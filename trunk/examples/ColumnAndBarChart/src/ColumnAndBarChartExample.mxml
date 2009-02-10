@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:degrafa="http://www.degrafa.com/2007"
+	xmlns:charts="charts.*"
+	layout="vertical"
+	width="1024"
+	height="768"
+	creationComplete="start()">
+	
+	<mx:Script>
+		<![CDATA[
+			import org.axiis.data.DataSet;
+			import com.degrafa.core.IGraphicsFill;
+			import mx.rpc.events.ResultEvent;
+			
+			public function start():void
+			{
+				var ds:DataSet = new DataSet();
+				ds.processXmlString(countryData);
+				
+				columnChart.ds = ds;
+				columnChart.dataCanvas.invalidateDisplayList();
+				
+				barChart.ds = ds;
+				barChart.dataCanvas.invalidateDisplayList();
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:String id="countryData" source="data/countryData.xml"/>
+
+	<mx:HBox>
+		<mx:Label text="Gap"/>
+		<mx:HSlider id="gapSlider" minimum="0" maximum="200" value="10" liveDragging="true"/>
+	</mx:HBox>
+	
+	<mx:HBox width="100%" height="100%">
+		<charts:ColumnChart id="columnChart" gap="{gapSlider.value}" width="100%" height="100%"/>
+		<charts:BarChart id="barChart" gap="{gapSlider.value}" width="100%" height="100%"/>
+	</mx:HBox>
+	
+</mx:Application>

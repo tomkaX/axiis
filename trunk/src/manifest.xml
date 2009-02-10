@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<componentPackage>
+    
+    <!-- root -->
+    <component id="DataCanvas" class="org.axiis.DataCanvas"/>
+
+	<!-- layouts -->
+	<component id="HorizontalLayout" class="org.axiis.layouts.HorizontalLayout"/>
+	<component id="VerticalLayout" class="org.axiis.layouts.VerticalLayout"/>
+	
+	<!-- data -->
+	<component id="SVGDashLine" class="org.axiis.data.DataSet"/>
+		
+</componentPackage>    
