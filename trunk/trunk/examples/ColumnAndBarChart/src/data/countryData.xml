@@ -1,0 +1,10 @@
+<someData>
+        <country name="USA" competitors="23">
+            <medal category="swimming" count="13"/> 
+            <medal category="running" count="18"/>
+        </country>
+         <country name="China" competitors="51">           
+            <medal category="swimming" count="23"/> 
+            <medal category="running" count="8"/>
+         </country>
+</someData>

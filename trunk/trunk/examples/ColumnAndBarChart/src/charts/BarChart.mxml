@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:visml="org.visml.*"
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:degrafa="http://www.degrafa.com/2007"
+	xmlns:axiis="http://www.axiis.org/2009">
+
+	<mx:Script>
+		<![CDATA[
+			import org.axiis.data.DataSet;
+		
+			[Bindable]
+			public var gap:Number = 10;
+			
+			[Bindable]
+			public var ds:DataSet;
+		]]>
+	</mx:Script>
+	
+	<mx:HBox>
+		<mx:ToggleButtonBar id="tbb" selectedIndex="0">
+			<mx:Array>
+				<mx:String>Top</mx:String>
+				<mx:String>Bottom</mx:String>
+			</mx:Array>
+		</mx:ToggleButtonBar>
+		<mx:Label text="{'Selected index : ' + barLayout.selectedIndex}"/>
+	</mx:HBox>
+
+	<axiis:DataCanvas id="dataCanvas" width="100%" height="100%">
+		<axiis:layouts>
+			<axiis:VerticalLayout id="barLayout"
+				dataProvider="{ds.data.someData.country}"
+				scale="categorical"
+				gap="{gap}"
+				verticalAlign="{tbb.selectedIndex == 0 ? 'top' : 'bottom'}">
+				<axiis:geometries>
+					<degrafa:RegularRectangle x="0" y="10"
+						width="{barLayout.currentDatum.competitors * 5}" height="50"
+						fill="{barFill}">
+					</degrafa:RegularRectangle>
+				</axiis:geometries>
+				
+				<axiis:layouts>
+					<axiis:VerticalLayout>
+						<axiis:geometries>
+							<degrafa:RegularRectangle x="10" y="{height}"
+								width="50" height="{barLayout.currentDatum.competitors * 5}"
+								fill="{barFill}">
+								<degrafa:transform>
+									<degrafa:ScaleTransform scaleY="-1" registrationPoint="topLeft"/>
+								</degrafa:transform>
+							</degrafa:RegularRectangle>
+						</axiis:geometries>
+					</axiis:VerticalLayout>
+				</axiis:layouts>
+				
+			</axiis:VerticalLayout>
+		</axiis:layouts>
+		
+		<axiis:fills>
+			<degrafa:SolidFill id="barFill" color="0x67A7E3"/>
+		</axiis:fills>
+		
+		<axiis:strokes>
+			<degrafa:SolidStroke id="axisStroke" weight="1" color="black"/>
+		</axiis:strokes>
+	</axiis:DataCanvas>
+
+</mx:VBox>
