@@ -4,6 +4,7 @@ package org.axiis.core
 	import flash.display.Sprite;
 	import flash.events.IEventDispatcher;
 	import flash.geom.Rectangle;
+
 	
 	public interface ILayout extends IEventDispatcher
 	{
@@ -49,6 +50,9 @@ package org.axiis.core
 		function set selectedDatum(value:Object):void;
 		function get selectedDatum():Object;
 		
+		function set layoutRepeater(value:ILayoutRepeater):void;
+		function get layoutRepeater():ILayoutRepeater;
+		
 		/**
 		 * Registers a DisplayObject as the owner of this ILayout.
 		 * Throws an error if the ILayout already has an owner.
@@ -70,6 +74,8 @@ package org.axiis.core
 		function initialize():void;
 		
 		function initializeGeometry():void;
+		
+		function invalidate():void;
 		
 		function measure():void;
 		
