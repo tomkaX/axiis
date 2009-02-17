@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layouts:BaseLayout xmlns="*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:core="org.axiis.core.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:layouts="org.axiis.layouts.*" xmlns:scale="org.axiis.layouts.scale.*">
+
+	<mx:Number id="percentGap">.05</mx:Number>
+	
+	<mx:String id="dataField"/>
+	<scale:CategoricalScale dataProvider="{this.dataItems}" dataField="{dataField}" minLayout="0" maxLayout="{width}"/>
+	<!--  We need to figure out how to implement this scale correctly -->
+	
+	<layouts:layoutRepeater>
+		<core:LayoutRepeater id="myLayout" dataProvider="{this.dataItems}">
+			<core:geometry>
+				<degrafa:RegularRectangle height="{this.height/this.itemCount-this.height*percentGap}" width="{this.width}" x="0" y="0" id="layoutGeometry"/>
+			</core:geometry>
+			<core:modifiers>
+				<core:PropertyModifier property="y" modifier="{this.height/this.itemCount}" modifierOperator="add"/>
+			</core:modifiers>
+		</core:LayoutRepeater>
+	</layouts:layoutRepeater>
+	
+</layouts:BaseLayout>
