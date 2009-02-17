@@ -34,15 +34,17 @@ package org.axiis.layouts.scale
 		 * 
 		 * I'm not sure if that behavior even makes sense. It leads to valueToLayout
 		 * not being the inverse of layoutToValue. 
+		 * 
 		 */
 		override public function valueToLayout(value:Object):Number
 		{
-			var valueIndex:Number = uniqueValues.indexOf(value);
+			if (this.invalidated) validate();
+			var valueIndex:Number = uniqueValues.indexOf(value[dataField]);
 			
 			if(valueIndex == -1)
 				return minLayout;
 			
-			var percentage:Number = valueIndex / uniqueValues.length;
+			var percentage:Number = valueIndex+1 / uniqueValues.length;
 			return percentage * (maxLayout - minLayout) + minLayout;
 		}
 		
@@ -53,6 +55,7 @@ package org.axiis.layouts.scale
 		 */
 		override public function layoutToValue(layout:Number):Object
 		{ 
+			if (this.invalidated) validate();
 			var layoutDelta:Number = maxLayout - minLayout;
 			var layoutPercentage:Number = (layout - layoutDelta) / (layoutDelta);
 			var index:Number = Math.round(layoutPercentage * uniqueValues.length) - 1;
