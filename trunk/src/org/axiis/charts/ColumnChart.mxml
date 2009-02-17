@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DataCanvas xmlns="org.axiis.*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:layouts="org.axiis.layouts.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:scale="org.axiis.layouts.scale.*">
+	<mx:Script>
+		<![CDATA[
+			//import org.axiis.data.DataSet;
+			
+			//[Bindable][Inspectable]
+		//	public var dataProvider:Object;
+			
+			//[Bindable]
+			//public var verticalField:String;
+			
+			//[Bindable]
+			//public var horizontalField:String;
+			
+		]]>
+	</mx:Script>
+	
+	<mx:Object id="dataProvider"/>
+	<mx:String id="verticalField"/>
+	<mx:String id="horizontalField"/>
+	
+	<mx:Boolean id="alignBottom">true</mx:Boolean>
+	
+	<mx:Number id="percentGap">.05</mx:Number>
+	
+	<scale:LinearScale dataProvider="{dataProvider}" dataField="{verticalField}" minLayout="0" maxLayout="{height-30}" minValue="0" id="vScale"/>
+	<layouts>
+			<layouts:HorizontalBoxLayout id="myLayout"
+				dataProvider="{dataProvider}"
+			 	dataField="{horizontalField}"
+			 	width="{this.width}"
+			 	height="{this.height-30}"
+			 	percentGap="{percentGap}">
+				<layouts:geometries>
+					<degrafa:RegularRectangle id="myCol"
+						x="{myLayout.currentLayout.x}" 
+						y="{(alignBottom) ? myLayout.height-vScale.valueToLayout(myLayout.currentDatum[verticalField])-30:0}" 
+						width="{myLayout.currentLayout.width}" height="{vScale.valueToLayout(myLayout.currentDatum[verticalField])}"
+						fill="{barFill}"/>
+					<degrafa:RasterText fontSize="16" fontFamily="Arial" text="{myLayout.currentDatum[horizontalField]}" x="{myLayout.currentLayout.x}" width="100" y="{myCol.y+myCol.height+5}"/>
+				</layouts:geometries>
+			</layouts:HorizontalBoxLayout>
+		</layouts>
+				
+		<fills>
+			<degrafa:LinearGradientFill id="barFill" angle="90">
+				<degrafa:GradientStop color="0xFFFFFF" alpha=".9"/><degrafa:GradientStop color="0xFFFFFF" alpha=".3"/>
+			</degrafa:LinearGradientFill>
+		</fills>
+		
+		<strokes>
+			<degrafa:SolidStroke id="axisStroke" weight="1" color="black"/>
+		</strokes>
+</DataCanvas>
