@@ -75,8 +75,6 @@ package org.axiis.core
 		
 		function initializeGeometry():void;
 		
-		function invalidate():void;
-		
 		function measure():void;
 		
 		function render():void;
