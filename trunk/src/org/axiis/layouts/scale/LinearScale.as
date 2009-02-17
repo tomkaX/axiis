@@ -9,13 +9,15 @@ package org.axiis.layouts.scale
 	{
 		override public function valueToLayout(value:Object):Number
 		{
+			if (this.invalidated) validate();
 			var percentage:Number = getPercentageBetweenValues(Number(value),Number(minValue),Number(maxValue));
-			percentage = Math.max(0,Math.min(1,percentage));
+			percentage = Math.max(0,Math.min(1.0,percentage));
 			return percentage * (maxLayout - minLayout) + minLayout;
 		}
 		
 		override public function layoutToValue(layout:Number):Object
 		{
+			if (this.invalidated) validate();
 			var percentage:Number = getPercentageBetweenValues(Number(layout),Number(minLayout),Number(maxLayout));
 			percentage = Math.max(0,Math.min(1,percentage));
 			return percentage * (Number(maxValue) - Number(minValue)) + Number(minValue);
