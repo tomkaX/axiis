@@ -37,6 +37,23 @@ package org.axiis.core
 		}
 		private var _dataProvider:Object;
 		
+		[Inspectable(category="General")]
+		[Bindable(event="layoutRepeaterChange")]
+		public function set layoutRepeater(value:ILayoutRepeater):void
+		{
+			if(value != _layoutRepeater)
+			{
+				_layoutRepeater = value;
+				dispatchEvent(new Event("layoutRepeaterChange"));
+			}
+		}
+		public function get layoutRepeater():ILayoutRepeater
+		{
+			return _layoutRepeater;
+		}
+		protected var _layoutRepeater:ILayoutRepeater;
+		
+		
 		[Bindable(event="dataFieldChange")]
 		public function set dataField(value:String):void
 		{
