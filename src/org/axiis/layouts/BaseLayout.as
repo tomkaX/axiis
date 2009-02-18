@@ -118,8 +118,6 @@ package org.axiis.layouts
 				sprite.addChild(newChildSprite);
 			}
 			_currentItem = Sprite(sprite.getChildAt(_currentIndex));
-			//_currentItem.width=this.width;
-			//_currentItem.height=this.height;
 			_currentDatum = dataItems[_currentIndex];
 			_currentLayout=layoutRepeater.geometry;  //We are assuming only one geometry in the layout array - perhaps change interface to just one geometry
 			renderDatum(_currentDatum,_currentItem,_bounds);
