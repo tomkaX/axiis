@@ -2,7 +2,7 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:degrafa="http://www.degrafa.com/2007"
 	xmlns:charts="charts.*"
-	layout="vertical"
+	layout="vertical"  
 	width="1024"
 	height="768"
 	creationComplete="start()"> 
