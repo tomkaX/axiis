@@ -3,7 +3,39 @@
             <medal category="swimming" count="13"/> 
             <medal category="running" count="18"/>
         </country>
-         <country name="China" competitors="51">           
+         <country name="China" competitors="151">           
+            <medal category="swimming" count="23"/> 
+            <medal category="running" count="8"/>
+         </country>
+         <country name="UK" competitors="51">           
+            <medal category="swimming" count="23"/> 
+            <medal category="running" count="8"/>
+         </country>
+         <country name="Russia" competitors="15">           
+            <medal category="swimming" count="23"/> 
+            <medal category="running" count="8"/>
+         </country>
+         <country name="France" competitors="45">           
+            <medal category="swimming" count="23"/> 
+            <medal category="running" count="8"/>
+         </country>
+         <country name="Germany" competitors="123">
+            <medal category="swimming" count="13"/> 
+            <medal category="running" count="18"/>
+        </country>
+         <country name="Canada" competitors="71">           
+            <medal category="swimming" count="23"/> 
+            <medal category="running" count="8"/>
+         </country>
+         <country name="Mexico" competitors="51">           
+            <medal category="swimming" count="63"/> 
+            <medal category="running" count="8"/>
+         </country>
+         <country name="Japan" competitors="85">           
+            <medal category="swimming" count="23"/> 
+            <medal category="running" count="8"/>
+         </country>
+         <country name="Peru" competitors="25">           
             <medal category="swimming" count="23"/> 
             <medal category="running" count="8"/>
          </country>
