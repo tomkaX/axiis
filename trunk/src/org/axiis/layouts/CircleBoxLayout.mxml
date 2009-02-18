@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layouts:BaseLayout xmlns="*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:core="org.axiis.core.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:layouts="org.axiis.layouts.*" xmlns:scale="org.axiis.layouts.scale.*">
+
+	<mx:Number id="innerDiameter">50</mx:Number>
+	<mx:Number id="outerDiameter">150</mx:Number>
+	<mx:String id="dataField"/>
+	<mx:Boolean id="pointOut">true</mx:Boolean>
+	<mx:Number id="percentGap">.03</mx:Number>
+	
+	<scale:CategoricalScale dataProvider="{this.dataItems}" dataField="{dataField}" minLayout="{innerDiameter}" maxLayout="{outerDiameter}"/>
+	<!--  We need to figure out how to implement this scale correctly -->
+	
+	<layouts:layoutRepeater>
+		<core:LayoutRepeater id="myLayout" dataProvider="{this.dataItems}">
+			<core:geometry>
+				<degrafa:RegularRectangle width="{(innerDiameter*Math.PI*2/this.itemCount)*(1-percentGap)}" height="50" x="{this.width/2}" y="{this.height/2}" id="layoutGeometry">
+					<degrafa:transform>
+						<degrafa:RotateTransform  centerX="{this.width/2+(layoutGeometry.width/2)}" centerY="{this.height/2-((pointOut) ? innerDiameter:outerDiameter)}" angle="0" id="rotate"/>
+					</degrafa:transform>
+				</degrafa:RegularRectangle>
+			</core:geometry>
+			<core:modifiers>
+				<core:PropertyModifier targets="{[layoutGeometry]}" property="transform.angle" modifier="{360/this.itemCount}" modifierOperator="add"/>
+			</core:modifiers>
+		</core:LayoutRepeater>
+	</layouts:layoutRepeater>
+	
+</layouts:BaseLayout>
