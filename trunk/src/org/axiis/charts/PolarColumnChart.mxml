@@ -34,12 +34,10 @@
 			 	pointOut="{pointOut}"
 			 	percentGap="{percentGap}"
 			 	>
-				<layouts:geometries>
-					<degrafa:RegularRectangle id="myCol"
-						x="{myLayout.currentLayout.x}" 
-						y="{myLayout.currentLayout.y}" 
+				<layouts:geometries> 
+					<degrafa:RoundedRectangle cornerRadius="3" id="myCol" x="{myLayout.currentLayout.x}" y="{myLayout.currentLayout.y}" 
 						width="{myLayout.currentLayout.width}" height="{((myLayout.pointOut) ? 1:-1)*vScale.valueToLayout(myLayout.currentDatum[verticalField])}"
-						fill="{barFill}">
+						fill="{barFill}" stroke="{myStroke}">
 						<degrafa:transform>
 							<degrafa:RotateTransform centerX="{myLayout.rotate.centerX}" centerY="{myLayout.rotate.centerY}" angle="{myLayout.rotate.angle}"/>
 						</degrafa:transform>
@@ -50,7 +48,7 @@
 								</degrafa:transform>
 							</degrafa:RasterText>
 						</degrafa:geometry>
-					</degrafa:RegularRectangle>
+					</degrafa:RoundedRectangle>
 				</layouts:geometries>
 			</layouts:CircleBoxLayout>
 		</layouts>
@@ -62,6 +60,6 @@
 		</fills>
 		
 		<strokes>
-			<degrafa:SolidStroke id="axisStroke" weight="1" color="black"/>
+			<degrafa:SolidStroke id="myStroke" weight="1" color="black" alpha=".5"/>
 		</strokes>
 </DataCanvas>
