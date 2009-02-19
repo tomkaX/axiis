@@ -35,9 +35,9 @@
 			 	percentGap="{percentGap}"
 			 	>
 				<layouts:geometries> 
-					<degrafa:RoundedRectangle cornerRadius="3" id="myCol" x="{myLayout.currentLayout.x}" y="{myLayout.currentLayout.y}" 
-						width="{myLayout.currentLayout.width}" height="{((myLayout.pointOut) ? 1:-1)*vScale.valueToLayout(myLayout.currentDatum[verticalField])}"
-						fill="{barFill}" stroke="{myStroke}">
+					<degrafa:RoundedRectangle cornerRadius="3" id="myCol" x="{myLayout.currentLayout.x}" y="{myLayout.currentLayout.y+((pointOut) ? 0 : vScale.maxLayout-vScale.valueToLayout(myLayout.currentDatum[verticalField]))}" 
+						width="{myLayout.currentLayout.width}" height="{vScale.valueToLayout(myLayout.currentDatum[verticalField])}"
+						fill="{barFill}" stroke="{myStroke}" >
 						<degrafa:transform>
 							<degrafa:RotateTransform centerX="{myLayout.rotate.centerX}" centerY="{myLayout.rotate.centerY}" angle="{myLayout.rotate.angle}"/>
 						</degrafa:transform>
