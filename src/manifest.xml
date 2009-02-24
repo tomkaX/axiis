@@ -4,9 +4,13 @@
     <!-- root -->
     <component id="DataCanvas" class="org.axiis.DataCanvas"/>
 
+	<!-- charts -->
+	<component id="WaterfallChart" class="org.axiis.charts.WaterfallChart"/>
+
 	<!-- layouts -->
-	<component id="HorizontalLayout" class="org.axiis.layouts.HorizontalLayout"/>
-	<component id="VerticalLayout" class="org.axiis.layouts.VerticalLayout"/>
+	<component id="HorizontalBoxLayout" class="org.axiis.layouts.HorizontalBoxLayout"/>
+	<component id="VerticalBoxLayout" class="org.axiis.layouts.VerticalBoxLayout"/>
+	
 	
 	<!-- scales -->
 	<component id="LinearScale" class="org.axiis.layouts.scale.LinearScale"/>

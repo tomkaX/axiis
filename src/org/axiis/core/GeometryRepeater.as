@@ -8,15 +8,12 @@ package org.axiis.core
 	
 	import mx.collections.ArrayCollection;
 
-	public class LayoutRepeater extends EventDispatcher implements ILayoutRepeater
+	public class GeometryRepeater extends EventDispatcher implements IGeometryRepeater
 	{
-		public function LayoutRepeater(target:IEventDispatcher=null)
+		public function GeometryRepeater(target:IEventDispatcher=null)
 		{
 			super(target);
 		}
-		
-		
-		private var _dataProvider:Array;
 		
 		[Bindable(event="datumChange")]
 		public function get currentDatum():Object
@@ -37,32 +34,42 @@ package org.axiis.core
 		}
 		private var __currentDatum:Object;
 		
-		public function set dataProvider(value:Array):void {
-			_dataProvider=value;
+		[Bindable(event="dataProviderChange")]
+		public function set dataProvider(value:Array):void
+		{
+			if(value != _dataProvider)
+			{
+				_dataProvider = value;
+				dispatchEvent(new Event("dataProviderChange"));
+			}
 		}
-		
-		public function get dataProvider():Array {
+		public function get dataProvider():Array
+		{
 			return _dataProvider;
 		}
-		
-		private var _modifiers:ArrayCollection;
+		private var _dataProvider:Array;
 		
 		[Inspectable(category="General", arrayType="org.axiis.core.IRepeaterModifier")]
 		[ArrayElementType("org.axiis.core.IRepeaterModifier")]
-		public function get modifiers():Array{
+		public function get modifiers():Array
+		{
 			initModifiersCollection();
 			return _modifiers.source;
 		}
-		public function set modifiers(value:Array):void{			
+		public function set modifiers(value:Array):void
+		{			
 			initModifiersCollection();
 			_modifiers.source = value;
 		}
+		private var _modifiers:ArrayCollection;
 		
 		/**
 		* Initialize the collection by creating it and adding an event listener.
 		**/
-		private function initModifiersCollection():void{
-			if(!_modifiers){
+		private function initModifiersCollection():void
+		{
+			if(!_modifiers)
+			{
 				_modifiers = new ArrayCollection();
 				
 				//add a listener to the collection
@@ -73,18 +80,20 @@ package org.axiis.core
 			}
 		}
 		
-		[Bindable] 
-		private var _geometry:Geometry;
-		
-		[Bindable]
-		public function get geometry():Geometry {
+		[Bindable(event="geometryChange")]
+		public function set geometry(value:Geometry):void
+		{
+			if(value != _geometry)
+			{
+				_geometry = value;
+				dispatchEvent(new Event("geometryChange"));
+			}
+		}
+		public function get geometry():Geometry
+		{
 			return _geometry;
 		}
-		public function set geometry(value:Geometry):void {
-			_geometry=value;
-		}
-		
-		
+		private var _geometry:Geometry;
 		
 		[Bindable(event="currentIterationChange")]
 		public function get currentIteration():int
@@ -106,7 +115,7 @@ package org.axiis.core
 		private var __currentIteration:int;
 
 		
-		public function repeat():void {
+		public function repeat(iterationCallback:Function = null):void {
 			for (var i:int=0; i<dataProvider.length; i++) {
 				_currentDatum=_dataProvider[i];
 				
@@ -116,19 +125,19 @@ package org.axiis.core
 						modifier.apply();
 					}
 				}
+				
 				_currentIteration=i;
+				if(iterationCallback != null)
+					iterationCallback.call(this);
 			}
 			
-			//End modifications (which returns the object to its original state
+			//End modifications (which returns the object to its original state)
 			if (_modifiers) {
 				for each (modifier in _modifiers) {
 					modifier.end();
 				}
 			}
-			_currentIteration=-1;
+			_currentIteration = -1;
 		}
-		
-		
-		
 	}
 }

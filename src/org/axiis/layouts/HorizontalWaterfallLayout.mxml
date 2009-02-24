@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<core:AbstractLayout xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:degrafa="http://www.degrafa.com/2007"
+	xmlns:core="org.axiis.core.*">
+	
+	<core:referenceGeometryRepeater>
+		<core:GeometryRepeater dataProvider="{dataItems}">
+			<core:geometry>
+				<degrafa:RegularRectangle x="0" y="0" width="{width / itemCount - 5}" height="{height}"/>
+			</core:geometry>
+			<core:modifiers>
+				<core:PropertyModifier property="x" modifierOperator="add" modifier="{width / itemCount}"/>
+			</core:modifiers>
+		</core:GeometryRepeater>
+	</core:referenceGeometryRepeater>
+	
+</core:AbstractLayout>

@@ -14,12 +14,16 @@ package org.axiis
 			super();
 		}
 		
+		[Bindable]
 		public var fills:Array = [];
 		
+		[Bindable]
 		public var strokes:Array = [];
 		
+		[Bindable]
 		public var dataProviders:Array= [];
 		
+		[Bindable]
 		public var layouts:Array = [];
 		
 		override protected function createChildren():void
