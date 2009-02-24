@@ -36,13 +36,13 @@
 			 	>
 				<layouts:geometries> 
 					<degrafa:RoundedRectangle cornerRadius="3" id="myCol"
-						x="{myLayout.currentLayout.x}"
-						y="{myLayout.currentLayout.y+(
+						x="{myLayout.currentReference.x}"
+						y="{myLayout.currentReference.y+(
 							(pointOut)
 							? 0
 							: vScale.maxLayout - vScale.valueToLayout(myLayout.currentDatum[verticalField])
 						)}" 
-						width="{myLayout.currentLayout.width}"
+						width="{myLayout.currentReference.width}"
 						height="{vScale.valueToLayout(myLayout.currentDatum[verticalField])}"
 						fill="{barFill}"
 						stroke="{myStroke}">
@@ -50,7 +50,7 @@
 							<degrafa:RotateTransform centerX="{myLayout.rotate.centerX}" centerY="{myLayout.rotate.centerY}" angle="{myLayout.rotate.angle}"/>
 						</degrafa:transform>
 						<degrafa:geometry>
-							<degrafa:RasterText fontSize="14" fontFamily="Arial" height="{myCol.width}" x="{myLayout.currentLayout.x+myCol.width/2}" y="{myLayout.currentLayout.y}" text="{myLayout.currentDatum[horizontalField]}"  id="myLabel">
+							<degrafa:RasterText fontSize="14" fontFamily="Arial" height="{myCol.width}" x="{myLayout.currentReference.x+myCol.width/2}" y="{myLayout.currentReference.y}" text="{myLayout.currentDatum[horizontalField]}"  id="myLabel">
 								<degrafa:transform>
 									<degrafa:RotateTransform registrationPoint="centerLeft" angle="90"/>
 								</degrafa:transform>

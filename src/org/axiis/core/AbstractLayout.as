@@ -55,22 +55,22 @@ package org.axiis.core
 		}
 		private var _dataItems:Array;
 		
-		[Bindable(event="currentReferenceGeometryChange")]
-		public function get currentReferenceGeometry():Geometry
+		[Bindable(event="currentReferenceChange")]
+		public function get currentReference():Geometry
 		{
-			return _currentReferenceGeometry;
+			return _currentReference;
 		}
-		protected function set _currentReferenceGeometry(value:Geometry):void
+		protected function set _currentReference(value:Geometry):void
 		{
 			//We want this to fire each time so the geometry property changes propogate
-			__currentReferenceGeometry = value;
-			dispatchEvent(new Event("currentReferenceGeometryChange"));
+			__currentReference = value;
+			dispatchEvent(new Event("currentReferenceChange"));
 		}
-		protected function get _currentReferenceGeometry():Geometry
+		protected function get _currentReference():Geometry
 		{
-			return __currentReferenceGeometry;
+			return __currentReference;
 		}
-		private var __currentReferenceGeometry:Geometry;
+		private var __currentReference:Geometry;
 		
 		/**
 		 * The Sprite that will be added to the DataCanvas
@@ -400,7 +400,7 @@ package org.axiis.core
 			}
 			_currentItem = Sprite(sprite.getChildAt(_currentIndex));
 			_currentDatum = dataItems[_currentIndex];
-			_currentReferenceGeometry = referenceGeometryRepeater.geometry; 
+			_currentReference = referenceGeometryRepeater.geometry; 
 			renderDatum(_currentDatum,_currentItem,_bounds);
 			
 		}
