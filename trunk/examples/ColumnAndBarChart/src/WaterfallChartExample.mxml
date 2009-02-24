@@ -32,7 +32,7 @@
 			<month name="Sep" count="300"/>
 			<month name="Oct" count="250"/>
 			<month name="Nov" count="200"/>
-			<month name="Dec" count="150"/>
+			<month name="Dec" count="200"/>
 		</months>
 	</mx:XML>
 	

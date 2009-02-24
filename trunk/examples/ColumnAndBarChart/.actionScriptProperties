@@ -13,8 +13,9 @@
     <sourceAttachmentPath/>
   </compiler>
   <applications>
-    <application path="CartesianChartExample.mxml"/>
+    <application path="CircleChartExample.mxml"/>
     <application path="WaterfallChartExample.mxml"/>
+    <application path="CartesianChartExample.mxml"/>
   </applications>
   <modules/>
   <buildCSSFiles/>
