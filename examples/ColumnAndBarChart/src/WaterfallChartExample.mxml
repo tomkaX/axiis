@@ -2,7 +2,7 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:axiis="http://www.axiis.org/2009"
 	layout="vertical"
-	 applicationComplete="start()">
+	applicationComplete="start()">
 	
 	<mx:Script>
 		<![CDATA[
@@ -36,6 +36,7 @@
 		</months>
 	</mx:XML>
 	
-	<axiis:WaterfallChart id="waterfallChart" width="100%" height="100%"/>
+	<axiis:WaterfallChart id="waterfallChart" width="100%" height="100%"
+		labelField="name" dataField="count"/>
 	
 </mx:Application>
