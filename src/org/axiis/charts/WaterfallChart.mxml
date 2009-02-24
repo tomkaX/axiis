@@ -9,32 +9,14 @@
 			import mx.collections.ArrayCollection;
 			import com.degrafa.core.IGraphicsFill;
 			
-			private function computeY(index:int):Number
-			{
-				//var toReturn:Number = index == 0 ? height : computeHeight(index - 1);
-				//trace("y " + index + " " + toReturn)
-				//return toReturn;
-				return height;
-			}
+			[Bindable]
+			public var dataProvider:Object;
 			
-			private function computeHeight(index:int):Number
-			{
-				var arr:ArrayCollection = dataProvider as ArrayCollection;
-				if(!arr)
-					return NaN;
-				
-				var currItem:Object = arr.getItemAt(index);
-				if(index == 0)
-					return scale.valueToLayout(currItem['count']);
-				
-				var prevItem:Object = arr.getItemAt(index - 1);
-				//var delta:Number = Math.abs(currItem['count'] -  prevItem['count']);
-				//var delta:Number = currItem['count'] ;
-				//var scaledValue:Number = scale.valueToLayout(delta);
-				//trace("height " +index + " " + scaledValue)
-				//return scaledValue;
-				return 100;
-			}
+			[Bindable]
+			public var labelField:String;
+			
+			[Bindable]
+			public var dataField:String;
 			
 			private function computeFill(o:Object):IGraphicsFill
 			{
@@ -60,30 +42,25 @@
 		]]>
 	</mx:Script>
 	
-	<mx:Object id="dataProvider"/>
-	
-	<axiis:LinearScale id="scale" 
-		dataProvider="{dataProvider}"
-		dataField="count"
-		minValue="0" 
-		minLayout="0"
-		maxLayout="{height}"/>
-	
 	<layouts>
-		<layouts:HorizontalWaterfallLayout id="waterfallLayout" dataProvider="{dataProvider}" width="{width}" height="{height}">
+		<layouts:HorizontalWaterfallLayout id="waterfallLayout"
+			dataProvider="{dataProvider}"
+			dataField="{dataField}"
+			width="{width}"
+			height="{height}">
 			<layouts:geometries>
 				<degrafa:RegularRectangle
 					x="{waterfallLayout.currentReferenceGeometry.x}"
-					y="{height}"
+					y="{height - waterfallLayout.currentReferenceGeometry.y}"
 					width="{waterfallLayout.currentReferenceGeometry.width}"
-					height="{scale.valueToLayout(waterfallLayout.currentDatum['count'])}"
+					height="{waterfallLayout.currentReferenceGeometry.height}"
 					fill="{computeFill(waterfallLayout.currentDatum)}">
 					<degrafa:transform>
 						<degrafa:ScaleTransform scaleY="-1" registrationPoint="topLeft"/>
 					</degrafa:transform>
 				</degrafa:RegularRectangle>
 				<degrafa:RasterText fontSize="11" fontFamily="Verdana"
-					text="{waterfallLayout.currentDatum['name']}"
+					text="{waterfallLayout.currentDatum[labelField]}"
 					x="{waterfallLayout.currentReferenceGeometry.x}"
 					y="{height}"/>
 			</layouts:geometries>
