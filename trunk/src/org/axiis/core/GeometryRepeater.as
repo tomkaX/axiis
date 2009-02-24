@@ -116,6 +116,9 @@ package org.axiis.core
 
 		
 		public function repeat(iterationCallback:Function = null):void {
+			if(dataProvider == null)
+				return;
+				
 			for (var i:int=0; i<dataProvider.length; i++) {
 				_currentDatum=_dataProvider[i];
 				
