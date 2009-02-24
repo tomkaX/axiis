@@ -1,21 +1,76 @@
 package org.axiis.core
 {
+	import com.degrafa.geometry.Geometry;
+	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
 	
 	import org.axiis.events.LayoutEvent;
 	
 	[Event(name="invalidate", type="org.visml.LayoutEvent")]
 	
-	public class AbstractLayout extends EventDispatcher
+	public class AbstractLayout extends EventDispatcher implements ILayout
 	{
 		public function AbstractLayout()
 		{
 			super();
 		}
+		
+		/**
+		 * Set to TRUE - this will use a common bounds to fill all layout items being drawn
+		 * Set to FALSE - each layout item will have its own fill bounds 
+		 */
+		[Inspectable]
+		public var useCommonBounds:Boolean=false;
+		
+		private var _bounds:Rectangle;
+		
+		[Bindable(event="itemCountChange")]
+		public function get itemCount():int
+		{
+			return _itemCount;
+		}
+		protected function set _itemCount(value:int):void
+		{
+			if(value != __itemCount)
+			{
+				__itemCount = value;
+				dispatchEvent(new Event("itemCountChange"));
+			}
+		}
+		protected function get _itemCount():int
+		{
+			return __itemCount;
+		}
+		private var __itemCount:int;
+		
+		
+		public function get dataItems():Array
+		{
+			return _dataItems;
+		}
+		private var _dataItems:Array;
+		
+		[Bindable(event="currentReferenceGeometryChange")]
+		public function get currentReferenceGeometry():Geometry
+		{
+			return _currentReferenceGeometry;
+		}
+		protected function set _currentReferenceGeometry(value:Geometry):void
+		{
+			//We want this to fire each time so the geometry property changes propogate
+			__currentReferenceGeometry = value;
+			dispatchEvent(new Event("currentReferenceGeometryChange"));
+		}
+		protected function get _currentReferenceGeometry():Geometry
+		{
+			return __currentReferenceGeometry;
+		}
+		private var __currentReferenceGeometry:Geometry;
 		
 		/**
 		 * The Sprite that will be added to the DataCanvas
@@ -25,9 +80,17 @@ package org.axiis.core
 		[Bindable(event="dataProviderChange")]
 		public function set dataProvider(value:Object):void
 		{
-			if(value != _dataProvider)
+			if(_dataProvider != value)
 			{
 				_dataProvider = value;
+				
+				_dataItems=new Array();
+				for each(var o:Object in dataProvider)
+				{
+					_dataItems.push(o);
+				}
+				_itemCount=_dataItems.length;
+				
 				dispatchEvent(new Event("dataProviderChange"));
 			}
 		}
@@ -38,20 +101,20 @@ package org.axiis.core
 		private var _dataProvider:Object;
 		
 		[Inspectable(category="General")]
-		[Bindable(event="layoutRepeaterChange")]
-		public function set layoutRepeater(value:ILayoutRepeater):void
+		[Bindable(event="referenceGeometryRepeaterChange")]
+		public function set referenceGeometryRepeater(value:IGeometryRepeater):void
 		{
-			if(value != _layoutRepeater)
+			if(value != _referenceGeometryRepeater)
 			{
-				_layoutRepeater = value;
-				dispatchEvent(new Event("layoutRepeaterChange"));
+				_referenceGeometryRepeater = value;
+				dispatchEvent(new Event("referenceGeometryRepeaterChange"));
 			}
 		}
-		public function get layoutRepeater():ILayoutRepeater
+		public function get referenceGeometryRepeater():IGeometryRepeater
 		{
-			return _layoutRepeater;
+			return _referenceGeometryRepeater;
 		}
-		protected var _layoutRepeater:ILayoutRepeater;
+		protected var _referenceGeometryRepeater:IGeometryRepeater;
 		
 		
 		[Bindable(event="dataFieldChange")]
@@ -315,10 +378,53 @@ package org.axiis.core
 		
 		public function render():void
 		{
+			if(!sprite || !_referenceGeometryRepeater)
+				return;
+			
+			// The rectangle needed by degrafa to draw geometry if we want common bounds to all elements
+			_bounds = new Rectangle(x,y,width,height);
+				
+			_referenceGeometryRepeater.dataProvider=_dataItems;
+			_referenceGeometryRepeater.repeat(onIteration);
+		}
+		
+		protected function onIteration():void
+		{
+			_currentIndex = _referenceGeometryRepeater.currentIteration;
+			
+			if(_currentIndex > sprite.numChildren - 1)
+			{
+				var newChildSprite:Sprite = new Sprite();
+				sprite.addEventListener(MouseEvent.CLICK,handleSpriteClick);
+				sprite.addChild(newChildSprite);
+			}
+			_currentItem = Sprite(sprite.getChildAt(_currentIndex));
+			_currentDatum = dataItems[_currentIndex];
+			_currentReferenceGeometry = referenceGeometryRepeater.geometry; 
+			renderDatum(_currentDatum,_currentItem,_bounds);
+			
 		}
 		
 		public function renderDatum(datum:Object,targetSprite:Sprite,rectange:Rectangle):void
 		{
+			targetSprite.graphics.clear();
+			
+			if(!geometries)
+				return;
+
+			for each(var geometry:Geometry in geometries)
+			{
+				//geometry.calculateLayout();
+				geometry.preDraw();
+				geometry.draw(targetSprite.graphics,(useCommonBounds) ? _bounds : geometry.commandStack.bounds);  
+			}
+		}
+		
+		protected function handleSpriteClick(event:MouseEvent):void
+		{
+			selectedItem = event.target as Sprite;
+			selectedIndex = sprite.getChildIndex(selectedItem);
+			selectedDatum = dataProvider[selectedIndex];
 		}
 	}
 }

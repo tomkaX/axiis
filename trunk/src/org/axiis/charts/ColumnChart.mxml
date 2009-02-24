@@ -9,31 +9,33 @@
 	<mx:Number id="percentGap">.05</mx:Number>
 	
 	<scale:LinearScale dataProvider="{dataProvider}" dataField="{verticalField}" minLayout="0" maxLayout="{height-30}" minValue="0" id="vScale"/>
+	
 	<layouts>
-			<layouts:HorizontalBoxLayout id="myLayout" useCommonBounds="true"
-				dataProvider="{dataProvider}"
-			 	dataField="{horizontalField}"
-			 	width="{this.width}"
-			 	height="{this.height-30}"
-			 	percentGap="{percentGap}">
-				<layouts:geometries>
-					<degrafa:RoundedRectangle id="myCol" cornerRadius="3"
-						x="{myLayout.currentLayout.x}" 
-						y="{(alignBottom) ? myLayout.height-vScale.valueToLayout(myLayout.currentDatum[verticalField])-30:0}" 
-						width="{myLayout.currentLayout.width}" height="{vScale.valueToLayout(myLayout.currentDatum[verticalField])}"
-						fill="{barFill}" stroke="{myStroke}"/>
-					<degrafa:RasterText fontSize="16" fontFamily="Arial" text="{myLayout.currentDatum[horizontalField]}" x="{myLayout.currentLayout.x}" width="100" y="{myCol.y+myCol.height+5}"/>
-				</layouts:geometries>
-			</layouts:HorizontalBoxLayout>
-		</layouts>
+		<layouts:HorizontalBoxLayout id="myLayout" useCommonBounds="true"
+			dataProvider="{dataProvider}"
+		 	dataField="{horizontalField}"
+		 	width="{this.width}"
+		 	height="{this.height-30}"
+		 	percentGap="{percentGap}">
+			<layouts:geometries>
+				<degrafa:RoundedRectangle id="myCol" cornerRadius="3"
+					x="{myLayout.currentReferenceGeometry.x}" 
+					y="{(alignBottom) ? myLayout.height-vScale.valueToLayout(myLayout.currentDatum[verticalField])-30:0}" 
+					width="{myLayout.currentReferenceGeometry.width}" height="{vScale.valueToLayout(myLayout.currentDatum[verticalField])}"
+					fill="{barFill}" stroke="{myStroke}"/>
+				<degrafa:RasterText fontSize="16" fontFamily="Arial" text="{myLayout.currentDatum[horizontalField]}" x="{myLayout.currentReferenceGeometry.x}" width="100" y="{myCol.y+myCol.height+5}"/>
+			</layouts:geometries>
+		</layouts:HorizontalBoxLayout>
+	</layouts>
 				
-		<fills>
-			<degrafa:LinearGradientFill id="barFill" angle="90">
-				<degrafa:GradientStop color="0xFFFFFF" alpha=".9"/><degrafa:GradientStop color="0xFFFFFF" alpha=".3"/>
-			</degrafa:LinearGradientFill>
-		</fills>
-		
-		<strokes>
-			<degrafa:SolidStroke id="myStroke" weight="1" color="black" alpha=".3"/>
-		</strokes>
+	<fills>
+		<degrafa:LinearGradientFill id="barFill" angle="90">
+			<degrafa:GradientStop color="0xFFFFFF" alpha=".9"/><degrafa:GradientStop color="0xFFFFFF" alpha=".3"/>
+		</degrafa:LinearGradientFill>
+	</fills>
+	
+	<strokes>
+		<degrafa:SolidStroke id="myStroke" weight="1" color="black" alpha=".3"/>
+	</strokes>
+	
 </DataCanvas>

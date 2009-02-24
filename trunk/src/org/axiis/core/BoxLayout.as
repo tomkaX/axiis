@@ -62,7 +62,7 @@ package org.axiis.core
 			}
 		}
 		
-		protected function handleSpriteClick(event:MouseEvent):void
+		override protected function handleSpriteClick(event:MouseEvent):void
 		{
 			selectedItem = event.target as Sprite;
 			selectedIndex = sprite.getChildIndex(selectedItem);

@@ -169,7 +169,7 @@ package  org.axiis.core {
 				}
 			}
 			
-			trace("modifying " + this.property + " = " + tempModifier);
+			//trace("modifying " + this.property + " = " + tempModifier);
 			
 			_iteration++;
 
