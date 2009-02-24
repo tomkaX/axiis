@@ -19,11 +19,11 @@
 		 	percentGap="{percentGap}">
 			<layouts:geometries>
 				<degrafa:RegularRectangle id="myCol"
-					y="{myLayout.currentReferenceGeometry.y}" 
+					y="{myLayout.currentReference.y}" 
 					x="{(!alignLeft) ? myLayout.width-hScale.valueToLayout(myLayout.currentDatum[horizontalField])-100:0}" 
-					height="{myLayout.currentReferenceGeometry.height}" width="{hScale.valueToLayout(myLayout.currentDatum[horizontalField])}"
+					height="{myLayout.currentReference.height}" width="{hScale.valueToLayout(myLayout.currentDatum[horizontalField])}"
 					fill="{barFill}"/>
-				<degrafa:RasterText fontSize="16" fontFamily="Arial" text="{myLayout.currentDatum[verticalField]}" y="{myLayout.currentReferenceGeometry.y}" width="100" x="{myCol.x+myCol.width+5}"/>
+				<degrafa:RasterText fontSize="16" fontFamily="Arial" text="{myLayout.currentDatum[verticalField]}" y="{myLayout.currentReference.y}" width="100" x="{myCol.x+myCol.width+5}"/>
 			</layouts:geometries>
 		</layouts:VerticalBoxLayout>
 	</layouts>

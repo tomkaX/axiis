@@ -50,10 +50,10 @@
 			height="{height}">
 			<layouts:geometries>
 				<degrafa:RegularRectangle
-					x="{waterfallLayout.currentReferenceGeometry.x}"
-					y="{height - waterfallLayout.currentReferenceGeometry.y}"
-					width="{waterfallLayout.currentReferenceGeometry.width}"
-					height="{waterfallLayout.currentReferenceGeometry.height}"
+					x="{waterfallLayout.currentReference.x}"
+					y="{height - waterfallLayout.currentReference.y}"
+					width="{waterfallLayout.currentReference.width}"
+					height="{waterfallLayout.currentReference.height}"
 					fill="{computeFill(waterfallLayout.currentDatum)}">
 					<degrafa:transform>
 						<degrafa:ScaleTransform scaleY="-1" registrationPoint="topLeft"/>
@@ -61,7 +61,7 @@
 				</degrafa:RegularRectangle>
 				<degrafa:RasterText fontSize="11" fontFamily="Verdana"
 					text="{waterfallLayout.currentDatum[labelField]}"
-					x="{waterfallLayout.currentReferenceGeometry.x}"
+					x="{waterfallLayout.currentReference.x}"
 					y="{height}"/>
 			</layouts:geometries>
 		</layouts:HorizontalWaterfallLayout>
