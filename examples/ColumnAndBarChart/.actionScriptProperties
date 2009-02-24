@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<actionScriptProperties mainApplicationPath="ColumnAndBarChartExample.mxml" version="3">
+<actionScriptProperties mainApplicationPath="CartesianChartExample.mxml" version="3">
   <compiler additionalCompilerArguments="-locale en_US" copyDependentFiles="true" enableModuleDebug="true" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="true" htmlHistoryManagement="true" htmlPlayerVersion="9.0.124" htmlPlayerVersionCheck="true" outputFolderPath="bin-debug" sourceFolderPath="src" strict="true" useApolloConfig="false" verifyDigests="true" warn="true">
-    <compilerSourcePath/>
+    <compilerSourcePath>
+      <compilerSourcePathEntry kind="1" linkType="1" path="C:/Documents and Settings/mvandani/My Documents/Code/axiis/src"/>
+    </compilerSourcePath>
     <libraryPath defaultLinkType="1">
       <libraryPathEntry kind="4" path=""/>
       <libraryPathEntry kind="1" linkType="1" path="libs"/>
-      <libraryPathEntry kind="3" linkType="1" path="C:/Documents and Settings/mvandani/My Documents/Code/axiis/trunk/bin/axiis.swc" useDefaultLinkType="false"/>
-      <libraryPathEntry kind="3" linkType="1" path="C:/Documents and Settings/mvandani/My Documents/Code/axiis/trunk/libs/Degrafa.swc" useDefaultLinkType="false"/>
+      <libraryPathEntry kind="3" linkType="1" path="C:/Documents and Settings/mvandani/My Documents/Code/axiis/bin/axiis.swc" useDefaultLinkType="false"/>
+      <libraryPathEntry kind="3" linkType="1" path="C:/Documents and Settings/mvandani/My Documents/Code/axiis/libs/Degrafa.swc" useDefaultLinkType="false"/>
     </libraryPath>
     <sourceAttachmentPath/>
   </compiler>
   <applications>
-    <application path="ColumnAndBarChartExample.mxml"/>
+    <application path="CartesianChartExample.mxml"/>
+    <application path="WaterfallChartExample.mxml"/>
   </applications>
   <modules/>
   <buildCSSFiles/>
