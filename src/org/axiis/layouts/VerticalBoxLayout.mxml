@@ -8,7 +8,7 @@
 	<scale:CategoricalScale dataProvider="{dataItems}" dataField="{dataField}" minLayout="0" maxLayout="{width}"/>
 	<!--  We need to figure out how to implement this scale correctly -->
 	
-	<core:referenceGeometryRepeater>
+	<core:referenceRepeater>
 		<core:GeometryRepeater id="myLayout" dataProvider="{dataItems}">
 			<core:geometry>
 				<degrafa:RegularRectangle x="0" y="0" height="{height / itemCount - height*percentGap}" width="{width}"/>
@@ -17,6 +17,6 @@
 				<core:PropertyModifier property="y" modifier="{height/itemCount}" modifierOperator="add"/>
 			</core:modifiers>
 		</core:GeometryRepeater>
-	</core:referenceGeometryRepeater>
+	</core:referenceRepeater>
 	
 </core:AbstractLayout>

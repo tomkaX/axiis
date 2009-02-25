@@ -49,7 +49,7 @@
 		minLayout="0"
 		maxLayout="{height}"/>
 	
-	<core:referenceGeometryRepeater>
+	<core:referenceRepeater>
 		<core:GeometryRepeater dataProvider="{dataItems}">
 			<core:geometry>
 				<degrafa:RegularRectangle x="0" y="0" width="{width / itemCount - 5}" height="{height}"/>
@@ -60,6 +60,6 @@
 				<core:PropertyModifier property="height" modifierOperator="none" modifier="{computeHeight}"/>
 			</core:modifiers>
 		</core:GeometryRepeater>
-	</core:referenceGeometryRepeater>
+	</core:referenceRepeater>
 	
 </core:AbstractLayout>

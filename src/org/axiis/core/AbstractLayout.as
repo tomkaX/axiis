@@ -102,7 +102,7 @@ package org.axiis.core
 		
 		[Inspectable(category="General")]
 		[Bindable(event="referenceGeometryRepeaterChange")]
-		public function set referenceGeometryRepeater(value:IGeometryRepeater):void
+		public function set referenceRepeater(value:IGeometryRepeater):void
 		{
 			if(value != _referenceGeometryRepeater)
 			{
@@ -110,7 +110,7 @@ package org.axiis.core
 				dispatchEvent(new Event("referenceGeometryRepeaterChange"));
 			}
 		}
-		public function get referenceGeometryRepeater():IGeometryRepeater
+		public function get referenceRepeater():IGeometryRepeater
 		{
 			return _referenceGeometryRepeater;
 		}
@@ -400,7 +400,7 @@ package org.axiis.core
 			}
 			_currentItem = Sprite(sprite.getChildAt(_currentIndex));
 			_currentDatum = dataItems[_currentIndex];
-			_currentReference = referenceGeometryRepeater.geometry; 
+			_currentReference = referenceRepeater.geometry; 
 			renderDatum(_currentDatum,_currentItem,_bounds);
 			
 		}

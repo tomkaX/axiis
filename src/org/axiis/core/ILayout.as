@@ -50,8 +50,8 @@ package org.axiis.core
 		function set selectedDatum(value:Object):void;
 		function get selectedDatum():Object;
 		
-		function set referenceGeometryRepeater(value:IGeometryRepeater):void;
-		function get referenceGeometryRepeater():IGeometryRepeater;
+		function set referenceRepeater(value:IGeometryRepeater):void;
+		function get referenceRepeater():IGeometryRepeater;
 		
 		/**
 		 * Registers a DisplayObject as the owner of this ILayout.
