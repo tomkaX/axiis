@@ -9,7 +9,8 @@ package org.axiis.layouts.scale
 	{
 		override public function valueToLayout(value:Object):Number
 		{
-			if (this.invalidated) validate();
+			if(invalidated)
+				validate();
 			var percentage:Number = getPercentageBetweenValues(Number(value),Number(minValue),Number(maxValue));
 			percentage = Math.max(0,Math.min(1.0,percentage));
 			return percentage * (maxLayout - minLayout) + minLayout;

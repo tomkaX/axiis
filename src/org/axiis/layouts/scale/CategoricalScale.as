@@ -38,8 +38,13 @@ package org.axiis.layouts.scale
 		 */
 		override public function valueToLayout(value:Object):Number
 		{
-			if (this.invalidated) validate();
-			var valueIndex:Number = uniqueValues.indexOf(value[dataField]);
+			if(invalidated)
+				validate();
+				
+				
+			var valueIndex:Number = dataField != null
+				? uniqueValues.indexOf(value[dataField])
+				: uniqueValues.indexOf(value);
 			
 			if(valueIndex == -1)
 				return minLayout;
