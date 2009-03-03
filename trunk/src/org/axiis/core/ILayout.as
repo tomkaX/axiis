@@ -4,7 +4,6 @@ package org.axiis.core
 	import flash.display.Sprite;
 	import flash.events.IEventDispatcher;
 	import flash.geom.Rectangle;
-
 	
 	public interface ILayout extends IEventDispatcher
 	{
@@ -77,7 +76,7 @@ package org.axiis.core
 		
 		function measure():void;
 		
-		function render():void;
+		function render(sprite:Sprite = null):void;
 		
 		function renderDatum(datum:Object,targetSprite:Sprite,rectange:Rectangle):void; 
 	}

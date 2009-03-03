@@ -5,6 +5,9 @@
     <component id="DataCanvas" class="org.axiis.DataCanvas"/>
 
 	<!-- charts -->
+	<component id="BarChart" class="org.axiis.charts.BarChart"/>
+	<component id="ColumnChart" class="org.axiis.charts.ColumnChart"/>
+	<component id="PolarColumnChart" class="org.axiis.charts.PolarColumnChart"/>
 	<component id="WaterfallChart" class="org.axiis.charts.WaterfallChart"/>
 
 	<!-- layouts -->

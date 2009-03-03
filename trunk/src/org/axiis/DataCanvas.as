@@ -56,9 +56,8 @@ package org.axiis
 			super.updateDisplayList(unscaledWidth,unscaledHeight);
 			
 			graphics.clear();
-			graphics.lineStyle(1);
-			graphics.drawRect(0,0,width,height);
-			
+			//graphics.lineStyle(1);
+			//graphics.drawRect(0,0,width,height);
 			for each(var layout:ILayout in layouts)
 			{
 				// This will have to change

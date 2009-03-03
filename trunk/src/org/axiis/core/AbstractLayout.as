@@ -15,6 +15,8 @@ package org.axiis.core
 	
 	public class AbstractLayout extends EventDispatcher implements ILayout
 	{
+		public var name:String = "";
+		
 		public function AbstractLayout()
 		{
 			super();
@@ -346,9 +348,17 @@ package org.axiis.core
 		public function registerOwner(displayObject:DisplayObject):void
 		{
 			if(!owner)
+			{
 				owner = displayObject;
+				for each(var childLayout:ILayout in layouts)
+				{
+					childLayout.registerOwner(owner);
+				}
+			}
 			else
+			{
 				throw new Error("Layout already has an owner.");
+			}
 		}
 		protected var owner:DisplayObject;
 		
@@ -365,6 +375,13 @@ package org.axiis.core
 		
 		public function initializeGeometry():void
 		{
+			/*var mySprite:Sprite = getSprite(owner);
+			for each(var childLayout:ILayout in layouts)
+			{
+				childLayout.initializeGeometry();
+				var childSprite:Sprite = childLayout.getSprite(owner);
+				mySprite.addChild(childSprite);
+			}*/
 		}
 		
 		public function invalidate():void
@@ -376,14 +393,18 @@ package org.axiis.core
 		{
 		}
 		
-		public function render():void
+		public function render(newSprite:Sprite = null):void
 		{
+			if(newSprite)
+			{
+				this.sprite = newSprite;
+			}
 			if(!sprite || !_referenceGeometryRepeater)
 				return;
 			
 			// The rectangle needed by degrafa to draw geometry if we want common bounds to all elements
 			_bounds = new Rectangle(x,y,width,height);
-				
+			
 			_referenceGeometryRepeater.dataProvider=_dataItems;
 			_referenceGeometryRepeater.repeat(onIteration);
 		}
@@ -400,9 +421,14 @@ package org.axiis.core
 			}
 			_currentItem = Sprite(sprite.getChildAt(_currentIndex));
 			_currentDatum = dataItems[_currentIndex];
-			_currentReference = referenceRepeater.geometry; 
+			_currentReference = referenceRepeater.geometry;
+			
 			renderDatum(_currentDatum,_currentItem,_bounds);
 			
+			for each(var layout:ILayout in layouts)
+			{
+				layout.render(_currentItem);
+			}
 		}
 		
 		public function renderDatum(datum:Object,targetSprite:Sprite,rectange:Rectangle):void
@@ -422,9 +448,16 @@ package org.axiis.core
 		
 		protected function handleSpriteClick(event:MouseEvent):void
 		{
-			selectedItem = event.target as Sprite;
-			selectedIndex = sprite.getChildIndex(selectedItem);
-			selectedDatum = dataProvider[selectedIndex];
+			try
+			{
+				selectedItem = event.target as Sprite;
+				selectedIndex = sprite.getChildIndex(selectedItem);
+				selectedDatum = dataProvider[selectedIndex];
+			}
+			catch(e:Error)
+			{
+				trace("embed selection isn't working yet");
+			}
 		}
 	}
 }
