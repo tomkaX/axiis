@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:axiis="http://www.axiis.org/2009"
+	xmlns:degrafa="http://www.degrafa.com/2007"
+	backgroundColor="0xffffff"
+	backgroundGradientColors="[0xffffff,0xffffff]" 
+	layout="vertical"
+	initialize="start()">
+
+	<mx:Script>
+		<![CDATA[
+			import org.axiis.data.DataSet;
+			
+			private var ds:DataSet = new DataSet();
+			
+			private function start():void
+			{
+				ds.processXmlString(xml);
+				clusterLayout.dataProvider = ds.data.nodes.node;
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:XML id="xml" source="/data/hierarchicalData.xml"/>
+
+	<axiis:LinearScale id="scale" maxLayout="{dataCanvas.height}" minLayout="0" minValue="0" maxValue="100"/> 
+
+	<axiis:DataCanvas id="dataCanvas" width="100%" height="100%">
+		<axiis:layouts>
+			<axiis:HorizontalBoxLayout id="clusterLayout" name="cluster">
+				<axiis:layouts>
+					<axiis:HorizontalBoxLayout id="columnLayout"
+						name=" column"
+						dataProvider="{clusterLayout.currentDatum.node}"
+						x="{clusterLayout.currentReference.x}"
+						y="{clusterLayout.currentReference.y}"
+						width="{clusterLayout.currentReference.width}"
+						height="{clusterLayout.currentReference.height}"
+						percentGap="0">
+						
+						<axiis:layouts>
+							<axiis:HorizontalBoxLayout id="subColumnLayout"
+								name="  subColumn"
+								dataProvider="{columnLayout.currentDatum.node}"
+								x="{columnLayout.currentReference.x}"
+								y="{columnLayout.currentReference.y}"
+								width="{columnLayout.currentReference.width}"
+								height="{columnLayout.currentReference.height}"
+								percentGap="0">
+								
+								<axiis:geometries>
+									<degrafa:RegularRectangle
+										x="{subColumnLayout.currentReference.x + columnLayout.currentReference.x + clusterLayout.currentReference.x}"
+										y="{dataCanvas.height}"
+										width="{subColumnLayout.currentReference.width}"
+										height="{scale.valueToLayout(subColumnLayout.currentDatum.value)}"
+										stroke="{blackStroke}">
+										<degrafa:fill>
+											<degrafa:SolidFill color="0xff0000"/>
+										</degrafa:fill>
+										<degrafa:transform>
+											<degrafa:ScaleTransform scaleY="-1" registrationPoint="topLeft"/>
+										</degrafa:transform>
+									</degrafa:RegularRectangle>
+								</axiis:geometries>
+								
+							</axiis:HorizontalBoxLayout>
+						</axiis:layouts>						
+						
+						<axiis:geometries>
+							<degrafa:RegularRectangle
+								x="{columnLayout.currentReference.x + clusterLayout.currentReference.x}"
+								y="{dataCanvas.height}"
+								width="{columnLayout.currentReference.width}"
+								height="{scale.valueToLayout(columnLayout.currentDatum.value)}"
+								stroke="{blackStroke}">
+								<degrafa:fill>
+									<degrafa:SolidFill color="0xff00"/>
+								</degrafa:fill>
+								<degrafa:transform>
+									<degrafa:ScaleTransform scaleY="-1" registrationPoint="topLeft"/>
+								</degrafa:transform>
+							</degrafa:RegularRectangle>
+						</axiis:geometries>
+					</axiis:HorizontalBoxLayout>
+				</axiis:layouts>
+				
+				<axiis:geometries>
+					<degrafa:RegularRectangle
+						x="{clusterLayout.currentReference.x}"
+						y="{dataCanvas.height}"
+						width="{clusterLayout.currentReference.width}"
+						height="{scale.valueToLayout(clusterLayout.currentDatum.value)}"
+						stroke="{blackStroke}">
+						<degrafa:fill>
+							<degrafa:SolidFill color="0xff"/>
+						</degrafa:fill>
+						<degrafa:transform>
+							<degrafa:ScaleTransform scaleY="-1" registrationPoint="topLeft"/>
+						</degrafa:transform>
+					</degrafa:RegularRectangle>
+				</axiis:geometries>
+				
+			</axiis:HorizontalBoxLayout>
+		</axiis:layouts>
+		
+		<axiis:strokes>
+			<degrafa:SolidStroke id="blackStroke" color="0"/>
+		</axiis:strokes>
+		
+	</axiis:DataCanvas>
+	
+</mx:Application>

@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<actionScriptProperties mainApplicationPath="CartesianChartExample.mxml" version="3">
+<actionScriptProperties mainApplicationPath="EmbedLayoutsExample.mxml" version="3">
   <compiler additionalCompilerArguments="-locale en_US" copyDependentFiles="true" enableModuleDebug="true" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="true" htmlHistoryManagement="true" htmlPlayerVersion="9.0.124" htmlPlayerVersionCheck="true" outputFolderPath="bin-debug" sourceFolderPath="src" strict="true" useApolloConfig="false" verifyDigests="true" warn="true">
-    <compilerSourcePath>
-      <compilerSourcePathEntry kind="1" linkType="1" path="C:/Documents and Settings/mvandani/My Documents/Code/axiis/src"/>
-    </compilerSourcePath>
+    <compilerSourcePath/>
     <libraryPath defaultLinkType="1">
       <libraryPathEntry kind="4" path=""/>
       <libraryPathEntry kind="1" linkType="1" path="libs"/>
@@ -13,9 +11,11 @@
     <sourceAttachmentPath/>
   </compiler>
   <applications>
-    <application path="CircleChartExample.mxml"/>
-    <application path="WaterfallChartExample.mxml"/>
     <application path="CartesianChartExample.mxml"/>
+    <application path="EmbedLayoutsExample.mxml"/>
+    <application path="CircleChartExample.mxml"/>
+    <application path="ScaleTest.mxml"/>
+    <application path="WaterfallChartExample.mxml"/>
   </applications>
   <modules/>
   <buildCSSFiles/>
