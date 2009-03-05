@@ -74,7 +74,7 @@
 								width="{columnLayout.currentReference.width}"
 								height="{scale.valueToLayout(columnLayout.currentDatum.value)}"
 								stroke="{blackStroke}">
-								<degrafa:fill>
+								<degrafa:fill> 
 									<degrafa:SolidFill color="0xff00"/>
 								</degrafa:fill>
 								<degrafa:transform>
