@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:axiis="http://www.axiis.org/2009"
+	xmlns:degrafa="http://www.degrafa.com/2007"
+	layout="vertical"
+	initialize="start()" xmlns:geometry="org.axiis.layouts.geometry.*">
+
+	<mx:Script>
+		<![CDATA[
+			import org.axiis.data.DataSet;
+			
+			private var ds:DataSet = new DataSet();
+			
+			private function start():void
+			{
+				ds.processXmlString(xml);
+				clusterLayout.dataProvider = ds.data.nodes.node;
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:XML id="xml" source="/data/hierarchicalData.xml"/>
+
+	<axiis:LinearScale id="scale" maxLayout="{dataCanvas.height}" minLayout="0" minValue="0" maxValue="100"/> 
+
+	<axiis:DataCanvas id="dataCanvas" width="800" height="800">
+		<axiis:layouts>
+			<axiis:HorizontalBoxLayout id="clusterLayout" name="cluster" width="{dataCanvas.width}" height="{dataCanvas.height}" scaleFill="true">
+				<axiis:geometries>
+					<geometry:Column stroke="{blackStroke}" fill="{fill1}" scale="{scale}" dataField="value"/>
+				</axiis:geometries>
+				<axiis:layouts>
+					<axiis:HorizontalBoxLayout id="columnLayout" dataProvider="{clusterLayout.currentDatum.node}" percentGap="0" x="10" y="5">
+						<axiis:geometries>
+							<geometry:Column stroke="{blackStroke}" fill="{fill2}" scale="{scale}"  dataField="value"/>
+						</axiis:geometries>
+						<axiis:layouts>
+							<axiis:HorizontalBoxLayout id="subColumnLayout"  dataProvider="{columnLayout.currentDatum.node}" y="-5" percentGap="0">
+								<axiis:geometries>
+									<geometry:Column stroke="{blackStroke}" fill="{fill3}" scale="{scale}" x="{subColumnLayout.currentReference.x}" dataField="value"/>
+								</axiis:geometries>
+							</axiis:HorizontalBoxLayout>
+						</axiis:layouts>						
+					</axiis:HorizontalBoxLayout>
+				</axiis:layouts>	
+			</axiis:HorizontalBoxLayout>
+		</axiis:layouts>
+		
+		<axiis:strokes>
+			<degrafa:SolidStroke id="blackStroke" color="0"/>
+		</axiis:strokes>
+		
+		<axiis:fills>
+			<degrafa:LinearGradientFill id="fill1" angle="90">
+				<degrafa:GradientStop color="0x4477FF"/>
+				<degrafa:GradientStop color="0x333388"/>
+			</degrafa:LinearGradientFill>
+			<degrafa:LinearGradientFill id="fill2">
+				<degrafa:GradientStop color="0xFFFF44"/>
+				<degrafa:GradientStop color="0x888833"/>
+			</degrafa:LinearGradientFill>
+			<degrafa:LinearGradientFill id="fill3">
+				<degrafa:GradientStop color="0xFF4444"/>
+				<degrafa:GradientStop color="0x883333"/>
+			</degrafa:LinearGradientFill>
+		</axiis:fills>
+		
+	</axiis:DataCanvas>
+	
+</mx:Application>

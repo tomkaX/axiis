@@ -30,7 +30,7 @@
 			<mx:Label text="Outer Diameter"/><mx:HSlider minimum="300" maximum="600" snapInterval="10" liveDragging="true" value="300" change="{polarChart.width=polarChart.height=event.target.value; polarChart.invalidateDisplayList();}"/>
 		</mx:HBox>
 		<mx:HBox>
-			<mx:Label text="Inner Diameter"/><mx:HSlider minimum="20" maximum="300" snapInterval="10" liveDragging="true" value="50" change="{polarChart.myLayout.innerDiameter=event.target.value; polarChart.invalidateDisplayList();}"/>
+			<mx:Label text="Inner Diameter"/><mx:HSlider minimum="20" maximum="150" snapInterval="10" liveDragging="true" value="50" change="{polarChart.myLayout.innerDiameter=event.target.value; polarChart.invalidateDisplayList();}"/>
 		</mx:HBox>
 		<mx:HBox>
 			<mx:Button toggle="true" id="direction" label="{(direction.selected) ? 'Inward':'Outward'}" change="{polarChart.pointOut=!direction.selected; polarChart.invalidateDisplayList();}"/>

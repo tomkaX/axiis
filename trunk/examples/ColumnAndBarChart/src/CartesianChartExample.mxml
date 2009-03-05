@@ -2,7 +2,6 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:charts="org.axiis.charts.*" 
 	layout="absolute"
-	width="800" height="600"
 	creationComplete="start();">
 	
 	<mx:Script>
@@ -26,9 +25,15 @@
 	
 	<mx:String id="countryData" source="data/countryData.xml"/>
 
-		<mx:HDividedBox width="100%" height="100%" top="50"> 
-			<charts:ColumnChart width="50%" height="100%" id="columnChart" horizontalField="name" verticalField="competitors"/>
-			<charts:BarChart width="50%" height="100%" id="barChart" horizontalField="competitors" verticalField="name"/>
+		<mx:HDividedBox width="800" height="600" verticalCenter="0" horizontalCenter="0"> 
+			<mx:VBox width="50%" height="100%">
+				<mx:CheckBox  label="use common bounds for fill" change="{columnChart.myLayout.scaleFill=event.target.selected; columnChart.invalidateDisplayList();}"/>
+				<charts:ColumnChart width="100%" height="100%"  id="columnChart" horizontalField="name" verticalField="competitors"/>
+			</mx:VBox>
+			<mx:VBox width="50%" height="100%">
+				<mx:CheckBox selected="true" label="use common bounds for fill" change="{barChart.myLayout.scaleFill=event.target.selected; barChart.invalidateDisplayList();}"/>
+				<charts:BarChart width="100%" height="100%" id="barChart" horizontalField="competitors" verticalField="name"/>
+			</mx:VBox>
 		</mx:HDividedBox>
 	
 	<mx:HSlider minimum=".01" maximum=".1" snapInterval=".005" liveDragging="true" value=".05" id="gapSlider" change="{barChart.percentGap=columnChart.percentGap=event.target.value; columnChart.invalidateDisplayList(); barChart.invalidateDisplayList();}"/>
