@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DataCanvas xmlns="org.axiis.*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:layouts="org.axiis.layouts.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:scale="org.axiis.layouts.scale.*">
+<DataCanvas xmlns="org.axiis.*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:layouts="org.axiis.layouts.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:scale="org.axiis.layouts.scale.*" xmlns:geometry="org.axiis.layouts.geometry.*">
 	<mx:Object id="dataProvider"/>
 	<mx:String id="verticalField"/>
 	<mx:String id="horizontalField"/>
@@ -8,34 +8,35 @@
 	
 	<mx:Number id="percentGap">.05</mx:Number>
 	
-	<scale:LinearScale dataProvider="{dataProvider}" dataField="{verticalField}" minLayout="0" maxLayout="{height-30}" minValue="0" id="vScale"/>
+	<scale:LinearScale dataProvider="{dataProvider}" dataField="{verticalField}" minLayout="0" maxLayout="{height-100}" minValue="0" id="vScale"/>
 	
 	<layouts>
-		<layouts:HorizontalBoxLayout id="myLayout" useCommonBounds="true"
+		<layouts:HorizontalBoxLayout id="myLayout" scaleFill="false"
 			dataProvider="{dataProvider}"
 		 	dataField="{horizontalField}"
 		 	width="{this.width}"
-		 	height="{this.height-30}"
+		 	height="{this.height-100}"
 		 	percentGap="{percentGap}">
 			<layouts:geometries>
-				<degrafa:RoundedRectangle id="myCol" cornerRadius="3"
-					x="{myLayout.currentReference.x}" 
-					y="{(alignBottom) ? myLayout.height-vScale.valueToLayout(myLayout.currentDatum[verticalField])-30:0}" 
-					width="{myLayout.currentReference.width}" height="{vScale.valueToLayout(myLayout.currentDatum[verticalField])}"
-					fill="{barFill}" stroke="{myStroke}"/>
-				<degrafa:RasterText fontSize="16" fontFamily="Arial" text="{myLayout.currentDatum[horizontalField]}" x="{myLayout.currentReference.x}" width="100" y="{myCol.y+myCol.height+5}"/>
+				<geometry:Column id="myCol" x="{myLayout.currentReference.x}" fill="{colFill}" stroke="{myStroke}" scale="{vScale}" dataField="{verticalField}"/>
+				<degrafa:RasterText fontSize="16" align="right" fontFamily="Arial" text="{myLayout.currentDatum[horizontalField]}" x="{myLayout.currentReference.x}" 
+					width="90" y="{height}">
+					<degrafa:transform>
+						<degrafa:RotateTransform angle="-90" registrationPoint="topLeft"/>
+					</degrafa:transform>
+				</degrafa:RasterText>
 			</layouts:geometries>
 		</layouts:HorizontalBoxLayout>
 	</layouts>
 				
 	<fills>
-		<degrafa:LinearGradientFill id="barFill" angle="90">
+		<degrafa:LinearGradientFill id="colFill" angle="-90">
 			<degrafa:GradientStop color="0xFFFFFF" alpha=".9"/><degrafa:GradientStop color="0xFFFFFF" alpha=".3"/>
 		</degrafa:LinearGradientFill>
 	</fills>
 	
 	<strokes>
-		<degrafa:SolidStroke id="myStroke" weight="1" color="black" alpha=".3"/>
+		<degrafa:SolidStroke id="myStroke" weight="1" color="black" alpha=".5"/>
 	</strokes>
 	
 </DataCanvas>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DataCanvas xmlns="org.axiis.*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:layouts="org.axiis.layouts.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:scale="org.axiis.layouts.scale.*">
+<DataCanvas xmlns="org.axiis.*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:layouts="org.axiis.layouts.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:scale="org.axiis.layouts.scale.*" xmlns:geometry="org.axiis.layouts.geometry.*">
 
 	<mx:Object id="dataProvider"/>
 	<mx:String id="verticalField"/>
@@ -9,33 +9,30 @@
 	
 	<mx:Number id="percentGap">.05</mx:Number>
 	
-	<scale:LinearScale dataProvider="{dataProvider}" dataField="{horizontalField}" minLayout="0" maxLayout="{width}" minValue="0" id="hScale"/>
+	<scale:LinearScale dataProvider="{dataProvider}" dataField="{horizontalField}" minLayout="0" maxLayout="{width-100}" minValue="0" id="hScale"/>
+	
 	<layouts>
-		<layouts:VerticalBoxLayout id="myLayout"
+		<layouts:VerticalBoxLayout id="myLayout" scaleFill="true"
 			dataProvider="{dataProvider}"
 		 	dataField="{horizontalField}"
 		 	width="{this.width-100}"
 		 	height="{this.height}"
 		 	percentGap="{percentGap}">
 			<layouts:geometries>
-				<degrafa:RegularRectangle id="myCol"
-					y="{myLayout.currentReference.y}" 
-					x="{(!alignLeft) ? myLayout.width-hScale.valueToLayout(myLayout.currentDatum[horizontalField])-100:0}" 
-					height="{myLayout.currentReference.height}" width="{hScale.valueToLayout(myLayout.currentDatum[horizontalField])}"
-					fill="{barFill}"/>
-				<degrafa:RasterText fontSize="16" fontFamily="Arial" text="{myLayout.currentDatum[verticalField]}" y="{myLayout.currentReference.y}" width="100" x="{myCol.x+myCol.width+5}"/>
+				<geometry:Bar id="myBar" y="{myLayout.currentReference.y}" fill="{barFill}" stroke="{myStroke}" scale="{hScale}" dataField="{horizontalField}"/>
+				<degrafa:RasterText fontSize="16" fontFamily="Arial" text="{myLayout.currentDatum[verticalField]}" y="{myLayout.currentReference.y}" width="100" x="{myBar.x+myBar.width+5}"/>
 			</layouts:geometries>
 		</layouts:VerticalBoxLayout>
 	</layouts>
 			
 	<fills>
-		<degrafa:LinearGradientFill id="barFill" angle="90">
+		<degrafa:LinearGradientFill id="barFill" angle="0">
 			<degrafa:GradientStop color="0xFFFFFF" alpha=".9"/><degrafa:GradientStop color="0xFFFFFF" alpha=".3"/>
 		</degrafa:LinearGradientFill>
 	</fills>
 	
 	<strokes>
-		<degrafa:SolidStroke id="axisStroke" weight="1" color="black"/>
+		<degrafa:SolidStroke id="myStroke" weight="1" color="black" alpha=".5"/>
 	</strokes>
 	
 </DataCanvas>
