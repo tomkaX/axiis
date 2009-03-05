@@ -1,5 +1,7 @@
 package org.axiis.core
 {
+	import com.degrafa.geometry.Geometry;
+	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.IEventDispatcher;
@@ -7,6 +9,13 @@ package org.axiis.core
 	
 	public interface ILayout extends IEventDispatcher
 	{
+		
+		function set parentLayout(value:ILayout):void;
+		function get parentLayout():ILayout;
+		
+		function set bounds(value:Rectangle):void;
+		function get bounds():Rectangle;
+		
 		function set dataProvider(value:Object):void;
 		function get dataProvider():Object;
 		
@@ -51,6 +60,8 @@ package org.axiis.core
 		
 		function set referenceRepeater(value:IGeometryRepeater):void;
 		function get referenceRepeater():IGeometryRepeater;
+		
+		function get currentReference():Geometry;
 		
 		/**
 		 * Registers a DisplayObject as the owner of this ILayout.

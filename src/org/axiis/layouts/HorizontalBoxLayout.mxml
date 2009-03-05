@@ -3,8 +3,9 @@
 	xmlns:degrafa="http://www.degrafa.com/2007"
 	xmlns:core="org.axiis.core.*"
 	xmlns:layouts="org.axiis.layouts.*"
-	xmlns:scale="org.axiis.layouts.scale.*">
-
+	xmlns:scale="org.axiis.layouts.scale.*"
+	>
+		
 	<mx:Number id="percentGap">.05</mx:Number>
 	
 	<mx:String id="dataField"/>
@@ -15,10 +16,10 @@
 	<core:referenceRepeater>
 		<core:GeometryRepeater id="myLayout" dataProvider="{dataItems}">
 			<core:geometry>
-				<degrafa:RegularRectangle x="0" y="0" width="{(width / itemCount) - (width * percentGap/2)}" height="{height}"/>
+				<degrafa:RegularRectangle x="0" y="0" width="{(bounds.width / itemCount) - (bounds.width * percentGap/2)}" height="{bounds.height}"/>
 			</core:geometry>
 			<core:modifiers>
-				<core:PropertyModifier property="x" modifier="{width / itemCount + (width * percentGap/4)}" modifierOperator="add"/>
+				<core:PropertyModifier property="x" modifier="{bounds.width/itemCount}" modifierOperator="add"/>
 			</core:modifiers>
 		</core:GeometryRepeater>
 	</core:referenceRepeater>

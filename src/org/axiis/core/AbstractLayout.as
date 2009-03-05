@@ -11,7 +11,7 @@ package org.axiis.core
 	
 	import org.axiis.events.LayoutEvent;
 	
-	[Event(name="invalidate", type="org.visml.LayoutEvent")]
+	[Event(name="invalidate", type="org.axiis.LayoutEvent")]
 	
 	public class AbstractLayout extends EventDispatcher implements ILayout
 	{
@@ -27,9 +27,51 @@ package org.axiis.core
 		 * Set to FALSE - each layout item will have its own fill bounds 
 		 */
 		[Inspectable]
-		public var useCommonBounds:Boolean=false;
+		public var scaleFill:Boolean=false;
+		
+		/**
+		 * this will use the currentReference bounds of the the parentLayout is its own bounds, and set the currentItem (sprite) accordingly
+		 */
+		[Inspectable]
+		public var useInheritedBounds:Boolean=true;
+		
+		/**
+		 * This will apply its bounds to root level child geometries
+		 */
+		 [Inspectable]
+		 public var autoApplyGeometryBounds=true;
+		
+		
+		[Bindable]
+		public function get parentLayout():ILayout {
+			return _parentLayout;
+		}
+		public function set parentLayout(value:ILayout) {
+			_parentLayout=value;
+		}
+		
+		[Bindable]
+		private var _parentLayout:ILayout;
+
+		
+		[Bindable(event="boundsChange")]
+		public function get bounds():Rectangle
+		{
+			return _bounds;
+		}
+		
+		public function set bounds(value:Rectangle):void
+		{
+			if(value != _bounds)
+			{
+				_bounds = value;
+				dispatchEvent(new Event("boundsChange"));
+			}
+		}
 		
 		private var _bounds:Rectangle;
+		
+		
 		
 		[Bindable(event="itemCountChange")]
 		public function get itemCount():int
@@ -402,9 +444,23 @@ package org.axiis.core
 			if(!sprite || !_referenceGeometryRepeater)
 				return;
 			
-			// The rectangle needed by degrafa to draw geometry if we want common bounds to all elements
-			_bounds = new Rectangle(x,y,width,height);
 			
+			if (useInheritedBounds && parentLayout) {
+				bounds=new Rectangle(parentLayout.currentReference.x+(isNaN(x) ? 0:x),
+									parentLayout.currentReference.y+(isNaN(y) ? 0:y),
+									parentLayout.currentReference.width,
+									parentLayout.currentReference.height);
+			}
+			else {
+				bounds = new Rectangle((isNaN(x) ? 0:x),(isNaN(y) ? 0:y),width,height);
+			}
+
+			sprite.x=isNaN(_bounds.x) ? 0:_bounds.x;
+			sprite.y=isNaN(_bounds.y) ? 0:_bounds.y;
+			
+			//we need to do the below so the fill boundary will match up with the currentReference geometry in relationship to its parent graphic context
+
+				
 			_referenceGeometryRepeater.dataProvider=_dataItems;
 			_referenceGeometryRepeater.repeat(onIteration);
 		}
@@ -419,6 +475,7 @@ package org.axiis.core
 				sprite.addEventListener(MouseEvent.CLICK,handleSpriteClick);
 				sprite.addChild(newChildSprite);
 			}
+	
 			_currentItem = Sprite(sprite.getChildAt(_currentIndex));
 			_currentDatum = dataItems[_currentIndex];
 			_currentReference = referenceRepeater.geometry;
@@ -427,6 +484,7 @@ package org.axiis.core
 			
 			for each(var layout:ILayout in layouts)
 			{
+				layout.parentLayout=this;
 				layout.render(_currentItem);
 			}
 		}
@@ -440,9 +498,10 @@ package org.axiis.core
 
 			for each(var geometry:Geometry in geometries)
 			{
-				//geometry.calculateLayout();
+				if (geometry is IAxiisGeometry) IAxiisGeometry(geometry).parentLayout=this;
 				geometry.preDraw();
-				geometry.draw(targetSprite.graphics,(useCommonBounds) ? _bounds : geometry.commandStack.bounds);  
+				geometry.draw(targetSprite.graphics,(scaleFill) ? new Rectangle(_bounds.x+geometry.x, _bounds.y+geometry.y,_bounds.width,_bounds.height) : geometry.commandStack.bounds);
+				trace("_bounds x = " + _bounds.x + " y = "  + _bounds.y + " width = " + _bounds.width + " height = "  + _bounds.height);  ////not sure if this will work with inherited bounds
 			}
 		}
 		

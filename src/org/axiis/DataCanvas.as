@@ -61,8 +61,8 @@ package org.axiis
 			for each(var layout:ILayout in layouts)
 			{
 				// This will have to change
-				layout.width = width;
-				layout.height = height;
+				//layout.width = width;
+				//layout.height = height;
 				
 				layout.render();
 			}

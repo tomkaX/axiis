@@ -11,10 +11,10 @@
 	<core:referenceRepeater>
 		<core:GeometryRepeater id="myLayout" dataProvider="{dataItems}">
 			<core:geometry>
-				<degrafa:RegularRectangle x="0" y="0" height="{height / itemCount - height*percentGap}" width="{width}"/>
+				<degrafa:RegularRectangle x="0" y="0" height="{bounds.height / itemCount - height*percentGap}" width="{bounds.width}"/>
 			</core:geometry>
 			<core:modifiers>
-				<core:PropertyModifier property="y" modifier="{height/itemCount}" modifierOperator="add"/>
+				<core:PropertyModifier property="y" modifier="{bounds.height/itemCount}" modifierOperator="add"/>
 			</core:modifiers>
 		</core:GeometryRepeater>
 	</core:referenceRepeater>
