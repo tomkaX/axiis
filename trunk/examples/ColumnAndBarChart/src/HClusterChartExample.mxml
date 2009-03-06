@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:charts="org.axiis.charts.*" 
+	layout="absolute"
+	creationComplete="start();" xmlns:axiis="http://www.axiis.org/2009" xmlns:series="org.axiis.charts.series.*" xmlns:groupings="org.axiis.charts.groupings.*" xmlns:degrafa="http://www.degrafa.com/2007">
+	
+<mx:Script>
+		<![CDATA[
+			import org.axiis.data.DataSet;
+			
+			public function start():void
+			{ 
+				var ds:DataSet = new DataSet();
+				ds.processXmlString(countryData);
+				
+				dataProvider=ds.data["someData"].country;
+				dc.invalidateDisplayList();
+				horizontalField="name";
+
+			}
+		]]>
+</mx:Script>
+
+<mx:String id="countryData" source="data/countryData.xml"/>
+
+<mx:Object id="dataProvider"/>
+<mx:String id="verticalField"/>
+<mx:String id="horizontalField"/>
+
+<mx:Boolean id="alignBottom">true</mx:Boolean>
+<mx:Number id="percentGap">.05</mx:Number>
+
+<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{height-70}" minValue="0" maxValue="320" id="myScale"/>
+
+	<axiis:DataCanvas height="800" width="800" id="dc" verticalCenter="0" horizontalCenter="0">
+		<axiis:layouts>
+			<groupings:ColumnCluster height="{dc.height-70}" width="{dc.width}" dataProvider="{dataProvider}" dataField="{horizontalField}" 
+				seriesFields="['competitors','totalMedals']" labelFields="['comp','medals']" verticalScale="{myScale}" 
+				fills="{[fill1,fill2]}" strokes="{[stroke1,stroke1]}"/>
+		</axiis:layouts>
+	
+		<axiis:fills>
+			<degrafa:LinearGradientFill id="fill1">
+				<degrafa:GradientStop color="0xFFFFFF" alpha=".7"/><degrafa:GradientStop color="0xFFFFFF" alpha=".3"/>
+			</degrafa:LinearGradientFill>
+			<degrafa:LinearGradientFill id="fill2">
+				<degrafa:GradientStop color="0x55FF22" alpha=".9"/><degrafa:GradientStop color="0xAAFF44" alpha=".3"/>
+			</degrafa:LinearGradientFill>
+		</axiis:fills>
+		<axiis:strokes>
+			<degrafa:LinearGradientStroke id="stroke1" angle="-45">
+				<degrafa:GradientStop color="0xFFFFFF" alpha="1"/><degrafa:GradientStop color="0" alpha=".3"/>
+			</degrafa:LinearGradientStroke>
+			<degrafa:SolidStroke id="myStroke" weight="1" color="black" alpha=".5"/>
+		</axiis:strokes>
+	</axiis:DataCanvas>
+	
+</mx:Application>
