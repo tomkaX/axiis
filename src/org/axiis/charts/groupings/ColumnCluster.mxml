@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layouts:HorizontalBoxLayout xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:degrafa="http://www.degrafa.com/2007"
+	xmlns:core="org.axiis.core.*"
+	xmlns:layouts="org.axiis.layouts.*"
+	xmlns:scale="org.axiis.layouts.scale.*"
+	xmlns:geometry="org.axiis.layouts.geometry.*"
+	>
+	
+	<mx:Array id="fills"/>
+	<mx:Array id="strokes"/>
+	<mx:Array id="seriesFields"/>
+	<mx:Array id="labelFields"/>
+	<mx:Number id="percentGap">.05</mx:Number>
+	<scale:LinearScale id="verticalScale"/>
+	<mx:Boolean id="alignBottom">true</mx:Boolean>
+	<degrafa:SolidStroke id="myStroke" weight="1" color="black" alpha=".5"/>
+	<layouts:layouts>
+		<layouts:HorizontalBoxLayout dataProvider="{seriesFields}" id="innerLayout" percentGap="{percentGap}">
+			<layouts:geometries>
+				<degrafa:RegularRectangle 
+						x="{innerLayout.currentReference.x}"
+						y="{bounds.height}"
+						width="{innerLayout.currentReference.width}"
+						height="{this.verticalScale.valueToLayout(currentDatum[seriesFields[innerLayout.referenceRepeater.currentIteration]])}"
+						fill="{fills[innerLayout.referenceRepeater.currentIteration]}"
+						stroke="{strokes[innerLayout.referenceRepeater.currentIteration]}"
+						>
+						<degrafa:transform>
+							<degrafa:ScaleTransform scaleY="{(alignBottom) ? -1: 1}" registrationPoint="topLeft"/>
+						</degrafa:transform>
+				</degrafa:RegularRectangle>
+				<degrafa:RasterText text="{(labelFields[innerLayout.referenceRepeater.currentIteration]) ? labelFields[innerLayout.referenceRepeater.currentIteration]:' '}"  
+					x="{innerLayout.currentReference.x+(innerLayout.currentReference.width-20)/2}" height="20" width="70" y="{bounds.height+70}" fontSize="12" align="right" fontFamily="Arial">
+					<degrafa:transform>
+						<degrafa:RotateTransform angle="-90" registrationPoint="topLeft"/>
+					</degrafa:transform>
+				</degrafa:RasterText>
+			</layouts:geometries>
+		</layouts:HorizontalBoxLayout>
+	</layouts:layouts>
+	<layouts:geometries>
+		<degrafa:Line x="0" x1="{currentReference.width}" y="{height+65}" y1="{height+65}" stroke="{myStroke}"/>
+		<degrafa:Line x="0" x1="0" y="{height+65}" y1="{height+10}" stroke="{myStroke}"/>
+		<degrafa:Line x="{currentReference.width}" x1="{currentReference.width}" y="{height+65}" y1="{height+10}" stroke="{myStroke}"/>
+		<degrafa:Line x="{currentReference.width/2}" x1="{currentReference.width/2}" y="{height+75}" y1="{height+65}" stroke="{myStroke}"/>
+		<degrafa:RasterText text="{currentDatum[dataField]}" x="0" width="{currentReference.width}" y="{height+75}" fontSize="16" align="center" fontFamily="Arial"/>
+	</layouts:geometries>
+</layouts:HorizontalBoxLayout>
