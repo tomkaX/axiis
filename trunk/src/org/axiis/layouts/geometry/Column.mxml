@@ -10,6 +10,7 @@
 			import org.axiis.layouts.scale.IScale;
 			import org.axiis.core.ILayout;
 			
+			//AbstractLayout knows to set this because we implement IAxiisGeometry
 			[Inspectable][Bindable]
 			public function get parentLayout():ILayout { return _parentLayout; }
 			public function set parentLayout(value:ILayout):void { _parentLayout=value; }
@@ -25,6 +26,7 @@
 	</mx:Script>
 	<mx:String id="dataField"/>
 	<mx:Boolean id="alignBottom">true</mx:Boolean>
+	<mx:String id="labelField">blank</mx:String>
 	<transform>
 		<degrafa:ScaleTransform scaleY="{(alignBottom) ? -1: 1}" registrationPoint="topLeft"/>
 	</transform>
