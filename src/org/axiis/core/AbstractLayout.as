@@ -501,7 +501,7 @@ package org.axiis.core
 				if (geometry is IAxiisGeometry) IAxiisGeometry(geometry).parentLayout=this;
 				geometry.preDraw();
 				geometry.draw(targetSprite.graphics,(scaleFill) ? new Rectangle(_bounds.x+geometry.x, _bounds.y+geometry.y,_bounds.width,_bounds.height) : geometry.commandStack.bounds);
-				trace("_bounds x = " + _bounds.x + " y = "  + _bounds.y + " width = " + _bounds.width + " height = "  + _bounds.height);  ////not sure if this will work with inherited bounds
+				//trace("_bounds x = " + _bounds.x + " y = "  + _bounds.y + " width = " + _bounds.width + " height = "  + _bounds.height);  ////not sure if this will work with inherited bounds
 			}
 		}
 		

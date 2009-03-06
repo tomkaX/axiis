@@ -40,6 +40,7 @@ package org.axiis.core
 		function set height(value:Number):void;
 		function get height():Number;
 		
+		//Do we really need this? not sure it is being used now.
 		function set scale(value:String):void
 		function get scale():String;
 		
