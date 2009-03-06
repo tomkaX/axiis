@@ -1,26 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DataCanvas xmlns="org.axiis.*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:layouts="org.axiis.layouts.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:scale="org.axiis.layouts.scale.*" xmlns:geometry="org.axiis.layouts.geometry.*">
+<DataCanvas xmlns="org.axiis.*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:layouts="org.axiis.layouts.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:scale="org.axiis.layouts.scale.*" xmlns:geometry="org.axiis.charts.geometry.*">
 	<mx:Object id="dataProvider"/>
 	<mx:String id="verticalField"/>
 	<mx:String id="horizontalField"/>
 	
 	<mx:Boolean id="alignBottom">true</mx:Boolean>
-	
 	<mx:Number id="percentGap">.05</mx:Number>
-	
 	<scale:LinearScale dataProvider="{dataProvider}" dataField="{verticalField}" minLayout="0" maxLayout="{height-100}" minValue="0" id="vScale"/>
 	
 	<layouts>
-		<layouts:HorizontalBoxLayout id="myLayout" scaleFill="false"
-			dataProvider="{dataProvider}"
-		 	dataField="{horizontalField}"
-		 	width="{this.width}"
-		 	height="{this.height-100}"
-		 	percentGap="{percentGap}">
+		<layouts:HorizontalBoxLayout id="myLayout" scaleFill="false" dataProvider="{dataProvider}" dataField="{horizontalField}" width="{this.width}" height="{this.height-100}" percentGap="{percentGap}">
 			<layouts:geometries>
-				<geometry:Column id="myCol" x="{myLayout.currentReference.x}" fill="{colFill}" stroke="{myStroke}" scale="{vScale}" dataField="{verticalField}"/>
-				<degrafa:RasterText fontSize="16" align="right" fontFamily="Arial" text="{myLayout.currentDatum[horizontalField]}" x="{myLayout.currentReference.x}" 
-					width="90" y="{height}">
+				<geometry:Column id="myCol" x="{myLayout.currentReference.x}" scale="{vScale}" dataField="{verticalField}" fill="{colFill}" stroke="{myStroke}" labelField="{horizontalField}"/>
+				<degrafa:RasterText text="{myLayout.currentDatum[horizontalField]}" x="{myLayout.currentReference.x}" width="90" y="{height}" fontSize="16" align="right" fontFamily="Arial" >
 					<degrafa:transform>
 						<degrafa:RotateTransform angle="-90" registrationPoint="topLeft"/>
 					</degrafa:transform>
