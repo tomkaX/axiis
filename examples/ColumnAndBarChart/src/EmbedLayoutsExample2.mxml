@@ -3,7 +3,7 @@
 	xmlns:axiis="http://www.axiis.org/2009"
 	xmlns:degrafa="http://www.degrafa.com/2007"
 	layout="vertical"
-	initialize="start()" xmlns:geometry="org.axiis.layouts.geometry.*">
+	initialize="start()" xmlns:geometry="org.axiis.charts.geometry.*">
 
 	<mx:Script>
 		<![CDATA[
@@ -51,7 +51,7 @@
 		</axiis:strokes>
 		
 		<axiis:fills>
-			<degrafa:LinearGradientFill id="fill1" angle="90">
+			<degrafa:LinearGradientFill id="fill1" angle="90"><!-- still have a bug where the gradient does not work when at angle=0 -->
 				<degrafa:GradientStop color="0x4477FF"/>
 				<degrafa:GradientStop color="0x333388"/>
 			</degrafa:LinearGradientFill>
