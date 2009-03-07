@@ -26,7 +26,7 @@
 						fill="{fills[innerLayout.referenceRepeater.currentIteration]}"
 						stroke="{strokes[innerLayout.referenceRepeater.currentIteration]}"
 						>
-						<degrafa:transform>
+						<degrafa:transform> 
 							<degrafa:ScaleTransform scaleY="{(alignBottom) ? -1: 1}" registrationPoint="topLeft"/>
 						</degrafa:transform>
 				</degrafa:RegularRectangle>
