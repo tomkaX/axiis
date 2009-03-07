@@ -457,10 +457,7 @@ package org.axiis.core
 
 			sprite.x=isNaN(_bounds.x) ? 0:_bounds.x;
 			sprite.y=isNaN(_bounds.y) ? 0:_bounds.y;
-			
-			//we need to do the below so the fill boundary will match up with the currentReference geometry in relationship to its parent graphic context
-
-				
+	
 			_referenceGeometryRepeater.dataProvider=_dataItems;
 			_referenceGeometryRepeater.repeat(onIteration);
 		}
