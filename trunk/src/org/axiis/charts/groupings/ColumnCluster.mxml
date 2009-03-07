@@ -6,7 +6,6 @@
 	xmlns:scale="org.axiis.layouts.scale.*"
 	xmlns:geometry="org.axiis.layouts.geometry.*"
 	>
-	
 	<mx:Array id="fills"/>
 	<mx:Array id="strokes"/>
 	<mx:Array id="seriesFields"/>
@@ -30,6 +29,7 @@
 							<degrafa:ScaleTransform scaleY="{(alignBottom) ? -1: 1}" registrationPoint="topLeft"/>
 						</degrafa:transform>
 				</degrafa:RegularRectangle>
+				<!-- smaller label for each column -->
 				<degrafa:RasterText text="{(labelFields[innerLayout.referenceRepeater.currentIteration]) ? labelFields[innerLayout.referenceRepeater.currentIteration]:' '}"  
 					x="{innerLayout.currentReference.x+(innerLayout.currentReference.width-20)/2}" height="20" width="70" y="{bounds.height+70}" fontSize="12" align="right" fontFamily="Arial">
 					<degrafa:transform>
@@ -40,6 +40,7 @@
 		</layouts:HorizontalBoxLayout>
 	</layouts:layouts>
 	<layouts:geometries>
+		<!-- makes the little bracked below the columns with the main label -->
 		<degrafa:Line x="0" x1="{currentReference.width}" y="{height+65}" y1="{height+65}" stroke="{myStroke}"/>
 		<degrafa:Line x="0" x1="0" y="{height+65}" y1="{height+10}" stroke="{myStroke}"/>
 		<degrafa:Line x="{currentReference.width}" x1="{currentReference.width}" y="{height+65}" y1="{height+10}" stroke="{myStroke}"/>
