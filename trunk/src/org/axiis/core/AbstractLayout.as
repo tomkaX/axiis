@@ -10,6 +10,7 @@ package org.axiis.core
 	import flash.geom.Rectangle;
 	
 	import org.axiis.events.LayoutEvent;
+	import org.axiis.states.State;
 	
 	[Event(name="invalidate", type="org.axiis.LayoutEvent")]
 	
@@ -21,6 +22,24 @@ package org.axiis.core
 		{
 			super();
 		}
+		
+		/***
+		 * Store states collection
+		 */
+		public function set states(value:Array):void {
+			_states=value;
+		}
+		
+		public function get states():Array {
+			return _states;
+		}
+		
+		private var _activeStates:Array=new Array();
+		
+		protected var _states:Array;
+		
+		
+		private var _currentState:String();
 		
 		/**
 		 * Set to TRUE - this will use a common bounds to fill all layout items being drawn
@@ -469,7 +488,10 @@ package org.axiis.core
 			if(_currentIndex > sprite.numChildren - 1)
 			{
 				var newChildSprite:Sprite = new Sprite();
-				sprite.addEventListener(MouseEvent.CLICK,handleSpriteClick);
+				sprite.addEventListener(MouseEvent.CLICK,onSpriteMouseClick);
+				sprite.addEventListener(MouseEvent.MOUSE_MOVE,onSpriteMouseMove);
+				sprite.addEventListener(MouseEvent.MOUSE_OVER,onSpriteMouseOver);
+				sprite.addEventListener(MouseEvent.MOUSE_OUT,onSpriteMouseOut);
 				sprite.addChild(newChildSprite);
 			}
 	
@@ -492,17 +514,42 @@ package org.axiis.core
 			
 			if(!geometries)
 				return;
-
+			
+			//Apply any states related to the sprite in question by altering the current geometry
+			applyStates(targetSprite);
+			
 			for each(var geometry:Geometry in geometries)
 			{
 				if (geometry is IAxiisGeometry) IAxiisGeometry(geometry).parentLayout=this;
 				geometry.preDraw();
+				//We pass in different bounds depending on if we want all geoemtries filled by a common bounds or individually
 				geometry.draw(targetSprite.graphics,(scaleFill) ? new Rectangle(_bounds.x+geometry.x, _bounds.y+geometry.y,_bounds.width,_bounds.height) : geometry.commandStack.bounds);
-				//trace("_bounds x = " + _bounds.x + " y = "  + _bounds.y + " width = " + _bounds.width + " height = "  + _bounds.height);  ////not sure if this will work with inherited bounds
+			}
+			
+			//Remove any states from the geometry so the next iteration rendering is not affected.
+			removeStates();
+		}
+		
+		private function applyStates(sprite:Sprite):void {
+			//trace("current sprite " + sprite.name);
+			
+			for (var y:int=0;y<_activeStates.length;y++) {
+			//	trace("target sprites " + _activeStates[y].target.name);
+				if (_activeStates[y].target==sprite) {  
+					_activeStates[y].state.apply();
+				}
 			}
 		}
 		
-		protected function handleSpriteClick(event:MouseEvent):void
+		private function removeStates():void {
+			//trace("current sprite " + sprite.name);
+			
+			for (var y:int=0;y<_activeStates.length;y++) {
+				_activeStates[y].state.remove();
+			}
+		}
+		
+		protected function onSpriteMouseClick(event:MouseEvent):void
 		{
 			try
 			{
@@ -515,5 +562,52 @@ package org.axiis.core
 				trace("embed selection isn't working yet");
 			}
 		}
+		
+		protected function onSpriteMouseOver(event:MouseEvent):void
+		{
+			invalidateState(Sprite(event.target),event.type);
+		}
+		
+		protected function onSpriteMouseOut(event:MouseEvent):void
+		{
+			 invalidateState(Sprite(event.target),event.type);
+		}
+		
+		protected function onSpriteMouseMove(event:MouseEvent):void
+		{
+			 trace("mouse moving ..");
+		}
+		
+		/**
+		 * Each time a sprite has its state invalidated we re render the whole layout
+		 * the alternative is figuring out a way for each iteration to keep track of its specific geometries (some type of cloning) and only rendering itself
+		 * The current approach has a bigger CPU load, using stateful geometries for each iteration would have a bigger memory load
+		 */
+		private function invalidateState(sprite:Sprite, eventType:String ):void {
+			//Look at all states and see if we have any mouse over
+			trace("mouse out on " + sprite.name);
+			if (!states) return;
+			for (var i:int=0;i<states.length;i++) {
+				var state:State=states[i];
+				if (state.enterStateEvent==eventType) {
+					var stateObject:Object=new Object(); //quick hack to store these two variables in internal array, probably better to use a Dictionary.
+					stateObject.target=sprite;
+					stateObject.state=state;
+					_activeStates.push(stateObject);
+				}
+			}	
+			
+			for (var y:int=0;y<_activeStates.length;y++) {
+				if (_activeStates[y].state.exitStateEvent==eventType && _activeStates[y].target==sprite) {  //Remove state
+					state.remove();
+					_activeStates.splice(y,1);	
+				}
+			}
+			
+			render();
+			
+		}
+		
+		
 	}
 }
