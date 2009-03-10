@@ -37,9 +37,7 @@ package org.axiis.core
 		private var _activeStates:Array=new Array();
 		
 		protected var _states:Array;
-		
-		
-		private var _currentState:String();
+
 		
 		/**
 		 * Set to TRUE - this will use a common bounds to fill all layout items being drawn
@@ -570,7 +568,7 @@ package org.axiis.core
 		
 		protected function onSpriteMouseOut(event:MouseEvent):void
 		{
-			 invalidateState(Sprite(event.target),event.type);
+			invalidateState(Sprite(event.target),event.type);
 		}
 		
 		protected function onSpriteMouseMove(event:MouseEvent):void
