@@ -56,14 +56,14 @@ package org.axiis.core
 		 * This will apply its bounds to root level child geometries
 		 */
 		 [Inspectable]
-		 public var autoApplyGeometryBounds=true;
+		 public var autoApplyGeometryBounds:Boolean = true;
 		
 		
 		[Bindable]
 		public function get parentLayout():ILayout {
 			return _parentLayout;
 		}
-		public function set parentLayout(value:ILayout) {
+		public function set parentLayout(value:ILayout):void {
 			_parentLayout=value;
 		}
 		

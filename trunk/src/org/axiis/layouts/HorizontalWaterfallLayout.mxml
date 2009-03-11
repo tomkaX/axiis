@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <core:AbstractLayout xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:degrafa="http://www.degrafa.com/2007"
-	xmlns:core="org.axiis.core.*" xmlns:axiis="http://www.axiis.org/2009">
+	xmlns:core="org.axiis.core.*" xmlns:scale="org.axiis.layouts.scale.*">
 	
 	<mx:Script>
 		<![CDATA[
@@ -42,7 +42,7 @@
 	
 	<mx:String id="dataField"/>
 	
-	<axiis:LinearScale id="linearScale" 
+	<scale:LinearScale id="linearScale" 
 		dataProvider="{dataProvider}"
 		dataField="{dataField}"
 		minValue="0" 
