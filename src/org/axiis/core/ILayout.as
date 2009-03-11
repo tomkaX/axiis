@@ -9,7 +9,6 @@ package org.axiis.core
 	
 	public interface ILayout extends IEventDispatcher
 	{
-		
 		function set parentLayout(value:ILayout):void;
 		function get parentLayout():ILayout;
 		

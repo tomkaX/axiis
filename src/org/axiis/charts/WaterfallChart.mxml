@@ -18,7 +18,7 @@
 			[Bindable]
 			public var dataField:String;
 			
-			private function computeFill(o:Object):IGraphicsFill
+			private function computeFill(o:Object):com.degrafa.core.IGraphicsFill
 			{
 				var arr:ArrayCollection = dataProvider as ArrayCollection;
 				if(!arr)
