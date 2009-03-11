@@ -3,7 +3,7 @@
 	<mx:Object id="dataProvider"/>
 	<mx:String id="verticalField"/>
 	<mx:String id="horizontalField"/>
-	
+	 
 	<mx:Boolean id="alignBottom">true</mx:Boolean>
 	<mx:Number id="percentGap">.05</mx:Number>
 	<scale:LinearScale dataProvider="{dataProvider}" dataField="{verticalField}" minLayout="0" maxLayout="{height-100}" minValue="0" id="vScale"/>
@@ -19,7 +19,7 @@
 				</degrafa:RasterText>
 			</layouts:geometries>
 			<layouts:states>
-				<states:State id="rollOverState" enterStateEvent="mouseOver" exitStateEvent="mouseOut" targets="{[myCol,myCol]}" properties="{['height','fill']}" values="{[10,rollOverFill]}"/>
+				<states:State id="rollOverState" enterStateEvent="mouseOver" exitStateEvent="mouseOut" targets="{[myCol,myCol,myCol]}" properties="{['height','fill','stroke']}" values="{[10,rollOverFill,rollOverStroke]}"/>
 			</layouts:states>
 		</layouts:HorizontalBoxLayout>
 	</layouts>
@@ -32,6 +32,7 @@
 	</fills>
 	
 	<strokes>
+		<degrafa:SolidStroke id="rollOverStroke" weight="1" color="white"/>
 		<degrafa:SolidStroke id="myStroke" weight="1" color="black" alpha=".5"/>
 	</strokes>
 	
