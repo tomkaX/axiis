@@ -10,9 +10,6 @@
 			import com.degrafa.core.IGraphicsFill;
 			
 			[Bindable]
-			public var dataProvider:Object;
-			
-			[Bindable]
 			public var labelField:String;
 			
 			[Bindable]

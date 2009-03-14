@@ -6,7 +6,9 @@ package org.axiis.events
 
 	public class LayoutEvent extends Event
 	{
-		public static const INVALIDATE:String = "invalidate";
+		public static const INVALIDATE:String = "org.axiis.events.LayoutEvent.INVALIDATE";
+		
+		public static const STATE_CHANGE:String = "org.axiis.events.StateEvent.STATE_CHANGE";
 		
 		public var layout:ILayout;
 		

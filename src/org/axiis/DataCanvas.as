@@ -20,11 +20,28 @@ package org.axiis
 		[Bindable]
 		public var strokes:Array = [];
 		
-		[Bindable]
-		public var dataProviders:Array= [];
+		[Bindable(event="dataProviderChange")]
+		public function set dataProvider(value:Object):void
+		{
+			if(value != _dataProvider)
+			{
+				_dataProvider = value;
+				invalidateDisplayList();
+				dispatchEvent(new Event("dataProviderChange"));
+			}
+		}
+		public function get dataProvider():Object
+		{
+			return _dataProvider;
+		}
+		private var _dataProvider:Object;
 		
 		[Bindable]
 		public var layouts:Array = [];
+		
+		private var invalidatedLayouts:Array = [];
+		
+		private var queuedStateChangeEvents:Array = [];
 		
 		override protected function createChildren():void
 		{
@@ -32,46 +49,80 @@ package org.axiis
 			for each(var layout:ILayout in layouts)
 			{
 				layout.registerOwner(this);
-				layout.initializeGeometry();
 				layout.addEventListener(LayoutEvent.INVALIDATE,handleLayoutInvalidate);
+				layout.addEventListener(LayoutEvent.STATE_CHANGE,handleLayoutStateChange);
+				
 				var sprite:Sprite = layout.getSprite(this);
 				addChild(sprite);
+				
+				invalidatedLayouts.push(layout);
 			}
 		}
 		
 		/**
 		 * TODO implement measure
+		 * 
+		 * For now we can just set some defaults
 		 */
 		override protected function measure():void
 		{
 			super.measure();
-			
-			for each(var layout:ILayout in layouts)
-			{
-			}
+			measuredWidth = 400;
+			measuredHeight = 400;
 		}
+		
+		override public function invalidateDisplayList():void
+		{
+			invalidateAllLayouts();
+		} 
 		
 		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
 		{
 			super.updateDisplayList(unscaledWidth,unscaledHeight);
-			
-			graphics.clear();
-			//graphics.lineStyle(1);
-			//graphics.drawRect(0,0,width,height);
-			for each(var layout:ILayout in layouts)
+			while(invalidatedLayouts.length > 0)
 			{
-				// This will have to change
-				//layout.width = width;
-				//layout.height = height;
-				
+				var layout:ILayout = ILayout(invalidatedLayouts.pop());
 				layout.render();
+				
+				// Remove queued state changes if they've been taken care of by layout.render
+				for(var a:int = 0; a < queuedStateChangeEvents.length; a++)
+				{
+					var currStateEvent:LayoutEvent = LayoutEvent(queuedStateChangeEvents[a]);
+					if(currStateEvent.layout == layout)
+					{
+						queuedStateChangeEvents.splice(a,1);
+						a--;
+					}
+				}
+			}
+			
+			// Apply any necessary state changes
+			while(queuedStateChangeEvents.length > 0)
+			{
+				var stateEvent:LayoutEvent = LayoutEvent(queuedStateChangeEvents.pop());
+				stateEvent.layout.renderAlteredStateSprites();
 			}
 		}
 		
 		protected function handleLayoutInvalidate(event:LayoutEvent):void
 		{
-			invalidateSize();
-			invalidateDisplayList();
+			invalidatedLayouts.push(event.layout);
+			super.invalidateDisplayList();
+		}
+		
+		protected function handleLayoutStateChange(event:LayoutEvent):void
+		{
+			queuedStateChangeEvents.push(event);
+			super.invalidateDisplayList();
+		}
+		
+		protected function invalidateAllLayouts():void
+		{
+			for each(var layout:ILayout in layouts)
+			{
+				invalidatedLayouts.push(layout);
+			}
+			super.invalidateDisplayList();
 		}
 	}
 }

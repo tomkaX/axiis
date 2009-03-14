@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DataCanvas xmlns="org.axiis.*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:layouts="org.axiis.layouts.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:scale="org.axiis.layouts.scale.*">
-	<mx:Script>
-		<![CDATA[
-			//import org.axiis.data.DataSet;
-			
-			//[Bindable][Inspectable]
-		//	public var dataProvider:Object;
-			
-			//[Bindable]
-			//public var verticalField:String;
-			
-			//[Bindable]
-			//public var horizontalField:String;
-			
-		]]>
-	</mx:Script>
-	
-	<mx:Object id="dataProvider"/>
+
 	<mx:String id="verticalField"/>
 	<mx:String id="horizontalField"/>
 	<mx:Boolean id="pointOut">true</mx:Boolean>

@@ -83,12 +83,15 @@ package org.axiis.core
 		
 		function initialize():void;
 		
-		function initializeGeometry():void;
-		
 		function measure():void;
 		
 		function render(sprite:Sprite = null):void;
 		
-		function renderDatum(datum:Object,targetSprite:Sprite,rectange:Rectangle):void; 
+		// This doesn't need to be public
+		//function renderDatum(datum:Object):void;
+		
+		function renderAlteredStateSprites():void
+		
+		function childToDatum(child:Sprite):Object; 
 	}
 }

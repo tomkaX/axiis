@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DataCanvas xmlns="org.axiis.*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:layouts="org.axiis.layouts.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:scale="org.axiis.layouts.scale.*" xmlns:geometry="org.axiis.charts.geometry.*">
 
-	<mx:Object id="dataProvider"/>
 	<mx:String id="verticalField"/>
 	<mx:String id="horizontalField"/>
 	
