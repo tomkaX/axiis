@@ -14,7 +14,6 @@
 	<component id="HorizontalBoxLayout" class="org.axiis.layouts.HorizontalBoxLayout"/>
 	<component id="VerticalBoxLayout" class="org.axiis.layouts.VerticalBoxLayout"/>
 	
-	
 	<!-- scales -->
 	<component id="LinearScale" class="org.axiis.layouts.scale.LinearScale"/>
 	<component id="LogScale" class="org.axiis.layouts.scale.LogScale"/>
@@ -22,5 +21,5 @@
 	
 	<!-- data -->
 	<component id="SVGDashLine" class="org.axiis.data.DataSet"/>
-		
+	
 </componentPackage>    

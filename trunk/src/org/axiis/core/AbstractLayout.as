@@ -8,6 +8,7 @@ package org.axiis.core
 	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
+	import flash.utils.Dictionary;
 	
 	import org.axiis.events.LayoutEvent;
 	import org.axiis.states.State;
@@ -23,22 +24,37 @@ package org.axiis.core
 			super();
 		}
 		
+		private var datumToSpriteHash:Dictionary = new Dictionary();
+		
+		private var spriteToDatumHash:Dictionary = new Dictionary();
+		
+		private var alteredStateSprites:Array = [];
+		
 		/***
 		 * Store states collection
 		 */
-		public function set states(value:Array):void {
-			_states=value;
+		public function set states(value:Array):void
+		{
+			if(_states != value)
+			{
+				if(_states)
+					removeListenersForStates(_states);
+				_states=value;
+				if(_states)
+					addListenersForStates(_states);
+				invalidate();
+			}
 		}
-		
-		public function get states():Array {
+		public function get states():Array
+		{
 			return _states;
 		}
+		private var _states:Array;
+		
+		private var stateChangingEventQueue:Array = [];
 		
 		private var _activeStates:Array=new Array();
-		
-		protected var _states:Array;
 
-		
 		/**
 		 * Set to TRUE - this will use a common bounds to fill all layout items being drawn
 		 * Set to FALSE - each layout item will have its own fill bounds 
@@ -76,7 +92,6 @@ package org.axiis.core
 		{
 			return _bounds;
 		}
-		
 		public function set bounds(value:Rectangle):void
 		{
 			if(value != _bounds)
@@ -85,10 +100,7 @@ package org.axiis.core
 				dispatchEvent(new Event("boundsChange"));
 			}
 		}
-		
 		private var _bounds:Rectangle;
-		
-		
 		
 		[Bindable(event="itemCountChange")]
 		public function get itemCount():int
@@ -432,17 +444,6 @@ package org.axiis.core
 		{
 		}
 		
-		public function initializeGeometry():void
-		{
-			/*var mySprite:Sprite = getSprite(owner);
-			for each(var childLayout:ILayout in layouts)
-			{
-				childLayout.initializeGeometry();
-				var childSprite:Sprite = childLayout.getSprite(owner);
-				mySprite.addChild(childSprite);
-			}*/
-		}
-		
 		public function invalidate():void
 		{
 			dispatchEvent(new LayoutEvent(LayoutEvent.INVALIDATE,this as ILayout));
@@ -450,6 +451,11 @@ package org.axiis.core
 		
 		public function measure():void
 		{
+		}
+		
+		public function childToDatum(child:Sprite):Object
+		{
+			return spriteToDatumHash[child];
 		}
 		
 		public function render(newSprite:Sprite = null):void
@@ -472,42 +478,72 @@ package org.axiis.core
 				bounds = new Rectangle((isNaN(x) ? 0:x),(isNaN(y) ? 0:y),width,height);
 			}
 
-			sprite.x=isNaN(_bounds.x) ? 0:_bounds.x;
-			sprite.y=isNaN(_bounds.y) ? 0:_bounds.y;
-	
+			sprite.x = isNaN(_bounds.x) ? 0 :_bounds.x;
+			sprite.y = isNaN(_bounds.y) ? 0 :_bounds.y;
+			
+			while(stateChangingEventQueue.length > 0)
+			{
+				var stateChangingEvent:Event = stateChangingEventQueue.pop() as Event;
+				invalidateState(stateChangingEvent.target as Sprite,stateChangingEvent.type);
+			}
+			
 			_referenceGeometryRepeater.dataProvider=_dataItems;
 			_referenceGeometryRepeater.repeat(onIteration);
 		}
 		
+		private var stateChangingCycle:Boolean = false;
+		
+		public function renderAlteredStateSprites():void
+		{		
+			stateChangingCycle = true;
+			render();
+			stateChangingCycle = false;
+		}
+		
+		private var stateChangeOnly:Boolean = false;
+		
+		/**
+		 * TODO we need to handle removing sprites when data is removed from the dataProvider
+		 */
 		protected function onIteration():void
 		{
+			// Update the "current" properties
 			_currentIndex = _referenceGeometryRepeater.currentIteration;
+			_currentDatum = dataItems[_currentIndex];
+			_currentReference = referenceRepeater.geometry;
 			
+			// Add a new Sprite if there isn't one available on the display list.
 			if(_currentIndex > sprite.numChildren - 1)
 			{
 				var newChildSprite:Sprite = new Sprite();
 				sprite.addEventListener(MouseEvent.CLICK,onSpriteMouseClick);
-				sprite.addEventListener(MouseEvent.MOUSE_MOVE,onSpriteMouseMove);
-				sprite.addEventListener(MouseEvent.MOUSE_OVER,onSpriteMouseOver);
-				sprite.addEventListener(MouseEvent.MOUSE_OUT,onSpriteMouseOut);
+				
+				// Add listeners for all the state changing events
+				for each(var state:State in states)
+				{
+					if(state.enterStateEvent != null)
+						sprite.addEventListener(state.enterStateEvent,onStateChange);
+					if(state.exitStateEvent != null)
+						sprite.addEventListener(state.exitStateEvent,onStateChange);
+				}
+				
 				sprite.addChild(newChildSprite);
 			}
-	
 			_currentItem = Sprite(sprite.getChildAt(_currentIndex));
-			_currentDatum = dataItems[_currentIndex];
-			_currentReference = referenceRepeater.geometry;
+			datumToSpriteHash[_currentDatum] = _currentItem;
+			spriteToDatumHash[_currentItem] = _currentDatum;
 			
-			renderDatum(_currentDatum,_currentItem,_bounds);
-			
-			for each(var layout:ILayout in layouts)
-			{
-				layout.parentLayout=this;
-				layout.render(_currentItem);
-			}
+			// We can skip this item if this isn't a state changing cycle and a relevant state hasn't been triggered
+			if(!stateChangingCycle || alteredStateSprites.indexOf(_currentItem) != -1)
+				renderDatum(_currentDatum);
 		}
 		
-		public function renderDatum(datum:Object,targetSprite:Sprite,rectange:Rectangle):void
+		protected function renderDatum(datum:Object):void
 		{
+			var targetSprite:Sprite = Sprite(datumToSpriteHash[datum]);
+			if(!targetSprite)
+				return;
+			
 			targetSprite.graphics.clear();
 			
 			if(!geometries)
@@ -518,21 +554,70 @@ package org.axiis.core
 			
 			for each(var geometry:Geometry in geometries)
 			{
-				if (geometry is IAxiisGeometry) IAxiisGeometry(geometry).parentLayout=this;
+				if (geometry is IAxiisGeometry)
+					IAxiisGeometry(geometry).parentLayout = this;
+					
 				geometry.preDraw();
+				
 				//We pass in different bounds depending on if we want all geoemtries filled by a common bounds or individually
-				geometry.draw(targetSprite.graphics,(scaleFill) ? new Rectangle(_bounds.x+geometry.x, _bounds.y+geometry.y,_bounds.width,_bounds.height) : geometry.commandStack.bounds);
+				var drawingBounds:Rectangle = scaleFill
+					? new Rectangle(_bounds.x+geometry.x, _bounds.y+geometry.y,_bounds.width,_bounds.height)
+					: geometry.commandStack.bounds;
+					
+				geometry.draw(targetSprite.graphics,drawingBounds);
+			}
+			
+			// Apply sublayouts for the targetSprite
+			for each(var layout:ILayout in layouts)
+			{
+				layout.parentLayout = this;
+				layout.render(_currentItem);
 			}
 			
 			//Remove any states from the geometry so the next iteration rendering is not affected.
 			removeStates();
 		}
 		
-		private function applyStates(sprite:Sprite):void {
-			//trace("current sprite " + sprite.name);
+		private function addListenersForStates(states:Array):void
+		{
+			if(!sprite)
+				return;
+				
+			var len:int = sprite.numChildren;
+			for(var a:int = 0; a < len; a++)
+			{
+				var currSprite:Sprite = Sprite(sprite.getChildAt(a));
+				for each(var state:State in states)
+				{
+					if(state.enterStateEvent != null)
+						currSprite.addEventListener(state.enterStateEvent,onStateChange);
+					if(state.exitStateEvent != null)
+						currSprite.addEventListener(state.exitStateEvent,onStateChange);
+				}
+			}
+		}
+		
+		private function removeListenersForStates(states:Array):void
+		{
+			if(!sprite)
+				return;
 			
+			var len:int = sprite.numChildren;
+			for(var a:int = 0; a < len; a++)
+			{
+				var currSprite:Sprite = Sprite(sprite.getChildAt(a));
+				for each(var state:State in states)
+				{
+					if(state.enterStateEvent != null)
+						sprite.removeEventListener(state.enterStateEvent,onStateChange);
+					if(state.exitStateEvent != null)
+						sprite.removeEventListener(state.exitStateEvent,onStateChange);
+				}
+			}
+		}
+		
+		private function applyStates(sprite:Sprite):void {
 			for (var y:int=0;y<_activeStates.length;y++) {
-			//	trace("target sprites " + _activeStates[y].target.name);
 				if (_activeStates[y].target==sprite) {  
 					_activeStates[y].state.apply();
 				}
@@ -540,8 +625,6 @@ package org.axiis.core
 		}
 		
 		private function removeStates():void {
-			//trace("current sprite " + sprite.name);
-			
 			for (var y:int=0;y<_activeStates.length;y++) {
 				_activeStates[y].state.remove();
 			}
@@ -561,19 +644,13 @@ package org.axiis.core
 			}
 		}
 		
-		protected function onSpriteMouseOver(event:MouseEvent):void
+		protected function onStateChange(event:Event):void
 		{
-			invalidateState(Sprite(event.target),event.type);
-		}
-		
-		protected function onSpriteMouseOut(event:MouseEvent):void
-		{
-			invalidateState(Sprite(event.target),event.type);
-		}
-		
-		protected function onSpriteMouseMove(event:MouseEvent):void
-		{
-			 trace("mouse moving ..");
+			stateChangingEventQueue.push(event);
+			dispatchEvent(new LayoutEvent(LayoutEvent.STATE_CHANGE,this));
+			
+			//the slow way			
+			//invalidate(); 
 		}
 		
 		/**
@@ -582,30 +659,25 @@ package org.axiis.core
 		 * The current approach has a bigger CPU load, using stateful geometries for each iteration would have a bigger memory load
 		 */
 		private function invalidateState(sprite:Sprite, eventType:String ):void {
-			//Look at all states and see if we have any mouse over
-			trace("mouse out on " + sprite.name);
 			if (!states) return;
-			for (var i:int=0;i<states.length;i++) {
-				var state:State=states[i];
-				if (state.enterStateEvent==eventType) {
-					var stateObject:Object=new Object(); //quick hack to store these two variables in internal array, probably better to use a Dictionary.
-					stateObject.target=sprite;
-					stateObject.state=state;
+			for (var i:int = 0; i < states.length; i++) {
+				var state:State = states[i];
+				if (state.enterStateEvent == eventType) {
+					var stateObject:Object = new Object(); //quick hack to store these two variables in internal array, probably better to use a Dictionary.
+					stateObject.target = sprite;
+					stateObject.state = state;
 					_activeStates.push(stateObject);
+					alteredStateSprites.push(sprite);
 				}
 			}	
 			
 			for (var y:int=0;y<_activeStates.length;y++) {
 				if (_activeStates[y].state.exitStateEvent==eventType && _activeStates[y].target==sprite) {  //Remove state
 					state.remove();
-					_activeStates.splice(y,1);	
+					_activeStates.splice(y,1);
+					alteredStateSprites.push(sprite);
 				}
 			}
-			
-			render();
-			
 		}
-		
-		
 	}
 }
