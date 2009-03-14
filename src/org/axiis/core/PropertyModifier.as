@@ -1,7 +1,6 @@
 
 package  org.axiis.core {
 	
-	import com.degrafa.core.collections.GeometryCollection;
 	import com.degrafa.geometry.Geometry;
 	
 	import flash.geom.Rectangle;
@@ -35,6 +34,12 @@ package  org.axiis.core {
 		 * the original values of the target objects property
 		 */
 		 private var _originalValues:Array;
+		
+		
+		/**
+		 * stores cached property values
+		 */
+		private var _cachedValues:Array;
 		
 		private var _iteration:Number=0;
 		private var _modifyInProgress:Boolean=false;
@@ -112,6 +117,7 @@ package  org.axiis.core {
 			setTargetProperty(_sourceObject);
 			_iteration=0;
 			_modifyInProgress=true;
+			_cachedValues=new Array();
 		}
 		
 		/**
@@ -141,7 +147,9 @@ package  org.axiis.core {
 		//	trace("applying modifier");
 			var tempModifier:Object;
 		
-			var bounds:Rectangle=new Rectangle();    
+			var bounds:Rectangle=new Rectangle(); 
+			
+			var tempArray:Array=new Array();   
 			
 			if (_modifier is Array) {
 				tempModifier = modifier[_iteration % modifier.length];
@@ -166,14 +174,23 @@ package  org.axiis.core {
 						_targetObjects[i][_targetProperties[i]]/=Number(tempModifier);
 					else if (_modifierOperator != PropertyModifier.MODIFIER_ADD && _modifierOperator != PropertyModifier.MODIFIER_SUBTRACT && _modifierOperator != PropertyModifier.MODIFIER_MULTIPLY && _modifierOperator != PropertyModifier.MODIFIER_DIVIDE)
 						_targetObjects[i][_targetProperties[i]]=tempModifier;
+						
+					tempArray.push(_targetObjects[i][_targetProperties[i]]);
 				}
 			}
+			
+			_cachedValues.push(tempArray);
 			
 			//trace("modifying " + this.property + " = " + tempModifier);
 			
 			_iteration++;
-
 			
+		}
+		
+		public function applyCachedIteration(iteration:int):void {
+			for (var i:int=0;i<_targetObjects.length;i++) {
+				_targetObjects[i][_targetProperties[i]]=_cachedValues[iteration][i];
+			}
 		}
 		
 		/**

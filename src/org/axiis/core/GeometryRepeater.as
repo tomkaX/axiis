@@ -142,5 +142,11 @@ package org.axiis.core
 			}
 			_currentIteration = -1;
 		}
+		
+		public function applyIteration(iteration:int):void {
+			for each (var modifier:IRepeaterModifier in _modifiers) { 
+				modifier.applyIteration(i);
+			}
+		}
 	}
 }
