@@ -188,6 +188,8 @@ package  org.axiis.core {
 		}
 		
 		public function applyCachedIteration(iteration:int):void {
+			if (_cachedValues==null || _cachedValues.length<iteration) return;
+			
 			for (var i:int=0;i<_targetObjects.length;i++) {
 				_targetObjects[i][_targetProperties[i]]=_cachedValues[iteration][i];
 			}

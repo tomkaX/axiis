@@ -12,5 +12,7 @@ package org.axiis.core
 		function apply():void
 		
 		function end():void
+		
+		function applyCachedIteration(iteration:int):void;
 	}
 }
