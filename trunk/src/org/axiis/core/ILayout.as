@@ -85,13 +85,6 @@ package org.axiis.core
 		
 		function measure():void;
 		
-		function render(sprite:Sprite = null):void;
-		
-		// This doesn't need to be public
-		//function renderDatum(datum:Object):void;
-		
-		function renderAlteredStateSprites():void
-		
-		function childToDatum(child:Sprite):Object; 
+		function render(sprite:Sprite = null):void; 
 	}
 }

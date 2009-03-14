@@ -26,10 +26,6 @@ package org.axiis.core
 		
 		private var datumToSpriteHash:Dictionary = new Dictionary();
 		
-		private var spriteToDatumHash:Dictionary = new Dictionary();
-		
-		private var alteredStateSprites:Array = [];
-		
 		/***
 		 * Store states collection
 		 */
@@ -453,11 +449,6 @@ package org.axiis.core
 		{
 		}
 		
-		public function childToDatum(child:Sprite):Object
-		{
-			return spriteToDatumHash[child];
-		}
-		
 		public function render(newSprite:Sprite = null):void
 		{
 			if(newSprite)
@@ -481,26 +472,9 @@ package org.axiis.core
 			sprite.x = isNaN(_bounds.x) ? 0 :_bounds.x;
 			sprite.y = isNaN(_bounds.y) ? 0 :_bounds.y;
 			
-			while(stateChangingEventQueue.length > 0)
-			{
-				var stateChangingEvent:Event = stateChangingEventQueue.pop() as Event;
-				invalidateState(stateChangingEvent.target as Sprite,stateChangingEvent.type);
-			}
-			
 			_referenceGeometryRepeater.dataProvider=_dataItems;
 			_referenceGeometryRepeater.repeat(onIteration);
 		}
-		
-		private var stateChangingCycle:Boolean = false;
-		
-		public function renderAlteredStateSprites():void
-		{		
-			stateChangingCycle = true;
-			render();
-			stateChangingCycle = false;
-		}
-		
-		private var stateChangeOnly:Boolean = false;
 		
 		/**
 		 * TODO we need to handle removing sprites when data is removed from the dataProvider
@@ -531,18 +505,15 @@ package org.axiis.core
 			}
 			_currentItem = Sprite(sprite.getChildAt(_currentIndex));
 			datumToSpriteHash[_currentDatum] = _currentItem;
-			spriteToDatumHash[_currentItem] = _currentDatum;
 			
-			// We can skip this item if this isn't a state changing cycle and a relevant state hasn't been triggered
-			if(!stateChangingCycle || alteredStateSprites.indexOf(_currentItem) != -1)
-				renderDatum(_currentDatum);
+			renderDatum(_currentDatum,_currentItem);
 		}
 		
-		protected function renderDatum(datum:Object):void
+		protected function renderDatum(datum:Object,targetSprite:Sprite):void
 		{
-			var targetSprite:Sprite = Sprite(datumToSpriteHash[datum]);
-			if(!targetSprite)
-				return;
+			//var targetSprite:Sprite = Sprite(datumToSpriteHash[datum]);
+			//if(!targetSprite)
+			//	return;
 			
 			targetSprite.graphics.clear();
 			
@@ -632,7 +603,7 @@ package org.axiis.core
 		
 		protected function onSpriteMouseClick(event:MouseEvent):void
 		{
-			try
+			/*try
 			{
 				selectedItem = event.target as Sprite;
 				selectedIndex = sprite.getChildIndex(selectedItem);
@@ -641,16 +612,26 @@ package org.axiis.core
 			catch(e:Error)
 			{
 				trace("embed selection isn't working yet");
-			}
+			}*/
 		}
 		
 		protected function onStateChange(event:Event):void
 		{
-			stateChangingEventQueue.push(event);
-			dispatchEvent(new LayoutEvent(LayoutEvent.STATE_CHANGE,this));
+			// Update the active states based on the event
+			invalidateState(event);
 			
-			//the slow way			
-			//invalidate(); 
+			// Update the "current" properties
+			_currentItem = Sprite(event.target);
+			_currentIndex = sprite.getChildIndex(_currentItem);
+			_currentDatum = dataItems[_currentIndex];
+			
+			referenceRepeater.applyIteration(_currentIndex);
+			_currentReference = referenceRepeater.geometry;
+			
+			renderDatum(currentDatum,currentItem);
+			
+			// Reset the current reference so things draw in the correct location during the next render
+			_currentReference = null;
 		}
 		
 		/**
@@ -658,8 +639,13 @@ package org.axiis.core
 		 * the alternative is figuring out a way for each iteration to keep track of its specific geometries (some type of cloning) and only rendering itself
 		 * The current approach has a bigger CPU load, using stateful geometries for each iteration would have a bigger memory load
 		 */
-		private function invalidateState(sprite:Sprite, eventType:String ):void {
-			if (!states) return;
+		private function invalidateState(event:Event):void {
+			if (!states)
+				return;
+				
+			var sprite:Sprite = Sprite(event.target);
+			var eventType:String = event.type; 
+				
 			for (var i:int = 0; i < states.length; i++) {
 				var state:State = states[i];
 				if (state.enterStateEvent == eventType) {
@@ -667,7 +653,6 @@ package org.axiis.core
 					stateObject.target = sprite;
 					stateObject.state = state;
 					_activeStates.push(stateObject);
-					alteredStateSprites.push(sprite);
 				}
 			}	
 			
@@ -675,7 +660,6 @@ package org.axiis.core
 				if (_activeStates[y].state.exitStateEvent==eventType && _activeStates[y].target==sprite) {  //Remove state
 					state.remove();
 					_activeStates.splice(y,1);
-					alteredStateSprites.push(sprite);
 				}
 			}
 		}
