@@ -17,5 +17,6 @@ package org.axiis.core
 		
 		function repeat(iterationCallback:Function = null):void;
 		
+		function applyIteration(iteration:int):void;
 	}
 }

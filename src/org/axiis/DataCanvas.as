@@ -41,8 +41,6 @@ package org.axiis
 		
 		private var invalidatedLayouts:Array = [];
 		
-		private var queuedStateChangeEvents:Array = [];
-		
 		override protected function createChildren():void
 		{
 			super.createChildren();
@@ -50,7 +48,6 @@ package org.axiis
 			{
 				layout.registerOwner(this);
 				layout.addEventListener(LayoutEvent.INVALIDATE,handleLayoutInvalidate);
-				layout.addEventListener(LayoutEvent.STATE_CHANGE,handleLayoutStateChange);
 				
 				var sprite:Sprite = layout.getSprite(this);
 				addChild(sprite);
@@ -83,36 +80,12 @@ package org.axiis
 			{
 				var layout:ILayout = ILayout(invalidatedLayouts.pop());
 				layout.render();
-				
-				// Remove queued state changes if they've been taken care of by layout.render
-				for(var a:int = 0; a < queuedStateChangeEvents.length; a++)
-				{
-					var currStateEvent:LayoutEvent = LayoutEvent(queuedStateChangeEvents[a]);
-					if(currStateEvent.layout == layout)
-					{
-						queuedStateChangeEvents.splice(a,1);
-						a--;
-					}
-				}
-			}
-			
-			// Apply any necessary state changes
-			while(queuedStateChangeEvents.length > 0)
-			{
-				var stateEvent:LayoutEvent = LayoutEvent(queuedStateChangeEvents.pop());
-				stateEvent.layout.renderAlteredStateSprites();
 			}
 		}
 		
 		protected function handleLayoutInvalidate(event:LayoutEvent):void
 		{
 			invalidatedLayouts.push(event.layout);
-			super.invalidateDisplayList();
-		}
-		
-		protected function handleLayoutStateChange(event:LayoutEvent):void
-		{
-			queuedStateChangeEvents.push(event);
 			super.invalidateDisplayList();
 		}
 		
