@@ -113,6 +113,7 @@ package  org.axiis.core {
 			//Expects a geometry array
 			
 			if (_modifyInProgress) return;
+			resetValues(); //If we have used our cache we want to reset our values;
 			_sourceObject=sourceObject;
 			setTargetProperty(_sourceObject);
 			_iteration=0;
@@ -126,12 +127,8 @@ package  org.axiis.core {
 		*/
 		public function end():void {
 			if (!_modifyInProgress) return;
-			var i:uint;
-			for (i=0;i<_targetObjects.length;i++) {
-				_targetObjects[i][_targetProperties[i]]=_originalValues[i];
-			}
-			
-			for (i=0;i<targets.length;i++) {
+			resetValues();
+			for (var i:int=0;i<targets.length;i++) {
 				if (targets[i] is Geometry) Geometry(targets[i]).suppressEventProcessing=false;
 			}
 			_iteration=0;
@@ -192,6 +189,13 @@ package  org.axiis.core {
 			
 			for (var i:int=0;i<_targetObjects.length;i++) {
 				_targetObjects[i][_targetProperties[i]]=_cachedValues[iteration][i];
+			}
+		}
+		
+		private function resetValues():void {
+			if (!_targetObjects) return;
+			for (var i:int=0;i<_targetObjects.length;i++) {
+				_targetObjects[i][_targetProperties[i]]=_originalValues[i];
 			}
 		}
 		
