@@ -202,6 +202,36 @@ package org.axiis.core
 		private var _dataField:String;
 		
 		[Bindable(event="geometryChange")]
+		public function set fills(value:Array):void
+		{
+			if(value != _fills)
+			{
+				_fills = value;
+				dispatchEvent(new Event("geometryChange"));
+			}
+		}
+		public function get fills():Array
+		{
+			return _fills;
+		}
+		private var _fills:Array;
+		
+		[Bindable(event="geometryChange")]
+		public function set strokes(value:Array):void
+		{
+			if(value != _strokes)
+			{
+				_strokes = value;
+				dispatchEvent(new Event("geometryChange"));
+			}
+		}
+		public function get strokes():Array
+		{
+			return _strokes;
+		}
+		private var _strokes:Array;
+		
+		[Bindable(event="geometryChange")]
 		public function set geometries(value:Array):void
 		{
 			if(value != _geometries)
@@ -449,8 +479,13 @@ package org.axiis.core
 		{
 		}
 		
-		public function render(newSprite:Sprite = null):void
+		//Used to store index for iterations
+		private var _tempParentIndex:int;
+		
+		public function render(newSprite:Sprite = null, parentIndex:int=-1):void
 		{
+			_tempParentIndex=parentIndex;
+			
 			if(newSprite)
 			{
 				this.sprite = newSprite;
@@ -490,20 +525,25 @@ package org.axiis.core
 			if(_currentIndex > sprite.numChildren - 1)
 			{
 				var newChildSprite:Sprite = new Sprite();
-				sprite.addEventListener(MouseEvent.CLICK,onSpriteMouseClick);
+				newChildSprite.addEventListener(MouseEvent.CLICK,onSpriteMouseClick);
+				
+				//We need to keep track of our parent layout index for single item rendering (i.e. states/tweens)
+				newChildSprite.name=_tempParentIndex.toString();
 				
 				// Add listeners for all the state changing events
 				for each(var state:State in states)
 				{
+					//trace("adding state listeners to " + newChildSprite.name);
 					if(state.enterStateEvent != null)
-						sprite.addEventListener(state.enterStateEvent,onStateChange);
+						newChildSprite.addEventListener(state.enterStateEvent,onStateChange);
 					if(state.exitStateEvent != null)
-						sprite.addEventListener(state.exitStateEvent,onStateChange);
+						newChildSprite.addEventListener(state.exitStateEvent,onStateChange);
 				}
 				
 				sprite.addChild(newChildSprite);
 			}
 			_currentItem = Sprite(sprite.getChildAt(_currentIndex));
+			Sprite(sprite.getChildAt(_currentIndex)).name=_tempParentIndex.toString();  //Stores our index releative to the parent
 			datumToSpriteHash[_currentDatum] = _currentItem;
 			
 			renderDatum(_currentDatum,_currentItem);
@@ -511,10 +551,7 @@ package org.axiis.core
 		
 		protected function renderDatum(datum:Object,targetSprite:Sprite):void
 		{
-			//var targetSprite:Sprite = Sprite(datumToSpriteHash[datum]);
-			//if(!targetSprite)
-			//	return;
-			
+		
 			targetSprite.graphics.clear();
 			
 			if(!geometries)
@@ -542,7 +579,7 @@ package org.axiis.core
 			for each(var layout:ILayout in layouts)
 			{
 				layout.parentLayout = this;
-				layout.render(_currentItem);
+				layout.render(_currentItem,_currentIndex); //pass in our _currentIndex as parent
 			}
 			
 			//Remove any states from the geometry so the next iteration rendering is not affected.
@@ -560,6 +597,7 @@ package org.axiis.core
 				var currSprite:Sprite = Sprite(sprite.getChildAt(a));
 				for each(var state:State in states)
 				{
+				//	trace("adding listeners to " + currSprite.name);
 					if(state.enterStateEvent != null)
 						currSprite.addEventListener(state.enterStateEvent,onStateChange);
 					if(state.exitStateEvent != null)
@@ -580,9 +618,9 @@ package org.axiis.core
 				for each(var state:State in states)
 				{
 					if(state.enterStateEvent != null)
-						sprite.removeEventListener(state.enterStateEvent,onStateChange);
+						currSprite.removeEventListener(state.enterStateEvent,onStateChange);
 					if(state.exitStateEvent != null)
-						sprite.removeEventListener(state.exitStateEvent,onStateChange);
+						currSprite.removeEventListener(state.exitStateEvent,onStateChange);
 				}
 			}
 		}
@@ -615,19 +653,31 @@ package org.axiis.core
 			}*/
 		}
 		
+		public function applyIteration(iteration:int, parentIteration:int=-1):void {
+			trace("applying iteration " + iteration);
+			if (parentLayout && parentIteration>0) {
+				parentLayout.applyIteration(parentIteration);    //Remember, we store the relative index of our sprite to the parent in the name
+			}
+			
+			referenceRepeater.applyIteration(iteration);
+			_currentReference = referenceRepeater.geometry;
+			_currentIndex=iteration;
+			_currentDatum = dataItems[iteration];
+			
+			
+		//	trace("applying iteration for " + sprite.name);
+		}
+		
 		protected function onStateChange(event:Event):void
 		{
-			// Update the active states based on the event
+			
 			invalidateState(event);
 			
 			// Update the "current" properties
 			_currentItem = Sprite(event.target);
-			_currentIndex = sprite.getChildIndex(_currentItem);
-			_currentDatum = dataItems[_currentIndex];
+			_currentIndex = _currentItem.parent.getChildIndex(_currentItem);
 			
-			referenceRepeater.applyIteration(_currentIndex);
-			_currentReference = referenceRepeater.geometry;
-			
+			applyIteration(_currentIndex,int(_currentItem.name));
 			renderDatum(currentDatum,currentItem);
 			
 			// Reset the current reference so things draw in the correct location during the next render

@@ -144,6 +144,8 @@ package org.axiis.core
 		}
 		
 		public function applyIteration(iteration:int):void {
+			_currentIteration = iteration;
+			trace("currentIteration=" + _currentIteration);
 			for each (var modifier:IRepeaterModifier in _modifiers) { 
 				modifier.applyCachedIteration(iteration);
 			}
