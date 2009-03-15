@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layouts:HorizontalBoxLayout xmlns:mx="http://www.adobe.com/2006/mxml"
-	xmlns:degrafa="http://www.degrafa.com/2007"
+	xmlns:degrafa="http://www.degrafa.com/2007" name="outerlayout"
 	xmlns:core="org.axiis.core.*"
 	xmlns:layouts="org.axiis.layouts.*"
 	xmlns:scale="org.axiis.layouts.scale.*"
@@ -19,11 +19,12 @@
 	<degrafa:SolidStroke id="myStroke" weight="1" color="black" alpha=".5"/>
 	
 	<layouts:layouts>
-		<layouts:HorizontalBoxLayout dataProvider="{seriesFields}" id="innerLayout" percentGap="{percentGap}">
+		<layouts:HorizontalBoxLayout dataProvider="{seriesFields}" id="innerLayout" name="innerLayout" percentGap="{percentGap}">
+			
 			<layouts:geometries>
 			
 				<!-- main column rectangle that gets repeated horizontally -->
-				<degrafa:RegularRectangle id="myRect"
+				<degrafa:RegularRectangle id="myCol"
 						x="{innerLayout.currentReference.x}"
 						y="{bounds.height}"
 						width="{innerLayout.currentReference.width}"
@@ -34,6 +35,7 @@
 						<degrafa:transform> 
 							<degrafa:ScaleTransform scaleY="{(alignBottom) ? -1: 1}" registrationPoint="topLeft"/>
 						</degrafa:transform>
+						
 				</degrafa:RegularRectangle>
 				
 				<!-- smaller label for each column -->
@@ -43,8 +45,20 @@
 						<degrafa:RotateTransform angle="-90" registrationPoint="topLeft"/>
 					</degrafa:transform>
 				</degrafa:RasterText>
-
 			</layouts:geometries>
+			<layouts:states>
+				<states:State id="rollOverState" enterStateEvent="mouseOver" exitStateEvent="mouseOut"
+					targets="{[myCol,myCol]}"
+					properties="{['fill','stroke']}"
+					values="{[innerLayout.fills[0],innerLayout.strokes[0]]}"/>
+			
+			</layouts:states>
+			<layouts:fills>
+				<degrafa:SolidFill color="0xDDDD00" alpha=".6" id="rollOverFill"/>
+			</layouts:fills>
+			<layouts:strokes>
+				<degrafa:SolidStroke id="rollOverStroke" weight="1" color="white"/>
+			</layouts:strokes>
 		</layouts:HorizontalBoxLayout>
 	</layouts:layouts>
 	<layouts:geometries>
@@ -57,4 +71,6 @@
 		<degrafa:RasterText text="{currentDatum[dataField]}" x="0" width="{currentReference.width}" y="{height+75}" fontSize="16" align="center" fontFamily="Arial"/>
 		
 	</layouts:geometries>
+	
+
 </layouts:HorizontalBoxLayout>

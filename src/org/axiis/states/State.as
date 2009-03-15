@@ -25,7 +25,7 @@ package org.axiis.states
 				var obj:Object=targets[i];
 				propertyValues.push(obj[properties[i]]);
 				obj[properties[i]]=values[i];
-				//trace(" applying " + properties[i] + " = " + values[i]);
+				trace(" applying " + properties[i] + " = " + values[i]);
 			}
 			
 		}
@@ -34,7 +34,8 @@ package org.axiis.states
 			if (targets.length!=properties.length || properties.length!=propertyValues.length) return;
 			for (var i:int=0;i<targets.length;i++) {
 				var obj:Object=targets[i];
-				obj[properties[i]]=propertyValues[i];
+				if (propertyValues[i])
+					obj[properties[i]]=propertyValues[i];
 			}
 			
 		}

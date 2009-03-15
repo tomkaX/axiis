@@ -24,6 +24,12 @@ package org.axiis.core
 		function set geometries(value:Array):void;
 		function get geometries():Array;
 		
+		function set fills(value:Array):void;
+		function get fills():Array;
+		
+		function set strokes(value:Array):void;
+		function get strokes():Array;
+		
 		function set layouts(value:Array):void;
 		function get layouts():Array;
 		
@@ -63,6 +69,8 @@ package org.axiis.core
 		
 		function get currentReference():Geometry;
 		
+		function applyIteration(iteration:int,parentIteration:int=-1):void;
+		
 		/**
 		 * Registers a DisplayObject as the owner of this ILayout.
 		 * Throws an error if the ILayout already has an owner.
@@ -85,6 +93,6 @@ package org.axiis.core
 		
 		function measure():void;
 		
-		function render(sprite:Sprite = null):void; 
+		function render(sprite:Sprite = null,index:int=-1):void; 
 	}
 }
