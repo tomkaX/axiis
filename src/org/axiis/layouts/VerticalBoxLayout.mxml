@@ -4,7 +4,7 @@ The VerticalBoxLayout is an AbstractLayout that creates a RegularRectangle for
 each item in its dataProvider. The RegularRectangles are sized and spaced evenly across
 the height of the VerticalBoxLayout.
 -->
-<core:AbstractLayout xmlns="*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:core="org.axiis.core.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:layouts="org.axiis.layouts.*" xmlns:scale="org.axiis.layouts.scale.*">
+<core:BaseLayout xmlns="*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:core="org.axiis.core.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:layouts="org.axiis.layouts.*" xmlns:scale="org.axiis.layouts.scale.*">
 
 	<!--- The amount of whitespace that should be left between RegularRectangles
 		as a percentage of the height of the VerticalBoxLayout -->
@@ -30,4 +30,4 @@ the height of the VerticalBoxLayout.
 		</core:GeometryRepeater>
 	</core:referenceRepeater>
 	
-</core:AbstractLayout>
+</core:BaseLayout>

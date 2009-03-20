@@ -10,6 +10,16 @@ package org.axiis.core
 
 	public class GeometryRepeater extends EventDispatcher implements IGeometryRepeater
 	{
+		
+		/**
+		 * This caches all the property modifier values per iteration
+		 */
+		public function get cachedValues():Array {
+			return _cachedValues;
+		}
+		
+		private var _cachedValues:Array;
+		
 		public function GeometryRepeater(target:IEventDispatcher=null)
 		{
 			super(target);
@@ -134,20 +144,23 @@ package org.axiis.core
 					iterationCallback.call(this);
 			}
 			
-			//End modifications (which returns the object to its original state)
+			_cachedValues=new Array();
+		
 			if (_modifiers) {
 				for each (modifier in _modifiers) {
+					_cachedValues.push(modifier.cachedValues);
 					modifier.end();
 				}
 			}
 			_currentIteration = -1;
 		}
 		
-		public function applyIteration(iteration:int):void {
+		public function applyIteration(iteration:int, values:Array=null):void {
 			_currentIteration = iteration;
-			trace("currentIteration=" + _currentIteration);
+			var i:int=0;
 			for each (var modifier:IRepeaterModifier in _modifiers) { 
-				modifier.applyCachedIteration(iteration);
+				modifier.applyCachedIteration(iteration,(values) ? values[i]:null);
+				i++
 			}
 		}
 	}

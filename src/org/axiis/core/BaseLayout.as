@@ -10,19 +10,76 @@ package org.axiis.core
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 	
+	import org.axiis.DataCanvas;
 	import org.axiis.events.LayoutEvent;
 	import org.axiis.states.State;
 	
 	[Event(name="invalidate", type="org.axiis.LayoutEvent")]
 	
-	public class AbstractLayout extends EventDispatcher implements ILayout
+	public class BaseLayout extends EventDispatcher implements ILayout
 	{
 		public var name:String = "";
 		
-		public function AbstractLayout()
+		public function BaseLayout()
 		{
 			super();
 		}
+		
+		
+		[Bindable(event="currentDataValueChange")]
+		public function get currentDataValue():Object
+		{
+			if (owner.dataFunction)
+				return owner.dataFunction.call(this,_currentDatum[dataField],_currentDatum);
+			else
+				return _currentDataValue;
+		}
+		protected function set _currentDataValue(value:Object):void
+		{
+			if(value != __currentDataValue)
+			{
+				__currentDataValue = value;
+				dispatchEvent(new Event("currentDataValueChange"));
+			}
+		}
+		protected function get _currentDataValue():Object
+		{
+			return __currentDataValue;
+		}
+		private var __currentDataValue:Object;
+		
+		
+		[Bindable(event="currentLabelValueChange")]
+		public function get currentLabelValue():String
+		{
+			if (owner.labelFunction !=null)
+				return owner.labelFunction.call(this,_currentDatum[labelField],_currentDatum);
+			else
+				return _currentLabelValue;
+		}
+		protected function set _currentLabelValue(value:String):void
+		{
+			if(value != __currentLabelValue)
+			{
+				__currentLabelValue = value;
+				dispatchEvent(new Event("currentLabelValueChange"));
+			}
+		}
+		protected function get _currentLabelValue():String
+		{
+			return __currentLabelValue;
+		}
+		private var __currentLabelValue:String;
+		
+		/**
+		 * For child layouts we need to keep track of all their referenceRepeater propertyModifier cached valued.
+		 * this is so if a state change occurs in a child the child can quickly access a specific iteration of propertymodifiers.
+		 */
+		public function get childLayoutCachedValues():Dictionary {
+			return _childLayoutCachedValues;
+		}
+		
+		private var _childLayoutCachedValues:Dictionary=new Dictionary();
 		
 		private var datumToSpriteHash:Dictionary = new Dictionary();
 		
@@ -200,6 +257,21 @@ package org.axiis.core
 			return _dataField;
 		}
 		private var _dataField:String;
+		
+		[Bindable(event="labelFieldChange")]
+		public function set labelField(value:String):void
+		{
+			if(value != _labelField)
+			{
+				_labelField = value;
+				dispatchEvent(new Event("labelFieldChange"));
+			}
+		}
+		public function get labelField():String
+		{
+			return _labelField;
+		}
+		private var _labelField:String;
 		
 		[Bindable(event="geometryChange")]
 		public function set fills(value:Array):void
@@ -442,11 +514,11 @@ package org.axiis.core
 		}
 		private var _selectedDatum:Object;
 		
-		public function registerOwner(displayObject:DisplayObject):void
+		public function registerOwner(dataCanvas:DataCanvas):void
 		{
 			if(!owner)
 			{
-				owner = displayObject;
+				owner = dataCanvas;
 				for each(var childLayout:ILayout in layouts)
 				{
 					childLayout.registerOwner(owner);
@@ -457,9 +529,9 @@ package org.axiis.core
 				throw new Error("Layout already has an owner.");
 			}
 		}
-		protected var owner:DisplayObject;
+		protected var owner:DataCanvas;
 		
-		public function getSprite(owner:DisplayObject):Sprite
+		public function getSprite(owner:DataCanvas):Sprite
 		{
 			if(!sprite)
 				sprite = new Sprite();
@@ -484,6 +556,9 @@ package org.axiis.core
 		
 		public function render(newSprite:Sprite = null, parentIndex:int=-1):void
 		{
+			if (layouts)
+				_childLayoutCachedValues=new Dictionary();
+				
 			_tempParentIndex=parentIndex;
 			
 			if(newSprite)
@@ -508,27 +583,34 @@ package org.axiis.core
 			sprite.y = isNaN(_bounds.y) ? 0 :_bounds.y;
 			
 			_referenceGeometryRepeater.dataProvider=_dataItems;
+			_itemCount=_dataItems.length;
 			_referenceGeometryRepeater.repeat(onIteration);
 		}
 		
 		/**
 		 * TODO we need to handle removing sprites when data is removed from the dataProvider
+		 *  including removing listeneners so they can be garbage collected.
 		 */
 		protected function onIteration():void
 		{
 			// Update the "current" properties
 			_currentIndex = _referenceGeometryRepeater.currentIteration;
 			_currentDatum = dataItems[_currentIndex];
+			if (dataField) _currentDataValue = _currentDatum[dataField];
+			if (labelField) _currentLabelValue = _currentDatum[labelField];
 			_currentReference = referenceRepeater.geometry;
+			
 			
 			// Add a new Sprite if there isn't one available on the display list.
 			if(_currentIndex > sprite.numChildren - 1)
 			{
 				var newChildSprite:Sprite = new Sprite();
 				newChildSprite.addEventListener(MouseEvent.CLICK,onSpriteMouseClick);
+				newChildSprite.doubleClickEnabled=true;
 				
 				//We need to keep track of our parent layout index for single item rendering (i.e. states/tweens)
 				newChildSprite.name=_tempParentIndex.toString();
+				this.addDataCanvasListeners(newChildSprite);
 				
 				// Add listeners for all the state changing events
 				for each(var state:State in states)
@@ -574,12 +656,14 @@ package org.axiis.core
 					
 				geometry.draw(targetSprite.graphics,drawingBounds);
 			}
-			
+	
 			// Apply sublayouts for the targetSprite
 			for each(var layout:ILayout in layouts)
 			{
 				layout.parentLayout = this;
 				layout.render(_currentItem,_currentIndex); //pass in our _currentIndex as parent
+				if (!_childLayoutCachedValues[layout]) _childLayoutCachedValues[layout]=new Array();
+				_childLayoutCachedValues[layout].push(layout.referenceRepeater.cachedValues);
 			}
 			
 			//Remove any states from the geometry so the next iteration rendering is not affected.
@@ -654,18 +738,24 @@ package org.axiis.core
 		}
 		
 		public function applyIteration(iteration:int, parentIteration:int=-1):void {
-			trace("applying iteration " + iteration);
-			if (parentLayout && parentIteration>0) {
-				parentLayout.applyIteration(parentIteration);    //Remember, we store the relative index of our sprite to the parent in the name
+			
+			//If we have a parent layout we rely upon it to set the appropriate cached values
+			if (parentLayout && parentIteration>=0) {
+				parentLayout.applyIteration(parentIteration);    
+				referenceRepeater.applyIteration(iteration,parentLayout.childLayoutCachedValues[this][parentIteration]);
 			}
 			
-			referenceRepeater.applyIteration(iteration);
+			//If we don't have a parent layout we apply our own iteration
+			else {
+				referenceRepeater.applyIteration(iteration);
+			}
+			
 			_currentReference = referenceRepeater.geometry;
 			_currentIndex=iteration;
 			_currentDatum = dataItems[iteration];
-			
-			
-		//	trace("applying iteration for " + sprite.name);
+			if (dataField) _currentDataValue = _currentDatum[dataField];
+			if (labelField) _currentLabelValue = _currentDatum[labelField];
+
 		}
 		
 		protected function onStateChange(event:Event):void
@@ -683,6 +773,19 @@ package org.axiis.core
 			// Reset the current reference so things draw in the correct location during the next render
 			_currentReference = null;
 		}
+		
+		/**
+		 * These listeners will register all sprites for events that can be handled at the DataCanvas level
+		 */
+		protected function addDataCanvasListeners(newSprite:Sprite):void {
+			newSprite.addEventListener(MouseEvent.CLICK,owner.onItemMouseClick);
+			newSprite.addEventListener(MouseEvent.DOUBLE_CLICK,owner.onItemMouseDoubleClick);
+			newSprite.addEventListener(MouseEvent.MOUSE_OVER,owner.onItemMouseOver);
+			newSprite.addEventListener(MouseEvent.MOUSE_OUT,owner.onItemMouseOut);
+			newSprite.addEventListener(MouseEvent.MOUSE_DOWN,owner.onItemMouseDown);
+			newSprite.addEventListener(MouseEvent.MOUSE_UP,owner.onItemMouseUp);
+		}
+		
 		
 		/**
 		 * Each time a sprite has its state invalidated we re render the whole layout
