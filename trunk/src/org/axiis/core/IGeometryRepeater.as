@@ -15,8 +15,10 @@ package org.axiis.core
 		
 		function get currentIteration():int;
 		
+		function get cachedValues():Array;
+		
 		function repeat(iterationCallback:Function = null):void;
 		
-		function applyIteration(iteration:int):void;
+		function applyIteration(iteration:int, values:Array=null):void;
 	}
 }

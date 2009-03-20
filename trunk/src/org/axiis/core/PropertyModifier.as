@@ -36,6 +36,9 @@ package  org.axiis.core {
 		 private var _originalValues:Array;
 		
 		
+		public function get cachedValues():Array {
+			return _cachedValues;
+		}
 		/**
 		 * stores cached property values
 		 */
@@ -184,7 +187,10 @@ package  org.axiis.core {
 			
 		}
 		
-		public function applyCachedIteration(iteration:int):void {
+		public function applyCachedIteration(iteration:int, values:Array=null):void {
+			
+			if (values) _cachedValues=values;
+			
 			if (_cachedValues==null || _cachedValues.length<iteration) return;
 			
 			for (var i:int=0;i<_targetObjects.length;i++) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<core:AbstractLayout xmlns:mx="http://www.adobe.com/2006/mxml"
+<core:BaseLayout xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:degrafa="http://www.degrafa.com/2007"
 	xmlns:core="org.axiis.core.*"
 	xmlns:layouts="org.axiis.layouts.*"
@@ -24,4 +24,4 @@
 		</core:GeometryRepeater>
 	</core:referenceRepeater>
 	
-</core:AbstractLayout>
+</core:BaseLayout>

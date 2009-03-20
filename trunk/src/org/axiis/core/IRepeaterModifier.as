@@ -5,6 +5,8 @@ package org.axiis.core
 		function set targets(value:Array):void;
 		function get targets():Array;
 		
+		function get cachedValues():Array;
+		
 		function get iteration():Number;
 		
 		function beginModify(sourceObject:Object):void
@@ -13,6 +15,6 @@ package org.axiis.core
 		
 		function end():void
 		
-		function applyCachedIteration(iteration:int):void;
+		function applyCachedIteration(iteration:int, values:Array=null):void;
 	}
 }

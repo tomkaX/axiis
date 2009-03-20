@@ -11,12 +11,12 @@
 	<mx:Array id="fills"/>
 	<mx:Array id="strokes"/>
 	<mx:Array id="seriesFields"/>
-	<mx:Array id="labelFields"/>
+	<mx:Array id="labelValues"/>
 	<mx:Number id="percentGap">.05</mx:Number>
 	<scale:LinearScale id="verticalScale"/>
 	<mx:Boolean id="alignBottom">true</mx:Boolean>
 	
-	<degrafa:SolidStroke id="myStroke" weight="1" color="black" alpha=".5"/>
+	<degrafa:SolidStroke id="myStroke" weight="1" color="white" alpha=".5"/>
 	
 	<layouts:layouts>
 		<layouts:HorizontalBoxLayout dataProvider="{seriesFields}" id="innerLayout" name="innerLayout" percentGap="{percentGap}">
@@ -39,7 +39,7 @@
 				</degrafa:RegularRectangle>
 				
 				<!-- smaller label for each column -->
-				<degrafa:RasterText text="{(labelFields[innerLayout.referenceRepeater.currentIteration]) ? labelFields[innerLayout.referenceRepeater.currentIteration]:' '}"  
+				<degrafa:RasterText text="{(labelValues[innerLayout.referenceRepeater.currentIteration]) ? labelValues[innerLayout.referenceRepeater.currentIteration]:' '}"  fill="{fills[innerLayout.referenceRepeater.currentIteration]}"
 					x="{innerLayout.currentReference.x+(innerLayout.currentReference.width-20)/2}" height="20" width="70" y="{bounds.height+70}" fontSize="12" align="right" fontFamily="Arial">
 					<degrafa:transform>
 						<degrafa:RotateTransform angle="-90" registrationPoint="topLeft"/>
@@ -64,13 +64,19 @@
 	<layouts:geometries>
 	
 		<!-- makes the little brackets below the columns with the main label -->
-		<degrafa:Line x="0" x1="{currentReference.width}" y="{height+65}" y1="{height+65}" stroke="{myStroke}"/>
-		<degrafa:Line x="0" x1="0" y="{height+65}" y1="{height+10}" stroke="{myStroke}"/>
-		<degrafa:Line x="{currentReference.width}" x1="{currentReference.width}" y="{height+65}" y1="{height+10}" stroke="{myStroke}"/>
-		<degrafa:Line x="{currentReference.width/2}" x1="{currentReference.width/2}" y="{height+75}" y1="{height+65}" stroke="{myStroke}"/>
+		<degrafa:Line x="0" x1="{currentReference.width}" y="{height+65}" y1="{height+65}" stroke="{myStroke}" id="line1"/>
+		<degrafa:Line x="0" x1="0" y="{height+65}" y1="{height+10}" stroke="{myStroke}" id="line2"/>
+		<degrafa:Line x="{currentReference.width}" x1="{currentReference.width}" y="{height+65}" y1="{height+10}" stroke="{myStroke}" id="line3"/>
+		<degrafa:Line x="{currentReference.width/2}" x1="{currentReference.width/2}" y="{height+75}" y1="{height+65}" stroke="{myStroke}" id="line4"/>
 		<degrafa:RasterText text="{currentDatum[dataField]}" x="0" width="{currentReference.width}" y="{height+75}" fontSize="16" align="center" fontFamily="Arial"/>
 		
 	</layouts:geometries>
+	<!--layouts:states>
+			<states:State id="rollOverState2" enterStateEvent="mouseOver" exitStateEvent="mouseOut"
+					targets="{[line1,line2,line3,line4]}"
+					properties="{['stroke','stroke','stroke','stroke']}"
+					values="{[innerLayout.strokes[0],innerLayout.strokes[0],innerLayout.strokes[0],innerLayout.strokes[0]]}"/>
+	</layouts:states-->
 	
 
 </layouts:HorizontalBoxLayout>

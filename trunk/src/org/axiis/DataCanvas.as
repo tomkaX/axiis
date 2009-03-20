@@ -1,6 +1,8 @@
 package org.axiis
 {
 	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.events.MouseEvent;
 	
 	import mx.core.UIComponent;
 	
@@ -19,6 +21,9 @@ package org.axiis
 		
 		[Bindable]
 		public var strokes:Array = [];
+		
+		[Bindable]
+		public var palettes:Array = [];
 		
 		[Bindable(event="dataProviderChange")]
 		public function set dataProvider(value:Object):void
@@ -96,6 +101,36 @@ package org.axiis
 				invalidatedLayouts.push(layout);
 			}
 			super.invalidateDisplayList();
+		}
+		
+		public var labelFunction:Function;
+		
+		public var dataFunction:Function;
+		
+		
+		/****   ITEM EVENTS ****/
+		public function onItemMouseOver(e:MouseEvent):void {
+			trace("mouseOver");
+		}
+		
+		public function onItemMouseOut(e:MouseEvent):void {
+			trace("mouseOut");
+		}
+		
+		public function onItemMouseDown(e:MouseEvent):void {
+			trace("mouseDown");
+		}
+		
+		public function onItemMouseUp(e:MouseEvent):void {
+			trace("mouseUp");
+		}
+
+		public function onItemMouseClick(e:MouseEvent):void {
+			trace("mouseClick");
+		}
+		
+		public function onItemMouseDoubleClick(e:MouseEvent):void {
+			trace("mouseDoubleClick");
 		}
 	}
 }

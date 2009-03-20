@@ -6,9 +6,16 @@ package org.axiis.core
 	import flash.display.Sprite;
 	import flash.events.IEventDispatcher;
 	import flash.geom.Rectangle;
+	import flash.utils.Dictionary;
+	
+	import org.axiis.DataCanvas;
 	
 	public interface ILayout extends IEventDispatcher
 	{
+		function get itemCount():int;
+		
+		function get childLayoutCachedValues():Dictionary;
+		
 		function set parentLayout(value:ILayout):void;
 		function get parentLayout():ILayout;
 		
@@ -20,6 +27,9 @@ package org.axiis.core
 		
 		function set dataField(value:String):void;
 		function get dataField():String;
+		
+		function set labelField(value:String):void;
+		function get labelField():String;
 		
 		function set geometries(value:Array):void;
 		function get geometries():Array;
@@ -55,6 +65,10 @@ package org.axiis.core
 		
 		function get currentDatum():Object
 		
+		function get currentDataValue():Object;
+		
+		function get currentLabelValue():String;
+		
 		function set selectedIndex(value:int):void;
 		function get selectedIndex():int;
 		
@@ -75,7 +89,7 @@ package org.axiis.core
 		 * Registers a DisplayObject as the owner of this ILayout.
 		 * Throws an error if the ILayout already has an owner.
 		 */
-		function registerOwner(displayObject:DisplayObject):void;
+		function registerOwner(dataCanvas:DataCanvas):void;
 		
 		
 		// hasOwner??
@@ -87,7 +101,7 @@ package org.axiis.core
 		 * This can be more secure if we look at the call stack to determine
 		 * ownership.
 		 */
-		function getSprite(owner:DisplayObject):Sprite;
+		function getSprite(owner:DataCanvas):Sprite;
 		
 		function initialize():void;
 		
