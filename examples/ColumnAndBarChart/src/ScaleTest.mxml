@@ -6,6 +6,7 @@
 	
 	<mx:Script>
 		<![CDATA[
+			import org.axiis.layouts.scale.DateTimeScale;
 			import org.axiis.layouts.scale.LinearScale;
 			import org.axiis.layouts.scale.LogScale;
 			import org.axiis.layouts.scale.CategoricalScale;
@@ -19,6 +20,8 @@
 				testLogScale();
 				trace();
 				testCategoricalScale();
+				trace();
+				testDateTimeScale();
 			}
 			
 			private function testLinearScale():void
@@ -112,6 +115,30 @@
 				for(var a:int = 9; a < 22; a++)
 				{
 					trace(a + " to value = " +categoricalScale.layoutToValue(a));
+				}
+			}
+			
+			private function testDateTimeScale():void
+			{
+				var arr:Array = [new Date(2001,0),new Date(2001,1),new Date(2001,2),new Date(2001,3),
+					new Date(2001,4),new Date(2001,5),new Date(2001,6),new Date(2001,7),new Date(2001,8),
+					new Date(2001,9),new Date(2001,10),new Date(2001,11)];
+				var dateTimeScale:DateTimeScale = new DateTimeScale();
+				dateTimeScale.dataProvider = arr;
+				dateTimeScale.minLayout = 11;
+				dateTimeScale.maxLayout = 20;
+				dateTimeScale.validate();
+				
+				trace("dateTimeScale:");
+				trace("minValue = " + dateTimeScale.minValue);
+				trace("maxValue = " + dateTimeScale.maxValue);
+				for each(var value:Date in arr)
+				{
+					trace(value + " to layout = " + dateTimeScale.valueToLayout(value));
+				}
+				for(var a:int = 9; a < 22; a++)
+				{
+					trace(a + " to value = " + dateTimeScale.layoutToValue(a));
 				}
 			}
 		]]>
