@@ -3,7 +3,7 @@
 	xmlns:axiis="http://www.axiis.org/2009"
 	layout="absolute"
 	initialize="start()"
-	width="1200"
+	width="100%"
 	height="500">
 	
 	<mx:Script>
