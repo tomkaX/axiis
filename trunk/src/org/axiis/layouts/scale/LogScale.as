@@ -4,7 +4,7 @@ package org.axiis.layouts.scale
 	 * A scale that deals with logarithmic data. Values from the dataProvider
 	 * are converted to layout-space using log base 10.
 	 */
-	public class LogScale extends NumericalScale
+	public class LogScale extends ContinuousScale
 	{
 		override public function valueToLayout(value:Object):Number
 		{

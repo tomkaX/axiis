@@ -162,12 +162,12 @@ package org.axiis.layouts.scale
 		
 		public function valueToLayout(value:Object):Number
 		{
-			return 0;
+			return NaN;
 		}
 		
 		public function layoutToValue(layout:Number):Object
 		{
-			return 0;
+			return null;
 		}
 	}
 }
