@@ -3,7 +3,7 @@ package org.axiis.layouts.scale
 	/**
 	 * The base class for scales that deal with numerical data.
 	 */
-	public class NumericalScale extends AbstractScale
+	public class ContinuousScale extends AbstractScale
 	{
 		/**
 		 * Updates the computed minimum and maximum values if the user

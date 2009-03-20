@@ -30,24 +30,19 @@ package org.axiis.layouts.scale
 		
 		/**
 		 * Converts a value to layout-space. If the value is not represented within
-		 * the dataProvider, minLayout is returned.
-		 * 
-		 * I'm not sure if that behavior even makes sense. It leads to valueToLayout
-		 * not being the inverse of layoutToValue. 
-		 * 
+		 * the dataProvider, NaN is returned.
 		 */
 		override public function valueToLayout(value:Object):Number
 		{
 			if(invalidated)
 				validate();
 				
-				
 			var valueIndex:Number = dataField != null
 				? uniqueValues.indexOf(value[dataField])
 				: uniqueValues.indexOf(value);
 			
 			if(valueIndex == -1)
-				return minLayout;
+				return NaN;
 			
 			var percentage:Number = valueIndex+1 / uniqueValues.length;
 			return percentage * (maxLayout - minLayout) + minLayout;
@@ -60,7 +55,9 @@ package org.axiis.layouts.scale
 		 */
 		override public function layoutToValue(layout:Number):Object
 		{ 
-			if (this.invalidated) validate();
+			if (invalidated)
+				validate();
+				
 			var layoutDelta:Number = maxLayout - minLayout;
 			var layoutPercentage:Number = (layout - layoutDelta) / (layoutDelta);
 			var index:Number = Math.round(layoutPercentage * uniqueValues.length) - 1;

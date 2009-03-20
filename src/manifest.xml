@@ -17,7 +17,7 @@
 	<!-- scales -->
 	<component id="LinearScale" class="org.axiis.layouts.scale.LinearScale"/>
 	<component id="LogScale" class="org.axiis.layouts.scale.LogScale"/>
-	<component id="NumericalScale" class="org.axiis.layouts.scale.NumericalScale"/>
+	<!--<component id="NumericalScale" class="org.axiis.layouts.scale.NumericalScale"/>-->
 	
 	<!-- data -->
 	<component id="SVGDashLine" class="org.axiis.data.DataSet"/>

@@ -1,18 +1,15 @@
 package org.axiis.layouts.scale
 {
-	import flash.events.Event;
-	
-	/**
-	 * A scale that deals with linear data.
-	 */
-	public class LinearScale extends ContinuousScale implements IScale
+	public class DateTimeScale extends ContinuousScale implements IScale
 	{
 		override public function valueToLayout(value:Object):Number
 		{
 			if(invalidated)
 				validate();
-				
-			var percentage:Number = getPercentageBetweenValues(Number(value),Number(minValue),Number(maxValue));
+			
+			var minDate:Date = minValue as Date;
+			var maxDate:Date = maxValue as Date;
+			var percentage:Number = getPercentageBetweenValues(Number(value),minDate.valueOf(),maxDate.valueOf());
 			percentage = Math.max(0,Math.min(1.0,percentage));
 			return percentage * (maxLayout - minLayout) + minLayout;
 		}
@@ -21,10 +18,12 @@ package org.axiis.layouts.scale
 		{
 			if (this.invalidated)
 				validate();
-				
+			
+			var minDate:Date = minValue as Date;
+			var maxDate:Date = maxValue as Date;
 			var percentage:Number = getPercentageBetweenValues(Number(layout),Number(minLayout),Number(maxLayout));
 			percentage = Math.max(0,Math.min(1,percentage));
-			return percentage * (Number(maxValue) - Number(minValue)) + Number(minValue);
+			return new Date(percentage * (maxDate.valueOf() - minDate.valueOf()) + minDate.valueOf());
 		}
 		
 		// This comes up a lot... maybe it should be in a util class
