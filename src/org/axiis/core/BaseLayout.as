@@ -583,7 +583,7 @@ package org.axiis.core
 			sprite.y = isNaN(_bounds.y) ? 0 :_bounds.y;
 			
 			_referenceGeometryRepeater.dataProvider=_dataItems;
-			_itemCount=_dataItems.length;
+			if (_dataItems) _itemCount=_dataItems.length;
 			_referenceGeometryRepeater.repeat(onIteration);
 		}
 		
