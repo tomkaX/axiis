@@ -71,7 +71,7 @@ package org.axiis.data
 			 * Parses a CSV string into our private _dataRows
 			 * 
 			 */
-			private function createTableFromCsv(value:String, firstRowIsHeader:Boolean=true, cleanPayload:Boolean=true, convertNullsToZero:Boolean=true):void {
+			private function createTableFromCsv(value:String, firstRowIsHeader:Boolean=true, convertNullsToZero:Boolean=true):void {
 				//First we need to use a regEx to find any string enclosed in Quotes - as they are being escaped
 				
 				var table:Object=new Object();
@@ -112,11 +112,11 @@ package org.axiis.data
 	
 					var row:Array=rowArray[i].split(","); //Create a row
 					var rowOutput:Object=new Object();
-					
-					if (cleanPayload) {		//We go through this cleanining stage to prepare raw CSV data
+					var cols:Array=new Array();
+		//We go through this cleanining stage to prepare raw CSV data
 								
 						for (var z:int=0;z<row.length;z++) {
-	
+							
 							var dataCell:String=row[z];
 							//clean up commas encoding
 							var re1:RegExp=/\&comma;/g;
@@ -141,19 +141,22 @@ package org.axiis.data
 							}
 							
 							var cell:Object=new Object();//Potentially we want to use ObjectProxies to detect changes
-							if (!isNaN(Number(dataCell))) cell=Number(dataCell); else cell=dataCell;
 							
-							//cell["name"]=header[z];
-							//cell["id"]="col"+z;
 							
-							rowOutput["col"+z]=cell;
+							cell["name"]=header[z];
+							cell["id"]="col"+z;
+							cell["value"]=(!isNaN(Number(dataCell))) ? Number(dataCell):dataCell;
+							
+							cols.push(cell);
+							
+							
 							
 						}
+						rowOutput["columns"]=cols;
+		
 					
-					}
-					
-					if (rowArray[i].length > row.length+2) { //Make sure that we do not have an empty row (i.e. just a string with all commas in it.
-						tempData=tempData.substr(0,tempData.length-1) + "\n";
+						if (rowArray[i].length > row.length+2) { //Make sure that we do not have an empty row (i.e. just a string with all commas in it.
+
 						if (row.length==_colCount) {  //don't enter fragmented rows (this can occur if a row length does not match the number of columns in the first row which is used to determine the header)
 							rows.addItem(rowOutput);
 						}
