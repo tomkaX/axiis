@@ -9,6 +9,10 @@
 			
 			public var ds:DataSet;
 			
+			public var seriesNames:Array=new Array();
+			public var seriesFills:Array=new Array();
+			public var seriesStrokes:Array=new Array();
+			
 			private function initApp():void {
 				ds=new DataSet();
 				ds.processCsv(payload.toString());
@@ -16,6 +20,16 @@
 				dataProvider=ds.data.rows;
 				dc.invalidateDisplayList();
 				columnNames=ds.data.header.slice(1,5);
+				/*
+				for (var i:int=0;i<5;i++) {
+					seriesNames.push("col"+i);
+					seriesFills.push(fill1);
+					seriesStrokes.push(stroke1);
+				}
+				myCluster.seriesFields=seriesNames;
+				myCluster.fills=seriesFills;
+				myCluster.strokes=seriesStrokes;
+				*/
 			}
 			
 			public function labelFunction(value:String, datum:Object):String {
@@ -29,23 +43,24 @@
 			fontFamily:Arial;
 			fontSize:10px;	
 			fontWeight:bold;
+			color:0;
 		}
 		
 	</mx:Style>
 	<mx:Object id="dataProvider"/>
 	<mx:Object id="columnNames"/>
 	
-	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{800-70}" minValue="0" maxValue="10" id="myScale"/>
+	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{800-70}" minValue="0" maxValue="100" id="myScale"/>
 
 	<axiis:DataCanvas height="500" width="90%" id="dc" horizontalCenter="0" labelFunction="{labelFunction}">
 		<axiis:palettes>
-			<paint:LayoutPalette colorFrom="0xFF0000" colorTo="0xFFFF00" target="{myCluster.innerLayout}" id="myPallete"/>
+			<paint:LayoutPalette colorFrom="0xFF0000" colorTo="0x0000FF" target="{myCluster.innerLayout}" id="myPallete"/>
 			<paint:LayoutPalette colorFrom="0xFF0000" colorTo="0xFFFF00" target="{legendLayout}" id="myPallete2"/>
 		</axiis:palettes>
 		<axiis:layouts>
-			<groupings:ColumnStack id="myCluster" height="{dc.height-70}" labelStyleName="labelStyle" dataProvider="{dataProvider}" width="{dc.width}" dataField="col0" labelField="col0"
-				seriesFields="['col1','col2','col3','col4','col5']"  verticalScale="{myScale}" 
-				fills="{[fill1,fill1,fill1,fill1,fill1]}" strokes="{[stroke1,stroke1,stroke1,stroke1,stroke1]}"/>
+			<groupings:ColumnStack id="myCluster" height="{dc.height-70}"  width="{dc.width}" labelStyleName="labelStyle" percentGap=".025"
+				dataProvider="{dataProvider}" dataField="columns" labelField="name" valueField="value"
+				fill="{fill1}" stroke="{stroke1}"  verticalScale="{myScale}"/>
 			<axiis:HorizontalBoxLayout dataProvider="{columnNames}" id="legendLayout" width="900" y="{dc.height+10}">
 				<axiis:geometries>
 					<degrafa:RegularRectangle width="10" height="10" y="10" x="{legendLayout.currentReference.x}" fill="{fill2}"/>
@@ -56,7 +71,7 @@
 		<axiis:fills>
 			<degrafa:SolidFill color="0xDDDD00" alpha=".6" id="rollOverFill"/>
 			<degrafa:LinearGradientFill id="fill1" angle="135">
-				<degrafa:GradientStop color="{myPallete.currentColor}" alpha=".7"/><degrafa:GradientStop color="{myPallete.currentColor | 0x555555}" alpha=".7"/>
+				<degrafa:GradientStop color="{myPallete.currentColor}" alpha="1"/><degrafa:GradientStop color="{myPallete.currentColor}" alpha="1"/>
 			</degrafa:LinearGradientFill>
 			<degrafa:LinearGradientFill id="fill2" angle="135">
 				<degrafa:GradientStop color="{myPallete2.currentColor}" alpha=".7"/><degrafa:GradientStop color="{myPallete2.currentColor | 0x555555}" alpha=".7"/>
