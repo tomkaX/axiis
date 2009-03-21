@@ -18,8 +18,10 @@
 				ds.processCsv(payload.toString());
 				trace(ds.rowCount);	
 				dataProvider=ds.data.rows;
+				myCluster.innerLayout.dataSliceFunction=dataSlicer;
 				dc.invalidateDisplayList();
 				columnNames=ds.data.header.slice(1,5);
+				
 				/*
 				for (var i:int=0;i<5;i++) {
 					seriesNames.push("col"+i);
@@ -33,7 +35,14 @@
 			}
 			
 			public function labelFunction(value:String, datum:Object):String {
-				return value + ":00";
+				if (datum["columns"]) 
+					return datum.columns[0].value + ":00";
+				else
+					return value;
+			}
+			
+			public function dataSlicer(columns:Array):Array {
+				return (columns.slice(1,4));
 			}
 		
 		]]>
@@ -59,7 +68,7 @@
 		</axiis:palettes>
 		<axiis:layouts>
 			<groupings:ColumnStack id="myCluster" height="{dc.height-70}"  width="{dc.width}" labelStyleName="labelStyle" percentGap=".025"
-				dataProvider="{dataProvider}" dataField="columns" labelField="name" valueField="value"
+				dataProvider="{dataProvider}" dataField="columns" labelField="index" seriesLabelField="name" seriesDataField="value"
 				fill="{fill1}" stroke="{stroke1}"  verticalScale="{myScale}"/>
 			<axiis:HorizontalBoxLayout dataProvider="{columnNames}" id="legendLayout" width="900" y="{dc.height+10}">
 				<axiis:geometries>
