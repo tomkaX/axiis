@@ -2,13 +2,14 @@ package org.axiis.core
 {
 	import com.degrafa.geometry.Geometry;
 	
-	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
+	
+	import mx.collections.ArrayCollection;
 	
 	import org.axiis.DataCanvas;
 	import org.axiis.events.LayoutEvent;
@@ -29,7 +30,7 @@ package org.axiis.core
 		[Bindable(event="currentDataValueChange")]
 		public function get currentDataValue():Object
 		{
-			if (owner.dataFunction)
+			if (owner.dataFunction!=null && dataField)
 				return owner.dataFunction.call(this,_currentDatum[dataField],_currentDatum);
 			else
 				return _currentDataValue;
@@ -52,7 +53,7 @@ package org.axiis.core
 		[Bindable(event="currentLabelValueChange")]
 		public function get currentLabelValue():String
 		{
-			if (owner.labelFunction !=null)
+			if (owner.labelFunction !=null && labelField)
 				return owner.labelFunction.call(this,_currentDatum[labelField],_currentDatum);
 			else
 				return _currentLabelValue;
@@ -211,9 +212,23 @@ package org.axiis.core
 				_dataProvider = value;
 				
 				_dataItems=new Array();
-				for each(var o:Object in dataProvider)
-				{
-					_dataItems.push(o);
+				
+				
+				if (dataProvider is ArrayCollection) {
+					for (var i:int=0;i<dataProvider.source.length;i++) {
+						_dataItems.push(dataProvider.source[i]);
+					}
+				}
+				else if (dataProvider is Array) {
+					for (var i:int=0;i<dataProvider.length;i++) {
+						_dataItems.push(dataProvider[i]);
+					}
+				}
+				else {
+					for each(var o:Object in dataProvider)
+					{
+						_dataItems.push(o);
+					}
 				}
 				_itemCount=_dataItems.length;
 				
@@ -596,7 +611,7 @@ package org.axiis.core
 			// Update the "current" properties
 			_currentIndex = _referenceGeometryRepeater.currentIteration;
 			_currentDatum = dataItems[_currentIndex];
-			if (dataField) _currentDataValue = _currentDatum[dataField];
+			if (dataField) _currentDataValue = _currentDatum[dataField] else _currentDataValue=_currentDatum;
 			if (labelField) _currentLabelValue = _currentDatum[labelField];
 			_currentReference = referenceRepeater.geometry;
 			
@@ -660,6 +675,7 @@ package org.axiis.core
 			// Apply sublayouts for the targetSprite
 			for each(var layout:ILayout in layouts)
 			{
+				/** TODO WE NEED TO HAVE A CLEAN UP ROUTINE ON DATAPROVIDER CHANGE **/
 				layout.parentLayout = this;
 				layout.render(_currentItem,_currentIndex); //pass in our _currentIndex as parent
 				if (!_childLayoutCachedValues[layout]) _childLayoutCachedValues[layout]=new Array();
@@ -736,6 +752,7 @@ package org.axiis.core
 				trace("embed selection isn't working yet");
 			}*/
 		}
+
 		
 		public function applyIteration(iteration:int, parentIteration:int=-1):void {
 			
@@ -753,13 +770,15 @@ package org.axiis.core
 			_currentReference = referenceRepeater.geometry;
 			_currentIndex=iteration;
 			_currentDatum = dataItems[iteration];
-			if (dataField) _currentDataValue = _currentDatum[dataField];
+			if (dataField) _currentDataValue = _currentDatum[dataField] else _currentDataValue=_currentDatum;
 			if (labelField) _currentLabelValue = _currentDatum[labelField];
 
 		}
 		
 		protected function onStateChange(event:Event):void
 		{
+			
+		
 			
 			invalidateState(event);
 			
@@ -769,6 +788,8 @@ package org.axiis.core
 			
 			applyIteration(_currentIndex,int(_currentItem.name));
 			renderDatum(currentDatum,currentItem);
+			
+			trace("stateChange dataValue=" + currentDataValue + " labelValue=" + currentLabelValue);
 			
 			// Reset the current reference so things draw in the correct location during the next render
 			_currentReference = null;
