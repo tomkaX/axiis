@@ -27,14 +27,10 @@ package org.axiis.core
 		}
 		
 		/**
-		 * This provides a way to further refine a layouts dataProvider by slicing it on the fly after it has been set
-		 * not sure if this is too hacky.. kinda feels that way
-		 * but I think we need a way to pass a layout an array of items and tell it "hey I only want you to render a subset of these items"
-		 * when working with dynamic data this becomes important, especially if we have data formatting each column as an array item
-		 * the alternative is to work on DataSet to massage data and have layouts strictly render the dataset as they are formated, but I suspect
-		 * we will loose some flexibility with that approach.
+		 * This provides a way to further refine a layouts dataProvider by providing access to a custom filter data filter function.
+		 * this allows developers to easily visualize subsets of the data without having to change the underlying data structure.
 		 */
-		public var dataSliceFunction:Function;
+		public var dataFilterFunction:Function;
 		
 		[Bindable(event="currentDataValueChange")]
 		public function get currentDataValue():Object
@@ -221,29 +217,45 @@ package org.axiis.core
 				_dataProvider = value;
 				
 				_dataItems=new Array();
-				
-				var tempProvider:Object;
-				
-				if (dataSliceFunction!=null)
-					tempProvider=dataSliceFunction.call(this,value);
-				else
-					tempProvider=dataProvider;
+
+			
 				
 				
-				if (tempProvider is ArrayCollection) {
-					for (var i:int=0;i<tempProvider.source.length;i++) {
-						_dataItems.push(tempProvider.source[i]);
+				if (dataProvider is ArrayCollection) {
+					for (var i:int=0;i<dataProvider.source.length;i++) {
+						if (dataFilterFunction) {
+								if (dataFilterFunction.call(this,dataProvider.source[i])) {
+									_dataItems.push(dataProvider.source[i]);
+								}
+							}
+						else {
+							_dataItems.push(dataProvider.source[i]);
+						}
 					}
 				}
-				else if (tempProvider is Array) {
-					for (var i:int=0;i<tempProvider.length;i++) {
-						_dataItems.push(tempProvider[i]);
+				else if (dataProvider is Array) {
+					for (var i:int=0;i<dataProvider.length;i++) {
+						if (dataFilterFunction) {
+							if (dataFilterFunction.call(this,dataProvider[i])) {
+								_dataItems.push(dataProvider[i]);
+							}
+						}
+						else {
+							_dataItems.push(dataProvider[i]);
+						}
 					}
 				}
 				else {
-					for each(var o:Object in tempProvider)
+					for each(var o:Object in dataProvider)
 					{
-						_dataItems.push(o);
+						if (dataFilterFunction) {
+							if (dataFilterFunction.call(this,o)) {
+								_dataItems.push(o);
+							}
+						}
+						else {
+							_dataItems.push(o);
+						}
 					}
 				}
 				
