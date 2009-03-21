@@ -144,7 +144,7 @@ package org.axiis.data
 							
 							
 							cell["name"]=header[z];
-							cell["id"]="col"+z;
+							cell["index"]=z;
 							cell["value"]=(!isNaN(Number(dataCell))) ? Number(dataCell):dataCell;
 							
 							cols.push(cell);
@@ -153,7 +153,7 @@ package org.axiis.data
 							
 						}
 						rowOutput["columns"]=cols;
-		
+						rowOutput["index"]=i-1;
 					
 						if (rowArray[i].length > row.length+2) { //Make sure that we do not have an empty row (i.e. just a string with all commas in it.
 

@@ -26,6 +26,15 @@ package org.axiis.core
 			super();
 		}
 		
+		/**
+		 * This provides a way to further refine a layouts dataProvider by slicing it on the fly after it has been set
+		 * not sure if this is too hacky.. kinda feels that way
+		 * but I think we need a way to pass a layout an array of items and tell it "hey I only want you to render a subset of these items"
+		 * when working with dynamic data this becomes important, especially if we have data formatting each column as an array item
+		 * the alternative is to work on DataSet to massage data and have layouts strictly render the dataset as they are formated, but I suspect
+		 * we will loose some flexibility with that approach.
+		 */
+		public var dataSliceFunction:Function;
 		
 		[Bindable(event="currentDataValueChange")]
 		public function get currentDataValue():Object
@@ -213,23 +222,31 @@ package org.axiis.core
 				
 				_dataItems=new Array();
 				
+				var tempProvider:Object;
 				
-				if (dataProvider is ArrayCollection) {
-					for (var i:int=0;i<dataProvider.source.length;i++) {
-						_dataItems.push(dataProvider.source[i]);
+				if (dataSliceFunction!=null)
+					tempProvider=dataSliceFunction.call(this,value);
+				else
+					tempProvider=dataProvider;
+				
+				
+				if (tempProvider is ArrayCollection) {
+					for (var i:int=0;i<tempProvider.source.length;i++) {
+						_dataItems.push(tempProvider.source[i]);
 					}
 				}
-				else if (dataProvider is Array) {
-					for (var i:int=0;i<dataProvider.length;i++) {
-						_dataItems.push(dataProvider[i]);
+				else if (tempProvider is Array) {
+					for (var i:int=0;i<tempProvider.length;i++) {
+						_dataItems.push(tempProvider[i]);
 					}
 				}
 				else {
-					for each(var o:Object in dataProvider)
+					for each(var o:Object in tempProvider)
 					{
 						_dataItems.push(o);
 					}
 				}
+				
 				_itemCount=_dataItems.length;
 				
 				dispatchEvent(new Event("dataProviderChange"));

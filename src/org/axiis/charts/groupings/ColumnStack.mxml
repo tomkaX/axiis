@@ -22,7 +22,8 @@
 		]]>
 	</mx:Script>
 	
-	<mx:Array id="valueField"/>
+	<mx:Array id="seriesDataField"/>
+	<mx:Array id="seriesLabelField"/>
 	<mx:Number id="percentGap">.05</mx:Number>
 	<mx:String id="labelStyleName"/>
 	<scale:LinearScale id="verticalScale"/>
@@ -30,20 +31,7 @@
 	<degrafa:SolidStroke id="myStroke" weight="1" color="white" alpha=".5"/>
 	
 	<layouts:layouts>
-	<!--core:BaseLayout dataProvider="{seriesFields}" id="innerLayout" name="innerLayout">
-			<core:referenceRepeater>
-				<core:GeometryRepeater dataProvider="{innerLayout.dataItems}">
-					<core:geometry>
-						<degrafa:RegularRectangle x="0" y="{this.height}" width="{this.currentReference.width}"/>
-					</core:geometry>
-					<core:modifiers>
-						<core:PropertyModifier property="height" modifier="{this.verticalScale.valueToLayout(currentDatum[seriesFields[innerLayout.referenceRepeater.currentIteration]])}" modifierOperator="none"/>
-						<core:PropertyModifier property="y" modifier="{this.verticalScale.valueToLayout(currentDatum[seriesFields[innerLayout.referenceRepeater.currentIteration]])}" modifierOperator="subtract"/>
-					</core:modifiers>
-				</core:GeometryRepeater>
-			
-			</core:referenceRepeater-->
-		<core:BaseLayout dataProvider="{currentDatum[dataField]}" dataField="{valueField}" labelField="{labelField}" id="innerLayout" name="innerLayout">
+		<core:BaseLayout dataProvider="{currentDatum[dataField]}" dataField="{seriesDataField}" labelField="{seriesLabelField}" id="innerLayout" name="innerLayout">
 			<core:referenceRepeater>
 				<core:GeometryRepeater dataProvider="{innerLayout.dataItems}">
 					<core:geometry>
