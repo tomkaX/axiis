@@ -223,6 +223,7 @@ package org.axiis.data
 							cell["index"]=z;
 							cell["value"]=(!isNaN(Number(dataCell))) ? Number(dataCell):dataCell;
 							
+							//We are automatically adding sum values for each column here
 							if (!_data["col_"+z+"_sum"]) data["col_"+z+"_sum"]=0;
 							_data["col_"+z+"_sum"]+=cell["value"];
 							
@@ -248,6 +249,7 @@ package org.axiis.data
 				_data["header"]=new Array();
 				for (var i:int=0;i<header.length;i++) {
 					_data["header"].push(header[i]);
+					//Adding avg for each column here.
 					_data["col_" + i + "_avg"]=_data["col_" + i + "_sum"]/_rowCount;
 				}
 			}
