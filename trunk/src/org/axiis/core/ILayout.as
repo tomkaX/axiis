@@ -4,8 +4,6 @@ package org.axiis.core
 	
 	import flash.display.Sprite;
 	import flash.events.IEventDispatcher;
-	import flash.geom.Rectangle;
-	import flash.utils.Dictionary;
 	
 	import org.axiis.DataCanvas;
 	
@@ -59,7 +57,7 @@ package org.axiis.core
 		
 		function get currentIndex():int;
 		
-		function get currentItem():Sprite;
+		function get currentItem():AxiisSprite;
 		
 		function get currentDatum():Object
 		

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:axiis="http://www.axiis.org/2009"
+	layout="vertical"
+	initialize="start()"
+	width="700" height="700">
+	
+	<mx:Style>
+		ToolTip
+		{
+			borderSkin:ClassReference('org.axiis.core.HTMLToolTip');
+		}
+	</mx:Style>
+	
+	<mx:Script>
+		<![CDATA[
+			import org.axiis.core.HTMLToolTip;
+			import org.axiis.data.DataSet;
+			
+			private function start():void
+			{
+				var ds:DataSet = new DataSet();
+				ds.processXmlString(countryData);
+				columnChart.dataProvider=ds.data["someData"].country;
+			}
+			
+			private function makeToolTip(data:Object):String
+			{
+				if(data["competitors"] != null && data["name"] != null)
+				{
+					return "<b>" + data["name"] + "</b><br/>" + data["competitors"];
+				}
+				return "";
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:String id="countryData" source="data/countryData.xml"/>
+	
+	<axiis:ColumnChart id="columnChart"
+		horizontalField="name"
+		verticalField="competitors"
+		width="600"
+		height="600"
+		toolTipFunction="{makeToolTip}"/>
+	
+</mx:Application>

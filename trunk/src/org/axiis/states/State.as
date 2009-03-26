@@ -25,7 +25,7 @@ package org.axiis.states
 				var obj:Object=targets[i];
 				propertyValues.push(obj[properties[i]]);
 				obj[properties[i]]=values[i];
-				trace(" applying " + properties[i] + " = " + values[i]);
+				//trace(" applying " + properties[i] + " = " + values[i]);
 			}
 			
 		}

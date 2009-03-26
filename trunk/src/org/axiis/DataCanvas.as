@@ -4,11 +4,17 @@ package org.axiis
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
+	import mx.core.ClassFactory;
+	import mx.core.IFactory;
+	import mx.core.IToolTip;
 	import mx.core.UIComponent;
+	import mx.managers.ToolTipManager;
+	import mx.skins.halo.ToolTipBorder;
+	import mx.styles.IStyleClient;
 	
+	import org.axiis.core.AxiisSprite;
 	import org.axiis.core.ILayout;
 	import org.axiis.events.LayoutEvent;
-	import org.axiis.events.StateChangeEvent;
 	
 	public class DataCanvas extends UIComponent
 	{
@@ -30,6 +36,14 @@ package org.axiis
 		
 		public var dataFunction:Function;
 		
+		public var toolTipFunction:Function;
+		
+		public var showToolTips:Boolean = true;
+		
+		public var toolTipClass:IFactory;
+		
+		private var tt:IToolTip;
+		
 		[Bindable(event="dataProviderChange")]
 		public function set dataProvider(value:Object):void
 		{
@@ -46,28 +60,7 @@ package org.axiis
 		}
 		private var _dataProvider:Object;
 		
-		[Bindable(event="layoutsChange")]
-		public function set layouts(value:Array):void
-		{
-			if(value != _layouts)
-			{
-				for each(var oldLayout:ILayout in layouts)
-				{
-					oldLayout.removeEventListener(StateChangeEvent.STATE_CHANGE,handleStateChange)
-				}
-				_layouts = value;
-				for each(var newLayout:ILayout in layouts)
-				{
-					newLayout.addEventListener(StateChangeEvent.STATE_CHANGE,handleStateChange,true);
-				}
-				dispatchEvent(new Event("layoutsChange"));
-			}
-		}
-		public function get layouts():Array
-		{
-			return _layouts;
-		}
-		private var _layouts:Array;
+		public var layouts:Array;
 		
 		private var invalidatedLayouts:Array = [];
 		
@@ -77,11 +70,17 @@ package org.axiis
 			for each(var layout:ILayout in layouts)
 			{
 				layout.registerOwner(this);
-				layout.addEventListener(LayoutEvent.INVALIDATE,handleLayoutInvalidate);
-				
 				var sprite:Sprite = layout.getSprite(this);
 				addChild(sprite);
 				
+				layout.addEventListener(LayoutEvent.INVALIDATE,handleLayoutInvalidate);
+				sprite.addEventListener(MouseEvent.MOUSE_OVER,onItemMouseOver);
+				sprite.addEventListener(MouseEvent.CLICK,onItemMouseClick);
+				sprite.addEventListener(MouseEvent.DOUBLE_CLICK,onItemMouseDoubleClick);
+				sprite.addEventListener(MouseEvent.MOUSE_OUT,onItemMouseOut);
+				sprite.addEventListener(MouseEvent.MOUSE_DOWN,onItemMouseDown);
+				sprite.addEventListener(MouseEvent.MOUSE_UP,onItemMouseUp);
+		
 				invalidatedLayouts.push(layout);
 			}
 		}
@@ -128,23 +127,35 @@ package org.axiis
 			super.invalidateDisplayList();
 		}
 		
-		private function handleStateChange(event:StateChangeEvent):void
-		{
-			trace("state change DataCanvas");
-			for each(var layout:ILayout in event.layoutChain)
-			{
-				trace(" " + layout["name"]);
-			}
-			trace(" " + event.target.name);
-		}
-		
 		/****   ITEM EVENTS ****/
-		public function onItemMouseOver(e:MouseEvent):void {
-			trace("mouseOver");
+		public function onItemMouseOver(e:MouseEvent):void
+		{
+			var axiisSprite:AxiisSprite = e.target as AxiisSprite;
+			if(!axiisSprite)
+				return;
+				
+			if(showToolTips && toolTipFunction != null)
+			{
+				var text:String = toolTipFunction.call(this,axiisSprite.data);
+				if(text != null && text != "")
+				{
+					tt = ToolTipManager.createToolTip(text,stage.mouseX + 10,stage.mouseY + 10);
+					addEventListener(MouseEvent.MOUSE_MOVE,mouseMoveHandler);
+				}
+			}
 		}
 		
 		public function onItemMouseOut(e:MouseEvent):void {
-			//trace("mouseOut");
+			var axiisSprite:AxiisSprite = e.target as AxiisSprite;
+			if(!axiisSprite)
+				return;
+			
+			if(tt)
+			{
+				ToolTipManager.destroyToolTip(tt);
+				tt = null;
+				removeEventListener(MouseEvent.MOUSE_MOVE,mouseMoveHandler);
+			}	
 		}
 		
 		public function onItemMouseDown(e:MouseEvent):void {
@@ -161,6 +172,15 @@ package org.axiis
 		
 		public function onItemMouseDoubleClick(e:MouseEvent):void {
 			//trace("mouseDoubleClick");
+		}
+		
+		private function mouseMoveHandler(event:MouseEvent):void
+		{
+			if(tt)
+			{
+				tt.x = stage.mouseX + 10;
+				tt.y = stage.mouseY + 10;
+			}
 		}
 	}
 }
