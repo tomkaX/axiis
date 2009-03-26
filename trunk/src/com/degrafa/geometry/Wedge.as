@@ -288,8 +288,8 @@ package com.degrafa.geometry {
                 var finalArc:Number = -this.arc;    
                 var finalStartAngle:Number = -this.startAngle;   
                 
-                if (isNaN(_width) || _width==0) _width=outerRadius*2;
-                if (isNaN(_height) || _height==0) _height=outerRadius*2;     
+                width=outerRadius*2;
+                height=outerRadius*2;     
                 
                 var newX:Number = (_centerX) + (_outerRadius) * 
                 Math.cos(finalStartAngle * (Math.PI / 180))+x;
