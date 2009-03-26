@@ -61,10 +61,84 @@ package org.axiis.data
 				processXml(payload);
 			}
 			
+			/**
+			 * Converts a CSV Payload into a object/array structure with a format of
+			 * data.rows[]
+			 * 
+			 * row.index = ordinal position
+			 * row.columns[] = array of columns
+			 * 
+			 * column.index = ordinal position
+			 * column.name = header name for column
+			 * column.value = value
+			 */
 			public function processCsv(payload:String, instructions:String=null):void {
 				//Process CSV Source, use instructions to group into hiearicies
 				//Convert CSV into data.row[n].col[n] format for dynamic object
 				createTableFromCsv(payload);
+			}
+				
+			public static var AGGREGATE_SUM:int = 0;
+			public static var AGGREGATE_AVG:int = 2;
+			
+			/**
+			 * Will perform simple aggregations against the "data" property by dynamically adding properties to the parent object
+			 * parentObject.collectionName_propertyName_sum
+			 * parentObject.collectionName_propertyName_avg
+			 * 
+			 * collectionName = "." property path of the collection in question i.e.   myCollection.myNestedCollection
+			 * properties = Array of property values to aggregate
+			 */
+			public function aggregateCollection(collectionName:String, properties:Array, aggregateType:int=0 ):void {
+				//First find our collection
+				aggregate(data,collectionName.split("."),properties,aggregateType);
+			}
+			
+			private function aggregate(object:Object, collections:Array, properties:Array, aggregateType:int):void {
+				
+				var collection:Object=object[collections[0]];
+				
+				if  (collections.length>1) { //We need to go deeper into the collection
+				  	if (collection is ArrayCollection) {
+						for (var i:int=0;i<ArrayCollection(collection).length;i++) {
+							var obj:Object=ArrayCollection(collection).getItemAt(i);
+							aggregate(obj,collections.slice(1,collections.length),properties,aggregateType);
+						}
+					}	
+					else if (collection is Array) {
+						for (var i:int=0;i<Array(collection).length;i++) {
+							var obj:Object=collection[i];
+							aggregate(obj,collections.slice(1,collections.length),properties,aggregateType);
+						}
+					}
+				} 
+				else {   //We are at the deepest collection
+				var aggregates:Object=new Object();
+					if (collection is ArrayCollection) {
+						for (var i:int=0;i<ArrayCollection(collection).length;i++) {
+							var obj:Object=ArrayCollection(collection).getItemAt(i);
+							for (var y:int=0;y<properties.length;y++) {
+								if (!aggregates[properties[y] + "_sum"]) aggregates[properties[y] + "_sum"]=0;
+								aggregates[properties[y] + "_sum"]+=obj[properties[y]];
+							}
+						}
+					}	
+					else if (collection is Array) {
+						for (var i:int=0;i<Array(collection).length;i++) {
+							var obj:Object=collection[i];
+							for (var y:int=0;y<properties.length;y++) {
+								if (!aggregates[properties[y] + "_sum"]) aggregates[properties[y] + "_sum"]=0;
+								aggregates[properties[y] + "_sum"]+=obj[properties[y]];
+							}
+						}
+					}
+					
+					for (var n:int=0;n<properties.length;n++) {
+						object[collections[0] + "_" + properties[n] + "_sum"] = aggregates[properties[n] + "_sum"];
+						object[collections[0] + "_" + properties[n] + "_avg"] = aggregates[properties[n] + "_sum"]/i;
+					}
+				}
+				
 			}
 			
 			/***
@@ -77,6 +151,8 @@ package org.axiis.data
 				var table:Object=new Object();
 				
 				var rows:ArrayCollection=new ArrayCollection();
+				
+				_data=new Object();//Potentially we want to use ObjectProxies to detect changes
 				
 				//Then need to put in symbols for  quotes and commas
 				var temp:String=value;
@@ -147,6 +223,9 @@ package org.axiis.data
 							cell["index"]=z;
 							cell["value"]=(!isNaN(Number(dataCell))) ? Number(dataCell):dataCell;
 							
+							if (!_data["col_"+z+"_sum"]) data["col_"+z+"_sum"]=0;
+							_data["col_"+z+"_sum"]+=cell["value"];
+							
 							cols.push(cell);
 							
 							
@@ -164,11 +243,12 @@ package org.axiis.data
 				}
 				
 				_rowCount=i;
-				_data=new Object();//Potentially we want to use ObjectProxies to detect changes
+				
 				_data["rows"]=rows;
 				_data["header"]=new Array();
 				for (var i:int=0;i<header.length;i++) {
 					_data["header"].push(header[i]);
+					_data["col_" + i + "_avg"]=_data["col_" + i + "_sum"]/_rowCount;
 				}
 			}
 			
