@@ -37,15 +37,14 @@ package org.axiis.layouts.scale
 			if(invalidated)
 				validate();
 				
-			var valueIndex:Number = dataField != null
-				? uniqueValues.indexOf(value[dataField])
-				: uniqueValues.indexOf(value);
-			
+			var valueIndex:Number = uniqueValues.indexOf(value);
 			if(valueIndex == -1)
 				return NaN;
 			
-			var percentage:Number = valueIndex+1 / uniqueValues.length;
-			return percentage * (maxLayout - minLayout) + minLayout;
+			var percentage:Number = (valueIndex + 1) / uniqueValues.length;
+			var toReturn:Number = percentage * (maxLayout - minLayout) + minLayout;
+			trace(value +" " +toReturn + " " + percentage + " " + valueIndex);
+			return toReturn;
 		}
 		
 		/**

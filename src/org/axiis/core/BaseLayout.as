@@ -7,24 +7,25 @@ package org.axiis.core
 	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
-	import flash.utils.Dictionary;
 	
 	import mx.collections.ArrayCollection;
+	import mx.core.FlexSprite;
 	
 	import org.axiis.DataCanvas;
 	import org.axiis.events.LayoutEvent;
+	import org.axiis.events.StateChangeEvent;
 	import org.axiis.states.State;
 	
 	[Event(name="invalidate", type="org.axiis.LayoutEvent")]
 	
 	public class BaseLayout extends EventDispatcher implements ILayout
 	{
-		public var name:String = "";
-		
 		public function BaseLayout()
 		{
 			super();
 		}
+		
+		public var name:String = "";
 		
 		/**
 		 * This provides a way to further refine a layouts dataProvider by providing access to a custom filter data filter function.
@@ -35,10 +36,13 @@ package org.axiis.core
 		[Bindable(event="currentDataValueChange")]
 		public function get currentDataValue():Object
 		{
+			/*
 			if (owner.dataFunction!=null && dataField)
 				return owner.dataFunction.call(this,_currentDatum[dataField],_currentDatum);
 			else
 				return _currentDataValue;
+			*/
+			return _currentDataValue;
 		}
 		protected function set _currentDataValue(value:Object):void
 		{
@@ -77,18 +81,6 @@ package org.axiis.core
 		}
 		private var __currentLabelValue:String;
 		
-		/**
-		 * For child layouts we need to keep track of all their referenceRepeater propertyModifier cached valued.
-		 * this is so if a state change occurs in a child the child can quickly access a specific iteration of propertymodifiers.
-		 */
-		public function get childLayoutCachedValues():Dictionary {
-			return _childLayoutCachedValues;
-		}
-		
-		private var _childLayoutCachedValues:Dictionary=new Dictionary();
-		
-		private var datumToSpriteHash:Dictionary = new Dictionary();
-		
 		/***
 		 * Store states collection
 		 */
@@ -110,8 +102,6 @@ package org.axiis.core
 		}
 		private var _states:Array;
 		
-		private var stateChangingEventQueue:Array = [];
-		
 		private var _activeStates:Array=new Array();
 
 		/**
@@ -127,31 +117,23 @@ package org.axiis.core
 		[Inspectable]
 		public var useInheritedBounds:Boolean=true;
 		
-		/**
-		 * This will apply its bounds to root level child geometries
-		 */
-		 [Inspectable]
-		 public var autoApplyGeometryBounds:Boolean = true;
-		
-		
 		[Bindable]
-		public function get parentLayout():ILayout {
+		public function get parentLayout():ILayout
+		{
 			return _parentLayout;
 		}
-		public function set parentLayout(value:ILayout):void {
+		public function set parentLayout(value:ILayout):void
+		{
 			_parentLayout=value;
 		}
-		
-		[Bindable]
 		private var _parentLayout:ILayout;
 
-		
 		[Bindable(event="boundsChange")]
-		public function get bounds():Rectangle
+		public function get bounds():Bounds
 		{
 			return _bounds;
 		}
-		public function set bounds(value:Rectangle):void
+		public function set bounds(value:Bounds):void
 		{
 			if(value != _bounds)
 			{
@@ -159,7 +141,7 @@ package org.axiis.core
 				dispatchEvent(new Event("boundsChange"));
 			}
 		}
-		private var _bounds:Rectangle;
+		private var _bounds:Bounds;
 		
 		[Bindable(event="itemCountChange")]
 		public function get itemCount():int
@@ -207,7 +189,19 @@ package org.axiis.core
 		/**
 		 * The Sprite that will be added to the DataCanvas
 		 */
-		protected var sprite:Sprite;
+		protected function set sprite(value:Sprite):void
+		{
+			if(value != _sprite)
+			{
+				_sprite = value;
+				dispatchEvent(new Event("spriteChange"));
+			}
+		}
+		protected function get sprite():Sprite
+		{
+			return _sprite;
+		}
+		private var _sprite:Sprite;
 
 		[Bindable(event="dataProviderChange")]
 		public function set dataProvider(value:Object):void
@@ -215,15 +209,10 @@ package org.axiis.core
 			if(_dataProvider != value)
 			{
 				_dataProvider = value;
-				
 				_dataItems=new Array();
-
-			
-				
-				
 				if (dataProvider is ArrayCollection) {
 					for (var i:int=0;i<dataProvider.source.length;i++) {
-						if (dataFilterFunction) {
+						if (dataFilterFunction != null) {
 								if (dataFilterFunction.call(this,dataProvider.source[i])) {
 									_dataItems.push(dataProvider.source[i]);
 								}
@@ -234,21 +223,21 @@ package org.axiis.core
 					}
 				}
 				else if (dataProvider is Array) {
-					for (var i:int=0;i<dataProvider.length;i++) {
-						if (dataFilterFunction) {
-							if (dataFilterFunction.call(this,dataProvider[i])) {
-								_dataItems.push(dataProvider[i]);
+					for (var j:int=0;j<dataProvider.length;j++) {
+						if (dataFilterFunction != null) {
+							if (dataFilterFunction.call(this,dataProvider[j])) {
+								_dataItems.push(dataProvider[j]);
 							}
 						}
 						else {
-							_dataItems.push(dataProvider[i]);
+							_dataItems.push(dataProvider[j]);
 						}
 					}
 				}
 				else {
 					for each(var o:Object in dataProvider)
 					{
-						if (dataFilterFunction) {
+						if (dataFilterFunction != null) {
 							if (dataFilterFunction.call(this,o)) {
 								_dataItems.push(o);
 							}
@@ -285,7 +274,6 @@ package org.axiis.core
 			return _referenceGeometryRepeater;
 		}
 		protected var _referenceGeometryRepeater:IGeometryRepeater;
-		
 		
 		[Bindable(event="dataFieldChange")]
 		public function set dataField(value:String):void
@@ -367,7 +355,15 @@ package org.axiis.core
 		{
 			if(value != _layouts)
 			{
+				for each(var oldLayout:ILayout in layouts)
+				{
+					oldLayout.removeEventListener(StateChangeEvent.STATE_CHANGE,handleSubLayoutStateChange)
+				}
 				_layouts = value;
+				for each(var newLayout:ILayout in layouts)
+				{
+					newLayout.addEventListener(StateChangeEvent.STATE_CHANGE,handleSubLayoutStateChange);
+				}
 				dispatchEvent(new Event("layoutsChange"));
 			}
 		}
@@ -463,6 +459,7 @@ package org.axiis.core
 			if(value != __currentIndex)
 			{
 				__currentIndex = value;
+				trace(name + " change currentIndex " + value)
 				dispatchEvent(new Event("currentIndexChange"));
 			}
 		}
@@ -578,12 +575,8 @@ package org.axiis.core
 		public function getSprite(owner:DataCanvas):Sprite
 		{
 			if(!sprite)
-				sprite = new Sprite();
+				sprite = new FlexSprite();
 			return sprite;
-		}
-		
-		public function initialize():void
-		{
 		}
 		
 		public function invalidate():void
@@ -595,56 +588,49 @@ package org.axiis.core
 		{
 		}
 		
-		//Used to store index for iterations
-		private var _tempParentIndex:int;
-		
-		public function render(newSprite:Sprite = null, parentIndex:int=-1):void
+		public function render(newSprite:Sprite = null):void
 		{
-			if (layouts)
-				_childLayoutCachedValues=new Dictionary();
-				
-			_tempParentIndex=parentIndex;
-			
 			if(newSprite)
-			{
 				this.sprite = newSprite;
-			}
+				
 			if(!sprite || !_referenceGeometryRepeater)
-				return;
-			
-			
+				return;			
 			
 			if (useInheritedBounds && parentLayout) {
-				bounds=new Rectangle(parentLayout.currentReference.x+(isNaN(x) ? 0:x),
+				bounds=new Bounds(parentLayout.currentReference.x+(isNaN(x) ? 0:x),
 									parentLayout.currentReference.y+(isNaN(y) ? 0:y),
 									parentLayout.currentReference.width,
 									parentLayout.currentReference.height);
 			}
-			else {
-				bounds = new Rectangle((isNaN(x) ? 0:x),(isNaN(y) ? 0:y),width,height);
+			else
+			{
+				bounds = new Bounds((isNaN(x) ? 0:x),(isNaN(y) ? 0:y),width,height);
 			}
 
 			sprite.x = isNaN(_bounds.x) ? 0 :_bounds.x;
 			sprite.y = isNaN(_bounds.y) ? 0 :_bounds.y;
 			
 			_referenceGeometryRepeater.dataProvider=_dataItems;
-			if (_dataItems) _itemCount=_dataItems.length;
+			if (_dataItems)
+				_itemCount=_dataItems.length;
 			
-			if (_dataItems && _dataItems.length > 0) {
+			if (_dataItems && _dataItems.length > 0)
+			{
 				_currentIndex=-1;
 				_referenceGeometryRepeater.repeat(preIteration, postIteration);
 			}
-			
 		}
 		
-		protected function preIteration():void {
-			
+		protected function preIteration():void
+		{
 			_currentIndex++;
 			_currentDatum = dataItems[_currentIndex];
-			if (dataField) _currentDataValue = _currentDatum[dataField] else _currentDataValue=_currentDatum;
-			if (labelField) _currentLabelValue = _currentDatum[labelField];
-			
-			
+			if (dataField)
+				_currentDataValue = _currentDatum[dataField]
+			else
+				_currentDataValue=_currentDatum;
+			if (labelField)
+				_currentLabelValue = _currentDatum[labelField];
 		}
 		
 		/**
@@ -654,24 +640,22 @@ package org.axiis.core
 		protected function postIteration():void
 		{
 			// Update the "current" properties
-			
 			_currentReference = referenceRepeater.geometry;
 			
 			// Add a new Sprite if there isn't one available on the display list.
 			if(_currentIndex > sprite.numChildren - 1)
 			{
-				var newChildSprite:Sprite = new Sprite();
-				newChildSprite.addEventListener(MouseEvent.CLICK,onSpriteMouseClick);
+				var newChildSprite:Sprite = new FlexSprite();
 				newChildSprite.doubleClickEnabled=true;
+				newChildSprite.addEventListener(StateChangeEvent.STATE_CHANGE,handleSubLayoutStateChange);
 				
 				//We need to keep track of our parent layout index for single item rendering (i.e. states/tweens)
-				newChildSprite.name=_tempParentIndex.toString();
+				//newChildSprite.name=_tempParentIndex.toString();
 				this.addDataCanvasListeners(newChildSprite);
 				
 				// Add listeners for all the state changing events
 				for each(var state:State in states)
 				{
-					//trace("adding state listeners to " + newChildSprite.name);
 					if(state.enterStateEvent != null)
 						newChildSprite.addEventListener(state.enterStateEvent,onStateChange);
 					if(state.exitStateEvent != null)
@@ -681,15 +665,14 @@ package org.axiis.core
 				sprite.addChild(newChildSprite);
 			}
 			_currentItem = Sprite(sprite.getChildAt(_currentIndex));
-			Sprite(sprite.getChildAt(_currentIndex)).name=_tempParentIndex.toString();  //Stores our index releative to the parent
-			datumToSpriteHash[_currentDatum] = _currentItem;
+			
+			trace(name + " " + currentIndex + " " + currentItem + " " + currentDataValue)
 			
 			renderDatum(_currentDatum,_currentItem);
 		}
 		
 		protected function renderDatum(datum:Object,targetSprite:Sprite):void
 		{
-		
 			targetSprite.graphics.clear();
 			
 			if(!geometries)
@@ -709,7 +692,8 @@ package org.axiis.core
 				var drawingBounds:Rectangle = scaleFill
 					? new Rectangle(_bounds.x+geometry.x, _bounds.y+geometry.y,_bounds.width,_bounds.height)
 					: geometry.commandStack.bounds;
-					
+				
+				trace(name + " " +currentIndex + " drawing" + " " + geometry.height);
 				geometry.draw(targetSprite.graphics,drawingBounds);
 			}
 	
@@ -718,9 +702,7 @@ package org.axiis.core
 			{
 				/** TODO WE NEED TO HAVE A CLEAN UP ROUTINE ON DATAPROVIDER CHANGE **/
 				layout.parentLayout = this;
-				layout.render(_currentItem,_currentIndex); //pass in our _currentIndex as parent
-				if (!_childLayoutCachedValues[layout]) _childLayoutCachedValues[layout]=new Array();
-				_childLayoutCachedValues[layout].push(layout.referenceRepeater.cachedValues);
+				layout.render(currentItem);
 			}
 			
 			//Remove any states from the geometry so the next iteration rendering is not affected.
@@ -738,7 +720,6 @@ package org.axiis.core
 				var currSprite:Sprite = Sprite(sprite.getChildAt(a));
 				for each(var state:State in states)
 				{
-				//	trace("adding listeners to " + currSprite.name);
 					if(state.enterStateEvent != null)
 						currSprite.addEventListener(state.enterStateEvent,onStateChange);
 					if(state.exitStateEvent != null)
@@ -780,57 +761,15 @@ package org.axiis.core
 			}
 		}
 		
-		protected function onSpriteMouseClick(event:MouseEvent):void
-		{
-			/*try
-			{
-				selectedItem = event.target as Sprite;
-				selectedIndex = sprite.getChildIndex(selectedItem);
-				selectedDatum = dataProvider[selectedIndex];
-			}
-			catch(e:Error)
-			{
-				trace("embed selection isn't working yet");
-			}*/
-		}
-
-		
-		public function applyIteration(iteration:int, parentIteration:int=-1):void {
-			
-			//If we have a parent layout we rely upon it to set the appropriate cached values
-			if (parentLayout && parentIteration>=0) {
-				parentLayout.applyIteration(parentIteration);    
-				referenceRepeater.applyIteration(iteration,parentLayout.childLayoutCachedValues[this][parentIteration]);
-			}
-			
-			//If we don't have a parent layout we apply our own iteration
-			else {
-				referenceRepeater.applyIteration(iteration);
-			}
-			
-			_currentReference = referenceRepeater.geometry;
-			_currentIndex=iteration;
-			_currentDatum = dataItems[iteration];
-			if (dataField) _currentDataValue = _currentDatum[dataField] else _currentDataValue=_currentDatum;
-			if (labelField) _currentLabelValue = _currentDatum[labelField];
-
-		}
-		
 		protected function onStateChange(event:Event):void
 		{
-			
-		
-			
 			invalidateState(event);
 			
 			// Update the "current" properties
 			_currentItem = Sprite(event.target);
-			_currentIndex = _currentItem.parent.getChildIndex(_currentItem);
 			
-			applyIteration(_currentIndex,int(_currentItem.name));
-			renderDatum(currentDatum,currentItem);
-			
-			trace("stateChange dataValue=" + currentDataValue + " labelValue=" + currentLabelValue);
+			var stateChangeEvent:StateChangeEvent = new StateChangeEvent(StateChangeEvent.STATE_CHANGE);
+			_currentItem.dispatchEvent(stateChangeEvent);
 			
 			// Reset the current reference so things draw in the correct location during the next render
 			_currentReference = null;
@@ -847,8 +786,7 @@ package org.axiis.core
 			newSprite.addEventListener(MouseEvent.MOUSE_DOWN,owner.onItemMouseDown);
 			newSprite.addEventListener(MouseEvent.MOUSE_UP,owner.onItemMouseUp);
 		}
-		
-		
+
 		/**
 		 * Each time a sprite has its state invalidated we re render the whole layout
 		 * the alternative is figuring out a way for each iteration to keep track of its specific geometries (some type of cloning) and only rendering itself
@@ -876,6 +814,47 @@ package org.axiis.core
 					state.remove();
 					_activeStates.splice(y,1);
 				}
+			}
+		}
+		
+		private function handleSubLayoutStateChange(event:StateChangeEvent):void
+		{
+			if(parentLayout)
+				event.addLayoutToChain(this);
+			else
+				renderChain(event.layoutChain,Sprite(event.target));
+		}
+		
+		public function renderChain(chain:Array,targetSprite:Sprite):void
+		{
+			trace("render chain")
+			var parentSprite:Sprite = sprite.parent as Sprite;
+			var ancestorOfTarget:Sprite = targetSprite;
+			while(ancestorOfTarget != parentSprite)
+			{
+				_currentItem = sprite;
+				sprite = ancestorOfTarget as Sprite;
+				ancestorOfTarget = ancestorOfTarget.parent as Sprite;
+			}
+			_currentIndex = sprite.getChildIndex(currentItem);
+			referenceRepeater.applyIteration(currentIndex);
+			_currentReference = referenceRepeater.geometry;
+			_currentDatum = dataItems[currentIndex];
+			_currentDataValue = dataField
+				? _currentDatum[dataField]
+				: _currentDatum;
+							
+			if (labelField)
+				_currentLabelValue = _currentDatum[labelField];
+			
+			if(chain.length == 0)
+			{
+				renderDatum(currentDatum,currentItem);
+			}
+			else
+			{
+				var childLayout:ILayout = chain.pop() as ILayout;
+				childLayout.renderChain(chain,targetSprite);
 			}
 		}
 	}

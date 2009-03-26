@@ -3,8 +3,11 @@
 	implements="org.axiis.core.IAxiisGeometry"
 	y="{_parentLayout.bounds.height}"
 	width="{_parentLayout.currentReference.width}"
-	height="{scale.valueToLayout(_parentLayout.currentDatum[dataField])}"
 	xmlns:degrafa="http://www.degrafa.com/2007">
+	
+	<!-- height="{updateHeight(parentLayout.currentIndex)}" -->
+	<!-- height="{scale.valueToLayout(parentLayout.currentDatum[dataField])}" -->
+	
 	<mx:Script>
 		<![CDATA[
 			import org.axiis.layouts.scale.IScale;
@@ -21,6 +24,12 @@
 			
 			[Inspectable][Bindable]
 			public var scale:IScale;
+			
+			private function updateHeight(currentIndex:Number):Number
+			{
+				trace(" - " + parentLayout["name"] + " " + currentIndex)
+				return scale.valueToLayout(parentLayout.currentDatum[dataField]);
+			}
 			
 		]]>
 	</mx:Script>

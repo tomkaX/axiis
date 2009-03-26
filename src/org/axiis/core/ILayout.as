@@ -2,7 +2,6 @@ package org.axiis.core
 {
 	import com.degrafa.geometry.Geometry;
 	
-	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.IEventDispatcher;
 	import flash.geom.Rectangle;
@@ -10,17 +9,16 @@ package org.axiis.core
 	
 	import org.axiis.DataCanvas;
 	
+	[Bindable]
 	public interface ILayout extends IEventDispatcher
 	{
 		function get itemCount():int;
 		
-		function get childLayoutCachedValues():Dictionary;
-		
 		function set parentLayout(value:ILayout):void;
 		function get parentLayout():ILayout;
 		
-		function set bounds(value:Rectangle):void;
-		function get bounds():Rectangle;
+		function set bounds(value:Bounds):void;
+		function get bounds():Bounds;
 		
 		function set dataProvider(value:Object):void;
 		function get dataProvider():Object;
@@ -83,7 +81,7 @@ package org.axiis.core
 		
 		function get currentReference():Geometry;
 		
-		function applyIteration(iteration:int,parentIteration:int=-1):void;
+		function renderChain(chain:Array,targetSprite:Sprite):void
 		
 		/**
 		 * Registers a DisplayObject as the owner of this ILayout.
@@ -103,10 +101,8 @@ package org.axiis.core
 		 */
 		function getSprite(owner:DataCanvas):Sprite;
 		
-		function initialize():void;
-		
 		function measure():void;
 		
-		function render(sprite:Sprite = null,index:int=-1):void; 
+		function render(sprite:Sprite = null):void; 
 	}
 }

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DataCanvas xmlns="org.axiis.*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:axiis="http://www.axiis.org/2009" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:geometry="org.axiis.charts.geometry.*">
+<DataCanvas xmlns="org.axiis.*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:axiis="http://www.axiis.org/2009" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:geometry="org.axiis.charts.geometry.*" xmlns:layouts="org.axiis.layouts.*">
 
 	<mx:Script>
 		<![CDATA[
 			import org.axiis.layouts.scale.IScale;
 			
+			[Bindable]
 			public var dataField:String;
 			
 			[Bindable]
@@ -12,16 +13,16 @@
 		]]>
 	</mx:Script>
 	
-	<layouts>
-		<axiis:HorizontalBoxLayout id="layout" dataProvider="{dataProvider}" width="{width}" height="{height}">
-			<axiis:geometries>
-				<geometry:Column id="myCol" x="{layout.currentReference.x}" scale="{scale}">
+	<layouts>		
+		<layouts:HorizontalBoxLayout id="layout" dataProvider="{dataProvider}" width="{width}" height="{height}">
+			<layouts:geometries>
+				<geometry:Column id="myCol" x="{layout.currentReference.x}" scale="{scale}" dataField="{dataField}">
 					<geometry:fill>
 						<degrafa:SolidFill color="0xff"/>
 					</geometry:fill>
 				</geometry:Column>
-			</axiis:geometries>
-		</axiis:HorizontalBoxLayout>
+			</layouts:geometries>
+		</layouts:HorizontalBoxLayout>
 	</layouts>
 	
 </DataCanvas>
