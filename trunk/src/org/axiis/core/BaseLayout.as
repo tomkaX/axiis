@@ -613,6 +613,7 @@ package org.axiis.core
 				return;
 			
 			
+			
 			if (useInheritedBounds && parentLayout) {
 				bounds=new Rectangle(parentLayout.currentReference.x+(isNaN(x) ? 0:x),
 									parentLayout.currentReference.y+(isNaN(y) ? 0:y),
@@ -628,22 +629,33 @@ package org.axiis.core
 			
 			_referenceGeometryRepeater.dataProvider=_dataItems;
 			if (_dataItems) _itemCount=_dataItems.length;
-			_referenceGeometryRepeater.repeat(onIteration);
+			
+			if (_dataItems && _dataItems.length > 0) {
+				_currentIndex=-1;
+				_referenceGeometryRepeater.repeat(preIteration, postIteration);
+			}
+			
+		}
+		
+		protected function preIteration():void {
+			
+			_currentIndex++;
+			_currentDatum = dataItems[_currentIndex];
+			if (dataField) _currentDataValue = _currentDatum[dataField] else _currentDataValue=_currentDatum;
+			if (labelField) _currentLabelValue = _currentDatum[labelField];
+			
+			
 		}
 		
 		/**
 		 * TODO we need to handle removing sprites when data is removed from the dataProvider
 		 *  including removing listeneners so they can be garbage collected.
 		 */
-		protected function onIteration():void
+		protected function postIteration():void
 		{
 			// Update the "current" properties
-			_currentIndex = _referenceGeometryRepeater.currentIteration;
-			_currentDatum = dataItems[_currentIndex];
-			if (dataField) _currentDataValue = _currentDatum[dataField] else _currentDataValue=_currentDatum;
-			if (labelField) _currentLabelValue = _currentDatum[labelField];
-			_currentReference = referenceRepeater.geometry;
 			
+			_currentReference = referenceRepeater.geometry;
 			
 			// Add a new Sprite if there isn't one available on the display list.
 			if(_currentIndex > sprite.numChildren - 1)

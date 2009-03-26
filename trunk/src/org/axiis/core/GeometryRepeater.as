@@ -125,11 +125,14 @@ package org.axiis.core
 		private var __currentIteration:int;
 
 		
-		public function repeat(iterationCallback:Function = null):void {
+		public function repeat(preIterationCallback:Function = null, postIterationCallback:Function=null):void {
 			if(dataProvider == null)
 				return;
 				
 			for (var i:int=0; i<dataProvider.length; i++) {
+				if (preIterationCallback !=null) {
+					preIterationCallback.call(this);
+				}
 				_currentDatum=_dataProvider[i];
 				
 				if (_modifiers && _geometry) {
@@ -140,8 +143,8 @@ package org.axiis.core
 				}
 				
 				_currentIteration=i;
-				if(iterationCallback != null)
-					iterationCallback.call(this);
+				if(postIterationCallback != null)
+					postIterationCallback.call(this);
 			}
 			
 			_cachedValues=new Array();
