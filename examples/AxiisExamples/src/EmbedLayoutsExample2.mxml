@@ -25,22 +25,25 @@
 
 	<axiis:DataCanvas id="dataCanvas" width="800" height="800">
 		<axiis:layouts>
-			<axiis:HorizontalBoxLayout id="clusterLayout" name="cluster" width="{dataCanvas.width}" height="{dataCanvas.height}" scaleFill="true">
+			<axiis:HorizontalBoxLayout id="clusterLayout" name="A" width="{dataCanvas.width}" height="{dataCanvas.height}" scaleFill="true" dataField="value">
 				<axiis:geometries>
-					<geometry:Column stroke="{blackStroke}" fill="{fill1}" scale="{scale}" dataField="value"/>
+					<geometry:Column stroke="{blackStroke}" fill="{fill1}" scale="{scale}" dataField="value"
+						height="{scale.valueToLayout(clusterLayout.currentDatum['value'])}"/>
 				</axiis:geometries>
 				<axiis:layouts>
-					<axiis:HorizontalBoxLayout id="columnLayout" dataProvider="{clusterLayout.currentDatum.node}" percentGap="0" x="10" y="5">
+					<axiis:HorizontalBoxLayout id="columnLayout" dataProvider="{clusterLayout.currentDatum.node}" percentGap="0" x="10" y="5" name=" B" dataField="value">
 						<axiis:geometries>
-							<geometry:Column stroke="{blackStroke}" fill="{fill2}" scale="{scale}"  dataField="value"/>
+							<geometry:Column stroke="{blackStroke}" fill="{fill2}" scale="{scale}" dataField="value"
+								height="{scale.valueToLayout(columnLayout.currentDatum['value'])}"/>
 						</axiis:geometries>
 						<axiis:layouts>
-							<axiis:HorizontalBoxLayout id="subColumnLayout"  dataProvider="{columnLayout.currentDatum.node}" y="-5" percentGap="0">
+							<axiis:HorizontalBoxLayout id="subColumnLayout"  dataProvider="{columnLayout.currentDatum.node}" y="-5" percentGap="0" name="  C" dataField="value">
 								<axiis:geometries>
-									<geometry:Column stroke="{blackStroke}" fill="{fill3}" scale="{scale}" x="{subColumnLayout.currentReference.x}" dataField="value"/>
+									<geometry:Column stroke="{blackStroke}" fill="{fill3}" scale="{scale}" x="{subColumnLayout.currentReference.x}" dataField="value"
+										height="{scale.valueToLayout(subColumnLayout.currentDatum['value'])}"/>
 								</axiis:geometries>
 							</axiis:HorizontalBoxLayout>
-						</axiis:layouts>						
+						</axiis:layouts>
 					</axiis:HorizontalBoxLayout>
 				</axiis:layouts>	
 			</axiis:HorizontalBoxLayout>
