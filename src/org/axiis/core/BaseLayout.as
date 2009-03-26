@@ -5,11 +5,9 @@ package org.axiis.core
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
 	
 	import mx.collections.ArrayCollection;
-	import mx.core.FlexSprite;
 	
 	import org.axiis.DataCanvas;
 	import org.axiis.events.LayoutEvent;
@@ -459,7 +457,6 @@ package org.axiis.core
 			if(value != __currentIndex)
 			{
 				__currentIndex = value;
-				trace(name + " change currentIndex " + value)
 				dispatchEvent(new Event("currentIndexChange"));
 			}
 		}
@@ -470,11 +467,11 @@ package org.axiis.core
 		private var __currentIndex:int;
 		
 		[Bindable(event="currentItemChange")]
-		public function get currentItem():Sprite
+		public function get currentItem():AxiisSprite
 		{
 			return _currentItem;
 		}
-		protected function set _currentItem(value:Sprite):void
+		protected function set _currentItem(value:AxiisSprite):void
 		{
 			if(value != __currentItem)
 			{
@@ -482,11 +479,11 @@ package org.axiis.core
 				dispatchEvent(new Event("currentItemChange"));
 			}
 		}
-		protected function get _currentItem():Sprite
+		protected function get _currentItem():AxiisSprite
 		{
 			return __currentItem;
 		}
-		private var __currentItem:Sprite;
+		private var __currentItem:AxiisSprite;
 		
 		[Bindable(event="currentDatumChange")]
 		public function get currentDatum():Object
@@ -575,7 +572,7 @@ package org.axiis.core
 		public function getSprite(owner:DataCanvas):Sprite
 		{
 			if(!sprite)
-				sprite = new FlexSprite();
+				sprite = new AxiisSprite();
 			return sprite;
 		}
 		
@@ -645,13 +642,9 @@ package org.axiis.core
 			// Add a new Sprite if there isn't one available on the display list.
 			if(_currentIndex > sprite.numChildren - 1)
 			{
-				var newChildSprite:Sprite = new FlexSprite();
+				var newChildSprite:Sprite = new AxiisSprite();
 				newChildSprite.doubleClickEnabled=true;
 				newChildSprite.addEventListener(StateChangeEvent.STATE_CHANGE,handleSubLayoutStateChange);
-				
-				//We need to keep track of our parent layout index for single item rendering (i.e. states/tweens)
-				//newChildSprite.name=_tempParentIndex.toString();
-				this.addDataCanvasListeners(newChildSprite);
 				
 				// Add listeners for all the state changing events
 				for each(var state:State in states)
@@ -664,22 +657,21 @@ package org.axiis.core
 				
 				sprite.addChild(newChildSprite);
 			}
-			_currentItem = Sprite(sprite.getChildAt(_currentIndex));
+			_currentItem = AxiisSprite(sprite.getChildAt(_currentIndex));
+			currentItem.data = currentDatum;
 			
-			trace(name + " " + currentIndex + " " + currentItem + " " + currentDataValue)
-			
-			renderDatum(_currentDatum,_currentItem);
+			drawGraphicsToChild(currentItem);
 		}
 		
-		protected function renderDatum(datum:Object,targetSprite:Sprite):void
+		protected function drawGraphicsToChild(child:Sprite):void
 		{
-			targetSprite.graphics.clear();
+			child.graphics.clear();
 			
 			if(!geometries)
 				return;
 			
 			//Apply any states related to the sprite in question by altering the current geometry
-			applyStates(targetSprite);
+			applyStates(child);
 			
 			for each(var geometry:Geometry in geometries)
 			{
@@ -693,8 +685,7 @@ package org.axiis.core
 					? new Rectangle(_bounds.x+geometry.x, _bounds.y+geometry.y,_bounds.width,_bounds.height)
 					: geometry.commandStack.bounds;
 				
-				trace(name + " " +currentIndex + " drawing" + " " + geometry.height);
-				geometry.draw(targetSprite.graphics,drawingBounds);
+				geometry.draw(child.graphics,drawingBounds);
 			}
 	
 			// Apply sublayouts for the targetSprite
@@ -766,25 +757,13 @@ package org.axiis.core
 			invalidateState(event);
 			
 			// Update the "current" properties
-			_currentItem = Sprite(event.target);
+			_currentItem = AxiisSprite(event.target);
 			
 			var stateChangeEvent:StateChangeEvent = new StateChangeEvent(StateChangeEvent.STATE_CHANGE);
 			_currentItem.dispatchEvent(stateChangeEvent);
 			
 			// Reset the current reference so things draw in the correct location during the next render
 			_currentReference = null;
-		}
-		
-		/**
-		 * These listeners will register all sprites for events that can be handled at the DataCanvas level
-		 */
-		protected function addDataCanvasListeners(newSprite:Sprite):void {
-			newSprite.addEventListener(MouseEvent.CLICK,owner.onItemMouseClick);
-			newSprite.addEventListener(MouseEvent.DOUBLE_CLICK,owner.onItemMouseDoubleClick);
-			newSprite.addEventListener(MouseEvent.MOUSE_OVER,owner.onItemMouseOver);
-			newSprite.addEventListener(MouseEvent.MOUSE_OUT,owner.onItemMouseOut);
-			newSprite.addEventListener(MouseEvent.MOUSE_DOWN,owner.onItemMouseDown);
-			newSprite.addEventListener(MouseEvent.MOUSE_UP,owner.onItemMouseUp);
 		}
 
 		/**
@@ -827,12 +806,11 @@ package org.axiis.core
 		
 		public function renderChain(chain:Array,targetSprite:Sprite):void
 		{
-			trace("render chain")
 			var parentSprite:Sprite = sprite.parent as Sprite;
 			var ancestorOfTarget:Sprite = targetSprite;
 			while(ancestorOfTarget != parentSprite)
 			{
-				_currentItem = sprite;
+				_currentItem = sprite as AxiisSprite;
 				sprite = ancestorOfTarget as Sprite;
 				ancestorOfTarget = ancestorOfTarget.parent as Sprite;
 			}
@@ -849,7 +827,7 @@ package org.axiis.core
 			
 			if(chain.length == 0)
 			{
-				renderDatum(currentDatum,currentItem);
+				drawGraphicsToChild(currentItem);
 			}
 			else
 			{
