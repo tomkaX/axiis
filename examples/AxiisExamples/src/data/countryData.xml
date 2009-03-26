@@ -1,4 +1,4 @@
-<someData>
+
 		<country name="USA" competitors="23" totalMedals="41">
             <medal category="swimming" count="13"/> 
             <medal category="running" count="18"/>
@@ -39,4 +39,3 @@
             <medal category="swimming" count="23"/> 
             <medal category="running" count="8"/>
          </country>
-</someData>
