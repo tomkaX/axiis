@@ -8,8 +8,6 @@
 		
 	<mx:Number id="percentGap">.05</mx:Number>
 	
-	<mx:String id="dataField"/>
-	
 	<scale:CategoricalScale dataProvider="{dataItems}" dataField="{dataField}" minLayout="0" maxLayout="{width}"/>
 	<!--  We need to figure out how to implement this scale correctly -->
 	

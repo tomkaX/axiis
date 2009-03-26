@@ -15,7 +15,7 @@ package org.axiis.layouts.scale
 			var percentage:Number = getPercentageBetweenValues(Number(value),Number(minValue),Number(maxValue));
 			percentage = Math.max(0,Math.min(1.0,percentage));
 			
-			trace("value to Layout " + value + " --> " + (percentage * (maxLayout - minLayout) + minLayout).toString());
+			//trace("value to Layout " + value + " --> " + (percentage * (maxLayout - minLayout) + minLayout).toString());
 			
 			return percentage * (maxLayout - minLayout) + minLayout;
 		}

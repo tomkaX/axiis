@@ -8,6 +8,7 @@ package org.axiis
 	
 	import org.axiis.core.ILayout;
 	import org.axiis.events.LayoutEvent;
+	import org.axiis.events.StateChangeEvent;
 	
 	public class DataCanvas extends UIComponent
 	{
@@ -25,6 +26,10 @@ package org.axiis
 		[Bindable]
 		public var palettes:Array = [];
 		
+		public var labelFunction:Function;
+		
+		public var dataFunction:Function;
+		
 		[Bindable(event="dataProviderChange")]
 		public function set dataProvider(value:Object):void
 		{
@@ -41,8 +46,28 @@ package org.axiis
 		}
 		private var _dataProvider:Object;
 		
-		[Bindable]
-		public var layouts:Array = [];
+		[Bindable(event="layoutsChange")]
+		public function set layouts(value:Array):void
+		{
+			if(value != _layouts)
+			{
+				for each(var oldLayout:ILayout in layouts)
+				{
+					oldLayout.removeEventListener(StateChangeEvent.STATE_CHANGE,handleStateChange)
+				}
+				_layouts = value;
+				for each(var newLayout:ILayout in layouts)
+				{
+					newLayout.addEventListener(StateChangeEvent.STATE_CHANGE,handleStateChange,true);
+				}
+				dispatchEvent(new Event("layoutsChange"));
+			}
+		}
+		public function get layouts():Array
+		{
+			return _layouts;
+		}
+		private var _layouts:Array;
 		
 		private var invalidatedLayouts:Array = [];
 		
@@ -103,10 +128,15 @@ package org.axiis
 			super.invalidateDisplayList();
 		}
 		
-		public var labelFunction:Function;
-		
-		public var dataFunction:Function;
-		
+		private function handleStateChange(event:StateChangeEvent):void
+		{
+			trace("state change DataCanvas");
+			for each(var layout:ILayout in event.layoutChain)
+			{
+				trace(" " + layout["name"]);
+			}
+			trace(" " + event.target.name);
+		}
 		
 		/****   ITEM EVENTS ****/
 		public function onItemMouseOver(e:MouseEvent):void {
@@ -114,23 +144,23 @@ package org.axiis
 		}
 		
 		public function onItemMouseOut(e:MouseEvent):void {
-			trace("mouseOut");
+			//trace("mouseOut");
 		}
 		
 		public function onItemMouseDown(e:MouseEvent):void {
-			trace("mouseDown");
+			//trace("mouseDown");
 		}
 		
 		public function onItemMouseUp(e:MouseEvent):void {
-			trace("mouseUp");
+			//trace("mouseUp");
 		}
 
 		public function onItemMouseClick(e:MouseEvent):void {
-			trace("mouseClick");
+			//trace("mouseClick");
 		}
 		
 		public function onItemMouseDoubleClick(e:MouseEvent):void {
-			trace("mouseDoubleClick");
+			//trace("mouseDoubleClick");
 		}
 	}
 }

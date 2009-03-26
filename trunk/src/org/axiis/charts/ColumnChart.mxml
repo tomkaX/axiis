@@ -12,9 +12,16 @@
 	<scale:LinearScale dataProvider="{dataProvider}" dataField="{verticalField}" minLayout="0" maxLayout="{height-100}" minValue="0" id="vScale"/>
 	
 	<layouts>
-		<layouts:HorizontalBoxLayout id="myLayout" scaleFill="false" dataProvider="{dataProvider}" dataField="{horizontalField}" width="{this.width}" height="{this.height-100}" percentGap="{percentGap}">
+		<layouts:HorizontalBoxLayout id="myLayout" scaleFill="false" dataProvider="{dataProvider}" dataField="{verticalField}" width="{this.width}" height="{this.height-100}" percentGap="{percentGap}">
 			<layouts:geometries>
-				<geometry:Column id="myCol" x="{myLayout.currentReference.x}" scale="{vScale}" dataField="{verticalField}" fill="{colFill}" stroke="{myStroke}" labelField="{horizontalField}"/>
+				<geometry:Column id="myCol"
+					x="{myLayout.currentReference.x}"
+					scale="{vScale}"
+					dataField="{verticalField}"
+					fill="{colFill}"
+					stroke="{myStroke}"
+					labelField="{horizontalField}"
+					height="{vScale.valueToLayout(myLayout.currentDatum[verticalField])}"/>
 				
 				<degrafa:RasterText text="{myLayout.currentDatum[horizontalField]}" x="{myLayout.currentReference.x}" width="90" y="{height}" fontSize="16" align="right" fontFamily="Arial" visible="{showLabels}">
 					<degrafa:transform>
