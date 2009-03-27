@@ -21,7 +21,7 @@
 			{
 				var ds:DataSet = new DataSet();
 				ds.processXmlString(countryData);
-				columnChart.dataProvider=ds.data["someData"].country;
+				columnChart.dataProvider=ds.data.country;
 			}
 			
 			private function makeToolTip(data:Object):String

@@ -18,6 +18,7 @@
 				ds.processCsv(payload.toString());
 				trace(ds.rowCount);	
 				dataProvider=ds.data.rows;
+				ds.aggregateCollection("rows.columns",['value']);
 				myCluster.innerLayout.dataFilterFunction=dataFilterFunction;
 				dc.invalidateDisplayList();
 				columnNames=ds.data.header.slice(1,5);

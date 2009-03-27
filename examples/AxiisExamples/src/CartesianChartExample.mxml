@@ -13,10 +13,10 @@
 				var ds:DataSet = new DataSet();
 				ds.processXmlString(countryData);
 				
-				columnChart.dataProvider=ds.data["someData"].country;
+				columnChart.dataProvider=ds.data.country;
 				columnChart.invalidateDisplayList();
 				
-				barChart.dataProvider=ds.data["someData"].country;
+				barChart.dataProvider=ds.data.country;
 				barChart.invalidateDisplayList();
 
 			}
