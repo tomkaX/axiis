@@ -12,7 +12,7 @@
 				
 
 				
-				polarChart.dataProvider=ds.data["someData"].country;
+				polarChart.dataProvider=ds.data.country;
 				polarChart.invalidateDisplayList();
 			}
 		]]>
