@@ -3,14 +3,12 @@ package org.axiis
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.utils.getTimer;
 	
-	import mx.core.ClassFactory;
 	import mx.core.IFactory;
 	import mx.core.IToolTip;
 	import mx.core.UIComponent;
 	import mx.managers.ToolTipManager;
-	import mx.skins.halo.ToolTipBorder;
-	import mx.styles.IStyleClient;
 	
 	import org.axiis.core.AxiisSprite;
 	import org.axiis.core.ILayout;
@@ -104,12 +102,17 @@ package org.axiis
 		
 		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
 		{
+			var t:Number=flash.utils.getTimer();
+			trace("DataCanvas.updateDisplayList() starting ...");
 			super.updateDisplayList(unscaledWidth,unscaledHeight);
+			
 			while(invalidatedLayouts.length > 0)
 			{
 				var layout:ILayout = ILayout(invalidatedLayouts.pop());
 				layout.render();
 			}
+			trace("DataCanvas.updateDisplayList = " + (flash.utils.getTimer()-t) + " milliseconds");
+
 		}
 		
 		protected function handleLayoutInvalidate(event:LayoutEvent):void

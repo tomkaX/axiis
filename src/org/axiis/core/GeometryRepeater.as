@@ -150,7 +150,7 @@ package org.axiis.core
 				if(postIterationCallback != null)
 					postIterationCallback.call(this);
 				
-				trace("geometry.arc=" + geometry["arc"] + " geometry.startAngle=" + geometry["startAngle"]);
+			//	trace("geometry.arc=" + geometry["arc"] + " geometry.startAngle=" + geometry["startAngle"]);
 			}
 			
 			_cachedValues=new Array();
