@@ -6,6 +6,8 @@ package org.axiis.core
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.geom.Rectangle;
+	import flash.utils.getDefinitionByName;
+	import flash.utils.getTimer;
 	
 	import mx.collections.ArrayCollection;
 	
@@ -587,6 +589,7 @@ package org.axiis.core
 		
 		public function render(newSprite:Sprite = null):void
 		{
+			var t:Number=flash.utils.getTimer();
 			if(newSprite)
 				this.sprite = newSprite;
 				
@@ -616,6 +619,7 @@ package org.axiis.core
 				_currentIndex=-1;
 				_referenceGeometryRepeater.repeat(preIteration, postIteration);
 			}
+			trace("BaseLayout.render() = " + (flash.utils.getTimer()-t) + " milliseconds");
 		}
 		
 		protected function preIteration():void
@@ -668,6 +672,8 @@ package org.axiis.core
 		
 		protected function drawGraphicsToChild(child:Sprite):void
 		{
+			var t:Number=flash.utils.getTimer();
+			
 			child.graphics.clear();
 			
 			if(!geometries)
@@ -700,12 +706,11 @@ package org.axiis.core
 				layout.render(currentItem);
 			}
 			
-			
-			if (!parentLayout) {
-				trace("stop here");
-			}
+		
 			//Remove any states from the geometry so the next iteration rendering is not affected.
 			removeStates();
+			
+			trace("BaseLayout.drawGraphics() = " + (flash.utils.getTimer()-t) + " milliseconds");
 		}
 		
 		private function addListenersForStates(states:Array):void

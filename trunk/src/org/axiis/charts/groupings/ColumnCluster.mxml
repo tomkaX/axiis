@@ -4,7 +4,6 @@
 	xmlns:core="org.axiis.core.*"
 	xmlns:layouts="org.axiis.layouts.*"
 	xmlns:scale="org.axiis.layouts.scale.*"
-	xmlns:geometry="org.axiis.layouts.geometry.*"
 	xmlns:states="org.axiis.states.*">
 	
 	<!-- public variables -->
