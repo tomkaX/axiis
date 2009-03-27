@@ -95,24 +95,30 @@ package org.axiis
 			measuredHeight = 400;
 		}
 		
+		private var _invalidated:Boolean=false;
+		
 		override public function invalidateDisplayList():void
 		{
-			invalidateAllLayouts();
+			if (!_invalidated)
+				invalidateAllLayouts();
+			
+			_invalidated=true;
 		} 
 		
 		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
 		{
-			var t:Number=flash.utils.getTimer();
-			trace("DataCanvas.updateDisplayList() starting ...");
+			//var t:Number=flash.utils.getTimer();
+			//trace("DataCanvas.updateDisplayList() starting ...");
 			super.updateDisplayList(unscaledWidth,unscaledHeight);
 			
 			while(invalidatedLayouts.length > 0)
 			{
 				var layout:ILayout = ILayout(invalidatedLayouts.pop());
+				//trace("rendering layout");
 				layout.render();
 			}
-			trace("DataCanvas.updateDisplayList = " + (flash.utils.getTimer()-t) + " milliseconds");
-
+			//trace("DataCanvas.updateDisplayList = " + (flash.utils.getTimer()-t) + " milliseconds");
+			_invalidated=false;
 		}
 		
 		protected function handleLayoutInvalidate(event:LayoutEvent):void
