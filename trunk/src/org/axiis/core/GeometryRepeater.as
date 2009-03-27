@@ -129,7 +129,11 @@ package org.axiis.core
 			if(dataProvider == null)
 				return;
 				
+			_currentIteration=0;
+			
+			
 			for (var i:int=0; i<dataProvider.length; i++) {
+				
 				if (preIterationCallback !=null) {
 					preIterationCallback.call(this);
 				}
@@ -145,6 +149,8 @@ package org.axiis.core
 				_currentIteration=i;
 				if(postIterationCallback != null)
 					postIterationCallback.call(this);
+				
+				trace("geometry.arc=" + geometry["arc"] + " geometry.startAngle=" + geometry["startAngle"]);
 			}
 			
 			_cachedValues=new Array();

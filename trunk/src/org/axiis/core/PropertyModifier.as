@@ -116,7 +116,7 @@ package  org.axiis.core {
 			//Expects a geometry array
 			
 			if (_modifyInProgress) return;
-			resetValues(); //If we have used our cache we want to reset our values;
+			//resetValues(); //If we have used our cache we want to reset our values;
 			_sourceObject=sourceObject;
 			setTargetProperty(_sourceObject);
 			_iteration=0;
@@ -134,7 +134,7 @@ package  org.axiis.core {
 			for (var i:int=0;i<targets.length;i++) {
 				if (targets[i] is Geometry) Geometry(targets[i]).suppressEventProcessing=false;
 			}
-			_iteration=0;
+			_iteration=-1;
 			_modifyInProgress=false;
 		}
 		

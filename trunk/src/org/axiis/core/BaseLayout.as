@@ -620,14 +620,16 @@ package org.axiis.core
 		
 		protected function preIteration():void
 		{
+			
 			_currentIndex++;
 			_currentDatum = dataItems[_currentIndex];
 			if (dataField)
-				_currentDataValue = _currentDatum[dataField]
+				_currentDataValue = _currentDatum[dataField];
 			else
 				_currentDataValue=_currentDatum;
 			if (labelField)
 				_currentLabelValue = _currentDatum[labelField];
+
 		}
 		
 		/**
@@ -636,7 +638,7 @@ package org.axiis.core
 		 */
 		protected function postIteration():void
 		{
-			// Update the "current" properties
+
 			_currentReference = referenceRepeater.geometry;
 			
 			// Add a new Sprite if there isn't one available on the display list.
@@ -659,6 +661,7 @@ package org.axiis.core
 			}
 			_currentItem = AxiisSprite(sprite.getChildAt(_currentIndex));
 			currentItem.data = currentDatum;
+			
 			
 			drawGraphicsToChild(currentItem);
 		}
@@ -687,6 +690,7 @@ package org.axiis.core
 				
 				geometry.draw(child.graphics,drawingBounds);
 			}
+
 	
 			// Apply sublayouts for the targetSprite
 			for each(var layout:ILayout in layouts)
@@ -696,6 +700,10 @@ package org.axiis.core
 				layout.render(currentItem);
 			}
 			
+			
+			if (!parentLayout) {
+				trace("stop here");
+			}
 			//Remove any states from the geometry so the next iteration rendering is not affected.
 			removeStates();
 		}
