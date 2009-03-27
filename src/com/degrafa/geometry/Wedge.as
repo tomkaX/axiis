@@ -141,12 +141,13 @@ package com.degrafa.geometry {
 			}
 		}
 		
-		
+
 		private var _centerX:Number;
 		/**
 		* The centerX-acenterXis coordinate of the upper left point of the arcs enclosure. If not specified 
 		* a default value of 0 is used.
 		**/
+
 	    public function get centerX():Number{
 			if(!_centerX){return 0;}
 			return _centerX;
@@ -158,6 +159,7 @@ package com.degrafa.geometry {
 			}
 		}
 		
+
 		private var _centerY:Number;
 		/**
 		* The centerY-axis coordinate of the upper left point of the arcs enclosure. If not specified 
@@ -174,11 +176,13 @@ package com.degrafa.geometry {
 			}
 		}
 		
+
 		private var _startAngle:Number;
 		/**
 		* The beginning angle of the arc. If not specified 
 		* a default value of 0 is used.
 		**/
+
 		public function get startAngle():Number{
 			if(!_startAngle){return 0;}
 			return _startAngle;
@@ -190,12 +194,13 @@ package com.degrafa.geometry {
 			}
 		}
 		
-		
+
 		private var _arc:Number;
 		/**
 		* The angular extent of the arc. If not specified 
 		* a default value of 0 is used.
 		**/
+
 		public function get arc():Number{
 			if(!_arc){return 0;}
 			return _arc;
@@ -436,6 +441,9 @@ package com.degrafa.geometry {
 			if (!_startAngle){_startAngle = value.startAngle;}
 			if (!_arc){_arc = value.arc;}
 			if (!_innerRadius){_innerRadius = value.innerRadius;}
+			if (!_outerRadius){_outerRadius = value.outerRadius;}
+			if (!_centerX){_centerX = value.centerX;}
+			if (!_centerY){_centerY = value.centerY;}
 			
 		}
 		
