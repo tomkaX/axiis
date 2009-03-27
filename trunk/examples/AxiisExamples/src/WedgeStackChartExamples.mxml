@@ -51,7 +51,7 @@
 					<!-- innerRepeater: the reference repeater wedge for the inner ring of wedges -->
 					<core:GeometryRepeater dataProvider="{wedgeLayout.dataItems}" id="innerRepeater" >
 						<core:geometry>
-							<geometry:Wedge  id="wedge" centerX="{wedgeLayout.width/2}" centerY="{wedgeLayout.width/2}" outerRadius="{(wedgeLayout.width/2)*.5}" outerRadius="{(wedgeLayout.width/2)*.7}" startAngle="360" arc="1"/>
+							<geometry:Wedge  id="wedge" centerX="{wedgeLayout.width/2}" centerY="{wedgeLayout.width/2}" innerRadius="{(wedgeLayout.width/2)*.5}" outerRadius="{(wedgeLayout.width/2)*.7}" startAngle="360" arc="1"/>
 						</core:geometry>
 						<core:modifiers>
 							<core:PropertyModifier targets="{[wedge]}" property="arc" modifier="{wedgeScale.valueToLayout(wedgeLayout.currentDataValue)-angleGap}" modifierOperator="none"/>
@@ -62,7 +62,7 @@
 				<core:geometries>
 					<!-- wedgeRenderer: the drawing geometry for the inner ring of wedges -->
 					<geometry:Wedge x="0" y="0" id="wedgeRenderer"
-					    outerRadius="{wedgeLayout.currentReference['outerRadius']}" outerRadius="{wedgeLayout.currentReference['outerRadius']}"
+					    innerRadius="{wedgeLayout.currentReference['innerRadius']}" outerRadius="{wedgeLayout.currentReference['outerRadius']}"
  						startAngle="{wedgeLayout.currentReference['startAngle']}" arc="{wedgeLayout.currentReference['arc']}" 
  						centerX="{wedgeLayout.currentReference['centerX']}" centerY="{wedgeLayout.currentReference['centerY']}"
 						fill="{wedgeFill}"><geometry:stroke><degrafa:SolidStroke color="0" pixelHinting="true"/></geometry:stroke></geometry:Wedge>  
@@ -74,7 +74,7 @@
 							<!-- outerRepeater:  the reference geometry for the outer ring of wedges -->
 							<core:GeometryRepeater dataProvider="{outerWedgeLayout.dataItems}" id="outerRepeater">
 								<core:geometry>
-									<geometry:Wedge  id="outerWedge" centerX="{wedgeLayout.width/2}" centerY="{wedgeLayout.width/2}" outerRadius="{(wedgeLayout.width/2)*.7}" outerRadius="{(wedgeLayout.width/2)}" startAngle="{wedgeLayout.currentReference['startAngle']}" arc="{wedgeScale.valueToLayout(outerWedgeLayout.currentDataValue)}"/>
+									<geometry:Wedge  id="outerWedge" centerX="{wedgeLayout.width/2}" centerY="{wedgeLayout.width/2}" innerRadius="{(wedgeLayout.width/2)*.7}" outerRadius="{(wedgeLayout.width/2)}" startAngle="{wedgeLayout.currentReference['startAngle']}" arc="{wedgeScale.valueToLayout(outerWedgeLayout.currentDataValue)}"/>
 								</core:geometry>
 								<core:modifiers>
 									<core:PropertyModifier targets="{[outerWedge]}" property="arc" modifier="{wedgeScale.valueToLayout(outerWedgeLayout.currentDataValue)-angleGap}" modifierOperator="none"/>
@@ -85,7 +85,7 @@
 						<core:geometries>
 								<!-- outerWedgeRenderer:  the drawing geometry for the outer ring of wedges -->
 								<geometry:Wedge x="0" y="0" id="outerWedgeRenderer"
-								    outerRadius="{outerWedgeLayout.currentReference['outerRadius']}" outerRadius="{outerWedgeLayout.currentReference['outerRadius']}"
+								    innerRadius="{outerWedgeLayout.currentReference['innerRadius']}" outerRadius="{outerWedgeLayout.currentReference['outerRadius']}"
 		 							startAngle="{outerWedgeLayout.currentReference['startAngle']}" arc="{outerWedgeLayout.currentReference['arc']}" 
 		 							centerX="{outerWedgeLayout.currentReference['centerX']}" centerY="{outerWedgeLayout.currentReference['centerY']}"
 									fill="{outerWedgeFill}"><geometry:stroke><degrafa:SolidStroke color="0" pixelHinting="true"/></geometry:stroke></geometry:Wedge> 
