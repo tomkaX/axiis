@@ -29,6 +29,10 @@
 	
 	<mx:String id="countryData" source="data/countryData.xml"/>
 	<mx:Number id="angleGap">.5</mx:Number>
+	<mx:Number id="innerRadi1">.5</mx:Number>
+	<mx:Number id="innerRadi2">.79</mx:Number>
+	<mx:Number id="outerRadi1">.8</mx:Number>
+	<mx:Number id="outerRadi2">1</mx:Number>
 	
 	<mx:Object id="dataProvider"/>
 	<axiis:LinearScale id="wedgeScale" minLayout="0" maxLayout="{360-wedgeLayout.itemCount*angleGap}" minValue="0" dataProvider="{dataProvider}" />
@@ -51,7 +55,7 @@
 					<!-- innerRepeater: the reference repeater wedge for the inner ring of wedges -->
 					<core:GeometryRepeater dataProvider="{wedgeLayout.dataItems}" id="innerRepeater" >
 						<core:geometry>
-							<geometry:Wedge  id="wedge" centerX="{wedgeLayout.width/2}" centerY="{wedgeLayout.width/2}" innerRadius="{(wedgeLayout.width/2)*.5}" outerRadius="{(wedgeLayout.width/2)*.7}" startAngle="360" arc="1"/>
+							<geometry:Wedge  id="wedge" centerX="{wedgeLayout.width/2}" centerY="{wedgeLayout.width/2}" innerRadius="{(wedgeLayout.width/2)*innerRadi1}" outerRadius="{(wedgeLayout.width/2)*innerRadi2}" startAngle="360" arc="1"/>
 						</core:geometry>
 						<core:modifiers>
 							<core:PropertyModifier targets="{[wedge]}" property="arc" modifier="{wedgeScale.valueToLayout(wedgeLayout.currentDataValue)-angleGap}" modifierOperator="none"/>
@@ -74,7 +78,8 @@
 							<!-- outerRepeater:  the reference geometry for the outer ring of wedges -->
 							<core:GeometryRepeater dataProvider="{outerWedgeLayout.dataItems}" id="outerRepeater">
 								<core:geometry>
-									<geometry:Wedge  id="outerWedge" centerX="{wedgeLayout.width/2}" centerY="{wedgeLayout.width/2}" innerRadius="{(wedgeLayout.width/2)*.7}" outerRadius="{(wedgeLayout.width/2)}" startAngle="{wedgeLayout.currentReference['startAngle']}" arc="{wedgeScale.valueToLayout(outerWedgeLayout.currentDataValue)}"/>
+									<geometry:Wedge  id="outerWedge" centerX="{wedgeLayout.width/2}" centerY="{wedgeLayout.width/2}" innerRadius="{(wedgeLayout.width/2)*outerRadi1}" outerRadius="{(wedgeLayout.width/2)*outerRadi2}" 
+										startAngle="{wedgeLayout.currentReference['startAngle']}" arc="{wedgeScale.valueToLayout(outerWedgeLayout.currentDataValue)}"/>
 								</core:geometry>
 								<core:modifiers>
 									<core:PropertyModifier targets="{[outerWedge]}" property="arc" modifier="{wedgeScale.valueToLayout(outerWedgeLayout.currentDataValue)-angleGap}" modifierOperator="none"/>
@@ -95,4 +100,6 @@
 			</core:BaseLayout>
 		</axiis:layouts>
 	</axiis:DataCanvas>
+	
+	<mx:Button click="{dc.width=dc.width-10;dc.height-=10;}" label="update"/>
 </mx:Application>
