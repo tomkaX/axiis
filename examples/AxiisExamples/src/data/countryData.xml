@@ -11,14 +11,17 @@
          <country name="UK" competitors="51" totalMedals="111">           
             <medal category="swimming" count="13"/> 
             <medal category="running" count="5"/>
+            <medal category="swimming" count="23"/> 
+            <medal category="running" count="18"/>
+            <medal category="running" count="9"/>
          </country>
          <country name="Russia" competitors="15" totalMedals="51">           
             <medal category="swimming" count="17"/> 
             <medal category="running" count="8"/>
          </country>
          <country name="France" competitors="45" totalMedals="24">           
-            <medal category="swimming" count="23"/> 
-            <medal category="running" count="8"/>
+            <medal category="swimming" count="13"/> 
+            <medal category="running" count="5"/>
          </country>
          <country name="Germany" competitors="123" totalMedals="27">
             <medal category="swimming" count="13"/> 
@@ -35,6 +38,8 @@
          <country name="Japan" competitors="85" totalMedals="16">           
             <medal category="swimming" count="23"/> 
             <medal category="running" count="8"/>
+            <medal category="swimming" count="13"/> 
+            <medal category="running" count="5"/>
          </country>
          <country name="Peru" competitors="25" totalMedals="9">           
             <medal category="swimming" count="20"/> 
