@@ -27,7 +27,8 @@
 			
 	<fills>
 		<degrafa:LinearGradientFill id="barFill" angle="0">
-			<degrafa:GradientStop color="0xFFFFFF" alpha=".9"/><degrafa:GradientStop color="0xFFFFFF" alpha=".3"/>
+			<degrafa:GradientStop color="0xFFFF44"/>
+			<degrafa:GradientStop color="0x888833"/>
 		</degrafa:LinearGradientFill>
 	</fills>
 	

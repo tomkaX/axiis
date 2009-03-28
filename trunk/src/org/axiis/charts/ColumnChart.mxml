@@ -5,7 +5,7 @@
 	<mx:String id="horizontalField"/>
 	 
 	<mx:Boolean id="alignBottom">true</mx:Boolean>
-	<mx:Number id="percentGap">0</mx:Number>
+	<mx:Number id="percentGap">.05</mx:Number>
 	
 	<mx:Boolean id="showLabels">true</mx:Boolean>
 	
@@ -16,12 +16,13 @@
 			<layouts:geometries>
 				<geometry:Column id="myCol"
 					x="{myLayout.currentReference.x}"
+					y="{myLayout.height-vScale.valueToLayout(myLayout.currentDataValue)}"
 					scale="{vScale}"
 					dataField="{verticalField}"
 					fill="{colFill}"
 					stroke="{myStroke}"
 					labelField="{horizontalField}"
-					height="{vScale.valueToLayout(myLayout.currentDatum[verticalField])}"/>
+					height="{vScale.valueToLayout(myLayout.currentDataValue)}"/>
 				
 				<degrafa:RasterText text="{myLayout.currentDatum[horizontalField]}" x="{myLayout.currentReference.x}" width="90" y="{height}" fontSize="16" align="right" fontFamily="Arial" visible="{showLabels}">
 					<degrafa:transform>
@@ -41,8 +42,9 @@
 				
 	<fills>
 		<degrafa:SolidFill color="0xDDDD00" alpha=".6" id="rollOverFill"/>
-		<degrafa:LinearGradientFill id="colFill" angle="-90">
-			<degrafa:GradientStop color="0xFFFFFF" alpha=".9"/><degrafa:GradientStop color="0xFFFFFF" alpha=".3"/>
+		<degrafa:LinearGradientFill id="colFill" angle="90">
+				<degrafa:GradientStop color="0x4477FF"/>
+				<degrafa:GradientStop color="0x333388"/>
 		</degrafa:LinearGradientFill>
 	</fills>
 	

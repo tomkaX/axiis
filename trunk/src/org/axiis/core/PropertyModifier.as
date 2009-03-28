@@ -187,6 +187,8 @@ package  org.axiis.core {
 			
 		}
 		
+		private var _cacheUsed:Boolean=false;
+		
 		public function applyCachedIteration(iteration:int, values:Array=null):void {
 			
 			if (values) _cachedValues=values;
@@ -196,13 +198,17 @@ package  org.axiis.core {
 			for (var i:int=0;i<_targetObjects.length;i++) {
 				_targetObjects[i][_targetProperties[i]]=_cachedValues[iteration][i];
 			}
+			//_cacheUsed=true;
 		}
 		
 		private function resetValues():void {
-			if (!_targetObjects) return;
-			for (var i:int=0;i<_targetObjects.length;i++) {
-				_targetObjects[i][_targetProperties[i]]=_originalValues[i];
-			}
+			//if (_cacheUsed) {
+				if (!_targetObjects) return;
+				for (var i:int=0;i<_targetObjects.length;i++) {
+					_targetObjects[i][_targetProperties[i]]=_originalValues[i];
+				}
+			//	_cacheUsed=false;
+			//}
 		}
 		
 		/**
