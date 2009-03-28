@@ -2,7 +2,7 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:charts="org.axiis.charts.*" 
 	layout="absolute"
 	creationComplete="start();" xmlns:core="org.axiis.core.*" xmlns:axiis="http://www.axiis.org/2009"
-	 backgroundGradientColors="[0xFFFFFF,0xDDDDDD]"
+	 backgroundGradientColors="[0xDDDDDD,0xF5F5F5]"
 	xmlns:geometry="com.degrafa.geometry.*" xmlns:paint="org.axiis.paint.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:states="org.axiis.states.*">
 	<mx:Style>
 		ToolTip
@@ -34,11 +34,11 @@
 			{
 				if(data["competitors"] != null && data["name"] != null)
 				{
-					return "<b>" + data["name"] + "</b><br/>" + data["competitors"];
+					return "<b>" + data["name"] + " Total Medals</b><br/>" + data["competitors"];
 				}
 				else if(data["count"] != null && data["category"] != null)
 				{
-					return "<b>" + data["category"] + "</b><br/>" + data["count"];
+					return "<b>" + data["category"] + " Total Medals</b><br/>" + data["count"];
 				}
 				return "";
 			}
@@ -48,7 +48,7 @@
 	
 	<mx:String id="countryData" source="data/countryData.xml"/>
 	<mx:Number id="angleGap">.5</mx:Number>
-	<mx:Number id="innerRadi1">.5</mx:Number>
+	<mx:Number id="innerRadi1">.4</mx:Number>
 	<mx:Number id="innerRadi2">.8</mx:Number>
 	<mx:Number id="outerRadi1">.8</mx:Number>
 	<mx:Number id="outerRadi2">1</mx:Number>
@@ -58,7 +58,8 @@
 	<axiis:LinearScale id="outerWedgeScale" minLayout="0" maxLayout="{wedgeLayout.currentReference['arc']}" minValue="0" dataProvider="{wedgeLayout.currentDatum}" maxValue="{wedgeLayout.currentDatum['medal_count_sum']}"/>
 	
 	
-	<axiis:DataCanvas width="{this.height*.6}" height="{this.height*.6}" verticalCenter="0" horizontalCenter="0" id="dc" showToolTips="true" toolTipFunction="{dataTipFunction}">
+	<axiis:DataCanvas id="dc" width="{this.height*.6}" height="{this.height*.6}" verticalCenter="0" horizontalCenter="0"  
+		showToolTips="true" toolTipFunction="{dataTipFunction}" filters="{[new DropShadowFilter(8,45,0,.5,8,8)]}">
 		<axiis:layouts>
 			<!-- wedgeLayout:  This renders the inner ring of wedges -->
 			<core:BaseLayout dataProvider="{dataProvider}" width="{dc.width}" height="{dc.width}" id="wedgeLayout" dataField="medal_count_sum">
@@ -114,15 +115,20 @@
 			</core:BaseLayout>
 		</axiis:layouts>
 		<axiis:palettes>
-			<paint:LayoutPalette colorFrom="0xFF0000" colorTo="0x0000FF" target="{wedgeLayout}" id="wedgePalette"/>
-			<paint:LayoutPalette colorFrom="{wedgePalette.currentColor | 0x111111}" colorTo="{wedgePalette.currentColor | 0x333333}" target="{outerWedgeLayout}" id="outerWedgePalette"/>
+			<paint:LayoutPalette colorFrom="0xFF0000" colorTo="0x0000BB" target="{wedgeLayout}" id="wedgePalette"/>
+			<paint:LayoutPalette colorFrom="{wedgePalette.currentColor | 0x111111}" colorTo="{wedgePalette.currentColor | 0x353535}" target="{outerWedgeLayout}" id="outerWedgePalette"/>
 		</axiis:palettes>
 		<axiis:fills>
-			<degrafa:SolidFill color="{wedgePalette.currentColor}" id="wedgeFill" alpha="1"/>
+			<degrafa:RadialGradientFill  id="wedgeFill" cx="{wedgeLayout.width/2}" cy="{wedgeLayout.width/2}" radius="{(wedgeLayout.width/2)*innerRadi2}">
+				<degrafa:GradientStop color="{wedgePalette.currentColor | 0x333333}" ratio=".6" />
+				<degrafa:GradientStop  color="{wedgePalette.currentColor}" />
+			</degrafa:RadialGradientFill>
+			<degrafa:SolidFill color="{wedgePalette.currentColor}" alpha="1"/>
 			<degrafa:SolidFill color="{outerWedgePalette.currentColor}" id="outerWedgeFill" alpha="1"/>
 			<degrafa:SolidFill color="0xFFFF00" id="rollOverFill" alpha=".9"/>
 		</axiis:fills>
 	</axiis:DataCanvas>
+	
 	
 	<mx:Button click="{dc.width=dc.width-10;dc.height-=10;}" label="update"/>
 </mx:Application>
