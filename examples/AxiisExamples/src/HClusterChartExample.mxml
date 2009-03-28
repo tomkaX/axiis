@@ -54,7 +54,6 @@
 			<degrafa:LinearGradientStroke id="stroke1" angle="-45">
 				<degrafa:GradientStop color="0xFFFFFF" alpha="1"/><degrafa:GradientStop color="0" alpha=".3"/>
 			</degrafa:LinearGradientStroke>
-			<degrafa:SolidStroke id="myStroke" weight="1" color="white" alpha=".5"/>
 		</axiis:strokes>
 	</axiis:DataCanvas>
 	

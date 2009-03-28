@@ -44,9 +44,9 @@
 								</axiis:geometries>
 							</axiis:HorizontalBoxLayout>
 						</axiis:layouts>
-						<axiis:states>
+						<!--axiis:states>
 							<states:State enterStateEvent="mouseOver" exitStateEvent="mouseOut" targets="{[subColumn]}" properties="[fill]" values="{[rollOverFill]}"/>
-						</axiis:states>
+						</axiis:states-->
 					</axiis:HorizontalBoxLayout>
 				</axiis:layouts>	
 			</axiis:HorizontalBoxLayout>
