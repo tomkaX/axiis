@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
-	xmlns:charts="org.axiis.charts.*" 
+	xmlns:charts="org.axiis.charts.*"  	 backgroundGradientColors="[0xFFFFFF,0xDDDDDD]"
 	layout="absolute"
 	creationComplete="start();">
 	
