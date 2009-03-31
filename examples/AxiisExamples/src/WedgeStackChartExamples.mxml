@@ -3,7 +3,7 @@
 	layout="absolute"
 	creationComplete="start();" xmlns:core="org.axiis.core.*" xmlns:axiis="http://www.axiis.org/2009"
 	 backgroundGradientColors="[0xDDDDDD,0xF5F5F5]"
-	xmlns:geometry="com.degrafa.geometry.*" xmlns:paint="org.axiis.paint.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:states="org.axiis.states.*">
+	xmlns:geometry="com.degrafa.geometry.*" xmlns:paint="org.axiis.paint.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:states="org.axiis.states.*" xmlns:utils="org.axiis.utils.*">
 	<mx:Style>
 		ToolTip
 		{
@@ -43,26 +43,61 @@
 				return "";
 			}
 			
+			private function transposeLabel(wedge:Object):Boolean {
+			
+				
+				if( (wedge.startAngle + wedge.arc/2) > 90  && (wedge.startAngle + wedge.arc/2) < 270) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+			
+			
 		]]>
 	</mx:Script>
+	<mx:Style source="styles/Axiis_Examples.css"/>
 	
-	<mx:String id="countryData" source="data/countryData.xml"/>
+	
+	<mx:String id="countryData" source="data/2008_Olympics.xml"/>
 	<mx:Number id="angleGap">.5</mx:Number>
-	<mx:Number id="innerRadi1">.4</mx:Number>
+	<mx:Number id="innerRadi1">.35</mx:Number>
 	<mx:Number id="innerRadi2">.8</mx:Number>
 	<mx:Number id="outerRadi1">.8</mx:Number>
 	<mx:Number id="outerRadi2">1</mx:Number>
+	
+	<utils:NumericExpression id="outerRadius" value="{(dc.width/2)*outerRadi2}"/>
+	<utils:NumericExpression id="center" value="{boundsRadius.value/2}"/>
+	<utils:NumericExpression id="boundsRadius" value="{Math.min(this.height,this.width)*.6}"/>
 	
 	<mx:Object id="dataProvider"/>
 	<axiis:LinearScale id="wedgeScale" minLayout="0" maxLayout="{360-wedgeLayout.itemCount*angleGap}" minValue="0" dataProvider="{dataProvider}" />
 	<axiis:LinearScale id="outerWedgeScale" minLayout="0" maxLayout="{wedgeLayout.currentReference['arc']}" minValue="0" dataProvider="{wedgeLayout.currentDatum}" maxValue="{wedgeLayout.currentDatum['medal_count_sum']}"/>
 	
+	<degrafa:Surface width="100%" height="100%">
+		<degrafa:GeometryGroup width="{this.width}" height="{this.height}">
+			<degrafa:RegularRectangle width="100%" height="100%">
+				<degrafa:fill>
+					<degrafa:LinearGradientFill angle="90">
+						<degrafa:GradientStop color="#3e3e3e" ratio="0"/>
+						<degrafa:GradientStop color="#e6e6e6" ratio=".55"/>
+						<degrafa:GradientStop color="#a5a5a5" ratio="1"/>
+					</degrafa:LinearGradientFill>
+				</degrafa:fill>
+			</degrafa:RegularRectangle>
+ 		</degrafa:GeometryGroup>
+	</degrafa:Surface>
 	
-	<axiis:DataCanvas id="dc" width="{this.height*.6}" height="{this.height*.6}" verticalCenter="0" horizontalCenter="0"  
-		showToolTips="true" toolTipFunction="{dataTipFunction}" filters="{[new DropShadowFilter(8,45,0,.5,8,8)]}">
+	<mx:Label fontSize="22" fontFamily="Myriad Pro" htmlText="&lt;b&gt;Axiis&lt;/b&gt; - Radial Wedge Graph" top="10" right="10" color="0xFFFFFF"/>
+	
+	<axiis:DataCanvas id="dc" width="{boundsRadius.value}" height="{boundsRadius.value}" verticalCenter="0" horizontalCenter="0" 
+		showToolTips="true" toolTipFunction="{dataTipFunction}">
 		<axiis:layouts>
 			<!-- wedgeLayout:  This renders the inner ring of wedges -->
-			<core:BaseLayout dataProvider="{dataProvider}" width="{dc.width}" height="{dc.width}" id="wedgeLayout" dataField="medal_count_sum">
+			<core:BaseLayout id="wedgeLayout" dataProvider="{dataProvider}" width="{dc.width}" height="{dc.width}"  dataField="medal_count_sum" labelField="name"
+				itemPreDraw="{innerLabel.width=innerLabel.textWidth+40; if (transposeLabel(wedgeLayout.currentReference)==true) innerLabel.right=(outerRadius.value-wedgeRenderer.outerRadius) + innerLabel.textWidth + 8; else innerLabel.right=outerRadius.value-wedgeRenderer.outerRadius+7;}"
+				>
 				<core:referenceRepeater>
 					<!-- innerRepeater: the reference repeater wedge for the inner ring of wedges -->
 					<core:GeometryRepeater dataProvider="{wedgeLayout.dataItems}" id="innerRepeater" >
@@ -77,15 +112,32 @@
 				</core:referenceRepeater>
 				<core:geometries>
 					<!-- wedgeRenderer: the drawing geometry for the inner ring of wedges -->
-					<geometry:Wedge x="0" y="0" id="wedgeRenderer"
+					<geometry:Wedge x="0" y="0" id="wedgeRenderer" 
 					    innerRadius="{wedgeLayout.currentReference['innerRadius']}" outerRadius="{wedgeLayout.currentReference['outerRadius']}"
  						startAngle="{wedgeLayout.currentReference['startAngle']}" arc="{wedgeLayout.currentReference['arc']}" 
  						centerX="{wedgeLayout.currentReference['centerX']}" centerY="{wedgeLayout.currentReference['centerY']}"
-						fill="{wedgeFill}"><geometry:stroke><degrafa:SolidStroke color="0" pixelHinting="true" alpha=".8"/></geometry:stroke></geometry:Wedge>  
+						fill="{wedgeFill}"><geometry:stroke><degrafa:SolidStroke color="0" pixelHinting="true" alpha=".5"/></geometry:stroke></geometry:Wedge> 
+					<degrafa:RegularRectangle width="{outerRadius.value}" x="{center.value}" y="{center.value}">
+						<degrafa:geometry>
+							<degrafa:RasterText id="innerLabel" fontFamily="Myriad Pro"  fontSize="13" text="{(wedgeLayout.currentLabelValue) ? wedgeLayout.currentLabelValue : ''}" 
+								right="0" autoSize="right">
+								<degrafa:fill><degrafa:SolidFill color="0xFFFFFF"/></degrafa:fill>
+								<degrafa:transform>
+									<degrafa:RotateTransform registrationPoint="topRight" angle="{(transposeLabel(wedgeLayout.currentReference)==true) ? 180:0}"/>
+								</degrafa:transform>
+							</degrafa:RasterText>
+						</degrafa:geometry>
+						<degrafa:transform>
+							<degrafa:RotateTransform angle="{wedgeLayout.currentReference['startAngle'] + wedgeLayout.currentReference['arc']/2+((transposeLabel(wedgeLayout.currentReference)==true) ? 3:-3)}" 
+									registrationPoint="topLeft"/>
+						</degrafa:transform>
+					</degrafa:RegularRectangle>
 				</core:geometries>
 				<core:layouts>
 					<!-- outerWedgeRenderer:  The layout for the outer ring of wedges -->
-					<core:BaseLayout dataProvider="{wedgeLayout.currentDatum.medal}" width="{dc.width}" height="{dc.width}" id="outerWedgeLayout" dataField="count">
+					<core:BaseLayout dataProvider="{wedgeLayout.currentDatum.medal}" width="{dc.width}" height="{dc.width}" id="outerWedgeLayout" dataField="count" labelField="category"
+						itemPreDraw="{outerLabel.width=outerLabel.textWidth+10; if (transposeLabel(outerWedgeLayout.currentReference)==true) outerLabel.right=-3; else outerLabel.right=-outerLabel.textWidth-5;}"
+						>
 						<core:referenceRepeater>
 							<!-- outerRepeater:  the reference geometry for the outer ring of wedges -->
 							<core:GeometryRepeater dataProvider="{outerWedgeLayout.dataItems}" id="outerRepeater">
@@ -105,18 +157,33 @@
 								    innerRadius="{outerWedgeLayout.currentReference['innerRadius']}" outerRadius="{outerWedgeLayout.currentReference['outerRadius']}"
 		 							startAngle="{outerWedgeLayout.currentReference['startAngle']}" arc="{outerWedgeLayout.currentReference['arc']}" 
 		 							centerX="{outerWedgeLayout.currentReference['centerX']}" centerY="{outerWedgeLayout.currentReference['centerY']}"
-									fill="{outerWedgeFill}"><geometry:stroke><degrafa:SolidStroke color="0" alpha=".5" pixelHinting="true"/></geometry:stroke></geometry:Wedge> 
+									fill="{outerWedgeFill}">
+									<geometry:stroke><degrafa:SolidStroke color="0" alpha=".5" pixelHinting="true"/></geometry:stroke>
+									<geometry:filters><mx:DropShadowFilter angle="{outerWedgeLayout.currentReference['startAngle']-180}" blurX="10" blurY="10" alpha=".6"/></geometry:filters>
+								</geometry:Wedge> 		
+								<degrafa:RegularRectangle width="{outerRadius.value}" x="{center.value}" y="{center.value}">
+										<degrafa:geometry>
+											<degrafa:RasterText id="outerLabel" fontFamily="Myriad Pro"  fontSize="11" text="{(outerWedgeLayout.currentLabelValue) ? outerWedgeLayout.currentLabelValue : ''}" 
+												right="0" autoSize="right">
+												<degrafa:fill><degrafa:SolidFill color="0"/></degrafa:fill>
+												<degrafa:transform>
+													<degrafa:RotateTransform registrationPoint="topRight" angle="{(transposeLabel(outerWedgeLayout.currentReference)==true) ? 180:0}"/>
+												</degrafa:transform>
+											</degrafa:RasterText>
+										</degrafa:geometry>
+										<degrafa:transform>
+											<degrafa:RotateTransform angle="{outerWedgeLayout.currentReference['startAngle'] + outerWedgeLayout.currentReference['arc']/2+((transposeLabel(outerWedgeLayout.currentReference)==true) ? 3:-3)}" 
+													registrationPoint="topLeft"/>
+										</degrafa:transform>
+								</degrafa:RegularRectangle>
 						</core:geometries>
-						<!--core:states>
-							<states:State targets="{[outerWedgeRenderer]}" enterStateEvent="mouseOver" exitStateEvent="mouseOut" properties="fill" values="{[rollOverFill]}"/>
-						</core:states-->
 					</core:BaseLayout>
 				</core:layouts>
 			</core:BaseLayout>
 		</axiis:layouts>
 		<axiis:palettes>
-			<paint:LayoutPalette colorFrom="0xFF0000" colorTo="0x0000BB" target="{wedgeLayout}" id="wedgePalette"/>
-			<paint:LayoutPalette colorFrom="{wedgePalette.currentColor | 0x111111}" colorTo="{wedgePalette.currentColor | 0x353535}" target="{outerWedgeLayout}" id="outerWedgePalette"/>
+			<paint:LayoutPalette colorFrom="0xCC0000" colorTo="0x0000AA" target="{wedgeLayout}" id="wedgePalette"/>
+			<paint:LayoutPalette colorFrom="{wedgePalette.currentColor | 0x2B2B11}" colorTo="{wedgePalette.currentColor | 0x151511}" target="{outerWedgeLayout}" id="outerWedgePalette"/>
 		</axiis:palettes>
 		<axiis:fills>
 			<degrafa:RadialGradientFill  id="wedgeFill" cx="{wedgeLayout.width/2}" cy="{wedgeLayout.width/2}" radius="{(wedgeLayout.width/2)*innerRadi2}">
@@ -129,6 +196,4 @@
 		</axiis:fills>
 	</axiis:DataCanvas>
 	
-	
-	<mx:Button click="{dc.width=dc.width-10;dc.height-=10;}" label="update"/>
 </mx:Application>
