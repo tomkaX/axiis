@@ -80,6 +80,7 @@ package org.axiis
 				sprite.addEventListener(MouseEvent.MOUSE_UP,onItemMouseUp);
 		
 				invalidatedLayouts.push(layout);
+				
 			}
 		}
 		
