@@ -6,7 +6,6 @@ package org.axiis.core
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.geom.Rectangle;
-	import flash.utils.getDefinitionByName;
 	import flash.utils.getTimer;
 	
 	import mx.collections.ArrayCollection;
@@ -17,7 +16,7 @@ package org.axiis.core
 	import org.axiis.states.State;
 	
 	[Event(name="invalidate", type="org.axiis.LayoutEvent")]
-	
+	[Event(name="itemPreDraw")]
 	public class BaseLayout extends EventDispatcher implements ILayout
 	{
 		public function BaseLayout()
@@ -666,8 +665,11 @@ package org.axiis.core
 			_currentItem = AxiisSprite(sprite.getChildAt(_currentIndex));
 			currentItem.data = currentDatum;
 			
+			this.dispatchEvent(new Event("itemPreDraw"));
 			
 			drawGraphicsToChild(currentItem);
+			
+			
 		}
 		
 		protected function drawGraphicsToChild(child:Sprite):void
