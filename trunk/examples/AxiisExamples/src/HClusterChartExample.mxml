@@ -30,7 +30,7 @@
 <mx:Boolean id="alignBottom">true</mx:Boolean>
 <mx:Number id="percentGap">.05</mx:Number>
 
-<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{800-70}" minValue="0" maxValue="320" id="myScale"/>
+	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{800-70}" minValue="0" maxValue="320" id="myScale"/>
 
 	<axiis:DataCanvas height="500" width="800" id="dc" horizontalCenter="0">
 		<axiis:layouts>
