@@ -39,13 +39,13 @@
 						<degrafa:RegularRectangle x="0" y="{this.height}" width="{this.currentReference.width}"/>
 					</core:geometry>
 					<core:modifiers>
-						<core:PropertyModifier property="height" modifier="{this.verticalScale.valueToLayout(innerLayout.currentDataValue)}" modifierOperator="none"/>
-						<core:PropertyModifier property="y" modifier="{this.verticalScale.valueToLayout(innerLayout.currentDataValue)}" modifierOperator="subtract"/>
+						<core:PropertyModifier property="height" modifier="{this.verticalScale.valueToLayout(innerLayout.currentValue)}" modifierOperator="none"/>
+						<core:PropertyModifier property="y" modifier="{this.verticalScale.valueToLayout(innerLayout.currentValue)}" modifierOperator="subtract"/>
 					</core:modifiers>
 				</core:GeometryRepeater>
 			
 			</core:referenceRepeater>
-			<core:geometries>
+			<core:drawingGeometries>
 			
 				<!-- main column rectangle that gets repeated vertically-->
 				<degrafa:RegularRectangle id="myCol"
@@ -62,7 +62,7 @@
 				
 				<!-- smaller label for each column -->
 				
-			</core:geometries>
+			</core:drawingGeometries>
 			<core:states>
 				<states:State id="rollOverState" enterStateEvent="mouseOver" exitStateEvent="mouseOut"
 					targets="{[myCol,myCol]}"
@@ -79,9 +79,9 @@
 			</core:strokes>
 		</core:BaseLayout>
 	</layouts:layouts>
-	<layouts:geometries>
+	<layouts:drawingGeometries>
 		<degrafa:RegularRectangle width="{currentReference.width}" height="{currentReference.height}" x="{currentReference.x}" y="{currentReference.y}"/>
-		<degrafa:RasterText  styleName="{labelStyleName}" text="{currentLabelValue}" x="0" y="{height+5}"/>
-	</layouts:geometries>
+		<degrafa:RasterText  styleName="{labelStyleName}" text="{currentLabel}" x="0" y="{height+5}"/>
+	</layouts:drawingGeometries>
 
 </layouts:HorizontalBoxLayout>

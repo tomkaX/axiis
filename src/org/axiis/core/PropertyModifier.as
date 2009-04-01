@@ -13,8 +13,8 @@ package  org.axiis.core {
 	* PropertyModifier is used to specify changes that should 
 	* occur on the geometry or subsequent objects being repeated.
 	**/
-	public class PropertyModifier extends Object implements IRepeaterModifier{
-		
+	public class PropertyModifier
+	{
 		/**
 		 * The source object we will apply mods to.
 		 */
@@ -115,7 +115,8 @@ package  org.axiis.core {
 		public function beginModify(sourceObject:Object):void {
 			//Expects a geometry array
 			
-			if (_modifyInProgress) return;
+			if (_modifyInProgress)
+				return;
 			//resetValues(); //If we have used our cache we want to reset our values;
 			_sourceObject=sourceObject;
 			setTargetProperty(_sourceObject);
@@ -129,13 +130,17 @@ package  org.axiis.core {
 		* back our modified property to its original state.
 		*/
 		public function end():void {
-			if (!_modifyInProgress) return;
 			resetValues();
-			for (var i:int=0;i<targets.length;i++) {
-				if (targets[i] is Geometry) Geometry(targets[i]).suppressEventProcessing=false;
+			if(targets)
+			{
+				for (var i:int=0;i<targets.length;i++)
+				{
+					if (targets[i] is Geometry)
+						Geometry(targets[i]).suppressEventProcessing = false;
+				}
+				_iteration=-1;
+				_modifyInProgress=false;
 			}
-			_iteration=-1;
-			_modifyInProgress=false;
 		}
 		
 		/**

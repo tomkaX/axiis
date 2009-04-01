@@ -9,6 +9,7 @@ package org.axiis.core
 	import flash.utils.getTimer;
 	
 	import mx.collections.ArrayCollection;
+	import mx.utils.StringUtil;
 	
 	import org.axiis.DataCanvas;
 	import org.axiis.events.LayoutEvent;
@@ -16,24 +17,76 @@ package org.axiis.core
 	import org.axiis.states.State;
 	
 	[Event(name="invalidate", type="org.axiis.LayoutEvent")]
-	[Event(name="itemPreDraw")]
+	[Event(name="itemPreDraw", type="flash.events.Event")]
 	public class BaseLayout extends EventDispatcher implements ILayout
 	{
+		include "DrawingPlaceholders.as";
+		
 		public function BaseLayout()
 		{
 			super();
 		}
 		
+		private var childSprites:Array = [];
+		
+		private var currentChild:AxiisSprite;
+		
+		private var activeStates:Array = [];
+		
 		public var name:String = "";
 		
 		/**
-		 * This provides a way to further refine a layouts dataProvider by providing access to a custom filter data filter function.
-		 * this allows developers to easily visualize subsets of the data without having to change the underlying data structure.
+		 * This provides a way to further refine a layouts dataProvider by
+		 * providing access to a custom filter data filter function. This allows
+		 * developers to easily visualize subsets of the data without having to
+		 * change the underlying data structure.
 		 */
 		public var dataFilterFunction:Function;
 		
-		[Bindable(event="currentDataValueChange")]
-		public function get currentDataValue():Object
+		//---------------------------------------------------------------------
+		// "Current" properties
+		//---------------------------------------------------------------------
+		
+		[Bindable(event="currentIndexChange")]
+		public function get currentIndex():int
+		{
+			return _currentIndex;
+		}
+		protected function set _currentIndex(value:int):void
+		{
+			if(value != __currentIndex)
+			{
+				__currentIndex = value;
+				dispatchEvent(new Event("currentIndexChange"));
+			}
+		}
+		protected function get _currentIndex():int
+		{
+			return __currentIndex;
+		}
+		private var __currentIndex:int;
+		
+		[Bindable(event="currentDatumChange")]
+		public function get currentDatum():Object
+		{
+			return _currentDatum;
+		}
+		protected function set _currentDatum(value:Object):void
+		{
+			if(value != __currentDatum)
+			{
+				__currentDatum = value;
+				dispatchEvent(new Event("currentDatumChange"));
+			}
+		}
+		protected function get _currentDatum():Object
+		{
+			return __currentDatum;
+		}
+		private var __currentDatum:Object;
+		
+		[Bindable(event="currentValueChange")]
+		public function get currentValue():Object
 		{
 			/*
 			if (owner.dataFunction!=null && dataField)
@@ -41,44 +94,43 @@ package org.axiis.core
 			else
 				return _currentDataValue;
 			*/
-			return _currentDataValue;
+			return _currentValue;
 		}
-		protected function set _currentDataValue(value:Object):void
+		protected function set _currentValue(value:Object):void
 		{
-			if(value != __currentDataValue)
+			if(value != __currentValue)
 			{
-				__currentDataValue = value;
-				dispatchEvent(new Event("currentDataValueChange"));
+				__currentValue = value;
+				dispatchEvent(new Event("currentValueChange"));
 			}
 		}
-		protected function get _currentDataValue():Object
+		protected function get _currentValue():Object
 		{
-			return __currentDataValue;
+			return __currentValue;
 		}
-		private var __currentDataValue:Object;
+		private var __currentValue:Object;
 		
-		
-		[Bindable(event="currentLabelValueChange")]
-		public function get currentLabelValue():String
+		[Bindable(event="currentLabelChange")]
+		public function get currentLabel():String
 		{
 			if (owner.labelFunction !=null && labelField)
 				return owner.labelFunction.call(this,_currentDatum[labelField],_currentDatum);
 			else
-				return _currentLabelValue;
+				return _currentLabel;
 		}
-		protected function set _currentLabelValue(value:String):void
+		protected function set _currentLabel(value:String):void
 		{
-			if(value != __currentLabelValue)
+			if(value != __currentLabel)
 			{
-				__currentLabelValue = value;
-				dispatchEvent(new Event("currentLabelValueChange"));
+				__currentLabel = value;
+				dispatchEvent(new Event("currentLabelChange"));
 			}
 		}
-		protected function get _currentLabelValue():String
+		protected function get _currentLabel():String
 		{
-			return __currentLabelValue;
+			return __currentLabel;
 		}
-		private var __currentLabelValue:String;
+		private var __currentLabel:String;
 		
 		/***
 		 * Store states collection
@@ -99,22 +151,33 @@ package org.axiis.core
 		{
 			return _states;
 		}
-		private var _states:Array;
-		
-		private var _activeStates:Array=new Array();
+		private var _states:Array = [];
 
+		[Bindable(event="scaleFillChange")]
 		/**
 		 * Set to TRUE - this will use a common bounds to fill all layout items being drawn
 		 * Set to FALSE - each layout item will have its own fill bounds 
 		 */
-		[Inspectable]
-		public var scaleFill:Boolean=false;
+		public function set scaleFill(value:Boolean):void
+		{
+			if(value != _scaleFill)
+			{
+				_scaleFill = value;
+				invalidate();
+				dispatchEvent(new Event("scaleFillChange"));
+			}
+		}
+		public function get scaleFill():Boolean
+		{
+			return _scaleFill;
+		}
+		private var _scaleFill:Boolean;
 		
 		/**
 		 * this will use the currentReference bounds of the the parentLayout is its own bounds, and set the currentItem (sprite) accordingly
 		 */
 		[Inspectable]
-		public var useInheritedBounds:Boolean=true;
+		public var useInheritedBounds:Boolean = true;
 		
 		[Bindable]
 		public function get parentLayout():ILayout
@@ -259,20 +322,20 @@ package org.axiis.core
 		private var _dataProvider:Object;
 		
 		[Inspectable(category="General")]
-		[Bindable(event="referenceGeometryRepeaterChange")]
-		public function set referenceRepeater(value:IGeometryRepeater):void
+		[Bindable(event="referenceRepeaterChange")]
+		public function set referenceRepeater(value:GeometryRepeater):void
 		{
 			if(value != _referenceGeometryRepeater)
 			{
 				_referenceGeometryRepeater = value;
-				dispatchEvent(new Event("referenceGeometryRepeaterChange"));
+				dispatchEvent(new Event("referenceRepeaterChange"));
 			}
 		}
-		public function get referenceRepeater():IGeometryRepeater
+		public function get referenceRepeater():GeometryRepeater
 		{
 			return _referenceGeometryRepeater;
 		}
-		protected var _referenceGeometryRepeater:IGeometryRepeater;
+		protected var _referenceGeometryRepeater:GeometryRepeater;
 		
 		[Bindable(event="dataFieldChange")]
 		public function set dataField(value:String):void
@@ -305,37 +368,7 @@ package org.axiis.core
 		private var _labelField:String;
 		
 		[Bindable(event="geometryChange")]
-		public function set fills(value:Array):void
-		{
-			if(value != _fills)
-			{
-				_fills = value;
-				dispatchEvent(new Event("geometryChange"));
-			}
-		}
-		public function get fills():Array
-		{
-			return _fills;
-		}
-		private var _fills:Array;
-		
-		[Bindable(event="geometryChange")]
-		public function set strokes(value:Array):void
-		{
-			if(value != _strokes)
-			{
-				_strokes = value;
-				dispatchEvent(new Event("geometryChange"));
-			}
-		}
-		public function get strokes():Array
-		{
-			return _strokes;
-		}
-		private var _strokes:Array;
-		
-		[Bindable(event="geometryChange")]
-		public function set geometries(value:Array):void
+		public function set drawingGeometries(value:Array):void
 		{
 			if(value != _geometries)
 			{
@@ -343,7 +376,7 @@ package org.axiis.core
 				dispatchEvent(new Event("geometryChange"));
 			}
 		}
-		public function get geometries():Array
+		public function get drawingGeometries():Array
 		{
 			return _geometries;
 		}
@@ -356,12 +389,12 @@ package org.axiis.core
 			{
 				for each(var oldLayout:ILayout in layouts)
 				{
-					oldLayout.removeEventListener(StateChangeEvent.STATE_CHANGE,handleSubLayoutStateChange)
+					oldLayout.removeEventListener(StateChangeEvent.STATE_CHANGE,onStateChange)
 				}
 				_layouts = value;
 				for each(var newLayout:ILayout in layouts)
 				{
-					newLayout.addEventListener(StateChangeEvent.STATE_CHANGE,handleSubLayoutStateChange);
+					newLayout.addEventListener(StateChangeEvent.STATE_CHANGE,onStateChange);
 				}
 				dispatchEvent(new Event("layoutsChange"));
 			}
@@ -378,6 +411,7 @@ package org.axiis.core
 			if(value != _x)
 			{
 				_x = value;
+				invalidate();
 				dispatchEvent(new Event("xChange"));
 			}
 		}
@@ -393,6 +427,7 @@ package org.axiis.core
 			if(value != _y)
 			{
 				_y = value;
+				invalidate();
 				dispatchEvent(new Event("yChange"));
 			}
 		}
@@ -408,6 +443,7 @@ package org.axiis.core
 			if(value != _width)
 			{
 				_width = value;
+				invalidate();
 				dispatchEvent(new Event("widthChange"));
 			}
 		}
@@ -423,6 +459,7 @@ package org.axiis.core
 			if(value != _height)
 			{
 				_height = value;
+				invalidate();
 				dispatchEvent(new Event("heightChange"));
 			}
 		}
@@ -431,127 +468,6 @@ package org.axiis.core
 			return _height;
 		}
 		private var _height:Number;
-		
-		[Bindable(event="scaleChange")]
-		[Inspectable(category="General", enumeration="categorical,linear,log")]
-		public function set scale(value:String):void
-		{
-			if(value != _scale)
-			{
-				_scale = value;
-				dispatchEvent(new Event("scaleChange"));
-			}
-		}
-		public function get scale():String
-		{
-			return _scale;
-		}
-		private var _scale:String;
-		
-		[Bindable(event="currentIndexChange")]
-		public function get currentIndex():int
-		{
-			return _currentIndex;
-		}
-		protected function set _currentIndex(value:int):void
-		{
-			if(value != __currentIndex)
-			{
-				__currentIndex = value;
-				dispatchEvent(new Event("currentIndexChange"));
-			}
-		}
-		protected function get _currentIndex():int
-		{
-			return __currentIndex;
-		}
-		private var __currentIndex:int;
-		
-		[Bindable(event="currentItemChange")]
-		public function get currentItem():AxiisSprite
-		{
-			return _currentItem;
-		}
-		protected function set _currentItem(value:AxiisSprite):void
-		{
-			if(value != __currentItem)
-			{
-				__currentItem = value;
-				dispatchEvent(new Event("currentItemChange"));
-			}
-		}
-		protected function get _currentItem():AxiisSprite
-		{
-			return __currentItem;
-		}
-		private var __currentItem:AxiisSprite;
-		
-		[Bindable(event="currentDatumChange")]
-		public function get currentDatum():Object
-		{
-			return _currentDatum;
-		}
-		protected function set _currentDatum(value:Object):void
-		{
-			if(value != __currentDatum)
-			{
-				__currentDatum = value;
-				dispatchEvent(new Event("currentDatumChange"));
-			}
-		}
-		protected function get _currentDatum():Object
-		{
-			return __currentDatum;
-		}
-		private var __currentDatum:Object;
-		
-		[Bindable(event="selectedIndexChange")]
-		public function set selectedIndex(value:int):void
-		{
-			if(value != _selectedIndex)
-			{
-				_selectedIndex = value;
-				invalidate();
-				dispatchEvent(new Event("selectedIndexChange"));
-			}
-		}
-		public function get selectedIndex():int
-		{
-			return _selectedIndex;
-		}
-		private var _selectedIndex:int = -1;
-		
-		[Bindable(event="selectedItemChange")]
-		public function set selectedItem(value:Sprite):void
-		{
-			if(value != _selectedItem)
-			{
-				_selectedItem = value;
-				invalidate();
-				dispatchEvent(new Event("selectedItemChange"));
-			}
-		}
-		public function get selectedItem():Sprite
-		{
-			return _selectedItem;
-		}
-		private var _selectedItem:Sprite;
-		
-		[Bindable(event="selectedDatumChange")]
-		public function set selectedDatum(value:Object):void
-		{
-			if(value != _selectedDatum)
-			{
-				_selectedDatum = value;
-				invalidate();
-				dispatchEvent(new Event("selectedDatumChange"));
-			}
-		}
-		public function get selectedDatum():Object
-		{
-			return _selectedDatum;
-		}
-		private var _selectedDatum:Object;
 		
 		public function registerOwner(dataCanvas:DataCanvas):void
 		{
@@ -582,12 +498,9 @@ package org.axiis.core
 			dispatchEvent(new LayoutEvent(LayoutEvent.INVALIDATE,this as ILayout));
 		}
 		
-		public function measure():void
-		{
-		}
-		
 		public function render(newSprite:Sprite = null):void
 		{
+			//trace(name + " render " +currentIndex)
 			var t:Number=flash.utils.getTimer();
 			if(newSprite)
 				this.sprite = newSprite;
@@ -595,9 +508,10 @@ package org.axiis.core
 			if(!sprite || !_referenceGeometryRepeater)
 				return;			
 			
-			if (useInheritedBounds && parentLayout) {
-				bounds=new Bounds(parentLayout.currentReference.x+(isNaN(x) ? 0:x),
-									parentLayout.currentReference.y+(isNaN(y) ? 0:y),
+			if (useInheritedBounds && parentLayout)
+			{
+				bounds = new Bounds(parentLayout.currentReference.x + (isNaN(x) ? 0 : x),
+									parentLayout.currentReference.y + (isNaN(y) ? 0 : y),
 									parentLayout.currentReference.width,
 									parentLayout.currentReference.height);
 			}
@@ -605,7 +519,6 @@ package org.axiis.core
 			{
 				bounds = new Bounds((isNaN(x) ? 0:x),(isNaN(y) ? 0:y),width,height);
 			}
-
 			sprite.x = isNaN(_bounds.x) ? 0 :_bounds.x;
 			sprite.y = isNaN(_bounds.y) ? 0 :_bounds.y;
 			
@@ -618,21 +531,18 @@ package org.axiis.core
 				_currentIndex=-1;
 				_referenceGeometryRepeater.repeat(preIteration, postIteration);
 			}
-			trace("BaseLayout.render() = " + (flash.utils.getTimer()-t) + " milliseconds");
 		}
 		
 		protected function preIteration():void
 		{
-			
 			_currentIndex++;
 			_currentDatum = dataItems[_currentIndex];
 			if (dataField)
-				_currentDataValue = _currentDatum[dataField];
+				_currentValue = _currentDatum[dataField];
 			else
-				_currentDataValue=_currentDatum;
+				_currentValue=_currentDatum;
 			if (labelField)
-				_currentLabelValue = _currentDatum[labelField];
-
+				_currentLabel = _currentDatum[labelField];
 		}
 		
 		/**
@@ -649,27 +559,26 @@ package org.axiis.core
 			{
 				var newChildSprite:Sprite = new AxiisSprite();
 				newChildSprite.doubleClickEnabled=true;
-				newChildSprite.addEventListener(StateChangeEvent.STATE_CHANGE,handleSubLayoutStateChange);
+				newChildSprite.addEventListener(StateChangeEvent.STATE_CHANGE,onStateChange);
 				
 				// Add listeners for all the state changing events
 				for each(var state:State in states)
 				{
 					if(state.enterStateEvent != null)
-						newChildSprite.addEventListener(state.enterStateEvent,onStateChange);
+						newChildSprite.addEventListener(state.enterStateEvent,onChildEvent);
 					if(state.exitStateEvent != null)
-						newChildSprite.addEventListener(state.exitStateEvent,onStateChange);
+						newChildSprite.addEventListener(state.exitStateEvent,onChildEvent);
 				}
-				
+				sprite.name = StringUtil.trim(name) + "" + sprite.numChildren
 				sprite.addChild(newChildSprite);
+				childSprites.push(newChildSprite);
 			}
-			_currentItem = AxiisSprite(sprite.getChildAt(_currentIndex));
-			currentItem.data = currentDatum;
+			currentChild = AxiisSprite(sprite.getChildAt(currentIndex));
+			currentChild.data = currentDatum;
 			
 			this.dispatchEvent(new Event("itemPreDraw"));
 			
-			drawGraphicsToChild(currentItem);
-			
-			
+			drawGraphicsToChild(currentChild);
 		}
 		
 		protected function drawGraphicsToChild(child:Sprite):void
@@ -678,16 +587,16 @@ package org.axiis.core
 			
 			child.graphics.clear();
 			
-			if(!geometries)
+			if(!drawingGeometries)
 				return;
 			
 			//Apply any states related to the sprite in question by altering the current geometry
 			applyStates(child);
 			
-			for each(var geometry:Geometry in geometries)
+			for each(var geometry:Geometry in drawingGeometries)
 			{
 				if (geometry is IAxiisGeometry)
-					IAxiisGeometry(geometry).parentLayout = this;
+					IAxiisGeometry(geometry).parentLayout = this as ILayout;
 					
 				geometry.preDraw();
 				
@@ -704,15 +613,13 @@ package org.axiis.core
 			for each(var layout:ILayout in layouts)
 			{
 				/** TODO WE NEED TO HAVE A CLEAN UP ROUTINE ON DATAPROVIDER CHANGE **/
-				layout.parentLayout = this;
-				layout.render(currentItem);
+				layout.parentLayout = this as ILayout;
+				//layout.referenceRepeater.reset();
+				layout.render(currentChild);
 			}
 			
-		
 			//Remove any states from the geometry so the next iteration rendering is not affected.
 			removeStates();
-			
-			trace("BaseLayout.drawGraphics() = " + (flash.utils.getTimer()-t) + " milliseconds");
 		}
 		
 		private function addListenersForStates(states:Array):void
@@ -727,9 +634,9 @@ package org.axiis.core
 				for each(var state:State in states)
 				{
 					if(state.enterStateEvent != null)
-						currSprite.addEventListener(state.enterStateEvent,onStateChange);
+						currSprite.addEventListener(state.enterStateEvent,onChildEvent);
 					if(state.exitStateEvent != null)
-						currSprite.addEventListener(state.exitStateEvent,onStateChange);
+						currSprite.addEventListener(state.exitStateEvent,onChildEvent);
 				}
 			}
 		}
@@ -746,41 +653,30 @@ package org.axiis.core
 				for each(var state:State in states)
 				{
 					if(state.enterStateEvent != null)
-						currSprite.removeEventListener(state.enterStateEvent,onStateChange);
+						currSprite.removeEventListener(state.enterStateEvent,onChildEvent);
 					if(state.exitStateEvent != null)
-						currSprite.removeEventListener(state.exitStateEvent,onStateChange);
+						currSprite.removeEventListener(state.exitStateEvent,onChildEvent);
 				}
 			}
 		}
 		
-		private function applyStates(sprite:Sprite):void {
-			for (var y:int=0;y<_activeStates.length;y++) {
-				if (_activeStates[y].target==sprite) {  
-					_activeStates[y].state.apply();
-				}
-			}
-		}
-		
-		private function removeStates():void {
-			for (var y:int=0;y<_activeStates.length;y++) {
-				_activeStates[y].state.remove();
-			}
-		}
-		
-		protected function onStateChange(event:Event):void
+		private function applyStates(sprite:Sprite):void
 		{
-			invalidateState(event);
-			
-			// Update the "current" properties
-			_currentItem = AxiisSprite(event.target);
-			
-			var stateChangeEvent:StateChangeEvent = new StateChangeEvent(StateChangeEvent.STATE_CHANGE);
-			_currentItem.dispatchEvent(stateChangeEvent);
-			
-			// Reset the current reference so things draw in the correct location during the next render
-			_currentReference = null;
+			for (var y:int=0;y<activeStates.length;y++)
+			{
+				if (activeStates[y].target==sprite)  
+					activeStates[y].state.apply();
+			}
 		}
-
+		
+		private function removeStates():void
+		{
+			for (var y:int=0;y<activeStates.length;y++)
+			{
+				activeStates[y].state.remove();
+			}
+		}
+		
 		/**
 		 * Each time a sprite has its state invalidated we re render the whole layout
 		 * the alternative is figuring out a way for each iteration to keep track of its specific geometries (some type of cloning) and only rendering itself
@@ -799,55 +695,113 @@ package org.axiis.core
 					var stateObject:Object = new Object(); //quick hack to store these two variables in internal array, probably better to use a Dictionary.
 					stateObject.target = sprite;
 					stateObject.state = state;
-					_activeStates.push(stateObject);
+					activeStates.push(stateObject);
 				}
 			}	
 			
-			for (var y:int=0;y<_activeStates.length;y++) {
-				if (_activeStates[y].state.exitStateEvent==eventType && _activeStates[y].target==sprite) {  //Remove state
+			for (var y:int=0;y<activeStates.length;y++) {
+				if (activeStates[y].state.exitStateEvent==eventType && activeStates[y].target==sprite) {  //Remove state
 					state.remove();
-					_activeStates.splice(y,1);
+					activeStates.splice(y,1);
 				}
 			}
 		}
 		
-		private function handleSubLayoutStateChange(event:StateChangeEvent):void
+		protected function onChildEvent(event:Event):void
 		{
-			if(parentLayout)
-				event.addLayoutToChain(this);
-			else
-				renderChain(event.layoutChain,Sprite(event.target));
+			//trace();
+			//trace(name + " state change " + event.type + " " + event.target);
+				
+			if(childSprites.indexOf(event.target) == -1)
+			{
+				//trace("cancelled")
+				_currentReference = null;
+				_currentIndex = -1;
+				referenceRepeater.reset();
+				return;
+			}
+			
+			invalidateState(event);
+				
+			// Update the "current" properties
+			currentChild = AxiisSprite(event.target);
+			
+			var stateChangeEvent:StateChangeEvent = new StateChangeEvent(StateChangeEvent.STATE_CHANGE);
+			currentChild.dispatchEvent(stateChangeEvent);
+			
+			// Reset the current reference so things draw in the correct location during the next render
+			_currentReference = null;
+			_currentIndex = -1;
+			referenceRepeater.reset();
+			
+			//trace(referenceRepeater.geometry)
+		}
+
+		
+		private function onStateChange(event:StateChangeEvent):void
+		{
+			//trace(name + " handleSubLayoutStateChange :: target " + event.target);
+			//trace(name + " handleSubLayoutStateChange :: my sprite " + sprite);
+			
+			var doSubLayoutsHaveStates:Boolean = false;
+			for each(var layout:BaseLayout in event.layoutChain)
+			{
+				if(layout.states.length != 0)
+				{
+					doSubLayoutsHaveStates = true;
+					break;
+				}
+			}
+			if(doSubLayoutsHaveStates || childSprites.indexOf(event.target) != -1)
+			{
+				if(parentLayout)
+				{
+					//trace("has parent -- adding to chain")
+					event.addLayoutToChain(this as ILayout);
+				}
+				else
+				{
+					//trace("no parent -- rendering chain");
+					renderChain(event.layoutChain,Sprite(event.target),Sprite(sprite.parent));
+				}
+			}
 		}
 		
-		public function renderChain(chain:Array,targetSprite:Sprite):void
+		public function renderChain(chain:Array,targetSprite:Sprite,parentSprite:Sprite):void
 		{
-			var parentSprite:Sprite = sprite.parent as Sprite;
+			//trace(name + " renderChain");
+			//trace();
 			var ancestorOfTarget:Sprite = targetSprite;
+			//trace(name + " target " + ancestorOfTarget);
 			while(ancestorOfTarget != parentSprite)
 			{
-				_currentItem = sprite as AxiisSprite;
+				currentChild = sprite as AxiisSprite;
 				sprite = ancestorOfTarget as Sprite;
 				ancestorOfTarget = ancestorOfTarget.parent as Sprite;
+				//trace(name + " ancestorOfTarget " + ancestorOfTarget);
 			}
-			_currentIndex = sprite.getChildIndex(currentItem);
+			_currentIndex = sprite.getChildIndex(currentChild);
+			//trace(name,"currentIndex =",currentIndex);
+			//trace(name,"currentItem =",currentChild);
 			referenceRepeater.applyIteration(currentIndex);
 			_currentReference = referenceRepeater.geometry;
 			_currentDatum = dataItems[currentIndex];
-			_currentDataValue = dataField
+			_currentValue = dataField
 				? _currentDatum[dataField]
 				: _currentDatum;
 							
 			if (labelField)
-				_currentLabelValue = _currentDatum[labelField];
+				_currentLabel = _currentDatum[labelField];
 			
 			if(chain.length == 0)
 			{
-				drawGraphicsToChild(currentItem);
+				drawGraphicsToChild(currentChild);
+				referenceRepeater.reset();
 			}
 			else
 			{
 				var childLayout:ILayout = chain.pop() as ILayout;
-				childLayout.renderChain(chain,targetSprite);
+				childLayout.renderChain(chain,targetSprite,Sprite(currentChild.parent));
 			}
 		}
 	}

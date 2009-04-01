@@ -45,7 +45,7 @@
 			dataField="{dataField}"
 			width="{width}"
 			height="{height}">
-			<layouts:geometries>
+			<layouts:drawingGeometries>
 				<degrafa:RegularRectangle
 					x="{waterfallLayout.currentReference.x}"
 					y="{height - waterfallLayout.currentReference.y}"
@@ -60,7 +60,7 @@
 					text="{waterfallLayout.currentDatum[labelField]}"
 					x="{waterfallLayout.currentReference.x}"
 					y="{height}"/>
-			</layouts:geometries>
+			</layouts:drawingGeometries>
 		</layouts:HorizontalWaterfallLayout>
 	</layouts>
 	

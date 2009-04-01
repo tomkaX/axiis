@@ -2,7 +2,7 @@
 <RegularRectangle xmlns="com.degrafa.geometry.*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:axiis="http://www.axiis.org/2009"
 	implements="org.axiis.core.IAxiisGeometry"
 	height="{_parentLayout.currentReference.height}"
-	width="{updateWidth(parentLayout.currentDataValue)}"
+	width="{updateWidth(parentLayout.currentValue)}"
 	xmlns:degrafa="http://www.degrafa.com/2007">
 	<mx:Script>
 		<![CDATA[
