@@ -16,19 +16,12 @@ package org.axiis
 	
 	public class DataCanvas extends UIComponent
 	{
+		include "core/DrawingPlaceholders.as";
+		
 		public function DataCanvas()
 		{
 			super();
 		}
-		
-		[Bindable]
-		public var fills:Array = [];
-		
-		[Bindable]
-		public var strokes:Array = [];
-		
-		[Bindable]
-		public var palettes:Array = [];
 		
 		public var labelFunction:Function;
 		
@@ -80,7 +73,6 @@ package org.axiis
 				sprite.addEventListener(MouseEvent.MOUSE_UP,onItemMouseUp);
 		
 				invalidatedLayouts.push(layout);
-				
 			}
 		}
 		
@@ -103,29 +95,27 @@ package org.axiis
 			if (!_invalidated)
 				invalidateAllLayouts();
 			
-			_invalidated=true;
+			_invalidated = true;
 		} 
 		
 		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
 		{
-			//var t:Number=flash.utils.getTimer();
-			//trace("DataCanvas.updateDisplayList() starting ...");
 			super.updateDisplayList(unscaledWidth,unscaledHeight);
-			
 			while(invalidatedLayouts.length > 0)
 			{
 				var layout:ILayout = ILayout(invalidatedLayouts.pop());
-				//trace("rendering layout");
 				layout.render();
 			}
-			//trace("DataCanvas.updateDisplayList = " + (flash.utils.getTimer()-t) + " milliseconds");
-			_invalidated=false;
+			_invalidated = false;
 		}
 		
 		protected function handleLayoutInvalidate(event:LayoutEvent):void
 		{
-			invalidatedLayouts.push(event.layout);
-			super.invalidateDisplayList();
+			if(invalidatedLayouts.indexOf(event.layout) == -1)
+			{
+				invalidatedLayouts.push(event.layout);
+				super.invalidateDisplayList();
+			}
 		}
 		
 		protected function invalidateAllLayouts():void

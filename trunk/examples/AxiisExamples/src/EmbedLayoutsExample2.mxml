@@ -3,10 +3,12 @@
 	xmlns:axiis="http://www.axiis.org/2009"
 	xmlns:degrafa="http://www.degrafa.com/2007" backgroundGradientColors="[0xFFFFFF,0xDDDDDD]"
 	layout="vertical"
-	initialize="start()" xmlns:geometry="org.axiis.charts.geometry.*" xmlns:states="org.axiis.states.*">
+	initialize="start()" xmlns:geometry="org.axiis.charts.geometry.*" xmlns:states="org.axiis.states.*"
+	width="900" height="500">
 
 	<mx:Script>
 		<![CDATA[
+			import mx.charts.chartClasses.ChartBase;
 			import org.axiis.data.DataSet;
 			
 			private var ds:DataSet = new DataSet();
@@ -23,32 +25,38 @@
 
 	<axiis:LinearScale id="scale" maxLayout="{dataCanvas.height}" minLayout="0" minValue="0" maxValue="100"/> 
 
-	<axiis:DataCanvas id="dataCanvas" width="800" height="800">
+	<axiis:DataCanvas id="dataCanvas" width="800" height="400">
 		<axiis:layouts>
 			<axiis:HorizontalBoxLayout id="clusterLayout" name="A" width="{dataCanvas.width}" height="{dataCanvas.height}" scaleFill="true" dataField="value">
-				<axiis:geometries>
+				<axiis:drawingGeometries>
 					<geometry:Column stroke="{blackStroke}" fill="{fill1}" scale="{scale}" dataField="value"
-						height="{scale.valueToLayout(clusterLayout.currentDataValue)}" y="{clusterLayout.height-scale.valueToLayout(clusterLayout.currentDataValue)}"/>
-				</axiis:geometries>
+						height="{scale.valueToLayout(clusterLayout.currentValue)}" y="{clusterLayout.height-scale.valueToLayout(clusterLayout.currentValue)}"/>
+				</axiis:drawingGeometries>
 				<axiis:layouts>
 					<axiis:HorizontalBoxLayout id="columnLayout" dataProvider="{clusterLayout.currentDatum.node}" percentGap="0" x="10" y="5" name=" B" dataField="value">
-						<axiis:geometries>
+						<axiis:drawingGeometries>
 							<geometry:Column stroke="{blackStroke}" fill="{fill2}" scale="{scale}" dataField="value"
-								height="{scale.valueToLayout(columnLayout.currentDataValue)}" y="{clusterLayout.height-scale.valueToLayout(columnLayout.currentDataValue)}"/>
-						</axiis:geometries>
+								height="{scale.valueToLayout(columnLayout.currentValue)}" y="{clusterLayout.height-scale.valueToLayout(columnLayout.currentValue)}"/>
+						</axiis:drawingGeometries>
 						<axiis:layouts>
 							<axiis:HorizontalBoxLayout id="subColumnLayout"  dataProvider="{columnLayout.currentDatum.node}" y="0" percentGap="0" name="  C" dataField="value">
-								<axiis:geometries>
+								<axiis:drawingGeometries>
 									<geometry:Column id="subColumn" stroke="{blackStroke}" fill="{fill3}" scale="{scale}" x="{subColumnLayout.currentReference.x}" dataField="value"
-										height="{scale.valueToLayout(subColumnLayout.currentDataValue)}" y="{clusterLayout.height-scale.valueToLayout(subColumnLayout.currentDataValue)}"/>
-								</axiis:geometries>
+										height="{scale.valueToLayout(subColumnLayout.currentValue)}" y="{clusterLayout.height-scale.valueToLayout(subColumnLayout.currentValue)}"/>
+								</axiis:drawingGeometries>
+								<axiis:states>
+									<states:State enterStateEvent="mouseOver" exitStateEvent="mouseOut" targets="{[subColumn]}" properties="[fill]" values="{[rollOverFill2]}"/>
+								</axiis:states>
 							</axiis:HorizontalBoxLayout>
 						</axiis:layouts>
-						<!--axiis:states>
-							<states:State enterStateEvent="mouseOver" exitStateEvent="mouseOut" targets="{[subColumn]}" properties="[fill]" values="{[rollOverFill]}"/>
-						</axiis:states-->
+						<axiis:states>
+							<states:State enterStateEvent="mouseOver" exitStateEvent="mouseOut" targets="{[subColumn]}" properties="[fill]" values="{[rollOverFill1]}"/>
+						</axiis:states>
 					</axiis:HorizontalBoxLayout>
-				</axiis:layouts>	
+				</axiis:layouts>
+				<axiis:states>
+					<states:State enterStateEvent="mouseOver" exitStateEvent="mouseOut" targets="{[subColumn]}" properties="[fill]" values="{[rollOverFill0]}"/>
+				</axiis:states>
 			</axiis:HorizontalBoxLayout>
 		</axiis:layouts>
 		
@@ -69,7 +77,9 @@
 				<degrafa:GradientStop color="0xFF4444"/>
 				<degrafa:GradientStop color="0x883333"/>
 			</degrafa:LinearGradientFill>
-			<degrafa:SolidFill color="0xFFFF00" alpha=".9" id="rollOverFill"/>
+			<degrafa:SolidFill color="0xFF" alpha=".9" id="rollOverFill0"/>
+			<degrafa:SolidFill color="0xFF00" alpha=".9" id="rollOverFill1"/>
+			<degrafa:SolidFill color="0xFF0000" alpha=".9" id="rollOverFill2"/>
 		</axiis:fills>
 		
 	</axiis:DataCanvas>

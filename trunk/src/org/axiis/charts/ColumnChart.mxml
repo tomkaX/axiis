@@ -13,16 +13,16 @@
 	
 	<layouts>
 		<layouts:HorizontalBoxLayout id="myLayout" scaleFill="false" dataProvider="{dataProvider}" dataField="{verticalField}" width="{this.width}" height="{this.height-100}" percentGap="{percentGap}">
-			<layouts:geometries>
+			<layouts:drawingGeometries>
 				<geometry:Column id="myCol"
 					x="{myLayout.currentReference.x}"
-					y="{myLayout.height-vScale.valueToLayout(myLayout.currentDataValue)}"
+					y="{myLayout.height-vScale.valueToLayout(myLayout.currentValue)}"
 					scale="{vScale}"
 					dataField="{verticalField}"
 					fill="{colFill}"
 					stroke="{myStroke}"
 					labelField="{horizontalField}"
-					height="{vScale.valueToLayout(myLayout.currentDataValue)}"/>
+					height="{vScale.valueToLayout(myLayout.currentValue)}"/>
 				
 				<degrafa:RasterText text="{myLayout.currentDatum[horizontalField]}" x="{myLayout.currentReference.x}" width="90" y="{height}" fontSize="16" align="right" fontFamily="Arial" visible="{showLabels}">
 					<degrafa:transform>
@@ -30,7 +30,7 @@
 					</degrafa:transform>
 				</degrafa:RasterText>
 				
-			</layouts:geometries>
+			</layouts:drawingGeometries>
 			<layouts:states>
 				<states:State id="rollOverState" enterStateEvent="mouseOver" exitStateEvent="mouseOut"
 					targets="{[myCol,myCol]}"

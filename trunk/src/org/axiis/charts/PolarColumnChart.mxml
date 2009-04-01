@@ -18,7 +18,7 @@
 			 	pointOut="{pointOut}"
 			 	percentGap="{percentGap}"
 			 	>
-				<layouts:geometries> 
+				<layouts:drawingGeometries> 
 					<degrafa:RoundedRectangle cornerRadius="3" id="myCol"
 						x="{myLayout.currentReference.x}"
 						y="{myLayout.currentReference.y+(
@@ -41,7 +41,7 @@
 							</degrafa:RasterText>
 						</degrafa:geometry>
 					</degrafa:RoundedRectangle>
-				</layouts:geometries>
+				</layouts:drawingGeometries>
 			</layouts:CircleBoxLayout>
 		</layouts>
 				

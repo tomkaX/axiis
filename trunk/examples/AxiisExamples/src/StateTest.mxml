@@ -34,13 +34,13 @@
 	<axiis:DataCanvas id="vis" width="100%" height="100%">
 		<axiis:layouts>
 			<axiis:HorizontalBoxLayout id="boxLayout" width="{vis.width}" height="{vis.height}" percentGap="0.01">
-				<axiis:geometries>
+				<axiis:drawingGeometries>
 					<geometry:Column id="col"
 						x="{boxLayout.currentReference.x}"
 						fill="{redFill}"
 						dataField="competitors" labelField="name" height="{vis.height}">
 					</geometry:Column>
-				</axiis:geometries>
+				</axiis:drawingGeometries>
 				<axiis:states>
 					<states:State id="rollOverState"
 						enterStateEvent="{MouseEvent.MOUSE_MOVE}"

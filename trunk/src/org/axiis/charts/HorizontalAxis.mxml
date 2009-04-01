@@ -15,13 +15,13 @@
 	
 	<layouts>		
 		<layouts:HorizontalBoxLayout id="layout" dataProvider="{dataProvider}" width="{width}" height="{height}">
-			<layouts:geometries>
+			<layouts:drawingGeometries>
 				<geometry:Column id="myCol" x="{layout.currentReference.x}" scale="{scale}" dataField="{dataField}">
 					<geometry:fill>
 						<degrafa:SolidFill color="0xff"/>
 					</geometry:fill>
 				</geometry:Column>
-			</layouts:geometries>
+			</layouts:drawingGeometries>
 		</layouts:HorizontalBoxLayout>
 	</layouts>
 	

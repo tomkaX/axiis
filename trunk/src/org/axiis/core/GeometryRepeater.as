@@ -8,7 +8,7 @@ package org.axiis.core
 	
 	import mx.collections.ArrayCollection;
 
-	public class GeometryRepeater extends EventDispatcher implements IGeometryRepeater
+	public class GeometryRepeater extends EventDispatcher
 	{
 		
 		/**
@@ -59,8 +59,8 @@ package org.axiis.core
 		}
 		private var _dataProvider:Array;
 		
-		[Inspectable(category="General", arrayType="org.axiis.core.IRepeaterModifier")]
-		[ArrayElementType("org.axiis.core.IRepeaterModifier")]
+		[Inspectable(category="General", arrayType="org.axiis.core.PropertyModifier")]
+		[ArrayElementType("org.axiis.core.PropertyModifier")]
 		public function get modifiers():Array
 		{
 			initModifiersCollection();
@@ -140,7 +140,7 @@ package org.axiis.core
 				_currentDatum=_dataProvider[i];
 				
 				if (_modifiers && _geometry) {
-					for each (var modifier:IRepeaterModifier in _modifiers) { 
+					for each (var modifier:PropertyModifier in _modifiers) { 
 						if (i==0) modifier.beginModify(_geometry);
 						modifier.apply();
 					}
@@ -148,9 +148,7 @@ package org.axiis.core
 				
 				_currentIteration=i;
 				if(postIterationCallback != null)
-					postIterationCallback.call(this);
-				
-			//	trace("geometry.arc=" + geometry["arc"] + " geometry.startAngle=" + geometry["startAngle"]);
+					postIterationCallback.call(this);			
 			}
 			
 			_cachedValues=new Array();
@@ -167,9 +165,18 @@ package org.axiis.core
 		public function applyIteration(iteration:int, values:Array=null):void {
 			_currentIteration = iteration;
 			var i:int=0;
-			for each (var modifier:IRepeaterModifier in _modifiers) { 
+			for each (var modifier:PropertyModifier in _modifiers) { 
 				modifier.applyCachedIteration(iteration,(values) ? values[i]:null);
 				i++
+			}
+		}
+		
+		public function reset():void
+		{
+			_currentIteration = -1;
+			for each(var modifier:PropertyModifier in modifiers)
+			{
+				modifier.end();
 			}
 		}
 	}

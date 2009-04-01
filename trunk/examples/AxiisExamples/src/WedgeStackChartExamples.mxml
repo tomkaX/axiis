@@ -105,12 +105,12 @@
 							<geometry:Wedge  id="wedge" centerX="{wedgeLayout.width/2}" centerY="{wedgeLayout.width/2}" innerRadius="{(wedgeLayout.width/2)*innerRadi1}" outerRadius="{(wedgeLayout.width/2)*innerRadi2}" startAngle="360" arc="1"/>
 						</core:geometry>
 						<core:modifiers>
-							<core:PropertyModifier targets="{[wedge]}" property="arc" modifier="{wedgeScale.valueToLayout(wedgeLayout.currentDataValue)-angleGap}" modifierOperator="none"/>
-							<core:PropertyModifier targets="{[wedge]}" property="startAngle" modifier="{wedgeScale.valueToLayout(wedgeLayout.currentDataValue)+angleGap}" modifierOperator="subtract"/> 
+							<core:PropertyModifier targets="{[wedge]}" property="arc" modifier="{wedgeScale.valueToLayout(wedgeLayout.currentValue)-angleGap}" modifierOperator="none"/>
+							<core:PropertyModifier targets="{[wedge]}" property="startAngle" modifier="{wedgeScale.valueToLayout(wedgeLayout.currentValue)+angleGap}" modifierOperator="subtract"/> 
 						</core:modifiers>
 					</core:GeometryRepeater>
 				</core:referenceRepeater>
-				<core:geometries>
+				<core:drawingGeometries>
 					<!-- wedgeRenderer: the drawing geometry for the inner ring of wedges -->
 					<geometry:Wedge x="0" y="0" id="wedgeRenderer" 
 					    innerRadius="{wedgeLayout.currentReference['innerRadius']}" outerRadius="{wedgeLayout.currentReference['outerRadius']}"
@@ -119,7 +119,7 @@
 						fill="{wedgeFill}"><geometry:stroke><degrafa:SolidStroke color="0" pixelHinting="true" alpha=".5"/></geometry:stroke></geometry:Wedge> 
 					<degrafa:RegularRectangle width="{outerRadius.value}" x="{center.value}" y="{center.value}">
 						<degrafa:geometry>
-							<degrafa:RasterText id="innerLabel" fontFamily="Myriad Pro"  fontSize="13" text="{(wedgeLayout.currentLabelValue) ? wedgeLayout.currentLabelValue : ''}" 
+							<degrafa:RasterText id="innerLabel" fontFamily="Myriad Pro"  fontSize="13" text="{(wedgeLayout.currentLabel) ? wedgeLayout.currentLabel : ''}" 
 								right="0" autoSize="right">
 								<degrafa:fill><degrafa:SolidFill color="0xFFFFFF"/></degrafa:fill>
 								<degrafa:transform>
@@ -132,7 +132,7 @@
 									registrationPoint="topLeft"/>
 						</degrafa:transform>
 					</degrafa:RegularRectangle>
-				</core:geometries>
+				</core:drawingGeometries>
 				<core:layouts>
 					<!-- outerWedgeRenderer:  The layout for the outer ring of wedges -->
 					<core:BaseLayout dataProvider="{wedgeLayout.currentDatum.medal}" width="{dc.width}" height="{dc.width}" id="outerWedgeLayout" dataField="count" labelField="category"
@@ -143,15 +143,15 @@
 							<core:GeometryRepeater dataProvider="{outerWedgeLayout.dataItems}" id="outerRepeater">
 								<core:geometry>
 									<geometry:Wedge  id="outerWedge" centerX="{wedgeLayout.width/2}" centerY="{wedgeLayout.width/2}" innerRadius="{(wedgeLayout.width/2)*outerRadi1}" outerRadius="{(wedgeLayout.width/2)*outerRadi2}" 
-										startAngle="{wedgeLayout.currentReference['startAngle']}" arc="{wedgeScale.valueToLayout(outerWedgeLayout.currentDataValue)-angleGap}"/>
+										startAngle="{wedgeLayout.currentReference['startAngle']}" arc="{wedgeScale.valueToLayout(outerWedgeLayout.currentValue)-angleGap}"/>
 								</core:geometry>
 								<core:modifiers>
-									<core:PropertyModifier targets="{[outerWedge]}" property="arc" modifier="{outerWedgeScale.valueToLayout(outerWedgeLayout.currentDataValue)}" modifierOperator="none"/>
+									<core:PropertyModifier targets="{[outerWedge]}" property="arc" modifier="{outerWedgeScale.valueToLayout(outerWedgeLayout.currentValue)}" modifierOperator="none"/>
 									<core:PropertyModifier targets="{[outerWedge]}" property="startAngle" modifier="{(outerWedgeLayout.currentIndex>0) ? outerWedgeScale.valueToLayout(outerWedgeLayout.dataItems[outerWedgeLayout.currentIndex-1][outerWedgeLayout.dataField]) : 0}" modifierOperator="add"/> 	
 								</core:modifiers>
 							</core:GeometryRepeater>
 						</core:referenceRepeater>
-						<core:geometries>
+						<core:drawingGeometries>
 								<!-- outerWedgeRenderer:  the drawing geometry for the outer ring of wedges -->
 								<geometry:Wedge x="0" y="0" id="outerWedgeRenderer"
 								    innerRadius="{outerWedgeLayout.currentReference['innerRadius']}" outerRadius="{outerWedgeLayout.currentReference['outerRadius']}"
@@ -163,7 +163,7 @@
 								</geometry:Wedge> 		
 								<degrafa:RegularRectangle width="{outerRadius.value}" x="{center.value}" y="{center.value}">
 										<degrafa:geometry>
-											<degrafa:RasterText id="outerLabel" fontFamily="Myriad Pro"  fontSize="11" text="{(outerWedgeLayout.currentLabelValue) ? outerWedgeLayout.currentLabelValue : ''}" 
+											<degrafa:RasterText id="outerLabel" fontFamily="Myriad Pro"  fontSize="11" text="{(outerWedgeLayout.currentLabel) ? outerWedgeLayout.currentLabel : ''}" 
 												right="0" autoSize="right">
 												<degrafa:fill><degrafa:SolidFill color="0"/></degrafa:fill>
 												<degrafa:transform>
@@ -176,7 +176,7 @@
 													registrationPoint="topLeft"/>
 										</degrafa:transform>
 								</degrafa:RegularRectangle>
-						</core:geometries>
+						</core:drawingGeometries>
 					</core:BaseLayout>
 				</core:layouts>
 			</core:BaseLayout>

@@ -79,10 +79,10 @@
 				dataProvider="{dataProvider}" dataField="columns" labelField="index" seriesLabelField="name" seriesDataField="value"
 				fill="{fill1}" stroke="{stroke1}"  verticalScale="{myScale}"/>
 			<axiis:HorizontalBoxLayout dataProvider="{columnNames}" id="legendLayout" width="900" y="{dc.height+10}">
-				<axiis:geometries>
+				<axiis:drawingGeometries>
 					<degrafa:RegularRectangle width="10" height="10" y="10" x="{legendLayout.currentReference.x}" fill="{fill2}"/>
 					<degrafa:RasterText text="{(columnNames[legendLayout.currentIndex]) ? columnNames[legendLayout.currentIndex]:''}" y="5" x="{12+legendLayout.currentReference.x}" width="220" fontFamily="Arial"/>
-				</axiis:geometries>
+				</axiis:drawingGeometries>
 			</axiis:HorizontalBoxLayout>
 		</axiis:layouts>
 		<axiis:fills>
