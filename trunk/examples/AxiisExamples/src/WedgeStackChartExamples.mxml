@@ -3,7 +3,7 @@
 	layout="absolute"
 	creationComplete="start();" xmlns:core="org.axiis.core.*" xmlns:axiis="http://www.axiis.org/2009"
 	 backgroundGradientColors="[0xDDDDDD,0xF5F5F5]"
-	xmlns:geometry="com.degrafa.geometry.*" xmlns:paint="org.axiis.paint.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:states="org.axiis.states.*" xmlns:utils="org.axiis.utils.*">
+	xmlns:geometry="com.degrafa.geometry.*" xmlns:paint="org.axiis.paint.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:states="org.axiis.states.*" xmlns:utils="org.axiis.utils.*" xmlns:Examples="Examples.*">
 	<mx:Style>
 		ToolTip
 		{
@@ -75,19 +75,8 @@
 	<axiis:LinearScale id="wedgeScale" minLayout="0" maxLayout="{360-wedgeLayout.itemCount*angleGap}" minValue="0" dataProvider="{dataProvider}" />
 	<axiis:LinearScale id="outerWedgeScale" minLayout="0" maxLayout="{wedgeLayout.currentReference['arc']}" minValue="0" dataProvider="{wedgeLayout.currentDatum}" maxValue="{wedgeLayout.currentDatum['medal_count_sum']}"/>
 	
-	<degrafa:Surface width="100%" height="100%">
-		<degrafa:GeometryGroup width="{this.width}" height="{this.height}">
-			<degrafa:RegularRectangle width="100%" height="100%">
-				<degrafa:fill>
-					<degrafa:LinearGradientFill angle="90">
-						<degrafa:GradientStop color="#3e3e3e" ratio="0"/>
-						<degrafa:GradientStop color="#e6e6e6" ratio=".55"/>
-						<degrafa:GradientStop color="#a5a5a5" ratio="1"/>
-					</degrafa:LinearGradientFill>
-				</degrafa:fill>
-			</degrafa:RegularRectangle>
- 		</degrafa:GeometryGroup>
-	</degrafa:Surface>
+	<Examples:ExampleBackground width="{this.width}" height="{this.height}"/>
+
 	
 	<mx:Label fontSize="22" fontFamily="Myriad Pro" htmlText="&lt;b&gt;Axiis&lt;/b&gt; - Stacked Wedge Graph" top="10" right="10" color="0xFFFFFF"/>
 	
@@ -97,7 +86,7 @@
 		showToolTips="true" toolTipFunction="{dataTipFunction}">
 		<axiis:layouts>
 			<!-- wedgeLayout:  This renders the inner ring of wedges -->
-			<core:BaseLayout id="wedgeLayout" dataProvider="{dataProvider}" width="{dc.width}" height="{dc.width}"  dataField="medal_count_sum" labelField="name"
+			<core:BaseLayout id="wedgeLayout" name="innerLayout" dataProvider="{dataProvider}" width="{dc.width}" height="{dc.width}"  dataField="medal_count_sum" labelField="name"
 				itemPreDraw="{innerLabel.width=innerLabel.textWidth+40; if (transposeLabel(wedgeLayout.currentReference)==true) innerLabel.right=(outerRadius.value-wedgeRenderer.outerRadius) + innerLabel.textWidth + 11; else innerLabel.right=outerRadius.value-wedgeRenderer.outerRadius+10;}"
 				>
 				<core:referenceRepeater>
@@ -118,7 +107,7 @@
 					    innerRadius="{wedgeLayout.currentReference['innerRadius']}" outerRadius="{wedgeLayout.currentReference['outerRadius']}"
  						startAngle="{wedgeLayout.currentReference['startAngle']}" arc="{wedgeLayout.currentReference['arc']}" 
  						centerX="{wedgeLayout.currentReference['centerX']}" centerY="{wedgeLayout.currentReference['centerY']}"
-						fill="{wedgeFill}"><geometry:stroke><degrafa:SolidStroke color="{wedgeLayou" pixelHinting="true" alpha=".5"/></geometry:stroke></geometry:Wedge> 
+						fill="{wedgeFill}"><geometry:stroke><degrafa:SolidStroke pixelHinting="true" alpha=".5"/></geometry:stroke></geometry:Wedge> 
 					<degrafa:RegularRectangle width="{outerRadius.value}" x="{center.value}" y="{center.value}" height="1" id="innerRect">
 						<degrafa:geometry>
 							<degrafa:RasterText id="innerLabel" fontFamily="Myriad Pro"  fontSize="13" text="{(wedgeLayout.currentLabel) ? wedgeLayout.currentLabel : ''}" 
@@ -137,8 +126,8 @@
 				</core:drawingGeometries>
 				<core:layouts>
 					<!-- outerWedgeRenderer:  The layout for the outer ring of wedges -->
-					<core:BaseLayout dataProvider="{wedgeLayout.currentDatum.medal}" width="{dc.width}" height="{dc.width}" id="outerWedgeLayout" dataField="count" labelField="category"
-						itemPreDraw="{trace('text width=' + outerLabel.bounds.width); outerLabel.width=outerLabel.textWidth+12; if (transposeLabel(outerWedgeLayout.currentReference)==true) outerLabel.right=-3; else outerLabel.right=-outerLabel.textWidth-5;}"
+					<core:BaseLayout id="outerWedgeLayout"  name=" outerLayout" dataProvider="{wedgeLayout.currentDatum.medal}" width="{dc.width}" height="{dc.width}"  dataField="count" labelField="category"
+						itemPreDraw="{outerLabel.width=outerLabel.textWidth+12; if (transposeLabel(outerWedgeLayout.currentReference)==true) outerLabel.right=-3; else outerLabel.right=-outerLabel.textWidth-5;}"
 						>
 						<core:referenceRepeater>
 							<!-- outerRepeater:  the reference geometry for the outer ring of wedges -->
