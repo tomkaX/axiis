@@ -4,7 +4,7 @@
 	xmlns:degrafa="http://www.degrafa.com/2007" backgroundGradientColors="[0xFFFFFF,0xDDDDDD]"
 	layout="vertical"
 	initialize="start()" xmlns:geometry="org.axiis.charts.geometry.*" xmlns:states="org.axiis.states.*"
-	width="900" height="500">
+	>
 
 	<mx:Script>
 		<![CDATA[
@@ -25,7 +25,7 @@
 
 	<axiis:LinearScale id="scale" maxLayout="{dataCanvas.height}" minLayout="0" minValue="0" maxValue="100"/> 
 
-	<axiis:DataCanvas id="dataCanvas" width="800" height="400">
+	<axiis:DataCanvas id="dataCanvas" width="800" height="800">
 		<axiis:layouts>
 			<axiis:HorizontalBoxLayout id="clusterLayout" name="A" width="{dataCanvas.width}" height="{dataCanvas.height}" scaleFill="true" dataField="value">
 				<axiis:drawingGeometries>
@@ -45,7 +45,7 @@
 										height="{scale.valueToLayout(subColumnLayout.currentValue)}" y="{clusterLayout.height-scale.valueToLayout(subColumnLayout.currentValue)}"/>
 								</axiis:drawingGeometries>
 								<axiis:states>
-									<states:State enterStateEvent="mouseOver" exitStateEvent="mouseOut" targets="{[subColumn]}" properties="[fill]" values="{[rollOverFill2]}"/>
+									<states:State enterStateEvent="mouseOver" exitStateEvent="mouseOut" targets="{[subColumn]}" properties="[width]" values="{[100]}"/>
 								</axiis:states>
 							</axiis:HorizontalBoxLayout>
 						</axiis:layouts>
