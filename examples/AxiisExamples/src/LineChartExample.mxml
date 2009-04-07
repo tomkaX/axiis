@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:charts="org.axiis.charts.*" 
+	layout="absolute"
+	creationComplete="start();" xmlns:core="org.axiis.core.*" xmlns:axiis="http://www.axiis.org/2009"
+	 backgroundGradientColors="[0xDDDDDD,0xF5F5F5]"
+	xmlns:geometry="com.degrafa.geometry.*" xmlns:paint="org.axiis.paint.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:states="org.axiis.states.*" xmlns:utils="org.axiis.utils.*" xmlns:Examples="Examples.*" xmlns:axis="org.axiis.charts.axis.*">
+	<mx:Style>
+		ToolTip
+		{
+			borderSkin:ClassReference('org.axiis.core.HTMLToolTip');
+		}
+	</mx:Style>
+	
+	<mx:Style source="styles/Axiis_Examples.css"/>
+	
+	<mx:Style>
+		.axisLabel {
+			fontSize:14pt;
+			fontFamily:"Myriad Pro";
+			fontWeight:normal;	
+			textColor:#FFFFFF;
+		}
+	
+	</mx:Style>
+	
+	<mx:Script>
+		<![CDATA[
+		
+			import org.axiis.data.DataSet; 
+			
+			var ds:DataSet = new DataSet();
+			
+			public function start():void
+			{ 
+				
+				ds.processXmlString(countryData);
+				//Aggregate the detailed data items
+				ds.aggregateCollection("country.medal",["count"]);
+				//Aggegate the higher level items
+				ds.aggregateCollection("country",["medal_count_sum"]);
+				vScale.maxValue=ds.data['country_medal_count_sum_max'];
+				dataProvider=ds.data.country;
+				
+				dc.invalidateDisplayList();
+			}
+			
+			private function dataTipFunction(data:Object):String
+			{
+				if(data["competitors"] != null && data["name"] != null)
+				{
+					return "<b>" + data["name"] + " Total Medals</b><br/>" + data["competitors"];
+				}
+				else if(data["count"] != null && data["category"] != null)
+				{
+					return "<b>" + data["category"] + " Total Medals</b><br/>" + data["count"];
+				}
+				return "";
+			}
+			
+			private function transposeLabel(wedge:Object):Boolean {
+			
+				
+				if( (wedge.startAngle + wedge.arc/2) > 90  && (wedge.startAngle + wedge.arc/2) < 270) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+			
+			
+		]]>
+	</mx:Script>
+	
+	
+	<mx:String id="countryData" source="data/2008_Olympics.xml"/>
+	
+	
+	<mx:Object id="dataProvider"/>
+	
+	<axiis:LinearScale id="vScale" minLayout="0" maxLayout="{hLayout.height}" minValue="0" dataProvider="{dataProvider}" />
+	
+	<Examples:ExampleBackground width="{this.width}" height="{this.height}"/>
+
+	<mx:Label fontSize="22" fontFamily="Myriad Pro" htmlText="&lt;b&gt;Axiis&lt;/b&gt; - Stacked Wedge Graph" top="10" right="10" color="0xFFFFFF"/>
+	
+	<mx:Label fontSize="16" fontFamily="Myriad Pro" htmlText="2008 Olympic Medals" top="{dc.y+dc.height+70}" horizontalCenter="0" color="0"/>
+	<mx:Canvas width="100%" height="100%">
+	<axiis:DataCanvas id="dc" width="{this.width*.6}" height="{this.height*.4}" verticalCenter="0" horizontalCenter="0" 
+		showToolTips="true" toolTipFunction="{dataTipFunction}">
+		<axiis:backgroundGeometries>
+			<axis:VerticalAxis verticalScale="{vScale}" tickStroke="{tickStroke}" width="20" height="{dc.height-20}" emitDataTips="false"
+				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5" majorTickInterval="55"
+				/>
+			<degrafa:Line x="20" x1="{hLayout.width}" y="{hLayout.height}" y1="{hLayout.height}" stroke="{tickStroke}"/>
+		</axiis:backgroundGeometries>
+		<axiis:layouts> 
+			
+			<axiis:HorizontalBoxLayout dataProvider="{dataProvider}" id="hLayout" dataField="medal_count_sum" labelField="name" width="{dc.width-40}" x="40" height="{dc.height-20}">
+				<axiis:drawingGeometries>
+					<degrafa:Circle radius="5"
+							centerX="{hLayout.currentReference.x}"
+							centerY="{hLayout.height-vScale.valueToLayout(hLayout.currentValue)}"
+							fill="{circleFill}"/>
+					<degrafa:Line x="{hLayout.currentReference.x}" x1="{hLayout.currentReference.x+hLayout.currentReference.width}" visible="{(hLayout.currentIndex &lt; hLayout.itemCount-1)}"
+							y="{hLayout.height-vScale.valueToLayout(hLayout.currentValue)}" y1="{hLayout.height-((hLayout.currentIndex &lt; hLayout.itemCount-1) ? vScale.valueToLayout(hLayout.dataItems[hLayout.currentIndex+1][hLayout.dataField]) : vScale.valueToLayout(hLayout.currentValue))}"
+							><degrafa:stroke><degrafa:SolidStroke/></degrafa:stroke></degrafa:Line>
+					<degrafa:RasterText fontFamily="Arial" textColor="0x444444" x="{hLayout.currentReference.x}" y="{hLayout.height-vScale.valueToLayout(hLayout.currentValue)-20}"
+						 text="{hLayout.currentLabel}"/>
+				</axiis:drawingGeometries>
+			</axiis:HorizontalBoxLayout>
+		</axiis:layouts>	
+		<axiis:palettes>
+			<paint:LayoutPalette colorFrom="0xCC0000" colorTo="0x0000AA" target="{hLayout}" id="circlePalette"/>
+		</axiis:palettes>
+		<axiis:fills>
+			<degrafa:SolidFill color="{circlePalette.currentColor}" alpha=".5" id="circleFill"/>
+		</axiis:fills>
+		<axiis:strokes>
+			<degrafa:SolidStroke id="tickStroke" weight="1" pixelHinting="true"/>
+		</axiis:strokes>
+	</axiis:DataCanvas>
+	</mx:Canvas>
+</mx:Application>

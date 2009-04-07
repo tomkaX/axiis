@@ -27,11 +27,11 @@
 
 		<mx:HDividedBox width="800" height="600" verticalCenter="0" horizontalCenter="0" liveDragging="true"> 
 			<mx:VBox width="50%" height="100%">
-				<mx:CheckBox  label="use common bounds for fill" change="{columnChart.myLayout.scaleFill=event.target.selected;}"/>
+				<mx:CheckBox  label="use common bounds for fill" change="{columnChart.myLayout.useInheritedBounds=!event.target.selected; columnChart.myLayout.scaleFill=event.target.selected; columnChart.invalidateDisplayList();}"/>
 				<charts:ColumnChart width="100%" height="100%"  id="columnChart" horizontalField="name" verticalField="competitors"/>
 			</mx:VBox>
 			<mx:VBox width="50%" height="100%">
-				<mx:CheckBox selected="true" label="use common bounds for fill" change="{barChart.myLayout.scaleFill=event.target.selected;}"/>
+				<mx:CheckBox selected="true" label="use common bounds for fill" change="{barChart.myLayout.scaleFill=event.target.selected; barChart.invalidateDisplayList();}"/>
 				<charts:BarChart width="100%" height="100%" id="barChart" horizontalField="competitors" verticalField="name"/>
 			</mx:VBox>
 		</mx:HDividedBox>
