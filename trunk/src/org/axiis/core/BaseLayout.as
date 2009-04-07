@@ -27,17 +27,19 @@ package org.axiis.core
 			super();
 		}
 		
-		
-		private var _emitDataTips:Boolean;
-		
+		public function get childSprites():Array
+		{
+			return _childSprites;
+		}
+		private var _childSprites:Array = [];
+
 		public function set emitDataTips(value:Boolean):void {
 			_emitDataTips=value;
 		}
 		public function get emitDataTips():Boolean {
 			return _emitDataTips;
 		}
-		
-		private var childSprites:Array = [];
+		private var _emitDataTips:Boolean = true;
 		
 		private var currentChild:AxiisSprite;
 		
@@ -141,6 +143,36 @@ package org.axiis.core
 			return __currentLabel;
 		}
 		private var __currentLabel:String;
+
+		[Bindable(event="dataTipLabelFunctionChange")]
+		public function set dataTipLabelFunction(value:Function):void
+		{
+			if(value != _dataTipLabelFunction)
+			{
+				_dataTipLabelFunction = value;
+				dispatchEvent(new Event("dataTipLabelFunctionChange"));
+			}
+		}
+		public function get dataTipLabelFunction():Function
+		{
+			return _dataTipLabelFunction;
+		}
+		private var _dataTipLabelFunction:Function;
+		
+		[Bindable(event="dataTipPositionFunctionChange")]
+		public function set dataTipPositionFunction(value:Function):void
+		{
+			if(value != _dataTipPositionFunction)
+			{
+				_dataTipPositionFunction = value;
+				dispatchEvent(new Event("dataTipPositionFunctionChange"));
+			}
+		}
+		public function get dataTipPositionFunction():Function
+		{
+			return _dataTipPositionFunction;
+		}
+		private var _dataTipPositionFunction:Function;
 		
 		/***
 		 * Store states collection
@@ -184,10 +216,10 @@ package org.axiis.core
 		private var _scaleFill:Boolean;
 		
 		/**
-		 * this will use the currentReference bounds of the the parentLayout is its own bounds, and set the currentItem (sprite) accordingly
+		 * Not really sure what the intention of this was. It breaks the EmbedLayoutExample but has effect on the WedgeStack.
+		 * Should we delete it?
 		 */
-		[Inspectable]
-		public var useInheritedBounds:Boolean = true;
+		private var useInheritedBounds:Boolean = true;
 		
 		[Bindable]
 		public function get parentLayout():ILayout
@@ -235,11 +267,24 @@ package org.axiis.core
 		private var __itemCount:int;
 		
 		
+		[Bindable(event="dataItemsChange")]
 		public function get dataItems():Array
 		{
 			return _dataItems;
 		}
-		private var _dataItems:Array;
+		private function set _dataItems(value:Array):void
+		{
+			if(value != __dataItems)
+			{
+				__dataItems = value;
+				dispatchEvent(new Event("dataItemsChange"));
+			}
+		}
+		private function get _dataItems():Array
+		{
+			return __dataItems;
+		}
+		private var __dataItems:Array;
 		
 		[Bindable(event="currentReferenceChange")]
 		public function get currentReference():Geometry
@@ -261,7 +306,7 @@ package org.axiis.core
 		/**
 		 * The Sprite that will be added to the DataCanvas
 		 */
-		protected function set sprite(value:Sprite):void
+		protected function set sprite(value:AxiisSprite):void
 		{
 			if(value != _sprite)
 			{
@@ -269,11 +314,11 @@ package org.axiis.core
 				dispatchEvent(new Event("spriteChange"));
 			}
 		}
-		protected function get sprite():Sprite
+		protected function get sprite():AxiisSprite
 		{
 			return _sprite;
 		}
-		private var _sprite:Sprite;
+		private var _sprite:AxiisSprite;
 
 		[Bindable(event="dataProviderChange")]
 		public function set dataProvider(value:Object):void
@@ -512,7 +557,7 @@ package org.axiis.core
 			dispatchEvent(new LayoutEvent(LayoutEvent.INVALIDATE,this as ILayout));
 		}
 		
-		public function render(newSprite:Sprite = null):void
+		public function render(newSprite:AxiisSprite = null):void
 		{
 			//trace(name + " render " +currentIndex)
 			var t:Number=flash.utils.getTimer();
@@ -565,15 +610,15 @@ package org.axiis.core
 		 */
 		protected function postIteration():void
 		{
-
 			_currentReference = referenceRepeater.geometry;
 			
 			// Add a new Sprite if there isn't one available on the display list.
 			if(_currentIndex > sprite.numChildren - 1)
 			{
-				var newChildSprite:Sprite = new AxiisSprite();
+				var newChildSprite:AxiisSprite = new AxiisSprite();
 				newChildSprite.doubleClickEnabled=true;
 				newChildSprite.addEventListener(StateChangeEvent.STATE_CHANGE,onStateChange);
+				newChildSprite.layout = this;
 				
 				// Add listeners for all the state changing events
 				for each(var state:State in states)
@@ -590,17 +635,17 @@ package org.axiis.core
 			currentChild = AxiisSprite(sprite.getChildAt(currentIndex));
 			currentChild.data = currentDatum;
 			
-			this.dispatchEvent(new Event("itemPreDraw"));
+			dispatchEvent(new Event("itemPreDraw"));
 			
 			drawGraphicsToChild(currentChild);
 		}
 		
-		protected function drawGraphicsToChild(child:Sprite):void
+		protected function drawGraphicsToChild(child:AxiisSprite):void
 		{
 			var t:Number=flash.utils.getTimer();
 			
 			//trace(name + " drawGraphicsToChild index=" + currentIndex);
-			if (parentLayout) { trace("startAngle=" + currentReference["startAngle"]); }
+			//if (parentLayout) { trace("startAngle=" + currentReference["startAngle"]); }
 			
 			child.graphics.clear();
 			
@@ -623,6 +668,8 @@ package org.axiis.core
 					: geometry.commandStack.bounds;
 				
 				geometry.draw(child.graphics,drawingBounds);
+				
+				child.bounds = drawingBounds.clone();
 			}
 
 	
@@ -728,10 +775,9 @@ package org.axiis.core
 		{
 			//trace();
 			//trace(name + " state change " + event.type + " " + event.target);
-				
+			
 			if(childSprites.indexOf(event.target) == -1)
 			{
-				//trace("cancelled")
 				_currentReference = null;
 				_currentIndex = -1;
 				referenceRepeater.reset();
@@ -786,14 +832,14 @@ package org.axiis.core
 		
 		public function renderChain(chain:Array,targetSprite:Sprite,parentSprite:Sprite):void
 		{
-			trace(name + " renderChain");
+			//trace(name + " renderChain");
 			//trace();
 			var ancestorOfTarget:Sprite = targetSprite;
 			//trace(name + " target " + ancestorOfTarget);
 			while(ancestorOfTarget != parentSprite)
 			{
 				currentChild = sprite as AxiisSprite;
-				sprite = ancestorOfTarget as Sprite;
+				sprite = ancestorOfTarget as AxiisSprite;
 				ancestorOfTarget = ancestorOfTarget.parent as Sprite;
 				//trace(name + " ancestorOfTarget " + ancestorOfTarget);
 			}
@@ -823,7 +869,7 @@ package org.axiis.core
 		}
 		
 		private function trimChildSprites(trim:Number):void {
-			trace("trimming " + trim);
+			//trace("trimming " + trim);
 			if (!_sprite || _sprite.numChildren<trim) return;
 			for (var i:int=0; i<=trim;i++) {
 				var s:AxiisSprite=AxiisSprite(_sprite.removeChildAt(_sprite.numChildren-1));

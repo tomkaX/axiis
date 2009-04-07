@@ -11,7 +11,7 @@ package org.axiis.core
 
 	public class HTMLToolTip extends ToolTipBorder
 	{
-        override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
+		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
         {
             var toolTip:ToolTip = (this.parent as ToolTip);
             var textField:UITextField = toolTip.getChildAt(1) as UITextField;
@@ -25,7 +25,10 @@ package org.axiis.core
             calWidth += textField.x*2;
             calWidth += toolTip.getStyle("paddingLeft");
             calWidth += toolTip.getStyle("paddingRight");
-             
+            
+            toolTip.width = calWidth;
+            toolTip.height = calHeight;
+            
             super.updateDisplayList(Math.ceil(calWidth), Math.ceil(calHeight));
         }
 	}

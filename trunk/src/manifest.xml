@@ -22,4 +22,7 @@
 	<!-- data -->
 	<component id="SVGDashLine" class="org.axiis.data.DataSet"/>
 	
+	<!-- states -->
+	<component id="State" class="org.axiis.states.State"/>
+	
 </componentPackage>    

@@ -14,6 +14,14 @@ package org.axiis.core
 		function set emitDataTips(value:Boolean):void;
 		
 		function get itemCount():int;
+
+		function get dataTipLabelFunction():Function;
+		function set dataTipLabelFunction(value:Function):void;
+		
+		function get dataTipPositionFunction():Function;
+		function set dataTipPositionFunction(value:Function):void;
+		
+		function get childSprites():Array;
 		
 		function set parentLayout(value:ILayout):void;
 		function get parentLayout():ILayout;
@@ -78,6 +86,6 @@ package org.axiis.core
 		 */
 		function getSprite(owner:DataCanvas):Sprite;
 		
-		function render(sprite:Sprite = null):void; 
+		function render(sprite:AxiisSprite = null):void; 
 	}
 }

@@ -5,6 +5,7 @@ package org.axiis
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
 	
 	import mx.core.IFactory;
 	import mx.core.IToolTip;
@@ -30,13 +31,13 @@ package org.axiis
 		
 		public var dataFunction:Function;
 		
-		public var toolTipFunction:Function;
-		
 		public var showToolTips:Boolean = true;
 		
 		public var toolTipClass:IFactory;
 		
-		private var tt:IToolTip;
+		public var hitRadius:Number = 10;
+		
+		private var toolTips:Array = [];
 		
 		[Bindable(event="dataProviderChange")]
 		public function set dataProvider(value:Object):void
@@ -63,15 +64,15 @@ package org.axiis
 		
 		private var invalidatedLayouts:Array = [];
 		
-		private var _background:Sprite;
+		private var _background:AxiisSprite;
 		
-		private var _foreground:Sprite;
+		private var _foreground:AxiisSprite;
 		
 		override protected function createChildren():void
 		{
 			super.createChildren();
 			
-			_background=new Sprite();
+			_background=new AxiisSprite();
 			addChild(_background);
 
 			for each(var layout:ILayout in layouts)
@@ -81,7 +82,8 @@ package org.axiis
 				addChild(sprite);
 				
 				layout.addEventListener(LayoutEvent.INVALIDATE,handleLayoutInvalidate);
-				if (layout.emitDataTips) sprite.addEventListener(MouseEvent.MOUSE_OVER,onItemMouseOver);
+				if (layout.emitDataTips)
+					sprite.addEventListener(MouseEvent.MOUSE_OVER,onItemMouseOver);
 				sprite.addEventListener(MouseEvent.CLICK,onItemMouseClick);
 				sprite.addEventListener(MouseEvent.DOUBLE_CLICK,onItemMouseDoubleClick);
 				sprite.addEventListener(MouseEvent.MOUSE_OUT,onItemMouseOut);
@@ -91,7 +93,7 @@ package org.axiis
 				invalidatedLayouts.push(layout);
 			}
 			
-			_foreground=new Sprite();
+			_foreground=new AxiisSprite();
 			addChild(_foreground);
 		}
 		
@@ -178,28 +180,28 @@ package org.axiis
 			var axiisSprite:AxiisSprite = e.target as AxiisSprite;
 			if(!axiisSprite)
 				return;
-				
-			if(showToolTips && toolTipFunction != null)
+			
+			if(showToolTips && axiisSprite.layout.dataTipLabelFunction != null)
 			{
-				var text:String = toolTipFunction.call(this,axiisSprite.data);
-				if(text != null && text != "")
+				var hitSiblings:Array = getHitSiblings(axiisSprite);
+				for each(var sibling:AxiisSprite in hitSiblings)
 				{
-					tt = ToolTipManager.createToolTip(text,stage.mouseX + 10,stage.mouseY + 10);
-					addEventListener(MouseEvent.MOUSE_MOVE,mouseMoveHandler);
+					showToolTip(sibling);
 				}
 			}
 		}
 		
-		public function onItemMouseOut(e:MouseEvent):void {
+		public function onItemMouseOut(e:MouseEvent):void
+		{
 			var axiisSprite:AxiisSprite = e.target as AxiisSprite;
 			if(!axiisSprite)
 				return;
 			
-			if(tt)
+			while(toolTips.length > 0)
 			{
+				var tt:IToolTip = IToolTip(toolTips.pop());
 				ToolTipManager.destroyToolTip(tt);
 				tt = null;
-				removeEventListener(MouseEvent.MOUSE_MOVE,mouseMoveHandler);
 			}	
 		}
 		
@@ -219,12 +221,44 @@ package org.axiis
 			//trace("mouseDoubleClick");
 		}
 		
-		private function mouseMoveHandler(event:MouseEvent):void
+		private function getHitSiblings(axiisSprite:AxiisSprite):Array
 		{
-			if(tt)
+			var s:Sprite = new Sprite();
+			s.graphics.clear();
+			s.graphics.beginFill(0,0);
+			s.graphics.drawCircle(mouseX,mouseY,hitRadius);
+			s.graphics.endFill();
+			addChild(s);
+			
+			var toReturn:Array = [];
+			var siblings:Array = axiisSprite.layout.childSprites;
+			for each(var sibling:AxiisSprite in siblings)
 			{
-				tt.x = stage.mouseX + 10;
-				tt.y = stage.mouseY + 10;
+				if(sibling.hitTestObject(s))
+				{
+					toReturn.push(sibling);
+				}
+			}
+			
+			removeChild(s);
+			
+			return toReturn;
+		}
+		
+		private function showToolTip(axiisSprite:AxiisSprite):void
+		{
+			var text:String = axiisSprite.layout.dataTipLabelFunction.call(this,axiisSprite.data);
+			if(text != null && text != "")
+			{
+				var tt:IToolTip = ToolTipManager.createToolTip(text,stage.mouseX + 10,stage.mouseY + 10);
+				if(axiisSprite.layout.dataTipPositionFunction != null)
+				{
+					var position:Point = axiisSprite.layout.dataTipPositionFunction.call(this,axiisSprite,tt);
+					trace(tt.text + " "+ position);
+					tt.x = position.x;
+					tt.y = position.y;
+				}
+				toolTips.push(tt);
 			}
 		}
 	}

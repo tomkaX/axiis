@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RegularRectangle xmlns="com.degrafa.geometry.*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:axiis="http://www.axiis.org/2009"
 	implements="org.axiis.core.IAxiisGeometry"
-	width="{_parentLayout.currentReference.width}"
 	xmlns:degrafa="http://www.degrafa.com/2007">
 	
 	<!-- height="{updateHeight(parentLayout.currentIndex)}" -->
@@ -23,13 +22,6 @@
 			
 			[Inspectable][Bindable]
 			public var scale:IScale;
-			
-			private function updateHeight(currentIndex:Number):Number
-			{
-				trace(" - " + parentLayout["name"] + " " + currentIndex)
-				return scale.valueToLayout(parentLayout.currentDatum[dataField]);
-			}
-			
 		]]>
 	</mx:Script> 
 	<mx:String id="dataField"/>

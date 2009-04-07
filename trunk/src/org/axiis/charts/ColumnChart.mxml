@@ -22,7 +22,8 @@
 					fill="{colFill}"
 					stroke="{myStroke}"
 					labelField="{horizontalField}"
-					height="{vScale.valueToLayout(myLayout.currentValue)}"/>
+					height="{vScale.valueToLayout(myLayout.currentValue)}"
+					width="{myLayout.currentReference.width}"/>
 				
 				<degrafa:RasterText text="{myLayout.currentDatum[horizontalField]}" x="{myLayout.currentReference.x}" width="90" y="{height}" fontSize="16" align="right" fontFamily="Arial" visible="{showLabels}">
 					<degrafa:transform>
