@@ -119,7 +119,12 @@ package org.axiis.data
 							var obj:Object=ArrayCollection(collection).getItemAt(i);
 							for (var y:int=0;y<properties.length;y++) {
 								if (!aggregates[properties[y] + "_sum"]) aggregates[properties[y] + "_sum"]=0;
+								if (!aggregates[properties[y] + "_sum"]) aggregates[properties[y] + "_sum"]=0;
+								if (!aggregates[properties[y] + "_min"]) aggregates[properties[y] + "_min"]=Number.POSITIVE_INFINITY;
+								if (!aggregates[properties[y] + "_max"]) aggregates[properties[y] + "_max"]=Number.NEGATIVE_INFINITY;
 								aggregates[properties[y] + "_sum"]+=obj[properties[y]];
+								aggregates[properties[y] + "_min"]=Math.min(obj[properties[y]], aggregates[properties[y] + "_min"]);
+								aggregates[properties[y] + "_max"]=Math.max(obj[properties[y]], aggregates[properties[y] + "_max"]);
 							}
 						}
 					}	
@@ -128,18 +133,31 @@ package org.axiis.data
 							var obj:Object=collection[i];
 							for (var y:int=0;y<properties.length;y++) {
 								if (!aggregates[properties[y] + "_sum"]) aggregates[properties[y] + "_sum"]=0;
+								if (!aggregates[properties[y] + "_min"]) aggregates[properties[y] + "_min"]=Number.POSITIVE_INFINITY;
+								if (!aggregates[properties[y] + "_max"]) aggregates[properties[y] + "_max"]=Number.NEGATIVE_INFINITY;
 								aggregates[properties[y] + "_sum"]+=obj[properties[y]];
+								aggregates[properties[y] + "_min"]=Math.min(obj[properties[y]], aggregates[properties[y] + "_min"]);
+								aggregates[properties[y] + "_max"]=Math.max(obj[properties[y]], aggregates[properties[y] + "_max"]);
 							}
 						}
 					}
 					
 					for (var n:int=0;n<properties.length;n++) {
-						object[collections[0] + "_" + properties[n] + "_sum"] = aggregates[properties[n] + "_sum"];
-						object[collections[0] + "_" + properties[n] + "_avg"] = aggregates[properties[n] + "_sum"]/i;
+						if (!object[collections[0] + "_" + properties[n] + "_sum"])  //Dont create if it has been set in the raw data
+							object[collections[0] + "_" + properties[n] + "_sum"] = aggregates[properties[n] + "_sum"];
+						if (!object[collections[0] + "_" + properties[n] + "_avg"]) //Dont create if it has been set in the raw data
+							object[collections[0] + "_" + properties[n] + "_avg"] = aggregates[properties[n] + "_sum"]/i;
+						if (!object[collections[0] + "_" + properties[n] + "_min"]) //Dont create if it has been set in the raw data
+							object[collections[0] + "_" + properties[n] + "_min"] = aggregates[properties[n] + "_min"];
+						if (!object[collections[0] + "_" + properties[n] + "_max"]) //Dont create if it has been set in the raw data
+							object[collections[0] + "_" + properties[n] + "_max"] = aggregates[properties[n] + "_max"];
+
 					}
 				}
 				
 			}
+			
+		
 			
 			/***
 			 * Parses a CSV string into our private _dataRows

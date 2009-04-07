@@ -6,10 +6,7 @@
 	xmlns:scale="org.axiis.layouts.scale.*"
 	>
 		
-	<mx:Number id="percentGap">.05</mx:Number>
-	
-	<scale:CategoricalScale dataProvider="{dataItems}" dataField="{dataField}" minLayout="0" maxLayout="{width}"/>
-	<!--  We need to figure out how to implement this scale correctly -->
+	<mx:Number id="percentGap">0</mx:Number>
 	
 	<core:referenceRepeater>
 		<core:GeometryRepeater id="myLayout" dataProvider="{dataItems}">

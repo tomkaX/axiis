@@ -1,9 +1,10 @@
 package org.axiis
 {
+	import com.degrafa.IGeometryComposition;
+	
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.utils.getTimer;
 	
 	import mx.core.IFactory;
 	import mx.core.IToolTip;
@@ -14,6 +15,7 @@ package org.axiis
 	import org.axiis.core.ILayout;
 	import org.axiis.events.LayoutEvent;
 	
+	
 	public class DataCanvas extends UIComponent
 	{
 		include "core/DrawingPlaceholders.as";
@@ -22,6 +24,7 @@ package org.axiis
 		{
 			super();
 		}
+		
 		
 		public var labelFunction:Function;
 		
@@ -51,13 +54,26 @@ package org.axiis
 		}
 		private var _dataProvider:Object;
 		
+		//TODO: I think we might consider using ArrayCollections and some initCollection calls (look at how degrafa handles this)
 		public var layouts:Array;
 		
+		public var backgroundGeometries:Array;
+		
+		public var foregroundGeometries:Array;
+		
 		private var invalidatedLayouts:Array = [];
+		
+		private var _background:Sprite;
+		
+		private var _foreground:Sprite;
 		
 		override protected function createChildren():void
 		{
 			super.createChildren();
+			
+			_background=new Sprite();
+			addChild(_background);
+
 			for each(var layout:ILayout in layouts)
 			{
 				layout.registerOwner(this);
@@ -65,7 +81,7 @@ package org.axiis
 				addChild(sprite);
 				
 				layout.addEventListener(LayoutEvent.INVALIDATE,handleLayoutInvalidate);
-				sprite.addEventListener(MouseEvent.MOUSE_OVER,onItemMouseOver);
+				if (layout.emitDataTips) sprite.addEventListener(MouseEvent.MOUSE_OVER,onItemMouseOver);
 				sprite.addEventListener(MouseEvent.CLICK,onItemMouseClick);
 				sprite.addEventListener(MouseEvent.DOUBLE_CLICK,onItemMouseDoubleClick);
 				sprite.addEventListener(MouseEvent.MOUSE_OUT,onItemMouseOut);
@@ -74,6 +90,9 @@ package org.axiis
 		
 				invalidatedLayouts.push(layout);
 			}
+			
+			_foreground=new Sprite();
+			addChild(_foreground);
 		}
 		
 		/**
@@ -101,11 +120,37 @@ package org.axiis
 		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
 		{
 			super.updateDisplayList(unscaledWidth,unscaledHeight);
+			
+			_background.graphics.clear();
+			
+			for each (var bg:Object in backgroundGeometries) {
+				if (bg is ILayout) {
+					ILayout(bg).render(_background)
+				}
+				else if (bg is IGeometryComposition) {
+					bg.preDraw();
+					bg.draw(_background.graphics,bg.bounds);
+				}
+			}
+			
 			while(invalidatedLayouts.length > 0)
 			{
 				var layout:ILayout = ILayout(invalidatedLayouts.pop());
+				//trace("rendering layout");
 				layout.render();
 			}
+			
+			_foreground.graphics.clear();
+			for each (var fl:ILayout in foregroundGeometries) {
+				fl.render(_foreground);
+			}
+			
+			for each (var fg:IGeometryComposition in foregroundGeometries) {
+				fg.preDraw();
+				fg.draw(_foreground.graphics,fg.bounds);
+			}
+			
+			
 			_invalidated = false;
 		}
 		
