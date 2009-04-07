@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<actionScriptProperties mainApplicationPath="ToolTipExample.mxml" version="3">
+<actionScriptProperties mainApplicationPath="WedgeStackChartExamples.mxml" version="3">
   <compiler additionalCompilerArguments="-locale en_US" copyDependentFiles="true" enableModuleDebug="true" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="true" htmlHistoryManagement="true" htmlPlayerVersion="9.0.124" htmlPlayerVersionCheck="true" outputFolderPath="bin-debug" sourceFolderPath="src" strict="true" useApolloConfig="false" verifyDigests="true" warn="true">
     <compilerSourcePath/>
     <libraryPath defaultLinkType="1">
@@ -11,15 +11,11 @@
     <sourceAttachmentPath/>
   </compiler>
   <applications>
+    <application path="WedgeStackChartExamples.mxml"/>
+    <application path="CrimeForADay.mxml"/>
+    <application path="EmbedLayoutsExample2.mxml"/>
     <application path="ToolTipExample.mxml"/>
-
-
     <application path="CartesianChartExample.mxml"/>
-
-
-
-
-
   </applications>
   <modules/>
   <buildCSSFiles/>

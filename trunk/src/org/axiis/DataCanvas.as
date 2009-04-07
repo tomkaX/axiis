@@ -153,6 +153,11 @@ package org.axiis
 			}
 			
 			
+			/* this.graphics.clear();
+			this.graphics.beginFill(0xff,.1);
+			this.graphics.drawRect(0,0,width,height);
+			this.graphics.endFill(); */
+			
 			_invalidated = false;
 		}
 		
