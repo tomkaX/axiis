@@ -17,6 +17,7 @@ package org.axiis.core
 	import org.axiis.states.State;
 	
 	[Event(name="invalidate", type="org.axiis.LayoutEvent")]
+	[Event(name="preRender", type="flash.events.Event")]
 	[Event(name="itemPreDraw", type="flash.events.Event")]
 	public class BaseLayout extends EventDispatcher implements ILayout
 	{
@@ -561,6 +562,9 @@ package org.axiis.core
 		{
 			trace(name + " render " +currentIndex)
 			var t:Number=flash.utils.getTimer();
+			
+			this.dispatchEvent(new Event("preRender"));
+			
 			if(newSprite)
 				this.sprite = newSprite;
 				
