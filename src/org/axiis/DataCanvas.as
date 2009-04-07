@@ -2,6 +2,7 @@ package org.axiis
 {
 	import com.degrafa.IGeometryComposition;
 	
+	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -193,6 +194,8 @@ package org.axiis
 				{
 					showToolTip(sibling);
 				}
+				if(doToolTipsOverlap())
+					repositionToolTips();
 			}
 		}
 		
@@ -259,12 +262,74 @@ package org.axiis
 				if(axiisSprite.layout.dataTipPositionFunction != null)
 				{
 					var position:Point = axiisSprite.layout.dataTipPositionFunction.call(this,axiisSprite,tt);
-					trace(tt.text + " "+ position);
 					tt.x = position.x;
 					tt.y = position.y;
 				}
 				toolTips.push(tt);
 			}
+		}
+		
+		/**
+		 * Reposition the tool tips by laying them out in four columns around the cursor.
+		 * The first column starts down and to the right of the cursor, the second
+		 * starts down and to the left, the third is above and to the left, and the
+		 * last column starts above and to the right. Each column grows vertically
+		 * away from the cursor.
+		 * 
+		 * This method needs to be adjusted to account for tool tips that end up offscreen.
+		 */
+		private function repositionToolTips():void
+		{
+			var startX:Number = stage.mouseX;
+			var startY:Number = stage.mouseY;
+			var gapX:Number = 10;
+			var gapY:Number = 10;
+			var offsetYs:Array = [0,0,0,0];
+			for(var a:int = 0; a < toolTips.length; a++)
+			{
+				var tt:IToolTip = toolTips[a] as IToolTip;
+				var offsetY:Number = offsetYs[a % 4];
+				if(a % 4 == 0)
+				{
+					tt.x = startX + gapX;
+					tt.y = startY + gapY + offsetY;
+				}
+				else if(a % 4 == 1)
+				{
+					tt.x = startX - gapX - tt.width;
+					tt.y = startY + gapY + offsetY;
+				}
+				else if(a % 4 == 2)
+				{
+					tt.x = startX - gapX - tt.width;
+					tt.y = startY - gapY - tt.height - offsetY;
+				}
+				else
+				{
+					tt.x = startX + gapX;
+					tt.y = startY - gapY - tt.height - offsetY;
+				}
+				offsetYs[a % 4] += tt.height;
+			}
+		}
+		
+		private function doToolTipsOverlap():Boolean 	
+		{
+			if(toolTips.length < 1)
+				return false;
+				
+			var toolTipsOverlap:Boolean = false;
+			for(var a:int = 0; a < toolTips.length - 1; a++)
+			{
+				var toolTip1:IToolTip = toolTips[a];
+				for(var b:int = a + 1; b < toolTips.length; b++)
+				{
+					var toolTip2:IToolTip = toolTips[b];
+					if(toolTip1.hitTestObject(toolTip2 as DisplayObject))
+						return true;
+				}
+			}
+			return false;
 		}
 	}
 }

@@ -43,12 +43,8 @@
 			private function positionDataTip(axiisSprite:AxiisSprite,toolTip:IToolTip):Point
 			{
 				var toReturn:Point = new Point();
-				
-				trace(axiisSprite.bounds)
-				
 				toReturn.x = axiisSprite.bounds.x + (axiisSprite.bounds.width - toolTip.width) / 2;
-				toReturn.y = axiisSprite.bounds.y - toolTip.height;
-				
+				toReturn.y = axiisSprite.bounds.y - toolTip.height;				
 				return axiisSprite.localToGlobal(toReturn);
 			}
 		]]>
