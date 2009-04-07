@@ -27,6 +27,16 @@ package org.axiis.core
 			super();
 		}
 		
+		
+		private var _emitDataTips:Boolean;
+		
+		public function set emitDataTips(value:Boolean):void {
+			_emitDataTips=value;
+		}
+		public function get emitDataTips():Boolean {
+			return _emitDataTips;
+		}
+		
 		private var childSprites:Array = [];
 		
 		private var currentChild:AxiisSprite;
@@ -271,6 +281,7 @@ package org.axiis.core
 			if(_dataProvider != value)
 			{
 				_dataProvider = value;
+				var oldLength:Number=(_dataItems) ? _dataItems.length : 0;
 				_dataItems=new Array();
 				if (dataProvider is ArrayCollection) {
 					for (var i:int=0;i<dataProvider.source.length;i++) {
@@ -311,6 +322,9 @@ package org.axiis.core
 				}
 				
 				_itemCount=_dataItems.length;
+				
+				if (oldLength > _dataItems.length)
+					trimChildSprites(oldLength-_dataItems.length);
 				
 				dispatchEvent(new Event("dataProviderChange"));
 			}
@@ -585,6 +599,9 @@ package org.axiis.core
 		{
 			var t:Number=flash.utils.getTimer();
 			
+			//trace(name + " drawGraphicsToChild index=" + currentIndex);
+			if (parentLayout) { trace("startAngle=" + currentReference["startAngle"]); }
+			
 			child.graphics.clear();
 			
 			if(!drawingGeometries)
@@ -769,7 +786,7 @@ package org.axiis.core
 		
 		public function renderChain(chain:Array,targetSprite:Sprite,parentSprite:Sprite):void
 		{
-			//trace(name + " renderChain");
+			trace(name + " renderChain");
 			//trace();
 			var ancestorOfTarget:Sprite = targetSprite;
 			//trace(name + " target " + ancestorOfTarget);
@@ -802,6 +819,15 @@ package org.axiis.core
 			{
 				var childLayout:ILayout = chain.pop() as ILayout;
 				childLayout.renderChain(chain,targetSprite,Sprite(currentChild.parent));
+			}
+		}
+		
+		private function trimChildSprites(trim:Number):void {
+			trace("trimming " + trim);
+			if (!_sprite || _sprite.numChildren<trim) return;
+			for (var i:int=0; i<=trim;i++) {
+				var s:AxiisSprite=AxiisSprite(_sprite.removeChildAt(_sprite.numChildren-1));
+				s.dispose();
 			}
 		}
 	}

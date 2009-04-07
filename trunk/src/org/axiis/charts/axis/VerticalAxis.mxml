@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<core:BaseLayout xmlns="*" 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:core="org.axiis.core.*" 
+	xmlns:degrafa="http://www.degrafa.com/2007" 
+	xmlns:layouts="org.axiis.layouts.*" 
+	xmlns:scale="org.axiis.layouts.scale.*"
+	xmlns:utils="org.axiis.utils.*" 
+	itemPreDraw="onItemPreDraw();"
+	>
+    
+	<mx:Script>
+		<![CDATA[
+			import org.axiis.layouts.scale.IScale;
+			
+			private function onValueChanged():void {
+				if (this.height==0 || isNaN(this.height)) return;
+				//First determine the minor tick interval
+				
+				var tempArray:Array=new Array();
+				
+				var totalMajorTicks:int=Math.floor(this.height/majorTickInterval);
+				var totalMinorTicks:int=Math.floor((this.height/totalMajorTicks)/tickGap)*totalMajorTicks;
+			
+				_majorTickInterval=totalMinorTicks/totalMajorTicks;
+				
+				_gapStep=this.height/totalMinorTicks;
+				
+				for (var i:int=0;i<totalMinorTicks+1;i++) {
+					tempArray.push(i);
+				}
+				this.dataProvider=tempArray;
+				trace("gapStep=" + _gapStep);
+			}
+			
+			private function onItemPreDraw():void {
+				label.fontFamily=fontFamily;
+				label.x=-label.textWidth-5;
+				label.y=currentReference.y-label.height/2;
+			}
+			
+			[Bindable] 
+			private var _gapStep:Number;
+			
+			[Bindable]
+			private var _majorTickInterval:Number;
+			
+			[Bindable]
+			private var _labelInterval:Number;
+			
+
+		]]>
+	</mx:Script>
+	
+	<mx:Boolean id="showLabels">true</mx:Boolean>
+	<mx:Number id="tickGap">4</mx:Number>
+	<mx:Number id="majorTickInterval">35</mx:Number>
+	
+	<scale:AbstractScale id="verticalScale"/>
+	
+	<degrafa:SolidStroke id="tickStroke"/>
+	
+	<mx:String id="fontFamily">Arial</mx:String>
+	<mx:Number id="fontSize">12</mx:Number>
+	<mx:Number id="fontColor">0</mx:Number>
+	<mx:String id="fontWeight">normal</mx:String>
+	
+	<utils:BooleanExpression id="showLabel" value="{ (showLabels &amp;&amp; (showMajorTick.value==true))}"/>
+	<utils:BooleanExpression id="showMinorTick" value="{ !(showMajorTick.value==true)}"/>
+	<utils:BooleanExpression id="showMajorTick" value="{(majorTickInterval > 0 &amp;&amp; (repeater.currentIteration % _majorTickInterval) == 0)}"/>
+	
+	<utils:NumericExpression id="repeaterCount" value="{Math.floor(this.height)}" valueChanged="onValueChanged();" />
+	
+	
+	<core:referenceRepeater>
+		<core:GeometryRepeater id="repeater">
+			<core:geometry>
+				<degrafa:Line id="refLine" x="0" x1="{this.width}" height="{this.height}" y="0" y1="0" width="{this.width}"/>
+			</core:geometry>
+			<core:modifiers>
+				<core:PropertyModifier property="y" modifier="{_gapStep}" modifierOperator="add"/>
+			</core:modifiers>
+		</core:GeometryRepeater>
+	</core:referenceRepeater>
+	<core:drawingGeometries>
+		<degrafa:Line id="minorTick" stroke="{tickStroke}"
+			x="0" x1="{this.width*.5}"  visible="{showMinorTick.value}"
+			y="{currentReference['y']}" y1="{currentReference['y']}"
+			/>
+		<degrafa:Line id="majorTick" stroke="{tickStroke}" 
+			x="0" x1="{this.width}" visible="{showMajorTick.value}"
+			y="{currentReference['y']}" y1="{currentReference['y']}"
+			/>
+		<degrafa:RasterText id="label" align="right" autoSizeField="true"
+			fontFamily="fontFamily" fontSize="{fontSize}" fontWeight="{fontWeight}" textColor="{fontColor}"
+			text="{Math.round(Number(verticalScale.layoutToValue(verticalScale.maxLayout-currentReference['y'])))}" visible="{showLabel.value}"/>
+	</core:drawingGeometries>
+</core:BaseLayout>

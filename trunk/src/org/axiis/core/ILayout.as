@@ -10,6 +10,9 @@ package org.axiis.core
 	[Bindable]
 	public interface ILayout extends IEventDispatcher
 	{
+		function get emitDataTips():Boolean;
+		function set emitDataTips(value:Boolean):void;
+		
 		function get itemCount():int;
 		
 		function set parentLayout(value:ILayout):void;
