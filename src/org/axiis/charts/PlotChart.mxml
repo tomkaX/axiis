@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<axiis:DataCanvas xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:axiis="http://www.axiis.org/2009" xmlns:layouts="org.axiis.layouts.*">
+	<mx:Script>
+		<![CDATA[
+			[Bindable]
+			public var xField:String;
+			
+			[Bindable]
+			public var yField:String;
+			
+			[Bindable]
+			public var dataTipLabelFunction:Function;
+			
+			[Bindable]
+			public var dataTipPositionFunction:Function;
+		]]>
+	</mx:Script>
+	
+	<axiis:LinearScale id="xScale"
+		dataProvider="{dataProvider}"
+		dataField="{xField}"
+		minLayout="0"
+		maxLayout="{width}"/>
+		
+	<axiis:LinearScale id="yScale"
+		dataProvider="{dataProvider}"
+		dataField="{yField}"
+		minLayout="0"
+		maxLayout="{height}"/>
+	
+	<axiis:layouts>
+		<axiis:AbsoluteLayout id="layout"
+			dataProvider="{dataProvider}"
+			dataTipLabelFunction="{dataTipLabelFunction}"
+			dataTipPositionFunction="{dataTipPositionFunction}"
+			width="{width}"
+			height="{height}">
+			
+			<axiis:drawingGeometries>
+				<degrafa:Circle id="renderedPoint"
+					centerX="{xScale.valueToLayout(layout.currentDatum[xField])}"
+					centerY="{height - yScale.valueToLayout(layout.currentDatum[yField])}"
+					radius="5"
+					fill="{colFill}"
+					stroke="{myStroke}"/>
+			</axiis:drawingGeometries>
+			
+			<axiis:states>
+				<axiis:State id="rollOverState" enterStateEvent="mouseOver" exitStateEvent="mouseOut"
+					targets="{[renderedPoint,renderedPoint]}"
+					properties="{['fill','stroke']}"
+					values="{[rollOverFill,rollOverStroke]}"/>
+			</axiis:states>
+			
+		</axiis:AbsoluteLayout>
+	</axiis:layouts>
+				
+	<axiis:fills>
+		<degrafa:SolidFill color="0xDDDD00" alpha=".6" id="rollOverFill"/>
+		<degrafa:LinearGradientFill id="colFill" angle="90">
+			<degrafa:GradientStop color="0x4477FF"/>
+			<degrafa:GradientStop color="0x333388"/>
+		</degrafa:LinearGradientFill>
+	</axiis:fills>
+	
+	<axiis:strokes>
+		<degrafa:SolidStroke id="rollOverStroke" weight="1" color="white"/>
+		<degrafa:SolidStroke id="myStroke" weight="1" color="black" alpha=".5"/>
+	</axiis:strokes>
+	
+</axiis:DataCanvas>

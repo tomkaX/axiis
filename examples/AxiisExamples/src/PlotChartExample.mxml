@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:axiis="http://www.axiis.org/2009"
+	xmlns:degrafa="http://www.degrafa.com/2007"
+	xmlns:charts="org.axiis.charts.*"
+	initialize="start()"
+	width="600"
+	height="600">
+	
+	<mx:Style>
+		ToolTip
+		{
+			borderSkin:ClassReference('org.axiis.core.HTMLToolTip');
+		}
+	</mx:Style>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.core.IToolTip;
+			import org.axiis.core.AxiisSprite;
+			import org.axiis.core.HTMLToolTip;
+			import org.axiis.data.DataSet;
+			
+			private var mouseRect:Sprite;
+			
+			private function start():void
+			{
+				var points:ArrayCollection = new ArrayCollection();
+				for(var a:int = 0; a < 360; a++)
+				{
+					var radians:Number = a * Math.PI / 180
+					points.addItem(new Point(a,Math.sin(radians)));
+				}
+				plotChart.dataProvider = points;
+			}
+			
+			private function labelDataTip(data:Object):String
+			{
+				return data.x + " " + data.y;
+			}
+			
+			private function positionDataTip(axiisSprite:AxiisSprite,toolTip:IToolTip):Point
+			{
+				var toReturn:Point = new Point();
+				
+				trace(axiisSprite.bounds)
+				
+				toReturn.x = axiisSprite.bounds.x + (axiisSprite.bounds.width - toolTip.width) / 2;
+				toReturn.y = axiisSprite.bounds.y - toolTip.height;
+				
+				return axiisSprite.localToGlobal(toReturn);
+			}
+		]]>
+	</mx:Script>
+
+	<mx:VBox borderColor="0" borderThickness="2" borderStyle="solid" borderSides="left,bottom">
+		<charts:PlotChart id="plotChart" xField="x" yField="y" width="500" height="500"
+			dataTipLabelFunction="{labelDataTip}"
+			dataTipPositionFunction="{positionDataTip}"/>
+	</mx:VBox>
+
+</mx:Application>

@@ -559,7 +559,7 @@ package org.axiis.core
 		
 		public function render(newSprite:AxiisSprite = null):void
 		{
-			//trace(name + " render " +currentIndex)
+			trace(name + " render " +currentIndex)
 			var t:Number=flash.utils.getTimer();
 			if(newSprite)
 				this.sprite = newSprite;
