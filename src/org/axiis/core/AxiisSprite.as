@@ -1,5 +1,9 @@
 package org.axiis.core
 {
+	import flash.events.Event;
+	import flash.geom.Rectangle;
+	
+	import mx.binding.utils.BindingUtils;
 	import mx.core.FlexSprite;
 
 	public class AxiisSprite extends FlexSprite
@@ -39,5 +43,9 @@ package org.axiis.core
 		}
 		
 		public var data:Object;
+		
+		public var layout:ILayout;
+		
+		public var bounds:Rectangle;
 	}
 }

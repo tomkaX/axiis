@@ -18,6 +18,18 @@
 				ds.processXmlString(xml);
 				clusterLayout.dataProvider = ds.data.nodes.node;
 			}
+			
+			private function fillChange(flag:Boolean):void
+			{
+				clusterLayout.scaleFill = flag;
+				clusterLayout.invalidate();
+				
+				columnLayout.scaleFill = flag;
+				columnLayout.invalidate();
+				
+				subColumnLayout.scaleFill = flag;
+				subColumnLayout.invalidate();
+			}
 		]]>
 	</mx:Script>
 	
@@ -30,19 +42,22 @@
 			<axiis:HorizontalBoxLayout id="clusterLayout" name="A" width="{dataCanvas.width}" height="{dataCanvas.height}" scaleFill="true" dataField="value">
 				<axiis:drawingGeometries>
 					<geometry:Column stroke="{blackStroke}" fill="{fill1}" scale="{scale}" dataField="value"
-						height="{scale.valueToLayout(clusterLayout.currentValue)}" y="{clusterLayout.height-scale.valueToLayout(clusterLayout.currentValue)}"/>
+						height="{scale.valueToLayout(clusterLayout.currentValue)}" y="{clusterLayout.height-scale.valueToLayout(clusterLayout.currentValue)}"
+						width="{clusterLayout.currentReference.width}"/>
 				</axiis:drawingGeometries>
 				<axiis:layouts>
 					<axiis:HorizontalBoxLayout id="columnLayout" dataProvider="{clusterLayout.currentDatum.node}" percentGap="0" x="10" y="5" name=" B" dataField="value">
 						<axiis:drawingGeometries>
 							<geometry:Column stroke="{blackStroke}" fill="{fill2}" scale="{scale}" dataField="value"
-								height="{scale.valueToLayout(columnLayout.currentValue)}" y="{clusterLayout.height-scale.valueToLayout(columnLayout.currentValue)}"/>
+								height="{scale.valueToLayout(columnLayout.currentValue)}" y="{clusterLayout.height-scale.valueToLayout(columnLayout.currentValue)}"
+								width="{columnLayout.currentReference.width}"/>
 						</axiis:drawingGeometries>
 						<axiis:layouts>
 							<axiis:HorizontalBoxLayout id="subColumnLayout"  dataProvider="{columnLayout.currentDatum.node}" y="0" percentGap="0" name="  C" dataField="value">
 								<axiis:drawingGeometries>
 									<geometry:Column id="subColumn" stroke="{blackStroke}" fill="{fill3}" scale="{scale}" x="{subColumnLayout.currentReference.x}" dataField="value"
-										height="{scale.valueToLayout(subColumnLayout.currentValue)}" y="{clusterLayout.height-scale.valueToLayout(subColumnLayout.currentValue)}"/>
+										height="{scale.valueToLayout(subColumnLayout.currentValue)}" y="{clusterLayout.height-scale.valueToLayout(subColumnLayout.currentValue)}"
+										width="{subColumnLayout.currentReference.width}"/>
 								</axiis:drawingGeometries>
 								<axiis:states>
 									<states:State enterStateEvent="mouseOver" exitStateEvent="mouseOut" targets="{[subColumn]}" properties="[width]" values="{[100]}"/>

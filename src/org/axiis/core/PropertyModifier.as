@@ -200,17 +200,24 @@ package  org.axiis.core {
 			
 			if (_cachedValues==null || _cachedValues.length<iteration) return;
 			
-			for (var i:int=0;i<_targetObjects.length;i++) {
+			for (var i:int=0;i<_targetObjects.length;i++)
+			{
 				_targetObjects[i][_targetProperties[i]]=_cachedValues[iteration][i];
+				//trace(_targetProperties[i] + " " + _targetObjects[i][_targetProperties[i]])
 			}
 			//_cacheUsed=true;
 		}
 		
 		private function resetValues():void {
+			//trace("resetting")
 			//if (_cacheUsed) {
 				if (!_targetObjects) return;
-				for (var i:int=0;i<_targetObjects.length;i++) {
+				for (var i:int=0;i<_targetObjects.length;i++)
+				{
 					_targetObjects[i][_targetProperties[i]]=_originalValues[i];
+					
+					//trace(_targetProperties[i] + " " + _targetObjects[i][_targetProperties[i]]);
+					
 				}
 			//	_cacheUsed=false;
 			//}

@@ -2,7 +2,8 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:charts="org.axiis.charts.*"  	 backgroundGradientColors="[0xFFFFFF,0xDDDDDD]"
 	layout="absolute"
-	creationComplete="start();">
+	creationComplete="start();"
+	width="850" height="700">
 	
 	<mx:Script>
 		<![CDATA[
@@ -16,8 +17,8 @@
 				columnChart.dataProvider=ds.data.country;
 				columnChart.invalidateDisplayList();
 				
-				barChart.dataProvider=ds.data.country;
-				barChart.invalidateDisplayList();
+				//barChart.dataProvider=ds.data.country;
+				//barChart.invalidateDisplayList();
 
 			}
 		]]>
@@ -25,17 +26,14 @@
 	
 	<mx:String id="countryData" source="data/countryData.xml"/>
 
-		<mx:HDividedBox width="800" height="600" verticalCenter="0" horizontalCenter="0" liveDragging="true"> 
-			<mx:VBox width="50%" height="100%">
-				<mx:CheckBox  label="use common bounds for fill" change="{columnChart.myLayout.useInheritedBounds=!event.target.selected; columnChart.myLayout.scaleFill=event.target.selected; columnChart.invalidateDisplayList();}"/>
-				<charts:ColumnChart width="100%" height="100%"  id="columnChart" horizontalField="name" verticalField="competitors"/>
-			</mx:VBox>
-			<mx:VBox width="50%" height="100%">
-				<mx:CheckBox selected="true" label="use common bounds for fill" change="{barChart.myLayout.scaleFill=event.target.selected; barChart.invalidateDisplayList();}"/>
-				<charts:BarChart width="100%" height="100%" id="barChart" horizontalField="competitors" verticalField="name"/>
-			</mx:VBox>
-		</mx:HDividedBox>
-	
-	<mx:HSlider minimum=".01" maximum=".1" snapInterval=".005" liveDragging="true" value=".05" id="gapSlider" change="{barChart.percentGap=columnChart.percentGap=event.target.value; columnChart.invalidateDisplayList(); barChart.invalidateDisplayList();}"/>
+	<mx:HDividedBox width="800" height="600" verticalCenter="0" horizontalCenter="0" liveDragging="false"> 
+		<mx:VBox width="50%" height="100%">
+			<mx:CheckBox  label="scaleFill" change="{columnChart.myLayout.scaleFill = event.target.selected;}"/>
+			<charts:ColumnChart width="100%" height="100%"  id="columnChart" horizontalField="name" verticalField="competitors"/>
+		</mx:VBox>
+		<mx:VBox width="50%" height="100%">
+			<!--<charts:BarChart width="100%" height="100%" id="barChart" horizontalField="competitors" verticalField="name"/>-->
+		</mx:VBox>
+	</mx:HDividedBox>
 	
 </mx:Application>

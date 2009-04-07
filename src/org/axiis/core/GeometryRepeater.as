@@ -165,7 +165,8 @@ package org.axiis.core
 		public function applyIteration(iteration:int, values:Array=null):void {
 			_currentIteration = iteration;
 			var i:int=0;
-			for each (var modifier:PropertyModifier in _modifiers) { 
+			for each (var modifier:PropertyModifier in _modifiers)
+			{ 
 				modifier.applyCachedIteration(iteration,(values) ? values[i]:null);
 				i++
 			}
@@ -173,6 +174,7 @@ package org.axiis.core
 		
 		public function reset():void
 		{
+			//trace("resetting")
 			_currentIteration = -1;
 			for each(var modifier:PropertyModifier in modifiers)
 			{
