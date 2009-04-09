@@ -4,6 +4,7 @@ package org.axiis.core
 	
 	import flash.display.Sprite;
 	import flash.events.IEventDispatcher;
+	import flash.geom.Rectangle;
 	
 	import org.axiis.DataCanvas;
 	
@@ -26,8 +27,8 @@ package org.axiis.core
 		function set parentLayout(value:ILayout):void;
 		function get parentLayout():ILayout;
 		
-		function set bounds(value:Bounds):void;
-		function get bounds():Bounds;
+		function set bounds(value:Rectangle):void; 
+		function get bounds():Rectangle;
 		
 		function set dataProvider(value:Object):void;
 		function get dataProvider():Object;

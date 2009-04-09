@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layouts:HorizontalBoxLayout xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:degrafa="http://www.degrafa.com/2007" name="outerlayout"
+	xmlns:core="org.axiis.core.*"
+	xmlns:layouts="org.axiis.layouts.*"
+	xmlns:scale="org.axiis.layouts.scale.*"
+	xmlns:geometry="org.axiis.layouts.geometry.*"
+	xmlns:states="org.axiis.states.*">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.degrafa.core.IGraphicsStroke;
+			import com.degrafa.core.IGraphicsFill;
+			
+			[Inspectable]
+			[Bindable]
+			public var fill:IGraphicsFill;
+			
+			[Inspectable]
+			[Bindable]
+			public var stroke:IGraphicsStroke;
+			
+		]]>
+	</mx:Script>
+
+	<mx:Array id="seriesDataField"/>
+	<mx:Array id="seriesLabelField"/>
+	<mx:Number id="percentGap">.05</mx:Number>
+	<mx:String id="labelStyleName"/>
+	<scale:LinearScale id="verticalScale"/>
+	
+	<degrafa:SolidStroke id="myStroke" weight="1" color="white" alpha=".5"/>
+	
+	<layouts:layouts>
+		<core:BaseLayout dataProvider="{currentDatum[dataField]}" dataField="{seriesDataField}" labelField="{seriesLabelField}" id="innerLayout" name="innerLayout">
+			<core:referenceRepeater>
+				<core:GeometryRepeater dataProvider="{innerLayout.dataItems}">
+					<core:geometry>
+						<degrafa:RegularRectangle x="0" y="{this.height}" width="{this.currentReference.width}"/>
+					</core:geometry>
+					<core:modifiers>
+						<core:PropertyModifier property="height" modifier="{this.verticalScale.valueToLayout(innerLayout.currentValue)}" modifierOperator="none"/>
+						<core:PropertyModifier property="y" modifier="{this.verticalScale.valueToLayout(innerLayout.currentValue)}" modifierOperator="subtract"/>
+					</core:modifiers>
+				</core:GeometryRepeater>
+			
+			</core:referenceRepeater>
+			<core:drawingGeometries>
+			
+				<!-- main column rectangle that gets repeated vertically-->
+				<degrafa:RegularRectangle id="myCol"
+						y="{innerLayout.currentReference.y}"
+						x="{innerLayout.currentReference.x}"
+						width="{innerLayout.currentReference.width}"
+						height="{innerLayout.currentReference.height}"
+						fill="{fill}"
+						stroke="{stroke}"
+						>
+						
+						
+				</degrafa:RegularRectangle>
+				
+				<!-- smaller label for each column -->
+				
+			</core:drawingGeometries>
+			<core:states>
+				<states:State id="rollOverState" enterStateEvent="mouseOver" exitStateEvent="mouseOut"
+					targets="{[myCol,myCol]}"
+					properties="{['fill','stroke']}"
+					values="{[innerLayout.fills[0],innerLayout.strokes[0]]}"/>
+			
+			</core:states>
+			<core:fills>
+				<degrafa:SolidFill color="0xDDDD00" alpha=".6" id="rollOverFill"/>
+			</core:fills>
+			<core:strokes>
+				<degrafa:SolidStroke id="colStroke" color="white" alpha=".5"/>
+				<degrafa:SolidStroke id="rollOverStroke" weight="1" color="white"/>
+			</core:strokes>
+		</core:BaseLayout>
+	</layouts:layouts>
+	<layouts:drawingGeometries>
+		<degrafa:RegularRectangle width="{currentReference.width}" height="{currentReference.height}" x="{currentReference.x}" y="{currentReference.y}"/>
+		<degrafa:RasterText  styleName="{labelStyleName}" text="{currentLabel}" x="0" y="{height+5}"/>
+	</layouts:drawingGeometries>
+
+</layouts:HorizontalBoxLayout>

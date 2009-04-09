@@ -84,7 +84,7 @@ package org.axiis.layouts.scale
 			return _computedMinValue;
 		}
 		private var _computedMinValue:Object;
-		protected var userMinValue:Object;
+		protected var userMinValue:Object=0;
 		
 		//---------------------------------------------------------------------
 		// maxValue
