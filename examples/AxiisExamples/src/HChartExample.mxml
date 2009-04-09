@@ -57,10 +57,10 @@
 					dataProvider="{dataProvider}" dataField="{dataField}" labelField="name">
 				<axiis:layouts>
 					<groupings:ColumnCluster id="myCluster" width="{hLayout.currentReference.width*.73}" height="{hLayout.currentReference.height}" y="0" x="0"
-						dataProvider="{hLayout.currentValue}" dataField="{childDataField}" labelField="{childLabelField}" itemPreDraw="onPreDrawChild();"
+						dataProvider="{hLayout.currentValue}" dataField="{childDataField}" labelField="{childLabelField}" 
 						fill="{clusterFill}" stroke="{myStroke}" verticalScale="{vScale}" />
 					<groupings:ColumnStack id="myStack" width="{hLayout.currentReference.width*.25}" x="{hLayout.currentReference.width*.75}" y="0" height="{hLayout.currentReference.height}" 
-						dataProvider="{hLayout.currentValue}" dataField="{childDataField}" labelField="{childLabelField}" itemPreDraw="onPreDrawChild();"
+						dataProvider="{hLayout.currentValue}" dataField="{childDataField}" labelField="{childLabelField}" 
 						fill="{stackFill}" stroke="{myStroke}" verticalScale="{vScale}" />
 				</axiis:layouts>
 			</axiis:HorizontalBoxLayout>
