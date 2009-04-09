@@ -149,7 +149,7 @@ package  org.axiis.core {
 		*/
 		public function apply():void {
 			
-		//	trace("applying modifier");
+			trace("applying modifier");
 			var tempModifier:Object;
 		
 			var bounds:Rectangle=new Rectangle(); 
@@ -181,12 +181,14 @@ package  org.axiis.core {
 						_targetObjects[i][_targetProperties[i]]=tempModifier;
 						
 					tempArray.push(_targetObjects[i][_targetProperties[i]]);
+					
+				//	trace("modifying " + this.property + " = " + _targetObjects[i][_targetProperties[i]]);
+					
 				}
 			}
 			
 			_cachedValues.push(tempArray);
 			
-			//trace("modifying " + this.property + " = " + tempModifier);
 			
 			_iteration++;
 			

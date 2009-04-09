@@ -888,7 +888,7 @@ package com.degrafa.geometry{
 						//CHANGED THE BELOW FROM THIS
 						//if(!Geometry(parent).layoutRectangle.isEmpty()){
 						//TO THIS
-						if(!Geometry(parent).layoutRectangle.x || !Geometry(parent).layoutRectangle.y){
+						if(!isNaN(Geometry(parent).layoutRectangle.x) && !isNaN(Geometry(parent).layoutRectangle.y)){
 							idealParentRectangle = currParent.layoutRectangle;
 						}
 						else{

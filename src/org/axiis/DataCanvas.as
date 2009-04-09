@@ -144,13 +144,14 @@ package org.axiis
 			}
 			
 			_foreground.graphics.clear();
-			for each (var fl:ILayout in foregroundGeometries) {
-				fl.render(_foreground);
-			}
-			
-			for each (var fg:IGeometryComposition in foregroundGeometries) {
-				fg.preDraw();
-				fg.draw(_foreground.graphics,fg.bounds);
+			for each (var fg:Object in foregroundGeometries) {
+				if (fg is ILayout) {
+					ILayout(fg).render(_foreground)
+				}
+				else if (fg is IGeometryComposition) {
+					fg.preDraw();
+					fg.draw(_foreground.graphics,fg.bounds);
+				}
 			}
 			
 			

@@ -234,11 +234,11 @@ package org.axiis.core
 		private var _parentLayout:ILayout;
 
 		[Bindable(event="boundsChange")]
-		public function get bounds():Bounds
+		public function get bounds():Rectangle
 		{
 			return _bounds;
 		}
-		public function set bounds(value:Bounds):void
+		public function set bounds(value:Rectangle):void
 		{
 			if(value != _bounds)
 			{
@@ -246,7 +246,7 @@ package org.axiis.core
 				dispatchEvent(new Event("boundsChange"));
 			}
 		}
-		private var _bounds:Bounds;
+		private var _bounds:Rectangle;
 		
 		[Bindable(event="itemCountChange")]
 		public function get itemCount():int
@@ -560,27 +560,28 @@ package org.axiis.core
 		
 		public function render(newSprite:AxiisSprite = null):void
 		{
-			trace(name + " render " +currentIndex)
+			//trace(name + " render " +currentIndex)
 			var t:Number=flash.utils.getTimer();
 			
 			this.dispatchEvent(new Event("preRender"));
 			
 			if(newSprite)
 				this.sprite = newSprite;
+			
 				
 			if(!sprite || !_referenceGeometryRepeater)
 				return;			
 			
 			if (useInheritedBounds && parentLayout)
 			{
-				bounds = new Bounds(parentLayout.currentReference.x + (isNaN(x) ? 0 : x),
+				bounds = new Rectangle(parentLayout.currentReference.x + (isNaN(x) ? 0 : x),
 									parentLayout.currentReference.y + (isNaN(y) ? 0 : y),
 									parentLayout.currentReference.width,
 									parentLayout.currentReference.height);
 			}
 			else
 			{
-				bounds = new Bounds((isNaN(x) ? 0:x),(isNaN(y) ? 0:y),width,height);
+				bounds = new Rectangle((isNaN(x) ? 0:x),(isNaN(y) ? 0:y),width,height);
 			}
 			sprite.x = isNaN(_bounds.x) ? 0 :_bounds.x;
 			sprite.y = isNaN(_bounds.y) ? 0 :_bounds.y;
@@ -617,8 +618,22 @@ package org.axiis.core
 			_currentReference = referenceRepeater.geometry;
 			
 			// Add a new Sprite if there isn't one available on the display list.
-			if(_currentIndex > sprite.numChildren - 1)
+			if(_currentIndex > sprite.drawingSprites.length - 1)
 			{
+				var newChildSprite=createChildSprite();
+				sprite.name = "drawing" + StringUtil.trim(name) + "" + sprite.drawingSprites.length;
+				sprite.addDrawingSprite(newChildSprite);
+				childSprites.push(newChildSprite);
+			}
+			currentChild = AxiisSprite(sprite.drawingSprites[currentIndex]);
+			currentChild.data = currentDatum;
+			
+			dispatchEvent(new Event("itemPreDraw"));
+			
+			drawGraphicsToChild(currentChild);
+		}
+		
+		private function createChildSprite():AxiisSprite {
 				var newChildSprite:AxiisSprite = new AxiisSprite();
 				newChildSprite.doubleClickEnabled=true;
 				newChildSprite.addEventListener(StateChangeEvent.STATE_CHANGE,onStateChange);
@@ -632,58 +647,59 @@ package org.axiis.core
 					if(state.exitStateEvent != null)
 						newChildSprite.addEventListener(state.exitStateEvent,onChildEvent);
 				}
-				sprite.name = StringUtil.trim(name) + "" + sprite.numChildren
-				sprite.addChild(newChildSprite);
-				childSprites.push(newChildSprite);
-			}
-			currentChild = AxiisSprite(sprite.getChildAt(currentIndex));
-			currentChild.data = currentDatum;
-			
-			dispatchEvent(new Event("itemPreDraw"));
-			
-			drawGraphicsToChild(currentChild);
+				
+				return newChildSprite;
 		}
 		
 		protected function drawGraphicsToChild(child:AxiisSprite):void
 		{
 			var t:Number=flash.utils.getTimer();
 			
+			//trace("drawing " + child.name);
 			//trace(name + " drawGraphicsToChild index=" + currentIndex);
 			//if (parentLayout) { trace("startAngle=" + currentReference["startAngle"]); }
 			
 			child.graphics.clear();
 			
-			if(!drawingGeometries)
-				return;
+			if(drawingGeometries) {
 			
-			//Apply any states related to the sprite in question by altering the current geometry
-			applyStates(child);
-			
-			for each(var geometry:Geometry in drawingGeometries)
-			{
-				if (geometry is IAxiisGeometry)
-					IAxiisGeometry(geometry).parentLayout = this as ILayout;
+				//Apply any states related to the sprite in question by altering the current geometry
+				applyStates(child);
+				
+				for each(var geometry:Geometry in drawingGeometries)
+				{
+					if (geometry is IAxiisGeometry)
+						IAxiisGeometry(geometry).parentLayout = this as ILayout;
+						
+					geometry.preDraw();
 					
-				geometry.preDraw();
-				
-				//We pass in different bounds depending on if we want all geoemtries filled by a common bounds or individually
-				var drawingBounds:Rectangle = scaleFill
-					? new Rectangle(_bounds.x+geometry.x, _bounds.y+geometry.y,_bounds.width,_bounds.height)
-					: geometry.commandStack.bounds;
-				
-				geometry.draw(child.graphics,drawingBounds);
-				
-				child.bounds = drawingBounds.clone();
-			}
+					//We pass in different bounds depending on if we want all geoemtries filled by a common bounds or individually
+					var drawingBounds:Rectangle = scaleFill
+						? new Rectangle(_bounds.x+geometry.x, _bounds.y+geometry.y,_bounds.width,_bounds.height)
+						: geometry.commandStack.bounds;
+					
+					geometry.draw(child.graphics,drawingBounds);
+					trace("geometry.x" + geometry.x);
+					//child.x=geometry.x;
+					//child.y=geometry.y;
+					child.bounds = drawingBounds.clone();
+				}
 
-	
+			}
+			
 			// Apply sublayouts for the targetSprite
+			var i:int=0;
 			for each(var layout:ILayout in layouts)
 			{
-				/** TODO WE NEED TO HAVE A CLEAN UP ROUTINE ON DATAPROVIDER CHANGE **/
-				layout.parentLayout = this as ILayout;
-				//layout.referenceRepeater.reset();
-				layout.render(currentChild);
+				
+				layout.parentLayout = this as ILayout;    //When we have multiple peer layouts the AxiisSprite needs to differentiate between child drawing sprites and child layout sprites
+				if (child.layoutSprites.length-1 < i) {
+					var ns:AxiisSprite=createChildSprite();
+					ns.name="layout - " + StringUtil.trim(name) + " " + child.layoutSprites.length;
+					child.addLayoutSprite(ns);
+				}
+				layout.render(child.layoutSprites[i]);
+				i++;
 			}
 			
 			//Remove any states from the geometry so the next iteration rendering is not affected.
@@ -838,6 +854,8 @@ package org.axiis.core
 		{
 			//trace(name + " renderChain");
 			//trace();
+			
+			
 			var ancestorOfTarget:Sprite = targetSprite;
 			//trace(name + " target " + ancestorOfTarget);
 			while(ancestorOfTarget != parentSprite)
@@ -874,9 +892,9 @@ package org.axiis.core
 		
 		private function trimChildSprites(trim:Number):void {
 			//trace("trimming " + trim);
-			if (!_sprite || _sprite.numChildren<trim) return;
+			if (!_sprite || _sprite.drawingSprites.length<trim) return;
 			for (var i:int=0; i<=trim;i++) {
-				var s:AxiisSprite=AxiisSprite(_sprite.removeChildAt(_sprite.numChildren-1));
+				var s:AxiisSprite=AxiisSprite(_sprite.removeChild(_sprite.drawingSprites[_sprite.drawingSprites.length-1]));
 				s.dispose();
 			}
 		}
