@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:charts="org.axiis.charts.*" 
+	layout="absolute"  backgroundGradientColors="[0xDDDDDD,0xF5F5F5]"
+	creationComplete="start();" 
+	xmlns:axiis="http://www.axiis.org/2009" xmlns:series="org.axiis.charts.series.*" xmlns:groupings="org.axiis.charts.groupings.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:states="org.axiis.states.*" xmlns:paint="org.axiis.paint.*" xmlns:Examples="Examples.*" xmlns:axis="org.axiis.charts.axis.*">
+
+<mx:Style source="styles/Axiis_Examples.css"/>
+<mx:Script>
+		<![CDATA[
+			import org.axiis.data.DataSet;
+			
+			var ds:DataSet = new DataSet();
+			
+			public function start():void
+			{ 
+				ds.processXmlString(countryData);
+				//Aggregate the detailed data items
+				ds.aggregateCollection("country.medal",["count"]);
+				//Aggegate the higher level items
+				ds.aggregateCollection("country",["medal_count_sum"]);
+				vScale.maxValue=ds.data['country_medal_count_sum_max'];
+				dataProvider=ds.data.country;
+				
+				dc.invalidateDisplayList();
+			}
+			
+			public function onPreDraw():void {
+			//	trace('test');
+			}
+			
+			public function onPreDrawChild():void {
+			//	trace('test');
+			}
+		]]>
+</mx:Script> 
+<Examples:ExampleBackground width="{this.width}" height="{this.height}"/>
+<mx:Label fontSize="22" fontFamily="Myriad Pro" htmlText="&lt;b&gt;Axiis&lt;/b&gt; - Horizontal Chart" top="10" right="10" color="0xFFFFFF"/>
+
+<mx:String id="countryData" source="data/2008_Olympics.xml"/>
+
+
+<!--  GLOBAL VARIABLES -->
+<mx:Object id="dataProvider"/>
+<mx:String id="verticalField"/>
+<mx:String id="dataField">medal</mx:String>
+<mx:String id="childDataField">count</mx:String>
+<mx:String id="childLabelField">category</mx:String>
+<mx:Number id="percentGap">.05</mx:Number>
+
+	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{hLayout.height}" id="vScale"/>
+	
+	<axiis:DataCanvas height="{this.height*.7}" width="{this.width*.7}" id="dc" verticalCenter="0" horizontalCenter="0">
+	
+		<!-- Background -->
+		<axiis:backgroundGeometries>
+			<axis:VerticalAxis verticalScale="{vScale}" tickStroke="{axisStroke}" width="15" height="{hLayout.height}" emitDataTips="false"
+				 fontFamily="Myriad Pro" fontColor="0x333333" fontSize="14" tickGap="5" majorTickInterval="55"/>
+		</axiis:backgroundGeometries>
+	
+		<!-- Layouts -->
+		<axiis:layouts>
+			<axiis:HorizontalBoxLayout id="hLayout" x="25" y="0"  height="{dc.height-70}" width="{dc.width-25}" itemPreDraw="onPreDraw();" percentGap="{percentGap}"
+					dataProvider="{dataProvider}" dataField="{dataField}" labelField="name">
+				<axiis:layouts>
+					<groupings:ColumnCluster id="myCluster" width="{hLayout.currentReference.width*.73}" height="{hLayout.currentReference.height}" y="0" x="0"
+						dataProvider="{hLayout.currentValue}" dataField="{childDataField}" labelField="{childLabelField}" itemPreDraw="onPreDrawChild();"
+						fill="{clusterFill}" stroke="{myStroke}" verticalScale="{vScale}" />
+					<groupings:ColumnStack id="myStack" width="{hLayout.currentReference.width*.25}" x="{hLayout.currentReference.width*.75}" y="0" height="{hLayout.currentReference.height}" 
+						dataProvider="{hLayout.currentValue}" dataField="{childDataField}" labelField="{childLabelField}" itemPreDraw="onPreDrawChild();"
+						fill="{stackFill}" stroke="{myStroke}" verticalScale="{vScale}" />
+				</axiis:layouts>
+			</axiis:HorizontalBoxLayout>
+		</axiis:layouts>
+		
+		
+		<!-- Styles -->
+		<axiis:palettes>
+			<paint:LayoutPalette id="outerPalette" target="{hLayout}" colorFrom="0xFF3333" colorTo="0x3333FF"/>
+			<paint:LayoutPalette id="clusterPalette" target="{myCluster}" colorFrom="{outerPalette.currentColor | 0x33333}" colorTo="{outerPalette.currentColor | 0x777777}"/>
+			<paint:LayoutPalette id="stackPalette" target="{myStack}" colorFrom="{outerPalette.currentColor | 0x33333}" colorTo="{outerPalette.currentColor | 0x777777}"/>
+		</axiis:palettes>
+		<axiis:fills>
+				<degrafa:LinearGradientFill id="clusterFill">
+					<degrafa:GradientStop color="{clusterPalette.currentColor}"/>
+					<degrafa:GradientStop color="{clusterPalette.currentColor}" alpha=".5"/>
+				</degrafa:LinearGradientFill>
+				<degrafa:LinearGradientFill id="stackFill">
+					<degrafa:GradientStop color="{stackPalette.currentColor}"/>
+					<degrafa:GradientStop color="{stackPalette.currentColor}" alpha=".5"/>
+				</degrafa:LinearGradientFill>
+		</axiis:fills>
+		<axiis:strokes>
+			<degrafa:SolidStroke color="0x222222" id="axisStroke" pixelHinting="true"/>
+			<degrafa:SolidStroke color="0xFFFFFF" id="myStroke" alpha=".5"/>
+		</axiis:strokes>
+	</axiis:DataCanvas>
+	
+</mx:Application>

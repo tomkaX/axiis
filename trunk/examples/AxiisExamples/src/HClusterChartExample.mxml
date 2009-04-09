@@ -34,7 +34,7 @@
 
 	<axiis:DataCanvas height="500" width="800" id="dc" horizontalCenter="0">
 		<axiis:layouts>
-			<groupings:ColumnCluster id="myCluster" height="{dc.height-70}" width="{dc.width}" dataProvider="{dataProvider}" dataField="{horizontalField}" 
+			<groupings:ColumnClusterOld id="myCluster" height="{dc.height-70}" width="{dc.width}" dataProvider="{dataProvider}" dataField="{horizontalField}" 
 				seriesFields="['competitors','totalMedals']" labelValues="['comp','medals']" verticalScale="{myScale}" 
 				fills="{[fill1,fill2]}" strokes="{[stroke1,stroke1]}"/>
 		</axiis:layouts>

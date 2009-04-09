@@ -30,7 +30,7 @@
 				for(var a:int = 0; a < 360; a++)
 				{
 					var radians:Number = a * Math.PI / 180
-					points.addItem(new Point(a,Math.sin(radians)));
+					points.addItem(new Point(a,Math.sin(radians))); 
 				}
 				plotChart.dataProvider = points;
 			}

@@ -143,19 +143,19 @@
 								<core:modifiers>
 									<core:PropertyModifier targets="{[outerWedge]}" property="arc" modifier="{outerWedgeScale.valueToLayout(outerWedgeLayout.currentValue)}" modifierOperator="none"/>
 									<core:PropertyModifier targets="{[outerWedge]}" property="startAngle" modifier="{(outerWedgeLayout.currentIndex>0) ? outerWedgeScale.valueToLayout(outerWedgeLayout.dataItems[outerWedgeLayout.currentIndex-1][outerWedgeLayout.dataField]) : 0}" modifierOperator="add"/> 	
-								</core:modifiers>
+								</core:modifiers>  
 							</core:GeometryRepeater>
 						</core:referenceRepeater>
 						<core:drawingGeometries>
 								<!-- outerWedgeRenderer:  the drawing geometry for the outer ring of wedges -->
-								<geometry:Wedge x="0" y="0" id="outerWedgeRenderer"
+								<geometry:Wedge id="outerWedgeRenderer"
 								    innerRadius="{outerWedgeLayout.currentReference['innerRadius']}" outerRadius="{outerWedgeLayout.currentReference['outerRadius']}"
 		 							startAngle="{outerWedgeLayout.currentReference['startAngle']}" arc="{outerWedgeLayout.currentReference['arc']}" 
 		 							centerX="{outerWedgeLayout.currentReference['centerX']}" centerY="{outerWedgeLayout.currentReference['centerY']}"
 									fill="{outerWedgeFill}">
 									<geometry:stroke><degrafa:SolidStroke color="0" alpha=".6" pixelHinting="true"/></geometry:stroke>
 									<geometry:filters><mx:DropShadowFilter angle="{outerWedgeLayout.currentReference['startAngle']-180}" blurX="10" blurY="10" alpha=".6"/></geometry:filters>
-								</geometry:Wedge> 		
+								</geometry:Wedge> 	
 								<degrafa:RegularRectangle width="{outerRadius.value}" x="{center.value}" y="{center.value}" height="1">
 										<degrafa:geometry>
 											<degrafa:RasterText id="outerLabel" fontFamily="Myriad Pro"  fontSize="11" text="{(outerWedgeLayout.currentLabel) ? outerWedgeLayout.currentLabel : ''}" 
@@ -171,9 +171,6 @@
 										</degrafa:transform>
 								</degrafa:RegularRectangle>
 						</core:drawingGeometries>
-						<core:states>
-							<states:State enterStateEvent="mouseOver" exitStateEvent="mouseOut" targets="{[outerWedgeRenderer]}" properties="['fill']" values="{[rollOverFill]}"/>
-						</core:states>
 					</core:BaseLayout>
 				</core:layouts>
 			</core:BaseLayout>

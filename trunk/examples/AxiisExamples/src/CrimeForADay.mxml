@@ -75,7 +75,7 @@
 			<paint:LayoutPalette colorFrom="0xFF0000" colorTo="0xFFFF00" target="{legendLayout}" id="myPallete2"/>
 		</axiis:palettes>
 		<axiis:layouts>
-			<groupings:ColumnStack id="myCluster" height="{dc.height-70}"  width="{dc.width}" labelStyleName="labelStyle" percentGap=".025"
+			<groupings:ColumnStackOld id="myCluster" height="{dc.height-70}"  width="{dc.width}" labelStyleName="labelStyle" percentGap=".025"
 				dataProvider="{dataProvider}" dataField="columns" labelField="index" seriesLabelField="name" seriesDataField="value"
 				fill="{fill1}" stroke="{stroke1}"  verticalScale="{myScale}"/>
 			<axiis:HorizontalBoxLayout dataProvider="{columnNames}" id="legendLayout" width="900" y="{dc.height+10}">
