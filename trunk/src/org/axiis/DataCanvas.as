@@ -32,7 +32,7 @@ package org.axiis
 		
 		public var dataFunction:Function;
 		
-		public var showToolTips:Boolean = true;
+		public var showDataTips:Boolean = true;
 		
 		public var toolTipClass:IFactory;
 		
@@ -188,7 +188,7 @@ package org.axiis
 			if(!axiisSprite)
 				return;
 			
-			if(showToolTips && axiisSprite.layout.dataTipLabelFunction != null)
+			if(showDataTips && axiisSprite.layout.dataTipLabelFunction != null)
 			{
 				var hitSiblings:Array = getHitSiblings(axiisSprite);
 				for each(var sibling:AxiisSprite in hitSiblings)
