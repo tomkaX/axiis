@@ -25,13 +25,6 @@
 				dc.invalidateDisplayList();
 			}
 			
-			public function onPreDraw():void {
-			//	trace('test');
-			}
-			
-			public function onPreDrawChild():void {
-			//	trace('test');
-			}
 		]]>
 </mx:Script> 
 <Examples:ExampleBackground width="{this.width}" height="{this.height}"/>
@@ -60,7 +53,7 @@
 	
 		<!-- Layouts -->
 		<axiis:layouts>
-			<axiis:HorizontalBoxLayout id="hLayout" x="25" y="0"  height="{dc.height-70}" width="{dc.width-25}" itemPreDraw="onPreDraw();" percentGap="{percentGap}"
+			<axiis:HorizontalBoxLayout id="hLayout" x="25" y="0"  height="{dc.height-70}" width="{dc.width-25}" percentGap="{percentGap}"
 					dataProvider="{dataProvider}" dataField="{dataField}" labelField="name">
 				<axiis:layouts>
 					<groupings:ColumnCluster id="myCluster" width="{hLayout.currentReference.width*.73}" height="{hLayout.currentReference.height}" y="0" x="0"
