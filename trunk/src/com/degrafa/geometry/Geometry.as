@@ -886,9 +886,9 @@ package com.degrafa.geometry{
 					var lastParent:Geometry;
 					while(currParent && !idealParentRectangle){
 						//CHANGED THE BELOW FROM THIS
-						//if(!Geometry(parent).layoutRectangle.isEmpty()){
+						if(!Geometry(parent).layoutRectangle.isEmpty()){
 						//TO THIS
-						if(!isNaN(Geometry(parent).layoutRectangle.x) && !isNaN(Geometry(parent).layoutRectangle.y)){
+						//if(!isNaN(Geometry(parent).layoutRectangle.x) && !isNaN(Geometry(parent).layoutRectangle.y)){
 							idealParentRectangle = currParent.layoutRectangle;
 						}
 						else{

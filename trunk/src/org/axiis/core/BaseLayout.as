@@ -2,6 +2,7 @@ package org.axiis.core
 {
 	import com.degrafa.core.ICloneable;
 	import com.degrafa.geometry.Geometry;
+
 	
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -158,7 +159,7 @@ package org.axiis.core
 		{
 			return _dataTipLabelFunction;
 		}
-		private var _dataTipLabelFunction:Function;
+		private var _dataTipLabelFunction:Function=dataTipFunction;
 		
 		[Bindable(event="dataTipPositionFunctionChange")]
 		public function set dataTipPositionFunction(value:Function):void
@@ -219,8 +220,14 @@ package org.axiis.core
 		/**
 		 * Not really sure what the intention of this was. It breaks the EmbedLayoutExample but has effect on the WedgeStack.
 		 * Should we delete it?
+		 * 
+		 * Set to TRUE - drawing geometries will have their intial bounds set to 
+		 * that of the currentReference of the PARENT LAYOUT.  This directly positions child drawing sprites on x/y according to
+		 * currentReference x/y of parent layout.
+		 * 
+		 * Set to FALSE - sprite gets the x/y of the current Layout
 		 */
-		private var useInheritedBounds:Boolean = true;
+		public var inheritParentBounds:Boolean = true;
 		
 		[Bindable]
 		public function get parentLayout():ILayout
@@ -285,7 +292,7 @@ package org.axiis.core
 		{
 			return __dataItems;
 		}
-		private var __dataItems:Array;
+		protected var __dataItems:Array;
 		
 		[Bindable(event="currentReferenceChange")]
 		public function get currentReference():Geometry
@@ -447,15 +454,9 @@ package org.axiis.core
 		{
 			if(value != _layouts)
 			{
-				/* for each(var oldLayout:ILayout in layouts)
-				{
-					oldLayout.removeEventListener(StateChangeEvent.STATE_CHANGE,onStateChange)
-				} */
+
 				_layouts = value;
-				/* for each(var newLayout:ILayout in layouts)
-				{
-					newLayout.addEventListener(StateChangeEvent.STATE_CHANGE,onStateChange);
-				} */
+			
 				dispatchEvent(new Event("layoutsChange"));
 			}
 		}
@@ -479,7 +480,7 @@ package org.axiis.core
 		{
 			return _x;
 		}
-		private var _x:Number;
+		private var _x:Number=0;
 		
 		[Bindable(event="yChange")]
 		public function set y(value:Number):void
@@ -495,7 +496,7 @@ package org.axiis.core
 		{
 			return _y;
 		}
-		private var _y:Number;
+		private var _y:Number=0;
 		
 		[Bindable(event="widthChange")]
 		public function set width(value:Number):void
@@ -511,7 +512,7 @@ package org.axiis.core
 		{
 			return _width;
 		}
-		private var _width:Number;
+		private var _width:Number=0;
 		
 		[Bindable(event="heightChange")]
 		public function set height(value:Number):void
@@ -527,7 +528,7 @@ package org.axiis.core
 		{
 			return _height;
 		}
-		private var _height:Number;
+		private var _height:Number=0;
 		
 		public function registerOwner(dataCanvas:DataCanvas):void
 		{
@@ -572,7 +573,7 @@ package org.axiis.core
 			if(!sprite || !_referenceGeometryRepeater)
 				return;			
 			
-			if (useInheritedBounds && parentLayout)
+			if (inheritParentBounds && parentLayout)
 			{
 				bounds = new Rectangle(parentLayout.currentReference.x + (isNaN(x) ? 0 : x),
 									parentLayout.currentReference.y + (isNaN(y) ? 0 : y),
@@ -650,6 +651,7 @@ package org.axiis.core
 			}
 		}
 		
+		
 		private function createChildSprite():AxiisSprite
 		{
 			var newChildSprite:AxiisSprite = new AxiisSprite();
@@ -658,6 +660,7 @@ package org.axiis.core
 			newChildSprite.states = states;
 			return newChildSprite;
 		}
+
 		
 		private function cloneGeometries():Array
 		{
@@ -679,6 +682,16 @@ package org.axiis.core
 				var s:AxiisSprite=AxiisSprite(_sprite.removeChild(_sprite.drawingSprites[_sprite.drawingSprites.length-1]));
 				s.dispose();
 			}
+		}
+			
+		//I hate to put yet another function in here, but I think we want a default data tip function
+		private function dataTipFunction(data:Object):String
+		{
+			if(dataField && labelField && data[dataField] != null && data[labelField] != null)
+			{
+				return "<b>" + data[labelField] + "</b><br/>" + data[dataField];
+			}
+			return "";
 		}
 	}
 }
