@@ -22,6 +22,7 @@
 package com.degrafa.geometry {
 	
 	import com.degrafa.IGeometry;
+	import com.degrafa.core.ICloneable;
 	import com.degrafa.geometry.command.CommandStackItem;
 	import com.degrafa.geometry.utilities.ArcUtils;
 	
@@ -43,7 +44,7 @@ package com.degrafa.geometry {
  	*  @see http://degrafa.com/samples/EllipticalArc_Element.html
  	*  
  	**/	
-	public class Wedge extends Geometry implements IGeometry{
+	public class Wedge extends Geometry implements IGeometry {
 		
 		/**
 	 	* Constructor.
