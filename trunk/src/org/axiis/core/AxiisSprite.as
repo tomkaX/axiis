@@ -1,25 +1,72 @@
 package org.axiis.core
 {
+	import com.degrafa.geometry.Geometry;
+	
 	import flash.display.DisplayObject;
+	import flash.events.Event;
 	import flash.geom.Rectangle;
 	
 	import mx.core.FlexSprite;
+	
+	import org.axiis.states.State;
 
 	public class AxiisSprite extends FlexSprite
 	{
-		private var _eventListeners:Array;
+		public function AxiisSprite()
+		{
+			super();
+		}
 		
-		private var _layoutSprites:Array=new Array();
+		private var activeStateTargets:Array = [];
 		
-		private var _drawingSprites:Array=new Array();
+		private var _eventListeners:Array = [];
 		
-		public function get layoutSprites():Array {
+		public var data:Object;
+		
+		public var layout:ILayout;
+		
+		public var bounds:Rectangle;
+		
+		public var geometries:Array = [];
+		
+		public var scaleFill:Boolean = true;
+		
+		public function get layoutSprites():Array
+		{
 			return _layoutSprites;
 		}
+		private var _layoutSprites:Array=new Array();
 		
-		public function get drawingSprites():Array {
+		public function get drawingSprites():Array
+		{
 			return _drawingSprites;
 		}
+		private var _drawingSprites:Array=new Array();
+		
+		[Bindable(event="statesChange")]
+		public function set states(value:Array):void
+		{
+			if(value != _states)
+			{
+				_states = value;
+				
+				// Add listeners for all the state changing events
+				for each(var state:State in states)
+				{
+					if(state.enterStateEvent != null)
+						addEventListener(state.enterStateEvent,onStateTriggeringEvent);
+					if(state.exitStateEvent != null)
+						addEventListener(state.exitStateEvent,onStateTriggeringEvent);
+				}
+				
+				dispatchEvent(new Event("statesChange"));
+			}
+		}
+		public function get states():Array
+		{
+			return _states;
+		}
+		private var _states:Array = [];
 		
 		public function addLayoutSprite(aSprite:AxiisSprite):void {
 			if (!this.contains(aSprite)) {
@@ -35,12 +82,6 @@ package org.axiis.core
 			}
 		}
 		
-		override public function AxiisSprite()
-		{
-			super();
-			_eventListeners=new Array();
-		}
-		
 		override public function removeChild(child:DisplayObject):DisplayObject {
 			for (var i:int=0;i<_layoutSprites.length;i++) {
 				if (child==_layoutSprites[i]) {
@@ -48,9 +89,9 @@ package org.axiis.core
 					continue;
 				}
 			}
-			for (var i:int=0;i<_drawingSprites.length;i++) {
-				if (child==_drawingSprites[i]) {
-					_drawingSprites.splice(i,1);
+			for (var j:int=0;j<_drawingSprites.length;j++) {
+				if (child==_drawingSprites[j]) {
+					_drawingSprites.splice(j,1);
 					continue;
 				}
 			}
@@ -77,17 +118,129 @@ package org.axiis.core
 			super.removeEventListener(type,listener,useCapture);
 		}
 		
-		public function dispose():void {
+		public function dispose():void
+		{
 			graphics.clear();
-			for each (var obj:Object in _eventListeners) {
+			for each (var obj:Object in _eventListeners)
+			{
 				super.removeEventListener(obj.type, obj.listener,obj.useCapture);
 			}
 		}
 		
-		public var data:Object;
+		public function render():void
+		{
+			applyStates();
+			
+			graphics.clear();
+			for each(var geometry:Geometry in geometries)
+			{
+				geometry.preDraw();
+				
+				var drawingBounds:Rectangle = scaleFill
+						? new Rectangle(bounds.x+geometry.x, bounds.y+geometry.y,bounds.width,bounds.height)
+						: geometry.commandStack.bounds;
+						
+				geometry.draw(graphics,drawingBounds);
+			}
+			
+			removeStates();
+		}
 		
-		public var layout:ILayout;
+		private function applyStates():void
+		{
+			for each(var activeStateTarget:StateTarget in activeStateTargets)
+			{
+				for each(var geometry:Geometry in geometries)
+				{
+					activeStateTarget.state.apply(geometry);
+				}
+			}
+		}
 		
-		public var bounds:Rectangle;
+		private function removeStates():void
+		{
+			for each(var activeStateTarget:StateTarget in activeStateTargets)
+			{
+				for each(var geometry:Geometry in geometries)
+				{
+					activeStateTarget.state.remove(geometry);
+				}
+			}
+		}
+		
+		protected function onStateTriggeringEvent(event:Event):void
+		{
+			if(event.target != this)
+				return;	
+			
+			updateActiveStates(event);
+			setActiveStatesForAncestors(activeStateTargets);
+			setActiveStatesForDescendents(activeStateTargets);
+			render();
+		}
+		
+		protected function updateActiveStates(event:Event):void
+		{
+			var sprite:AxiisSprite = AxiisSprite(event.target);
+			var eventType:String = event.type; 
+			
+			for (var i:int = 0; i < states.length; i++)
+			{
+				var state:State = State(states[i]);
+				if(state.enterStateEvent == eventType)
+				{
+					var stateTarget:StateTarget = new StateTarget();
+					stateTarget.eventTarget = sprite;
+					stateTarget.state = state;
+					activeStateTargets.push(stateTarget);
+				}
+			}
+			
+			for(var a:int = 0; a < activeStateTargets.length; a++)
+			{
+				var activeStateTarget:StateTarget = activeStateTargets[a]
+				if(activeStateTarget.state.exitStateEvent == eventType && activeStateTarget.eventTarget == sprite)
+				{
+					for each(var geometry:Geometry in geometries)
+					{
+						activeStateTarget.state.remove(geometry);
+					}
+					activeStateTargets.splice(a,1);
+				}
+			}
+		}
+		
+		protected function setActiveStatesForAncestors(stateTargets:Array):void
+		{
+			if(parent is AxiisSprite)
+			{
+				AxiisSprite(parent).activeStateTargets = stateTargets;
+				AxiisSprite(parent).setActiveStatesForAncestors(stateTargets);
+				AxiisSprite(parent).render();
+			}
+		}
+		
+		protected function setActiveStatesForDescendents(stateTargets:Array):void
+		{
+			for(var a:int = 0; a < numChildren; a++)
+			{
+				var currChild:DisplayObject = getChildAt(a);
+				if(currChild is AxiisSprite)
+				{
+					AxiisSprite(currChild).activeStateTargets = stateTargets;
+					AxiisSprite(currChild).setActiveStatesForDescendents(stateTargets);
+					AxiisSprite(currChild).render();
+				}
+			}
+		}
 	}
+}
+
+import org.axiis.core.AxiisSprite;
+import org.axiis.states.State;
+
+internal class StateTarget
+{
+	public var eventTarget:AxiisSprite;
+	public var state:State;
 }

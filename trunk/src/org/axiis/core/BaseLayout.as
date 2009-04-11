@@ -1,5 +1,6 @@
 package org.axiis.core
 {
+	import com.degrafa.core.ICloneable;
 	import com.degrafa.geometry.Geometry;
 	
 	import flash.display.Sprite;
@@ -13,7 +14,6 @@ package org.axiis.core
 	
 	import org.axiis.DataCanvas;
 	import org.axiis.events.LayoutEvent;
-	import org.axiis.events.StateChangeEvent;
 	import org.axiis.states.State;
 	
 	[Event(name="invalidate", type="org.axiis.LayoutEvent")]
@@ -182,11 +182,11 @@ package org.axiis.core
 		{
 			if(_states != value)
 			{
-				if(_states)
-					removeListenersForStates(_states);
+				/* if(_states)
+					removeListenersForStates(_states); */
 				_states=value;
-				if(_states)
-					addListenersForStates(_states);
+				/* if(_states)
+					addListenersForStates(_states); */
 				invalidate();
 			}
 		}
@@ -447,15 +447,15 @@ package org.axiis.core
 		{
 			if(value != _layouts)
 			{
-				for each(var oldLayout:ILayout in layouts)
+				/* for each(var oldLayout:ILayout in layouts)
 				{
 					oldLayout.removeEventListener(StateChangeEvent.STATE_CHANGE,onStateChange)
-				}
+				} */
 				_layouts = value;
-				for each(var newLayout:ILayout in layouts)
+				/* for each(var newLayout:ILayout in layouts)
 				{
 					newLayout.addEventListener(StateChangeEvent.STATE_CHANGE,onStateChange);
-				}
+				} */
 				dispatchEvent(new Event("layoutsChange"));
 			}
 		}
@@ -620,7 +620,7 @@ package org.axiis.core
 			// Add a new Sprite if there isn't one available on the display list.
 			if(_currentIndex > sprite.drawingSprites.length - 1)
 			{
-				var newChildSprite=createChildSprite();
+				var newChildSprite:AxiisSprite = createChildSprite();
 				sprite.name = "drawing" + StringUtil.trim(name) + "" + sprite.drawingSprites.length;
 				sprite.addDrawingSprite(newChildSprite);
 				childSprites.push(newChildSprite);
@@ -630,268 +630,49 @@ package org.axiis.core
 			
 			dispatchEvent(new Event("itemPreDraw"));
 			
-			drawGraphicsToChild(currentChild);
-		}
-		
-		private function createChildSprite():AxiisSprite {
-				var newChildSprite:AxiisSprite = new AxiisSprite();
-				newChildSprite.doubleClickEnabled=true;
-				newChildSprite.addEventListener(StateChangeEvent.STATE_CHANGE,onStateChange);
-				newChildSprite.layout = this;
-				
-				// Add listeners for all the state changing events
-				for each(var state:State in states)
-				{
-					if(state.enterStateEvent != null)
-						newChildSprite.addEventListener(state.enterStateEvent,onChildEvent);
-					if(state.exitStateEvent != null)
-						newChildSprite.addEventListener(state.exitStateEvent,onChildEvent);
-				}
-				
-				return newChildSprite;
-		}
-		
-		protected function drawGraphicsToChild(child:AxiisSprite):void
-		{
-			var t:Number=flash.utils.getTimer();
+			currentChild.bounds = bounds;
+			currentChild.scaleFill = scaleFill;
+			currentChild.geometries = cloneGeometries();
+			currentChild.render();
 			
-			//trace("drawing " + child.name);
-			//trace(name + " drawGraphicsToChild index=" + currentIndex);
-			//if (parentLayout) { trace("startAngle=" + currentReference["startAngle"]); }
-			
-			child.graphics.clear();
-			
-			if(drawingGeometries) {
-			
-				//Apply any states related to the sprite in question by altering the current geometry
-				applyStates(child);
-				
-				for each(var geometry:Geometry in drawingGeometries)
-				{
-					if (geometry is IAxiisGeometry)
-						IAxiisGeometry(geometry).parentLayout = this as ILayout;
-						
-					geometry.preDraw();
-					
-					//We pass in different bounds depending on if we want all geoemtries filled by a common bounds or individually
-					var drawingBounds:Rectangle = scaleFill
-						? new Rectangle(_bounds.x+geometry.x, _bounds.y+geometry.y,_bounds.width,_bounds.height)
-						: geometry.commandStack.bounds;
-					
-					geometry.draw(child.graphics,drawingBounds);
-					trace("geometry.x" + geometry.x);
-					//child.x=geometry.x;
-					//child.y=geometry.y;
-					child.bounds = drawingBounds.clone();
-				}
-
-			}
-			
-			// Apply sublayouts for the targetSprite
 			var i:int=0;
 			for each(var layout:ILayout in layouts)
 			{
 				
 				layout.parentLayout = this as ILayout;    //When we have multiple peer layouts the AxiisSprite needs to differentiate between child drawing sprites and child layout sprites
-				if (child.layoutSprites.length-1 < i) {
-					var ns:AxiisSprite=createChildSprite();
-					ns.name="layout - " + StringUtil.trim(name) + " " + child.layoutSprites.length;
-					child.addLayoutSprite(ns);
+				if (currentChild.layoutSprites.length-1 < i) {
+					var ns:AxiisSprite = createChildSprite();
+					ns.name="layout - " + StringUtil.trim(name) + " " + currentChild.layoutSprites.length;
+					currentChild.addLayoutSprite(ns);
 				}
-				layout.render(child.layoutSprites[i]);
+				layout.render(currentChild.layoutSprites[i]);
 				i++;
 			}
-			
-			//Remove any states from the geometry so the next iteration rendering is not affected.
-			removeStates();
 		}
 		
-		private function addListenersForStates(states:Array):void
+		private function createChildSprite():AxiisSprite
 		{
-			if(!sprite)
-				return;
-				
-			var len:int = sprite.numChildren;
-			for(var a:int = 0; a < len; a++)
-			{
-				var currSprite:Sprite = Sprite(sprite.getChildAt(a));
-				for each(var state:State in states)
-				{
-					if(state.enterStateEvent != null)
-						currSprite.addEventListener(state.enterStateEvent,onChildEvent);
-					if(state.exitStateEvent != null)
-						currSprite.addEventListener(state.exitStateEvent,onChildEvent);
-				}
-			}
+			var newChildSprite:AxiisSprite = new AxiisSprite();
+			newChildSprite.doubleClickEnabled=true;
+			newChildSprite.layout = this;
+			newChildSprite.states = states;
+			return newChildSprite;
 		}
 		
-		private function removeListenersForStates(states:Array):void
+		private function cloneGeometries():Array
 		{
-			if(!sprite)
-				return;
-			
-			var len:int = sprite.numChildren;
-			for(var a:int = 0; a < len; a++)
+			var toReturn:Array = new Array();
+			for each(var geometry:Geometry in drawingGeometries)
 			{
-				var currSprite:Sprite = Sprite(sprite.getChildAt(a));
-				for each(var state:State in states)
-				{
-					if(state.enterStateEvent != null)
-						currSprite.removeEventListener(state.enterStateEvent,onChildEvent);
-					if(state.exitStateEvent != null)
-						currSprite.removeEventListener(state.exitStateEvent,onChildEvent);
-				}
-			}
-		}
-		
-		private function applyStates(sprite:Sprite):void
-		{
-			for (var y:int=0;y<activeStates.length;y++)
-			{
-				if (activeStates[y].target==sprite)  
-					activeStates[y].state.apply();
-			}
-		}
-		
-		private function removeStates():void
-		{
-			for (var y:int=0;y<activeStates.length;y++)
-			{
-				activeStates[y].state.remove();
-			}
-		}
-		
-		/**
-		 * Each time a sprite has its state invalidated we re render the whole layout
-		 * the alternative is figuring out a way for each iteration to keep track of its specific geometries (some type of cloning) and only rendering itself
-		 * The current approach has a bigger CPU load, using stateful geometries for each iteration would have a bigger memory load
-		 */
-		private function invalidateState(event:Event):void {
-			if (!states)
-				return;
-				
-			var sprite:Sprite = Sprite(event.target);
-			var eventType:String = event.type; 
-				
-			for (var i:int = 0; i < states.length; i++) {
-				var state:State = states[i];
-				if (state.enterStateEvent == eventType) {
-					var stateObject:Object = new Object(); //quick hack to store these two variables in internal array, probably better to use a Dictionary.
-					stateObject.target = sprite;
-					stateObject.state = state;
-					activeStates.push(stateObject);
-				}
-			}	
-			
-			for (var y:int=0;y<activeStates.length;y++) {
-				if (activeStates[y].state.exitStateEvent==eventType && activeStates[y].target==sprite) {  //Remove state
-					state.remove();
-					activeStates.splice(y,1);
-				}
-			}
-		}
-		
-		protected function onChildEvent(event:Event):void
-		{
-			//trace();
-			//trace(name + " state change " + event.type + " " + event.target);
-			
-			if(childSprites.indexOf(event.target) == -1)
-			{
-				_currentReference = null;
-				_currentIndex = -1;
-				referenceRepeater.reset();
-				return;
-			}
-			
-			invalidateState(event);
-				
-			// Update the "current" properties
-			currentChild = AxiisSprite(event.target);
-			
-			var stateChangeEvent:StateChangeEvent = new StateChangeEvent(StateChangeEvent.STATE_CHANGE);
-			currentChild.dispatchEvent(stateChangeEvent);
-			
-			// Reset the current reference so things draw in the correct location during the next render
-			_currentReference = null;
-			_currentIndex = -1;
-			referenceRepeater.reset();
-			
-			//trace(referenceRepeater.geometry)
-		}
-
-		
-		private function onStateChange(event:StateChangeEvent):void
-		{
-			//trace(name + " handleSubLayoutStateChange :: target " + event.target);
-			//trace(name + " handleSubLayoutStateChange :: my sprite " + sprite);
-			
-			var doSubLayoutsHaveStates:Boolean = false;
-			for each(var layout:BaseLayout in event.layoutChain)
-			{
-				if(layout.states.length != 0)
-				{
-					doSubLayoutsHaveStates = true;
-					break;
-				}
-			}
-			if(doSubLayoutsHaveStates || childSprites.indexOf(event.target) != -1)
-			{
-				if(parentLayout)
-				{
-					//trace("has parent -- adding to chain")
-					event.addLayoutToChain(this as ILayout);
-				}
+				if(geometry is ICloneable)
+					toReturn.push(ICloneable(geometry).clone());
 				else
-				{
-					//trace("no parent -- rendering chain");
-					renderChain(event.layoutChain,Sprite(event.target),Sprite(sprite.parent));
-				}
+					trace("error: geometry is not cloneable");
 			}
-		}
-		
-		public function renderChain(chain:Array,targetSprite:Sprite,parentSprite:Sprite):void
-		{
-			//trace(name + " renderChain");
-			//trace();
-			
-			
-			var ancestorOfTarget:Sprite = targetSprite;
-			//trace(name + " target " + ancestorOfTarget);
-			while(ancestorOfTarget != parentSprite)
-			{
-				currentChild = sprite as AxiisSprite;
-				sprite = ancestorOfTarget as AxiisSprite;
-				ancestorOfTarget = ancestorOfTarget.parent as Sprite;
-				//trace(name + " ancestorOfTarget " + ancestorOfTarget);
-			}
-			_currentIndex = sprite.getChildIndex(currentChild);
-			//trace(name,"currentIndex =",currentIndex);
-			//trace(name,"currentItem =",currentChild);
-			referenceRepeater.applyIteration(currentIndex);
-			_currentReference = referenceRepeater.geometry;
-			_currentDatum = dataItems[currentIndex];
-			_currentValue = dataField
-				? _currentDatum[dataField]
-				: _currentDatum;
-							
-			if (labelField)
-				_currentLabel = _currentDatum[labelField];
-			
-			if(chain.length == 0)
-			{
-				drawGraphicsToChild(currentChild);
-				referenceRepeater.reset();
-			}
-			else
-			{
-				var childLayout:ILayout = chain.pop() as ILayout;
-				childLayout.renderChain(chain,targetSprite,Sprite(currentChild.parent));
-			}
+			return toReturn;
 		}
 		
 		private function trimChildSprites(trim:Number):void {
-			//trace("trimming " + trim);
 			if (!_sprite || _sprite.drawingSprites.length<trim) return;
 			for (var i:int=0; i<=trim;i++) {
 				var s:AxiisSprite=AxiisSprite(_sprite.removeChild(_sprite.drawingSprites[_sprite.drawingSprites.length-1]));

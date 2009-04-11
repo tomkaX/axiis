@@ -25,12 +25,6 @@
 					height="{vScale.valueToLayout(myLayout.currentValue)}"
 					width="{myLayout.currentReference.width}"/>
 				
-				<degrafa:RasterText text="{myLayout.currentDatum[horizontalField]}" x="{myLayout.currentReference.x}" width="90" y="{height}" fontSize="16" align="right" fontFamily="Arial" visible="{showLabels}">
-					<degrafa:transform>
-						<degrafa:RotateTransform angle="-90" registrationPoint="topLeft"/>
-					</degrafa:transform>
-				</degrafa:RasterText>
-				
 			</layouts:drawingGeometries>
 			<layouts:states>
 				<states:State id="rollOverState" enterStateEvent="mouseOver" exitStateEvent="mouseOut"

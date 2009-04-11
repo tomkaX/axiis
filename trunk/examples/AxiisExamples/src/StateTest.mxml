@@ -18,7 +18,7 @@
 			{
 				var ds:DataSet = new DataSet();
 				ds.processXmlString(countryData);
-				boxLayout.dataProvider = ds.data["someData"].country;
+				boxLayout.dataProvider = ds.data.country;
 				vis.invalidateDisplayList();
 			}
 			
@@ -41,7 +41,7 @@
 						dataField="competitors" labelField="name" height="{vis.height}">
 					</geometry:Column>
 				</axiis:drawingGeometries>
-				<axiis:states>
+				<!--<axiis:states>
 					<states:State id="rollOverState"
 						enterStateEvent="{MouseEvent.MOUSE_MOVE}"
 						targets="{[col]}"
@@ -52,7 +52,7 @@
 						targets="{[col]}"
 						properties="{['fill']}"
 						values="{[redFill]}"/>
-				</axiis:states>
+				</axiis:states>-->
 				
 			</axiis:HorizontalBoxLayout>
 		</axiis:layouts>

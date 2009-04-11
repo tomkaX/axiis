@@ -43,7 +43,6 @@ package org.axiis.layouts.scale
 			
 			var percentage:Number = (valueIndex + 1) / uniqueValues.length;
 			var toReturn:Number = percentage * (maxLayout - minLayout) + minLayout;
-			trace(value +" " +toReturn + " " + percentage + " " + valueIndex);
 			return toReturn;
 		}
 		

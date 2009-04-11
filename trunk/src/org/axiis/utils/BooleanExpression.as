@@ -5,7 +5,7 @@ package org.axiis.utils
 	[Event(name="valueChanged")]
 	public class BooleanExpression extends EventDispatcher
 	{
-		public function NumericExpression()
+		public function BooleanExpression()
 		{
 		}
 		

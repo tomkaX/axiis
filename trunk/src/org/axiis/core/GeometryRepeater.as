@@ -174,7 +174,6 @@ package org.axiis.core
 		
 		public function reset():void
 		{
-			//trace("resetting")
 			_currentIteration = -1;
 			for each(var modifier:PropertyModifier in modifiers)
 			{
