@@ -55,6 +55,7 @@ package org.axiis
 			return _dataProvider;
 		}
 		private var _dataProvider:Object;
+			
 		
 		//TODO: I think we might consider using ArrayCollections and some initCollection calls (look at how degrafa handles this)
 		public var layouts:Array;
