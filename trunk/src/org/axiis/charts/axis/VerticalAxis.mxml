@@ -19,10 +19,10 @@
 				
 				var tempArray:Array=new Array();
 				
-				var totalMajorTicks:int=Math.floor(this.height/majorTickInterval);
-				var totalMinorTicks:int=Math.floor((this.height/totalMajorTicks)/tickGap)*totalMajorTicks;
+				_totalMajorTicks=Math.floor(this.height/majorTickSpacing);
+				var totalMinorTicks:int=Math.floor((this.height/_totalMajorTicks)/tickGap)*_totalMajorTicks;
 			
-				_majorTickInterval=totalMinorTicks/totalMajorTicks;
+				_majorTickInterval=totalMinorTicks/_totalMajorTicks;
 				
 				_gapStep=this.height/totalMinorTicks;
 				
@@ -30,7 +30,8 @@
 					tempArray.push(i);
 				}
 				this.dataProvider=tempArray;
-				trace("gapStep=" + _gapStep);
+				
+				gridRect.height=height/_totalMajorTicks;
 			}
 			
 			private function onItemPreDraw():void {
@@ -38,6 +39,24 @@
 				label.x=-label.textWidth-5;
 				label.y=currentReference.y-label.height/2;
 			}
+			
+			
+			public function set labelFunction(value:Function):void {
+				_labelFunction=value;
+			}
+			
+			public function get labelFunction():Function {
+				return _labelFunction;
+			}
+			
+			private var _labelFunction:Function=internalLabelFunction;
+			
+			private function internalLabelFunction(value:Object):String {
+				return (Math.round(Number(value)).toString());
+			}
+			
+			[Bindable]
+			private var _totalMajorTicks:int;
 			
 			[Bindable] 
 			private var _gapStep:Number;
@@ -54,8 +73,12 @@
 	
 	<mx:Boolean id="showLabels">true</mx:Boolean>
 	<mx:Number id="tickGap">4</mx:Number>
-	<mx:Number id="majorTickInterval">35</mx:Number>
-	
+	<mx:Number id="majorTickSpacing">35</mx:Number>
+	<mx:Number id="majorTickLength">12</mx:Number>
+	<mx:Number id="minorTickLength">6</mx:Number>
+	<mx:Number id="gridFillColor">0xFFFFFF</mx:Number>
+	<mx:Number id="gridFillAlpha">.1</mx:Number>
+		
 	<scale:AbstractScale id="verticalScale"/>
 	
 	<degrafa:SolidStroke id="tickStroke"/>
@@ -67,10 +90,11 @@
 	
 	<utils:BooleanExpression id="showLabel" value="{ (showLabels &amp;&amp; (showMajorTick.value==true))}"/>
 	<utils:BooleanExpression id="showMinorTick" value="{ !(showMajorTick.value==true)}"/>
-	<utils:BooleanExpression id="showMajorTick" value="{(majorTickInterval > 0 &amp;&amp; (repeater.currentIteration % _majorTickInterval) == 0)}"/>
-	
+	<utils:BooleanExpression id="showMajorTick" value="{(majorTickSpacing > 0 &amp;&amp; (repeater.currentIteration % _majorTickInterval) == 0)}"/>
+	<utils:BooleanExpression id="showGrid" value="{((repeater.currentIteration % (_majorTickInterval*2))==0 &amp;&amp; currentIndex &lt; itemCount-1)}"/>
 	<utils:NumericExpression id="repeaterCount" value="{Math.floor(this.height)}" valueChanged="onValueChanged();" />
 	
+	<degrafa:SolidFill id="gridFill" color="{gridFillColor}" alpha="{gridFillAlpha}"/>
 	
 	<core:referenceRepeater>
 		<core:GeometryRepeater id="repeater">
@@ -83,16 +107,21 @@
 		</core:GeometryRepeater>
 	</core:referenceRepeater>
 	<core:drawingGeometries>
+		<degrafa:RegularRectangle x="0"  y="{currentReference['y']}" id="gridRect"
+			width="{width}" 
+			visible="{(showGrid.value)}" fill="{gridFill}">				  
+		</degrafa:RegularRectangle>
 		<degrafa:Line id="minorTick" stroke="{tickStroke}"
-			x="0" x1="{this.width*.5}"  visible="{showMinorTick.value}"
+			x="0" x1="{minorTickLength}"  visible="{showMinorTick.value}"
 			y="{currentReference['y']}" y1="{currentReference['y']}"
 			/>
 		<degrafa:Line id="majorTick" stroke="{tickStroke}" 
-			x="0" x1="{this.width}" visible="{showMajorTick.value}"
+			x="0" x1="{majorTickLength}" visible="{showMajorTick.value}"
 			y="{currentReference['y']}" y1="{currentReference['y']}"
 			/>
 		<degrafa:RasterText id="label" align="right" autoSizeField="true"
 			fontFamily="fontFamily" fontSize="{fontSize}" fontWeight="{fontWeight}" textColor="{fontColor}"
-			text="{Math.round(Number(verticalScale.layoutToValue(verticalScale.maxLayout-currentReference['y'])))}" visible="{showLabel.value}"/>
+			text="{_labelFunction(Number(verticalScale.layoutToValue(verticalScale.maxLayout-currentReference['y'])))}" visible="{showLabel.value}"/>
 	</core:drawingGeometries>
+
 </core:BaseLayout>
