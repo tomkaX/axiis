@@ -9,6 +9,9 @@ package org.axiis.core
 	import org.axiis.DataCanvas;
 	
 	[Bindable]
+	/**
+	 * ILayout is an interface that all layouts must implement.
+	 */
 	public interface ILayout extends IEventDispatcher
 	{
 		function get emitDataTips():Boolean;
