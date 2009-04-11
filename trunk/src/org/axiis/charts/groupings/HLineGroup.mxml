@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layouts:HorizontalBoxLayout xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:degrafa="http://www.degrafa.com/2007" name="outerlayout"
+	xmlns:core="org.axiis.core.*"
+	xmlns:layouts="org.axiis.layouts.*"
+	xmlns:scale="org.axiis.layouts.scale.*"
+	xmlns:states="org.axiis.states.*"
+	preRender="onPreRender();" scaleFill="true"
+	itemPreDraw="onItemPreDraw();"
+	xmlns:geom="flash.geom.*"
+ 	inheritParentBounds="false"
+	>
+	
+	<!-- public variables -->
+	<mx:Script>
+		<![CDATA[
+			import com.degrafa.geometry.segment.QuadraticBezierTo;
+			import com.degrafa.geometry.segment.ClosePath;
+			import com.degrafa.geometry.segment.LineTo;
+			import com.degrafa.geometry.segment.MoveTo;
+			import com.degrafa.GraphicPoint;
+			import com.degrafa.core.IGraphicsStroke;
+			import com.degrafa.core.IGraphicsFill;
+			import org.axiis.utils.GraphicUtils;
+			
+			[Inspectable][Bindable]
+			public var stroke:IGraphicsStroke;
+			
+			/**
+			 * Stores the pre-computed curve segments
+			 */
+
+			private function onPreRender():void {
+				if (parentLayout && parentLayout.currentIndex==0)
+					calculateCurves();
+					
+				//Align us to the midpoint of the first layout datum
+				this.x=(parentLayout.width/parentLayout.itemCount)/2;
+				
+			}
+			
+			private function onItemPreDraw():void {
+				
+				trace("currentIndex" + currentIndex);
+
+				//Always add a "move to for the starting point"
+				if (parentLayout.currentIndex==0) {
+					_currentSegments=_segmentGroups[currentIndex].slice(parentLayout.currentIndex,parentLayout.currentIndex+2);
+					_currentSegments.splice(0,0,new MoveTo(_currentSegments[0].x,_currentSegments[0].y));
+				}
+				else if (parentLayout.currentIndex < parentLayout.itemCount-1) {
+					_currentSegments=_segmentGroups[currentIndex].slice(parentLayout.currentIndex*2-1,parentLayout.currentIndex*2+2);
+					_currentSegments.splice(0,1,new MoveTo(_currentSegments[0].x,_currentSegments[0].y));
+
+				} 
+				else if (parentLayout.currentIndex == parentLayout.itemCount-1) {
+					_currentSegments=_segmentGroups[currentIndex].slice(parentLayout.currentIndex*2-1,parentLayout.currentIndex*2);
+					_currentSegments.splice(0,1,new MoveTo(_currentSegments[0].x,_currentSegments[0].y));
+				} 
+
+				myPath.segments=_currentSegments;
+				marker.centerX=parentLayout.currentReference.x+parentLayout.currentReference.width/2-this.x;;
+
+			}
+			
+			public function calculateCurves():void {
+
+				if (!parentCollection) return;
+				
+				_segmentGroups=new Array();	
+				
+				var tempPoints:Array=new Array();
+				
+				
+				//Go through each of the parent collections and serially build a list of points, then turn into bezier curves 
+				var y:int=0;
+				var xo:Number=0; 
+				for each (var group in parentCollection) {
+					var i:int=0;
+					for each (var obj in group[collectionName]) { 
+						var ta:Array;
+						if (y==0 && tempPoints.length-1<i) {
+							ta=new Array();
+							ta.push(new GraphicPoint(-1,height-verticalScale.valueToLayout(group[collectionName][0][dataField])));
+							tempPoints.push(ta);
+						}
+						tempPoints[i].push(new GraphicPoint(xo,height-verticalScale.valueToLayout(obj[dataField])));
+						
+						i++;
+					} 
+					xo+=segmentWidth;
+					y++;
+				}
+				
+				for each (var ar:Array in tempPoints) {
+					_segmentGroups.push(GraphicUtils.buildSegmentsFromCurvePoints(ar,tension));
+				}
+			}
+			
+			private var _segmentGroups:Array;
+			
+			[Bindable]
+			private var _currentSegments:Array;
+			
+		]]>
+	</mx:Script>
+	
+	<mx:Object id="parentCollection"/>
+	<mx:Object id="collectionName"/>
+	<scale:LinearScale id="verticalScale"/>
+	<mx:Number id="fontSize">12</mx:Number>
+	<mx:Number id="fontColor">0</mx:Number>
+	<mx:String id="fontFamily">Arial</mx:String>
+	<mx:String id="fontWeight">normal</mx:String>
+	<mx:Boolean id="showLabel">true</mx:Boolean>
+	<mx:Number id="segmentWidth"></mx:Number>
+	<mx:Number id="tension">.25</mx:Number>
+	
+	<layouts:drawingGeometries>
+			<degrafa:RegularRectangle width="{parentLayout.width}" height="{parentLayout.height}" x="0" y="0">
+				<degrafa:Path id="myPath"  scaleOnLayout="false" 
+						visible="{(_currentSegments.length>1)}"
+						stroke="{stroke}"
+						segments="{_currentSegments}"
+						>
+				</degrafa:Path>
+			</degrafa:RegularRectangle>
+		
+		<!--degrafa:RegularRectangle width="{width}" height="{verticalScale.valueToLayout(this.currentValue)}" x="0" y="{height-verticalScale.valueToLayout(this.currentValue)}">
+			<degrafa:stroke><degrafa:SolidStroke color="0x0000FF"/></degrafa:stroke>
+		</degrafa:RegularRectangle-->
+
+		<degrafa:Circle id="marker"  radius="4" centerX="{x}" centerY="{height-verticalScale.valueToLayout(this.currentValue)}">
+			<degrafa:fill><degrafa:SolidFill color="0x779933" alpha=".7"/></degrafa:fill>
+		</degrafa:Circle>
+		
+		
+	</layouts:drawingGeometries>
+</layouts:HorizontalBoxLayout>
