@@ -324,8 +324,8 @@
 	<axiis:DataCanvas id="dc" width="{this.width*.6}" height="{this.height*.4}" verticalCenter="0" horizontalCenter="0" 
 		>
 		<axiis:backgroundGeometries>
-			<axis:VerticalAxis verticalScale="{vScale}" tickStroke="{tickStroke}" width="20" height="{dc.height-20}" emitDataTips="false"
-				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5" majorTickInterval="55"
+			<axis:VerticalAxis verticalScale="{vScale}" tickStroke="{tickStroke}" width="{hLayout.width}" height="{hLayout.height}" emitDataTips="false"
+				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5" majorTickSpacing="55"
 				/>
 			<degrafa:Line x="20" x1="{hLayout.width}" y="{hLayout.height}" y1="{hLayout.height}" stroke="{tickStroke}"/>
 			
