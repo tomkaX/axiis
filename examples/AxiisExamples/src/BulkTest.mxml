@@ -15,7 +15,6 @@
 				var ds:DataSet = new DataSet();
 				ds.processXmlString(countryData);
 				columnChart.dataProvider = ds.data["someData"].country;
-				trace(columnChart.dataProvider.length);
 			}
 		]]>
 	</mx:Script>

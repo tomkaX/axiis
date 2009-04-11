@@ -148,8 +148,6 @@ package  org.axiis.core {
 		* the property of our geometryObject.
 		*/
 		public function apply():void {
-			
-			trace("applying modifier");
 			var tempModifier:Object;
 		
 			var bounds:Rectangle=new Rectangle(); 
@@ -158,7 +156,6 @@ package  org.axiis.core {
 			
 			if (_modifier is Array) {
 				tempModifier = modifier[_iteration % modifier.length];
-				//trace(tempmodifier);
 			}
 			else if (_modifier is Function ) {
 				tempModifier=_modifier(_iteration,_targetObjects[i][_targetProperties[i]] );
@@ -181,9 +178,6 @@ package  org.axiis.core {
 						_targetObjects[i][_targetProperties[i]]=tempModifier;
 						
 					tempArray.push(_targetObjects[i][_targetProperties[i]]);
-					
-				//	trace("modifying " + this.property + " = " + _targetObjects[i][_targetProperties[i]]);
-					
 				}
 			}
 			
@@ -205,24 +199,16 @@ package  org.axiis.core {
 			for (var i:int=0;i<_targetObjects.length;i++)
 			{
 				_targetObjects[i][_targetProperties[i]]=_cachedValues[iteration][i];
-				//trace(_targetProperties[i] + " " + _targetObjects[i][_targetProperties[i]])
 			}
-			//_cacheUsed=true;
 		}
 		
 		private function resetValues():void {
-			//trace("resetting")
-			//if (_cacheUsed) {
-				if (!_targetObjects) return;
-				for (var i:int=0;i<_targetObjects.length;i++)
-				{
-					_targetObjects[i][_targetProperties[i]]=_originalValues[i];
-					
-					//trace(_targetProperties[i] + " " + _targetObjects[i][_targetProperties[i]]);
-					
-				}
-			//	_cacheUsed=false;
-			//}
+			if (!_targetObjects)
+				return;
+			for (var i:int=0;i<_targetObjects.length;i++)
+			{
+				_targetObjects[i][_targetProperties[i]]=_originalValues[i];
+			}
 		}
 		
 		/**

@@ -37,34 +37,58 @@
 
 	<axiis:LinearScale id="scale" maxLayout="{dataCanvas.height}" minLayout="0" minValue="0" maxValue="100"/> 
 
-	<axiis:DataCanvas id="dataCanvas" width="800" height="800">
+	<axiis:DataCanvas id="dataCanvas" width="100%" height="100%">
 		<axiis:layouts>
-			<axiis:HorizontalBoxLayout id="clusterLayout" name="A" width="{dataCanvas.width}" height="{dataCanvas.height}" x="0" y="0" scaleFill="true" dataField="value" percentGap=".05">
+			<axiis:HorizontalBoxLayout id="clusterLayout" name="A" width="{dataCanvas.width}" height="{dataCanvas.height}" x="0" y="0" dataField="value" percentGap=".05" scaleFill="{scaleFillCheckBox.selected}">
 				<axiis:drawingGeometries>
 					<geometry:Column stroke="{blackStroke}" fill="{fill1}" scale="{scale}" dataField="value"
 						height="{scale.valueToLayout(clusterLayout.currentValue)}" x="{clusterLayout.currentReference.x}" y="{clusterLayout.height-scale.valueToLayout(clusterLayout.currentValue)}"
 						width="{clusterLayout.currentReference.width}"/>
 				</axiis:drawingGeometries>
 				<axiis:layouts>
-					<axiis:HorizontalBoxLayout id="columnLayout" width="{clusterLayout.currentReference.width}" height="{clusterLayout.currentReference.height}"  dataProvider="{clusterLayout.currentDatum.node}" percentGap="0" x="0" y="5" name=" B" dataField="value">
+					<axiis:HorizontalBoxLayout id="columnLayout" width="{clusterLayout.currentReference.width}" height="{clusterLayout.currentReference.height}"  dataProvider="{clusterLayout.currentDatum.node}" percentGap="0" x="0" y="5" name=" B" dataField="value" scaleFill="{scaleFillCheckBox.selected}">
 						<axiis:drawingGeometries>
 							<geometry:Column stroke="{blackStroke}" fill="{fill2}" scale="{scale}" dataField="value"
 								height="{scale.valueToLayout(columnLayout.currentValue)}" x="{columnLayout.currentReference.x}" y="{clusterLayout.height-scale.valueToLayout(columnLayout.currentValue)}"
 								width="{columnLayout.currentReference.width}"/>
 						</axiis:drawingGeometries>
 						<axiis:layouts>
-							<axiis:HorizontalBoxLayout id="subColumnLayout" width="{columnLayout.currentReference.width}" height="{columnLayout.currentReference.height}" dataProvider="{columnLayout.currentDatum.node}" y="0" x="0" percentGap="0" name="  C" dataField="value">
+							<axiis:HorizontalBoxLayout id="subColumnLayout" width="{columnLayout.currentReference.width}" height="{columnLayout.currentReference.height}" dataProvider="{columnLayout.currentDatum.node}" y="0" x="0" percentGap="0" name="  C" dataField="value" scaleFill="{scaleFillCheckBox.selected}">
 								<axiis:drawingGeometries>
 									<geometry:Column id="subColumn" stroke="{blackStroke}" fill="{fill3}" scale="{scale}" x="{subColumnLayout.currentReference.x}" dataField="value"
 										height="{scale.valueToLayout(subColumnLayout.currentValue)}" y="{clusterLayout.height-scale.valueToLayout(subColumnLayout.currentValue)}"
 										width="{subColumnLayout.currentReference.width}"/>
 								</axiis:drawingGeometries>
 								
+								<axiis:states>
+									<axiis:State enterStateEvent="mouseOver"
+										exitStateEvent="mouseOut"
+										properties="{['fill']}"
+										values="{[rollOverFill2]}"
+										targets="{[subColumn]}"/>
+								</axiis:states>
+								
 							</axiis:HorizontalBoxLayout>
 						</axiis:layouts>
 						
+						<axiis:states>
+							<axiis:State enterStateEvent="mouseOver"
+								exitStateEvent="mouseOut"
+								properties="{['fill']}"
+								values="{[rollOverFill1]}"
+								targets="{[subColumn]}"/>
+						</axiis:states>
+						
 					</axiis:HorizontalBoxLayout>
 				</axiis:layouts>
+				
+				<axiis:states>
+					<axiis:State enterStateEvent="mouseOver"
+						exitStateEvent="mouseOut"
+						properties="{['fill']}"
+						values="{[rollOverFill0]}"
+						targets="{[subColumn]}"/>
+				</axiis:states>
 				
 			</axiis:HorizontalBoxLayout>
 		</axiis:layouts>
@@ -92,5 +116,7 @@
 		</axiis:fills>
 		
 	</axiis:DataCanvas>
+	
+	<mx:CheckBox id="scaleFillCheckBox" label="Scale fill" selected="false" />
 	
 </mx:Application>

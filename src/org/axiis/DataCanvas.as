@@ -188,15 +188,18 @@ package org.axiis
 			if(!axiisSprite)
 				return;
 			
-			if(showDataTips && axiisSprite.layout.dataTipLabelFunction != null)
+			if(axiisSprite.layout)
 			{
-				var hitSiblings:Array = getHitSiblings(axiisSprite);
-				for each(var sibling:AxiisSprite in hitSiblings)
+				if(showDataTips && axiisSprite.layout.dataTipLabelFunction != null)
 				{
-					showToolTip(sibling);
+					var hitSiblings:Array = getHitSiblings(axiisSprite);
+					for each(var sibling:AxiisSprite in hitSiblings)
+					{
+						showToolTip(sibling);
+					}
+					if(doToolTipsOverlap())
+						repositionToolTips();
 				}
-				if(doToolTipsOverlap())
-					repositionToolTips();
 			}
 		}
 		

@@ -70,8 +70,6 @@ package org.axiis.core
 		
 		function get currentReference():Geometry;
 		
-		function renderChain(chain:Array,targetSprite:Sprite,parentSprite:Sprite):void
-		
 		/**
 		 * Registers a DisplayObject as the owner of this ILayout.
 		 * Throws an error if the ILayout already has an owner.
