@@ -664,10 +664,11 @@ package org.axiis.core
 			var toReturn:Array = new Array();
 			for each(var geometry:Geometry in drawingGeometries)
 			{
-				if(geometry is ICloneable)
-					toReturn.push(ICloneable(geometry).clone());
-				else
-					trace("error: geometry is not cloneable");
+				//if(geometry is ICloneable)
+				//	toReturn.push(ICloneable(geometry).clone());
+				//else
+					//trace("error: geometry is not cloneable");
+					toReturn.push(geometry)
 			}
 			return toReturn;
 		}

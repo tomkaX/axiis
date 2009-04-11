@@ -271,6 +271,7 @@ package com.degrafa.geometry{
                 		*/
                 		copy[property] = this[property];
                 	}
+                	
                 	return copy;
                 }
                 

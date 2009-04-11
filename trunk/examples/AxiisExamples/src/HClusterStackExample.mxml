@@ -52,7 +52,7 @@
 		<!-- Background -->
 		<axiis:backgroundGeometries>
 			<axis:VerticalAxis verticalScale="{vScale}" tickStroke="{axisStroke}" width="{dc.width}"  height="{hLayout.height}" emitDataTips="false"
-				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5" majorTickSpacing="50"/>
+				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5"/>
 		</axiis:backgroundGeometries>
 	
 		<!-- Layouts -->
