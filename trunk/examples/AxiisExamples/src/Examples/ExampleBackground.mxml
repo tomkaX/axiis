@@ -21,7 +21,7 @@
 			<degrafa:fill>
 				<degrafa:LinearGradientFill angle="90">
 					<degrafa:GradientStop color="#3e3e3e" ratio="0"/>
-					<degrafa:GradientStop color="#e6e6e6" ratio=".55"/>
+					<degrafa:GradientStop color="#e0e0e0" ratio=".55"/>
 					<degrafa:GradientStop color="#a5a5a5" ratio="1"/>
 				</degrafa:LinearGradientFill>
 			</degrafa:fill>
