@@ -42,7 +42,7 @@
 		<core:GeometryRepeater dataProvider="{dataItems}">
 			<core:geometry>
 				<degrafa:RegularRectangle width="{this.width}" height="0" id="refRect"
-					x="0"/>
+					x="0"/> 
 			</core:geometry>
 			<core:modifiers>
 				<core:PropertyModifier id="heightModifier" property="height" modifier="{this.verticalScale.valueToLayout(currentValue)}" modifierOperator="none"/>
