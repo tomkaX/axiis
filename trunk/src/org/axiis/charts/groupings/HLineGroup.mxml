@@ -31,6 +31,9 @@
 			[Inspectable][Bindable]
 			public var fill:IGraphicsFill;
 			
+			
+			
+			
 			/**
 			 * Stores the pre-computed curve segments
 			 */
@@ -39,25 +42,24 @@
 				if (parentLayout && parentLayout.currentIndex==0) {
 					calculateCurves();
 					_decorator.fillBounds=new Rectangle(0,parentLayout.height-_maxHeight,parentLayout.width,_maxHeight);
-					
 					if (!showArea) {
 						myPath.fill=new SolidFill(0,0);					}
 					else {
 						myPath.fill=fill
 					}
 				}
-					
 				//Align us to the midpoint of the first layout datum
-				this.x=gutterWidth;
-							
+				this.x=gutterWidth;			
 			}
+			
+			
+		
 			
 			private function onItemPreDraw():void {
 				
-				trace("currentIndex" + currentIndex);
+				//Render in reverse order (accomodates stack and fills overlaying markers)
 				var currIndex:int=itemCount-currentIndex-1;
-				//Render in reverse order (accomodates stack				
-
+							
 				//Need to make sure each curve start/stops at same x line (the curves produced are interpolations and have some variance)
 				// If we don't do this the fills will overlap
 				
@@ -81,18 +83,14 @@
 				} 
 				else if (parentLayout.currentIndex == parentLayout.itemCount-1) {
 					_currentSegments=_segmentGroups[currIndex].slice(parentLayout.currentIndex*2-1,parentLayout.currentIndex*2);
-					//Clip Start point
-					//_currentSegments[0].x=_repeatWidth/2+_repeatWidth*(parentLayout.currentIndex-1);
 					_currentSegments.splice(0,1,new MoveTo(_currentSegments[0].x,_currentSegments[0].y));
-					//Clip End Point
-					//_currentSegments[_currentSegments.length-1].x=_repeatWidth/2+_repeatWidth*(parentLayout.currentIndex);
 				} 
 				
-				//if (showArea) {
-					_currentSegments.push(new LineTo(_currentSegments[_currentSegments.length-1].x,height)); //right vertical line
-					_currentSegments.push(new LineTo(_currentSegments[0].x,height)); //bottom line;
-					_currentSegments.push(new ClosePath());
-				//}
+				//Close our path with sides and bottom lines
+				_currentSegments.push(new LineTo(_currentSegments[_currentSegments.length-1].x,height)); //right vertical line
+				_currentSegments.push(new LineTo(_currentSegments[0].x,height)); //bottom line;
+				_currentSegments.push(new ClosePath());
+
 				
 				myPath.segments=_currentSegments;
 				marker.centerX=_repeatWidth*parentLayout.currentIndex;
@@ -100,17 +98,22 @@
 
 			}
 			
+			/**
+			 * This routine pre-calculates all the curves for a series
+			 * While we could calculate on each iteration, it would degrade performance because each curve is depdendent on the previous and next
+			 * Thus we cache all the curves up front, and then just takes slices off them to render
+			 * Curves are stored in multi-dimensional array
+			 * 
+			 * segmentGroups[currentIndex][parentLayout.currentIndex]  where currentIndex==the current "series", and parentLayout.currentIndex==the ordinal record position
+			 */
 			public function calculateCurves():void {
 
 				if (!parentCollection) return;
 				
 				_segmentGroups=new Array();	
-				
 				_maxHeight=0;
-				
 				//Two dimension array used to store each series fields, one row at a time  Array[hField,vField]
 				tempPoints=new Array();
-				
 				_repeatWidth=segmentWidth+(segmentWidth-gutterWidth*2)/parentLayout.itemCount;
 				
 				//Go through each of the parent collections and serially build a list of points, then turn into bezier curves 
@@ -122,7 +125,7 @@
 						var ta:Array;
 						if (y==0 && i > tempPoints.length-1) { //adds a new node if it is the first time
 							ta=new Array();
-							ta.push(new GraphicPoint(-1,height-verticalScale.valueToLayout(group[collectionName][0][dataField]))); //The first marker
+							ta.push(new GraphicPoint(-1,verticalScale.valueToLayout(group[collectionName][0][dataField]))); //The first marker
 							tempPoints.push(ta);
 						}
 						var gp:GraphicPoint=new GraphicPoint;
@@ -132,18 +135,13 @@
 							for (var z:int=0; z <= i ;z++) {
 								stackedVal+=group[collectionName][z][dataField];
 							}
-							gp.y=height-verticalScale.valueToLayout(stackedVal);
-							
+							gp.y=verticalScale.valueToLayout(stackedVal);
 						}
 						else {
-							gp.y=height-verticalScale.valueToLayout(obj[dataField]);
+							gp.y=verticalScale.valueToLayout(obj[dataField]);
 						}
 						
 						tempPoints[i].push(gp);
-						
-						//if (mode==HLineGroup.MODE_STACK && i > 0) {
-						//	tempPoints[i][y].y+=(tempPoints[i-1][y]-height);
-						//}
 						_maxHeight=Math.max(_maxHeight,verticalScale.valueToLayout(obj[dataField]));
 					} 
 					xo+=_repeatWidth;
@@ -155,18 +153,24 @@
 				}
 			}
 			
+			//Stores all the data points (accounts for stacking and alternate layouts
 			private var tempPoints:Array;
 			
+			//Used to help calculate common fill bounds for myPath
 			private var _maxHeight:Number;
 			
+			//Our repeat width depends on the hPadding 
 			[Bindable]
 			private var _repeatWidth:Number;
 			
+			//Stores all the precomputed curve segments
 			private var _segmentGroups:Array;
 			
+			//The segments used to render the series.
 			[Bindable]
 			private var _currentSegments:Array;
 			
+			//Used to remove strokes off the sides and bottom of the path
 			[Bindable]
 			private var _decorator:AreaLineDecorator=new AreaLineDecorator();
 			

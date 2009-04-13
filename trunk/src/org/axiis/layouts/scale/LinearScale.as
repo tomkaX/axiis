@@ -5,8 +5,19 @@ package org.axiis.layouts.scale
 	/**
 	 * A scale that deals with linear data.
 	 */
+
+	 
 	public class LinearScale extends ContinuousScale implements IScale
 	{
+			 
+	 
+		/**
+		 * TRUE: Scale will reverse valueToLayout calc based on min/max layout (helpful for vertical charts to accomodate top,left ==  0,0)
+		 * FALSE:  Scale will return normal valueToLayout
+		 */
+		[Bindable]
+		public var invert:Boolean=false;
+	
 		override public function valueToLayout(value:Object):Number
 		{
 			if(invalidated)
@@ -17,7 +28,10 @@ package org.axiis.layouts.scale
 			
 			//trace("value to Layout " + value + " --> " + (percentage * (maxLayout - minLayout) + minLayout).toString());
 			
-			return percentage * (maxLayout - minLayout) + minLayout;
+			if  (!invert)
+				return percentage * (maxLayout - minLayout) + minLayout;
+			else
+				return maxLayout - (percentage * (maxLayout - minLayout) + minLayout);
 		}
 		
 		override public function layoutToValue(layout:Number):Object
