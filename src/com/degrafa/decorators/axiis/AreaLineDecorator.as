@@ -1,6 +1,6 @@
 
 package  com.degrafa.decorators.axiis {
-	
+
 	import com.degrafa.core.IGraphicsFill;
 	import com.degrafa.decorators.RenderDecoratorBase;
 	import com.degrafa.geometry.command.CommandStack;
@@ -10,7 +10,6 @@ package  com.degrafa.decorators.axiis {
 	
 	public class AreaLineDecorator extends RenderDecoratorBase{
 
-	
 		public function AreaLineDecorator(){
 			super();
 		}
