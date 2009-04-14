@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:charts="org.axiis.charts.*" 
+	layout="absolute"
+	creationComplete="start();" xmlns:core="org.axiis.core.*" xmlns:axiis="http://www.axiis.org/2009"
+	 backgroundGradientColors="[0xDDDDDD,0xF5F5F5]"
+	xmlns:geometry="com.degrafa.geometry.*" 
+	xmlns:paint="org.axiis.paint.*" 
+	xmlns:degrafa="http://www.degrafa.com/2007" 
+	xmlns:states="org.axiis.states.*" 
+	xmlns:utils="org.axiis.utils.*" 
+	xmlns:Examples="Examples.*" 
+	xmlns:axis="org.axiis.charts.axis.*">
+	<mx:Style>
+		ToolTip
+		{
+			borderSkin:ClassReference('org.axiis.core.HTMLToolTip');
+		}
+	</mx:Style>
+	
+	<mx:Style source="styles/Axiis_Examples.css"/>
+	
+	<mx:Style>
+		.axisLabel {
+			fontSize:14pt;
+			fontFamily:"Myriad Pro";
+			fontWeight:normal;	
+			textColor:#FFFFFF;
+		}
+	
+	</mx:Style>
+	
+	<mx:Script>
+		<![CDATA[
+			import flash.utils.getTimer;
+			import com.degrafa.geometry.segment.QuadraticBezierTo;
+			import com.degrafa.geometry.segment.LineTo;
+			import com.degrafa.geometry.segment.MoveTo;
+			import com.degrafa.geometry.splines.CubicCage;
+			import com.degrafa.geometry.CubicBezier;
+			import com.degrafa.GraphicPoint;
+			import com.degrafa.geometry.splines.BezierSpline;
+			import com.degrafa.geometry.splines.BezierSplineControl;
+		
+			import org.axiis.data.DataSet; 
+			
+			var ds:DataSet = new DataSet();
+			
+			public function start():void
+			{ 
+				
+				ds.processXmlString(countryData);
+				//Aggregate the detailed data items
+				ds.aggregateCollection("country.medal",["count"]);
+				//Aggegate the higher level items
+				ds.aggregateCollection("country",["medal_count_sum"]);
+				vScale.maxValue=ds.data['country_medal_count_sum_max'];
+				dataProvider=ds.data.country;
+				
+				dc.invalidateDisplayList();
+			}
+			
+			private function dataTipFunction(data:Object):String
+			{
+				if(data["competitors"] != null && data["name"] != null)
+				{
+					return "<b>" + data["name"] + " Total Medals</b><br/>" + data["competitors"];
+				}
+				else if(data["count"] != null && data["category"] != null)
+				{
+					return "<b>" + data["category"] + " Total Medals</b><br/>" + data["count"];
+				}
+				return "";
+			}
+			
+			private function transposeLabel(wedge:Object):Boolean {
+			
+				
+				if( (wedge.startAngle + wedge.arc/2) > 90  && (wedge.startAngle + wedge.arc/2) < 270) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+			
+			private function calculateCurves():void {
+				
+				//Create a collection of knots
+				//pass them to our bezier spline
+
+				if (hLayout.dataItems.length < 1) return;
+				
+				var xo:Number=0;
+				 
+				var ta:Array=new Array();
+				ta.push(new GraphicPoint(0,vScale.valueToLayout(hLayout.dataItems[0][hLayout.dataField])));
+
+				for each (var obj in hLayout.dataItems) { 
+					ta.push(new GraphicPoint(xo,hLayout.height-vScale.valueToLayout(obj[hLayout.dataField])));
+					xo+=hLayout.referenceGeometry.width;
+				}
+				//ta.push(new GraphicPoint(hLayout.width,vScale.valueToLayout(hLayout.dataItems[0][hLayout.dataField])));
+				myPath.segments=buildSegmentsFromCurvePoints(ta);
+				myPath.segments.splice(0,0,new MoveTo(0,hLayout.height));
+				myPath.segments.splice(1,0,new LineTo(0,hLayout.height-vScale.valueToLayout(hLayout.dataItems[0][hLayout.dataField])));
+				myPath.segments.push(new LineTo(hLayout.width-hLayout.referenceGeometry.width,hLayout.height));
+			//	myPath.segments=buildSegmentsFromCurvePoints(ta);
+				
+				
+			}
+			
+			
+			private function buildSegmentsFromCurvePoints(pts:Array):Array
+		    {
+			 var t:Number = flash.utils.getTimer();
+			 var incr=1;
+		     var start:int = 0;
+		     var end:int=pts.length;
+			 var innerEnd:int = pts.length - incr;
+			 var segments:Array=new Array();
+			 var reverse:Boolean=false;
+			 var len:Number;
+
+			 
+				// Check for coincident points at the head of the list.
+				// We'll skip over any of those			
+				while (start != end)
+				{
+					if (pts[start + incr].x != pts[start].x ||
+						pts[start + incr].y != pts[start].y)
+					{
+						break;
+					}
+					start += incr;
+				}
+				if (start == end || start + incr == end)
+					return null;
+					
+				if (Math.abs(end - start) == 2)
+				{
+					segments.push(new LineTo(pts[start + incr].x, pts[start + incr].y));
+					return null;
+				}
+	
+				var tanLeft:Point = new Point();
+				var tanRight:Point = new Point();
+				var tangentLengthPercent:Number = 0.25;
+				
+				if (reverse)
+					tangentLengthPercent *= -1;
+				
+				var j:int= start;
+				
+				// First, find the normalized vector
+				// from the 0th point TO the 1st point
+				var v1:Point = new Point();
+				var v2:Point = new Point(pts[j + incr].x - pts[j].x,
+										 pts[j + incr].y - pts[j].y);
+				var tan:Point = new Point();
+				var p1:Point = new Point();
+				var p2:Point = new Point();
+				var mp:Point = new Point();
+				
+				len = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+				v2.x /= len;
+				v2.y /= len;
+				
+				// Now later on we'll be using the tangent to the curve
+				// to define the control point.
+				// But since we're at the end, we don't have a tangent.
+				// Instead, we'll just use the first segment itself as the tangent.
+				// The effect will be that the first curve will start along the
+				// polyline.
+				// Now extend the tangent to get a control point.
+				// The control point is expressed as a percentage
+				// of the horizontal distance beteen the two points.
+				var tanLenFactor:Number = pts[j + incr].x - pts[j].x;
+				
+				var prevNonCoincidentPt:Object = pts[j];
+				
+				// Here's the basic idea.
+				// On any given iteration of this loop, we're going to draw the
+				// segment of the curve from the nth-1 sample to the nth sample.
+				// To do that, we're going to compute the 'tangent' of the curve
+				// at the two samples.
+				// We'll use these two tangents to find two control points
+				// between the two samples.
+				// Each control point is W pixels along the tangent at the sample,
+				// where W is some percentage of the horizontal distance
+				// between the samples.
+				// We then take the two control points, and find the midpoint
+				// of the line between them.
+				// Then we're ready to draw.
+				// We draw two quadratic beziers, one from sample N-1
+				// to the midpoint, with control point N-1, and one
+				// from the midpoint to sample N, with the control point N.
+				
+				for (j += incr; j != innerEnd; j += incr)
+				{
+					// Check and see if the next point is coincident.
+					// If it is, we'll skip forward.
+					if (pts[j + incr].x == pts[j].x &&
+					    pts[j + incr].y == pts[j].y)
+					{
+						continue;
+					}
+						 
+					// v1 is the normalized vector from the nth point
+					// to the nth-1 point.
+					// Since we already computed from nth-1 to nth,
+					// we can just invert it.
+					v1.x = -v2.x
+					v1.y = -v2.y;
+					
+					// Now compute the normalized vector from nth to nth+1. 
+					v2.x = pts[j + incr].x - pts[j].x;
+					v2.y = pts[j + incr].y - pts[j].y;
+					
+					len = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+					v2.x /= len;
+					v2.y /= len;
+					
+					// Now compute the 'tangent' of the C1 curve
+					// formed by the two vectors.
+					// Since they're normalized, that's easy to find...
+					// It's the vector that runs between the two endpoints.
+					// We normalize it, as well.
+					tan.x = v2.x - v1.x;
+					tan.y = v2.y - v1.y;
+					var tanlen:Number = Math.sqrt(tan.x * tan.x + tan.y * tan.y);
+					tan.x /= tanlen;
+					tan.y /= tanlen;
+	
+					// Optionally, if the vertical direction of the curve
+					// reverses itself, we'll pin the tangent to be  horizontal.
+					// This works well for typical, well spaced chart lines,
+					// not so well for arbitrary curves.
+					if (v1.y * v2.y >= 0)
+						tan = new Point(1, 0);
+	
+					// Find the scaled tangent we'll use
+					// to calculate the control point.
+					tanLeft.x = -tan.x * tanLenFactor * tangentLengthPercent;
+					tanLeft.y = -tan.y * tanLenFactor * tangentLengthPercent;
+	
+					if (j == (incr+start))
+					{
+						// The first segment starts along the polyline,
+						// so we only draw a single quadratic.
+
+						segments.push(new QuadraticBezierTo(pts[j].x + tanLeft.x,
+								  pts[j].y + tanLeft.y,
+								  pts[j].x,
+								  pts[j].y));
+					}
+					else
+					{
+						// Determine the two control points...
+						p1.x = prevNonCoincidentPt.x + tanRight.x;
+						p1.y = prevNonCoincidentPt.y + tanRight.y;
+						
+						p2.x = pts[j].x + tanLeft.x;
+						p2.y = pts[j].y + tanLeft.y;
+						
+						// and the midpoint of the line between them.
+						mp.x = (p1.x+p2.x)/2
+						mp.y = (p1.y+p2.y)/2;
+						
+						// Now draw our two quadratics.
+						segments.push(new QuadraticBezierTo(p1.x, p1.y, mp.x, mp.y));
+						segments.push(new QuadraticBezierTo(p2.x, p2.y, pts[j].x, pts[j].y));
+						
+					}
+	
+					// We're about to move on to the nth to the nth+1 segment
+					// of the curve...so let's flip the tangent at n,
+					// and scale it for the horizontal distance from n to n+1.
+					tanLenFactor = pts[j + incr].x - pts[j].x;
+					tanRight.x = tan.x * tanLenFactor * tangentLengthPercent;
+					tanRight.y = tan.y * tanLenFactor * tangentLengthPercent;
+					prevNonCoincidentPt = pts[j];
+				}
+
+			// Now in theory we're going to draw our last curve,
+			// which, like the first, is only a single quadratic,
+			// ending at the last sample.
+			// If we try and draw two curves back to back, in reverse order,
+			// they don't quite match.
+			// I'm not sure whether this is expected, based on the definition
+			// of a quadratic bezier, or a bug in the player.
+			// Regardless, to work around this, we'll draw the last segment
+			// backwards.
+			
+			segments.push(new QuadraticBezierTo(prevNonCoincidentPt.x + tanRight.x,
+					  prevNonCoincidentPt.y + tanRight.y,
+					  pts[j].x, pts[j].y));
+
+			
+			trace("calc points elapsed time=" + (flash.utils.getTimer()-t));
+			return segments;
+			
+		
+		    }
+
+			
+			
+		]]>
+	</mx:Script>
+	
+	
+	<mx:String id="countryData" source="data/2008_Olympics.xml"/>
+	
+	
+	<mx:Object id="dataProvider"/>
+	
+	<axiis:LinearScale id="vScale" minLayout="0" maxLayout="{hLayout.height}" minValue="0" dataProvider="{dataProvider}" />
+	
+	<Examples:ExampleBackground width="{this.width}" height="{this.height}"/>
+
+	<mx:Label fontSize="22" fontFamily="Myriad Pro" htmlText="&lt;b&gt;Axiis&lt;/b&gt; - Line Chart with Vertical Axis" top="10" right="10" color="0xFFFFFF"/>
+	
+	<mx:Label fontSize="16" fontFamily="Myriad Pro" htmlText="2008 Olympic Medals" top="{dc.y+dc.height+70}" horizontalCenter="0" color="0"/>
+	<mx:Canvas width="100%" height="100%">
+	<axiis:DataCanvas id="dc" width="{this.width*.6}" height="{this.height*.4}" verticalCenter="0" horizontalCenter="0" 
+		>
+		<axiis:backgroundGeometries>
+			<axis:VerticalAxis verticalScale="{vScale}" tickStroke="{tickStroke}" width="{hLayout.width}" height="{hLayout.height}" emitDataTips="false"
+				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5" majorTickSpacing="55"
+				/>
+			<degrafa:Line x="20" x1="{hLayout.width}" y="{hLayout.height}" y1="{hLayout.height}" stroke="{tickStroke}"/>
+			
+		</axiis:backgroundGeometries>
+		
+		<axiis:layouts> 
+			
+			<axiis:HorizontalBoxLayout dataProvider="{dataProvider}" id="hLayout" dataField="medal_count_sum" labelField="name" width="{dc.width-40}" x="40" height="{dc.height-20}"
+				 preRender="calculateCurves();"
+				>
+				<axiis:drawingGeometries>
+					<degrafa:Circle radius="5"
+							centerX="{hLayout.currentReference.x}"
+							centerY="{hLayout.height-vScale.valueToLayout(hLayout.currentValue)}"
+							fill="{myFill}"/>
+					<!--degrafa:CubicBezier close="false" x0="{_bezier[hLayout.currentIndex].x0}" cx="{_bezier[hLayout.currentIndex].cx}" x1="{_bezier[hLayout.currentIndex].x1}" cx1="{_bezier[hLayout.currentIndex].cx1}"
+										y0="{_bezier[hLayout.currentIndex].y0}" cy="{_bezier[hLayout.currentIndex].cy}" y1="{_bezier[hLayout.currentIndex].y1}" cy1="{_bezier[hLayout.currentIndex].cy1}">
+										<degrafa:stroke><degrafa:SolidStroke pixelHinting="true" weight="5" alpha=".8"/></degrafa:stroke>
+										</degrafa:CubicBezier-->
+					<!--degrafa:Line x="{hLayout.currentReference.x}" x1="{hLayout.currentReference.x+hLayout.currentReference.width}" visible="{(hLayout.currentIndex &lt; hLayout.itemCount-1)}"
+							y="{hLayout.height-vScale.valueToLayout(hLayout.currentValue)}" y1="{hLayout.height-((hLayout.currentIndex &lt; hLayout.itemCount-1) ? vScale.valueToLayout(hLayout.dataItems[hLayout.currentIndex+1][hLayout.dataField]) : vScale.valueToLayout(hLayout.currentValue))}"
+							 stroke="{myStroke}"/-->
+					<degrafa:RasterText fontFamily="Arial" textColor="0x444444" x="{hLayout.currentReference.x}" y="{hLayout.height-vScale.valueToLayout(hLayout.currentValue)-20}"
+						 text="{hLayout.currentLabel}"/>
+					<degrafa:Path id="myPath" stroke="{myStroke}" visible="{(hLayout.currentIndex==hLayout.dataItems.length-1)}" />
+				<!--degrafa:BezierSpline id="mySpline" tension="3"><degrafa:stroke><degrafa:SolidStroke color="0xFFFFFF" weight="1"/></degrafa:stroke>
+				</degrafa:BezierSpline-->
+				</axiis:drawingGeometries>
+			</axiis:HorizontalBoxLayout>
+		</axiis:layouts>	
+		<axiis:palettes>
+			<paint:LayoutPalette colorFrom="0xCC0000" colorTo="0x0000AA" target="{hLayout}" id="circlePalette"/>
+		</axiis:palettes>
+		<axiis:fills>
+			<degrafa:SolidFill color="{circlePalette.currentColor}" alpha=".5" id="myFill"/>
+			<degrafa:LinearGradientFill id="myFill2" angle="90">
+				<degrafa:GradientStop color="0xFFFFFF"/>
+				<degrafa:GradientStop color="0x000000" alpha=".2"/>
+			</degrafa:LinearGradientFill>
+		</axiis:fills>
+		<axiis:strokes>
+			<degrafa:SolidStroke color="{circlePalette.currentColor}" alpha=".8" id="myStroke" weight="3"/>
+			<degrafa:SolidStroke id="tickStroke" weight="1" pixelHinting="true"/>
+		</axiis:strokes>
+	</axiis:DataCanvas>
+	</mx:Canvas>
+</mx:Application>

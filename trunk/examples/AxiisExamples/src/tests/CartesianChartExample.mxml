@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:charts="org.axiis.charts.*"  	 backgroundGradientColors="[0xFFFFFF,0xDDDDDD]"
+	layout="absolute"
+	creationComplete="start();"
+	width="850" height="700">
+	
+	<mx:Script>
+		<![CDATA[
+			import org.axiis.data.DataSet; 
+			
+			public function start():void
+			{ 
+				var ds:DataSet = new DataSet();
+				ds.processXmlString(countryData);
+				
+				columnChart.dataProvider=ds.data.country;
+				columnChart.invalidateDisplayList();
+				
+				//barChart.dataProvider=ds.data.country;
+				//barChart.invalidateDisplayList();
+
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:String id="countryData" source="data/countryData.xml"/>
+
+	<mx:HDividedBox width="800" height="600" verticalCenter="0" horizontalCenter="0" liveDragging="false"> 
+		<mx:VBox width="50%" height="100%">
+			<mx:CheckBox  label="scaleFill" change="{columnChart.myLayout.scaleFill = event.target.selected;}"/>
+			<charts:ColumnChart width="100%" height="100%"  id="columnChart" horizontalField="name" verticalField="competitors"/>
+		</mx:VBox>
+		<mx:VBox width="50%" height="100%">
+			<!--<charts:BarChart width="100%" height="100%" id="barChart" horizontalField="competitors" verticalField="name"/>-->
+		</mx:VBox>
+	</mx:HDividedBox>
+	
+</mx:Application>

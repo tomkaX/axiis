@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:axiis="http://www.axiis.org/2009"
+	xmlns:degrafa="http://www.degrafa.com/2007"
+	layout="absolute"
+	initialize="start()"	
+	width="600"
+	height="600"
+	enterFrame="drawMouseRect()">
+	
+	<mx:Style>
+		ToolTip
+		{
+			borderSkin:ClassReference('org.axiis.core.HTMLToolTip');
+		}
+	</mx:Style>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.core.IToolTip;
+			import org.axiis.core.AxiisSprite;
+			import org.axiis.core.HTMLToolTip;
+			import org.axiis.data.DataSet;
+			
+			private var mouseRect:Sprite;
+			
+			private function start():void
+			{
+				mouseRect = new Sprite();
+				mouseRect.mouseEnabled = false;
+				rawChildren.addChild(mouseRect);
+				
+				var ds:DataSet = new DataSet();
+				ds.processXmlString(countryData);
+				hBoxLayout.dataProvider = ds.data.country;
+			}
+			
+			private function labelToolTip(data:Object):String
+			{
+				if(data["competitors"] != null && data["name"] != null)
+				{
+					return "<b>" + data["name"] + "</b><br/>" + data["competitors"];
+				}
+				return "";
+			}
+			
+			private function positionDataTip(axiisSprite:AxiisSprite,toolTip:IToolTip):Point
+			{
+				var toReturn:Point = new Point();
+				
+				trace(axiisSprite.bounds)
+				
+				toReturn.x = axiisSprite.bounds.x + (axiisSprite.bounds.width - toolTip.width) / 2;
+				toReturn.y = axiisSprite.bounds.y - toolTip.height;
+				
+				return axiisSprite.localToGlobal(toReturn);
+			}
+			
+			private function drawMouseRect():void
+			{
+				if(mouseRect && hitRadiusSlider)
+				{
+					rawChildren.setChildIndex(mouseRect,rawChildren.numChildren - 1);
+					mouseRect.graphics.clear();
+					mouseRect.graphics.beginFill(0xff0000,.75);
+					mouseRect.graphics.drawCircle(mouseX,mouseY,hitRadiusSlider.value);
+					mouseRect.graphics.endFill();
+				}
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:String id="countryData" source="data/countryData.xml"/>
+
+	<axiis:LinearScale id="vScale"
+		dataProvider="{hBoxLayout.dataProvider}"
+		dataField="competitors"
+		minLayout="0"
+		maxLayout="{hBoxLayout.height}"
+		minValue="0"/>
+	
+	<mx:VBox y="70" width="100%" height="100%" horizontalAlign="center">
+		<axiis:DataCanvas id="dataCanvas" hitRadius="{hitRadiusSlider.value}" >
+			<axiis:layouts>
+				<axiis:HorizontalBoxLayout id="hBoxLayout" dataField="competitors" labelField="name" width="400" height="400"
+					dataTipLabelFunction="{labelToolTip}" dataTipPositionFunction="{positionDataTip}">
+					<axiis:drawingGeometries>
+						<degrafa:RegularRectangle id="column"
+							x="{hBoxLayout.currentReference.x}"
+							y="{hBoxLayout.height - vScale.valueToLayout(hBoxLayout.currentValue)}"
+							width="{hBoxLayout.currentReference.width}"
+							height="{vScale.valueToLayout(hBoxLayout.currentValue)}"
+							fill="{colFill}"
+							stroke="{myStroke}"/>
+					</axiis:drawingGeometries>
+					<axiis:states>
+						<axiis:State id="rollOverState" enterStateEvent="mouseOver" exitStateEvent="mouseOut"
+							targets="{[column,column]}"
+							properties="{['fill','stroke']}"
+							values="{[rollOverFill,rollOverStroke]}"/>
+					</axiis:states>
+				</axiis:HorizontalBoxLayout>
+			</axiis:layouts>
+						
+			<axiis:fills>
+				<degrafa:SolidFill color="0xDDDD00" alpha=".6" id="rollOverFill"/>
+				<degrafa:LinearGradientFill id="colFill" angle="90">
+					<degrafa:GradientStop color="0x4477FF"/>
+					<degrafa:GradientStop color="0x333388"/>
+				</degrafa:LinearGradientFill>
+			</axiis:fills>
+			
+			<axiis:strokes>
+				<degrafa:SolidStroke id="rollOverStroke" weight="1" color="white"/>
+				<degrafa:SolidStroke id="myStroke" weight="1" color="black" alpha=".5"/>
+			</axiis:strokes>
+		</axiis:DataCanvas>
+		
+		<mx:HSlider id="hitRadiusSlider" minimum="1" maximum="100" value="30" liveDragging="true"/>
+	</mx:VBox>
+	
+</mx:Application>
