@@ -15,12 +15,19 @@
 			 
 			public function start():void
 			{ 
-				ds.processCsvAsShapedData(oilData,["0,region","1,country"]);
+				ds.processCsvAsShapedData(oilData,["0,region","1,country","2,state"]);
 					//Aggregate the detailed data items
-				ds.aggregateCollection("region.country",["columns"]);
+				ds.aggregateCollection("region.country.state.columns",["value"]);
+				ds.aggregateCollection("region.country.state",["aggregates.columns_value_sum"]);
+				ds.aggregateCollection("region.country",["aggregates.state:aggregates_columns_value_sum_sum"]);
+			
 					//Aggegate the higher level items
 				//ds.aggregateCollection("country",["medal_count_sum"]);
 				//vScale.maxValue=ds.data['country_medal_count_sum_max'];
+				
+				
+				//NEED TO WRTIE CODE IN DATASET THAT DOES COLUMN AGGREGATIONS
+				
 				dataProvider=ds.data.country;
 				 
 				dc.invalidateDisplayList();
@@ -33,10 +40,10 @@
 <mx:Label fontSize="22" fontFamily="Myriad Pro" htmlText="&lt;b&gt;Axiis&lt;/b&gt; - Horizontal Chart" top="20" right="30" color="0xFFFFFF"/>
 <mx:Label fontSize="14" fontFamily="Myriad Pro" htmlText="Lines and Areas" top="50" right="30" color="0xFFFFFF" alpha=".9"/>
 
-<mx:String id="oilData" source="data/OilConsumedByCountry.csv"/>
+<!--mx:String id="oilData" source="data/OilConsumedByCountry.csv"/-->
 
 
-<!--mx:String id="oilData" source="data/FlattenedCSV.csv"/-->
+<mx:String id="oilData" source="data/FlattenedCSV.csv"/>
 
 
 
