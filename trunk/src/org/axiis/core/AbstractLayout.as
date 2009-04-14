@@ -416,7 +416,7 @@ package org.axiis.core
 			return "";
 		}
 		
-			/**
+		/**
 		 * This provides a way to further refine a layouts dataProvider by
 		 * providing access to a custom filter data filter function. This allows
 		 * developers to easily visualize subsets of the data without having to

@@ -160,7 +160,7 @@ package org.axiis.layouts.scale
 			invalidated = false;
 		}
 		
-		public function valueToLayout(value:Object):Number
+		public function valueToLayout(value:Object,invert:Boolean=false):Number
 		{
 			return NaN;
 		}

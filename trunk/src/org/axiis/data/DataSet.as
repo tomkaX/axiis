@@ -2,12 +2,16 @@ package org.axiis.data
 {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.utils.getTimer;
 	import flash.xml.XMLDocument;
 	import flash.xml.XMLNode;
 	
 	import mx.collections.ArrayCollection;
+	import mx.collections.Sort;
+	import mx.collections.SortField;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.xml.SimpleXMLDecoder;
+	import mx.utils.StringUtil;
 	
 	/**
 	 * This class is the universal data conncector for Axiis visualizations
@@ -71,11 +75,28 @@ package org.axiis.data
 			 * column.index = ordinal position
 			 * column.name = header name for column
 			 * column.value = value
+			 * 
+			 * addSummaryFields=TRUE:  Will dynamically add min/max values to each row for each column
 			 */
-			public function processCsv(payload:String, instructions:String=null):void {
+			public function processCsvAsTable(payload:String, addSummaryFields:Boolean=false):void {
+	
+				//Convert CSV into data.row[n].col[n] format for dynamic object
+				_data=createTableFromCsv(payload,addSummaryFields);
+			}
+			
+			/**
+			 *  groupings: Ordered list of name value pairs (column index, object name) to create heirarchal Groupings
+			 *  flattenLastGroup:  If the lowest level grouping returns only one row for that group, it will add the COLUMNS of that one row directly to the group object
+			 *  				   (versus a 1 item arrayCollection of rows)
+			*/
+			public function processCsvAsShapedData(payload:String, groupings:Array, flattenLastGroup:Boolean=true):void {
 				//Process CSV Source, use instructions to group into hiearicies
 				//Convert CSV into data.row[n].col[n] format for dynamic object
-				createTableFromCsv(payload);
+				var tempData:Object=createTableFromCsv(payload);
+				
+				if (!groupings || groupings.length<1) throw new Error("You must declare groupings to shape data DataSet.processCsvAsShapedData");
+				
+				_data=createShapedObject(tempData.rows,groupings,flattenLastGroup);
 			}
 				
 			public static var AGGREGATE_SUM:int = 0;
@@ -91,7 +112,9 @@ package org.axiis.data
 			 */
 			public function aggregateCollection(collectionName:String, properties:Array, aggregateType:int=0 ):void {
 				//First find our collection
+				var t:Number=flash.utils.getTimer();
 				aggregate(data,collectionName.split("."),properties,aggregateType);
+				trace("DataSet.aggregateCollection=" + (flash.utils.getTimer()-t) + "ms");
 			}
 			
 			private function aggregate(object:Object, collections:Array, properties:Array, aggregateType:int):void {
@@ -117,60 +140,66 @@ package org.axiis.data
 					if (collection is ArrayCollection) {
 						for (var i:int=0;i<ArrayCollection(collection).length;i++) {
 							var obj:Object=ArrayCollection(collection).getItemAt(i);
-							for (var y:int=0;y<properties.length;y++) {
-								if (!aggregates[properties[y] + "_sum"]) aggregates[properties[y] + "_sum"]=0;
-								if (!aggregates[properties[y] + "_sum"]) aggregates[properties[y] + "_sum"]=0;
-								if (!aggregates[properties[y] + "_min"]) aggregates[properties[y] + "_min"]=Number.POSITIVE_INFINITY;
-								if (!aggregates[properties[y] + "_max"]) aggregates[properties[y] + "_max"]=Number.NEGATIVE_INFINITY;
-								aggregates[properties[y] + "_sum"]+=obj[properties[y]];
-								aggregates[properties[y] + "_min"]=Math.min(obj[properties[y]], aggregates[properties[y] + "_min"]);
-								aggregates[properties[y] + "_max"]=Math.max(obj[properties[y]], aggregates[properties[y] + "_max"]);
-							}
+							processAggregateObject(obj,properties,aggregates,collections[0]);
 						}
 					}	
 					else if (collection is Array) {
 						for (var i:int=0;i<Array(collection).length;i++) {
 							var obj:Object=collection[i];
-							for (var y:int=0;y<properties.length;y++) {
-								if (!aggregates[properties[y] + "_sum"]) aggregates[properties[y] + "_sum"]=0;
-								if (!aggregates[properties[y] + "_min"]) aggregates[properties[y] + "_min"]=Number.POSITIVE_INFINITY;
-								if (!aggregates[properties[y] + "_max"]) aggregates[properties[y] + "_max"]=Number.NEGATIVE_INFINITY;
-								aggregates[properties[y] + "_sum"]+=obj[properties[y]];
-								aggregates[properties[y] + "_min"]=Math.min(obj[properties[y]], aggregates[properties[y] + "_min"]);
-								aggregates[properties[y] + "_max"]=Math.max(obj[properties[y]], aggregates[properties[y] + "_max"]);
-							}
+							processAggregateObject(obj,properties,aggregates,collections[0]);
 						}
 					}
 					
 					for (var n:int=0;n<properties.length;n++) {
-						if (!object[collections[0] + "_" + properties[n] + "_sum"])  //Dont create if it has been set in the raw data
-							object[collections[0] + "_" + properties[n] + "_sum"] = aggregates[properties[n] + "_sum"];
-						if (!object[collections[0] + "_" + properties[n] + "_avg"]) //Dont create if it has been set in the raw data
-							object[collections[0] + "_" + properties[n] + "_avg"] = aggregates[properties[n] + "_sum"]/i;
-						if (!object[collections[0] + "_" + properties[n] + "_min"]) //Dont create if it has been set in the raw data
-							object[collections[0] + "_" + properties[n] + "_min"] = aggregates[properties[n] + "_min"];
-						if (!object[collections[0] + "_" + properties[n] + "_max"]) //Dont create if it has been set in the raw data
-							object[collections[0] + "_" + properties[n] + "_max"] = aggregates[properties[n] + "_max"];
-
-					}
+						aggregates[collections[0] + "_" + properties[n] + "_avg"]=aggregates[collections[0] + "_" + properties[n] + "_sum"]/i
+				}
+					object.aggregates=aggregates;
 				}
 				
 			}
 			
-		
+			/**
+			 * used to set sum,min,max,avg for aggregate method
+			 */
+			private function processAggregateObject(obj:Object, properties:Array, aggregates:Object, collectionName:String):void {
+				for (var y:int=0;y<properties.length;y++) {
+					var property:String=properties[y];  
+					
+					if (!aggregates[collectionName + "_" + property + "_sum"]) aggregates[collectionName + "_" + property + "_sum"]=0;
+					if (!aggregates[collectionName + "_" + property + "_sum"]) aggregates[collectionName + "_" + property + "_sum"]=0;
+					if (!aggregates[collectionName + "_" + property + "_min"]) aggregates[collectionName + "_" + property + "_min"]=Number.POSITIVE_INFINITY;
+					if (!aggregates[collectionName + "_" + property + "_max"]) aggregates[collectionName + "_" + property + "_max"]=Number.NEGATIVE_INFINITY;
+					
+					var valObj:Object=getProperty(obj,property);
+					var val:Number = isNaN(Number(valObj)) ? 0:Number(valObj);
+					
+					aggregates[collectionName + "_" + property + "_sum"]+=val;
+					aggregates[collectionName + "_" + property + "_min"]=Math.min(val, aggregates[collectionName + "_" + property + "_min"]);
+					aggregates[collectionName + "_" + property + "_max"]=Math.max(val, aggregates[collectionName + "_" + property + "_max"]);
+				}
+			}
 			
+			private function getProperty(obj:Object, propertyName:String):Object {
+				var chain:Array=propertyName.split(".");
+				if (chain.length<2) {
+					return obj[chain[0]];
+				}
+				else {
+					return getProperty(obj[chain[0]],chain.slice(1,chain.length).join("."));
+				}
+			}
 			/***
 			 * Parses a CSV string into our private _dataRows
 			 * 
 			 */
-			private function createTableFromCsv(value:String, firstRowIsHeader:Boolean=true, convertNullsToZero:Boolean=true):void {
+			private function createTableFromCsv(value:String, addSummaries:Boolean=false, firstRowIsHeader:Boolean=true, convertNullsToZero:Boolean=true):Object {
 				//First we need to use a regEx to find any string enclosed in Quotes - as they are being escaped
 				
 				var table:Object=new Object();
 				
 				var rows:ArrayCollection=new ArrayCollection();
 				
-				_data=new Object();//Potentially we want to use ObjectProxies to detect changes
+				var tempPayload:Object=new Object();//Potentially we want to use ObjectProxies to detect changes
 				
 				//Then need to put in symbols for  quotes and commas
 				var temp:String=value;
@@ -207,7 +236,7 @@ package org.axiis.data
 					var row:Array=rowArray[i].split(","); //Create a row
 					var rowOutput:Object=new Object();
 					var cols:Array=new Array();
-		//We go through this cleanining stage to prepare raw CSV data
+					//We go through this cleanining stage to prepare raw CSV data
 								
 						for (var z:int=0;z<row.length;z++) {
 							
@@ -242,8 +271,8 @@ package org.axiis.data
 							cell["value"]=(!isNaN(Number(dataCell))) ? Number(dataCell):dataCell;
 							
 							//We are automatically adding sum values for each column here
-							if (!_data["col_"+z+"_sum"]) data["col_"+z+"_sum"]=0;
-							_data["col_"+z+"_sum"]+=cell["value"];
+							if (addSummaries && !tempPayload["col_"+z+"_sum"]) tempPayload["col_"+z+"_sum"]=0;
+							if (addSummaries) tempPayload["col_"+z+"_sum"]+=cell["value"];
 							
 							cols.push(cell);
 							
@@ -263,15 +292,98 @@ package org.axiis.data
 				
 				_rowCount=i;
 				
-				_data["rows"]=rows;
-				_data["header"]=new Array();
+				tempPayload["rows"]=rows;
+				tempPayload["header"]=new Array();
 				for (var i:int=0;i<header.length;i++) {
-					_data["header"].push(header[i]);
+					tempPayload["header"].push(header[i]);
 					//Adding avg for each column here.
-					_data["col_" + i + "_avg"]=_data["col_" + i + "_sum"]/_rowCount;
+					if (addSummaries) tempPayload["col_" + i + "_avg"]=tempPayload["col_" + i + "_sum"]/_rowCount;
 				}
+				
+				return tempPayload;
 			}
 			
+			/**
+			 * tableData:Object - expects the result from a processCsvData operation
+			 */
+			private function createShapedObject(collection:ArrayCollection, groupings:Array, flattenLastGroup:Boolean):Object {
+				
+					var tempData:Object=new Object;
+				
+					
+					//Start with outer grouping and find unique values
+					
+					var colIndex:String=groupings[0].split(",")[0];
+					var groupName:String=StringUtil.trim(groupings[0].split(",")[1]);
+					var srt:Sort=new Sort();
+					srt.fields=[new SortField(colIndex,true)];
+					srt.compareFunction=internalCompare;
+					collection.sort=srt;
+					collection.refresh();
+					
+					tempData[groupName]=new ArrayCollection();
+				
+					
+					//Go through collection and each time we hit a new unique value create a new group object
+					var currValue:String=collection.getItemAt(0).columns[int(colIndex)].value;
+					var nextValue:String;
+					var tempCollection:ArrayCollection=new ArrayCollection();
+					
+					for (var y:int=0;y<collection.length;y++) {
+						
+						if (y!=collection.length-1)
+							nextValue=collection.getItemAt(y+1).columns[int(colIndex)].value;  //look ahead to see if we are at the end of a group.
+						else {
+							nextValue=null;  //We are at the end force the end of group
+						}
+						
+						currValue=collection.getItemAt(y).columns[int(colIndex)].value;
+						tempCollection.addItem(collection.getItemAt(y));
+							
+						if (currValue!=nextValue) {
+								
+							var newObject:Object=new Object();
+							newObject.name=currValue;
+
+							if (groupings.length > 1) { //we need to go one level deeper recursively
+								newObject=createShapedObject(tempCollection,groupings.slice(1,groupings.length),flattenLastGroup);
+								newObject.name=currValue;
+							}
+							else {
+								if (flattenLastGroup && tempCollection.length==1)
+									newObject.columns=tempCollection.getItemAt(0).columns;
+								else
+									newObject.rows=tempCollection;
+							}
+						
+							tempData[groupName].addItem(newObject);
+							tempCollection=new ArrayCollection();
+						}
+
+					}
+
+				return tempData;
+				
+			}
+			
+			private function internalCompare(a:Object, b:Object, fields:Array = null):int
+	        {
+	        	var a:Object=a.columns[fields[0].name].value;
+	        	var b:Object=b.columns[fields[0].name].value;
+	            
+	           if (a == null && b == null)
+                return 0;
+                 if (a == null)
+              return 1;
+                 if (b == null)
+               return -1;
+                 if (a < b)
+                return -1;
+                 if (a > b)
+                return 1;
+	                 return 0;
+        	}
+	        
 			private function processXml(body:String):void {
 				
 	             var tmp:Object = new XMLDocument();

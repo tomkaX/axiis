@@ -55,7 +55,7 @@ package org.axiis.layouts.scale
 		/**
 		 * Converts a value to a position in layout space.
 		 */
-		function valueToLayout(value:Object):Number;
+		function valueToLayout(value:Object,invert:Boolean=false):Number;
 		
 		/**
 		 * Converts a layout position to a value that would arise in the
