@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:axiis="http://www.axiis.org/2009"
+	layout="absolute"
+	initialize="start()"
+	width="100%"
+	height="500">
+	
+	<mx:Script>
+		<![CDATA[
+			import org.axiis.data.DataSet;
+			
+			private function start():void
+			{
+				var ds:DataSet = new DataSet();
+				ds.processXmlString(countryData);
+				columnChart.dataProvider = ds.data["someData"].country;
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:String id="countryData" source="/data/countryDataLarge.xml"/>
+	
+	<axiis:ColumnChart id="columnChart" 
+		horizontalField="name"
+		verticalField="competitors"
+		width="100%"
+		height="100%"
+		showLabels="false"/>
+	
+</mx:Application>
