@@ -24,8 +24,8 @@
 				//Aggregate the detailed data items
 				ds.aggregateCollection("country.medal",["count"]);
 				//Aggegate the higher level items
-				ds.aggregateCollection("country",["medal_count_sum"]);
-				wedgeScale.maxValue=ds.data['country_medal_count_sum_sum'];
+				ds.aggregateCollection("country",["aggregates.medal_count_sum"]);
+				wedgeScale.maxValue=ds.data.aggregates['country_aggregates.medal_count_sum_sum'];
 				dataProvider=ds.data.country;
 				
 				dc.invalidateDisplayList();
@@ -77,7 +77,7 @@
 	
 	<mx:Object id="dataProvider"/>
 	<axiis:LinearScale id="wedgeScale" minLayout="0" maxLayout="{360-wedgeLayout.itemCount*angleGap}" minValue="0" dataProvider="{dataProvider}" />
-	<axiis:LinearScale id="outerWedgeScale" minLayout="0" maxLayout="{wedgeLayout.currentReference['arc']}" minValue="0" dataProvider="{wedgeLayout.currentDatum}" maxValue="{wedgeLayout.currentDatum['medal_count_sum']}"/>
+	<axiis:LinearScale id="outerWedgeScale" minLayout="0" maxLayout="{wedgeLayout.currentReference['arc']}" minValue="0" dataProvider="{wedgeLayout.currentDatum}" maxValue="{wedgeLayout.currentDatum.aggregates['medal_count_sum']}"/>
 	
 	<Examples:ExampleBackground width="{this.width}" height="{this.height}"/>
  
@@ -87,12 +87,12 @@
 	<mx:Label fontSize="16" fontFamily="Myriad Pro" htmlText="2008 Olympic Medals" top="{dc.y+dc.height+70}" horizontalCenter="0" color="0"/>
 	<mx:Canvas width="100%" height="100%">
 
-
 	<axiis:DataCanvas id="dc" width="{boundsRadius.value}" height="{boundsRadius.value}" verticalCenter="0" horizontalCenter="0" >
+
 
 		<axiis:layouts>
 			<!-- wedgeLayout:  This renders the inner ring of wedges -->
-			<core:BaseLayout id="wedgeLayout" name="innerLayout" dataProvider="{dataProvider}" width="{dc.width}" height="{dc.width}"  dataField="medal_count_sum" labelField="name"
+			<core:BaseLayout id="wedgeLayout" name="innerLayout" dataProvider="{dataProvider}" width="{dc.width}" height="{dc.width}"  dataField="aggregates.medal_count_sum" labelField="name"
 				itemPreDraw="{innerLabel.width=innerLabel.textWidth+40; if (transposeLabel(wedgeLayout.currentReference)==true) innerLabel.right=(outerRadius.value-wedgeRenderer.outerRadius) + innerLabel.textWidth + 11; else innerLabel.right=outerRadius.value-wedgeRenderer.outerRadius+10;}"
 				dataTipLabelFunction="{dataTipFunction}">
 				<core:referenceRepeater>

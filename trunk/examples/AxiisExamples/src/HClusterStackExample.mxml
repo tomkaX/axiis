@@ -18,8 +18,8 @@
 				//Aggregate the detailed data items
 				ds.aggregateCollection("country.medal",["count"]);
 				//Aggegate the higher level items
-				ds.aggregateCollection("country",["medal_count_sum"]);
-				vScale.maxValue=ds.data['country_medal_count_sum_max'];
+				ds.aggregateCollection("country",["aggregates.medal_count_sum"]);
+				vScale.maxValue=ds.data.aggregates['country_aggregates.medal_count_sum_max'];
 				dataProvider=ds.data.country;
 				
 				dc.invalidateDisplayList();
@@ -72,6 +72,11 @@
 						dataProvider="{hLayout.currentValue}" dataField="{childDataField}" labelField="{childLabelField}" 
 						fill="{stackFill}" stroke="{colStroke}" verticalScale="{vScale}" fontFamily="Arial" showLabel="false"/>
 						
+					<groupings:HLineGroup id="myLineGroup"  segmentWidth="{hLayout.width/hLayout.itemCount}"  
+					  width="{hLayout.currentReference.width}" height="{hLayout.currentReference.height}"
+					  stroke="{myStroke2}" dataProvider="{hLayout.currentDatum[dataField]}" parentCollection="{dataProvider}" collectionName="{dataField}"
+					  dataField="{childDataField}" verticalScale="{vScale}"/>
+						
 				</axiis:layouts>
 				
 				<!-- Bottom Bracket -->
@@ -107,6 +112,7 @@
 		<degrafa:SolidStroke color="0xFFFFFF" alpha=".3"/>
 		<degrafa:SolidStroke color="0x222222" id="axisStroke" pixelHinting="true"/>
 		<degrafa:SolidStroke color="{outerPalette.currentColor}" id="myStroke" alpha=".5"/>
+		<degrafa:SolidStroke color="{outerPalette.currentColor}" id="myStroke2" alpha=".7" weight="6" caps="none"/>
 	</mx:Array>
 	
 </mx:Application>
