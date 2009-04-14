@@ -151,11 +151,17 @@ package org.axiis.data
 					}
 					
 					for (var n:int=0;n<properties.length;n++) {
-						aggregates[collections[0] + "_" + properties[n] + "_avg"]=aggregates[collections[0] + "_" + properties[n] + "_sum"]/i
-				}
+						aggregates[collections[0] + "_" + cleanName(properties[n]) + "_avg"]=aggregates[collections[0] + "_" + cleanName(properties[n]) + "_sum"]/i
+					}
+					
 					object.aggregates=aggregates;
 				}
 				
+			}
+			
+			private function cleanName(propName:String):String {
+				var pa:Array=propName.split(".");
+				return pa.join(":");
 			}
 			
 			/**
@@ -163,14 +169,14 @@ package org.axiis.data
 			 */
 			private function processAggregateObject(obj:Object, properties:Array, aggregates:Object, collectionName:String):void {
 				for (var y:int=0;y<properties.length;y++) {
-					var property:String=properties[y];  
+					var property:String=cleanName(properties[y]);  
 					
 					if (!aggregates[collectionName + "_" + property + "_sum"]) aggregates[collectionName + "_" + property + "_sum"]=0;
 					if (!aggregates[collectionName + "_" + property + "_sum"]) aggregates[collectionName + "_" + property + "_sum"]=0;
 					if (!aggregates[collectionName + "_" + property + "_min"]) aggregates[collectionName + "_" + property + "_min"]=Number.POSITIVE_INFINITY;
 					if (!aggregates[collectionName + "_" + property + "_max"]) aggregates[collectionName + "_" + property + "_max"]=Number.NEGATIVE_INFINITY;
 					
-					var valObj:Object=getProperty(obj,property);
+					var valObj:Object=getProperty(obj,properties[y]);
 					var val:Number = isNaN(Number(valObj)) ? 0:Number(valObj);
 					
 					aggregates[collectionName + "_" + property + "_sum"]+=val;

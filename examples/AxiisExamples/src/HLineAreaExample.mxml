@@ -20,7 +20,7 @@
 				ds.aggregateCollection("country.medal",["count"]);
 				//Aggegate the higher level items
 				ds.aggregateCollection("country",["aggregates.medal_count_sum"]);
-				vScale.maxValue=ds.data.aggregates['country_aggregates.medal_count_sum_max'];
+				vScale.maxValue=ds.data.aggregates['country_aggregates:medal_count_sum_max'];
 				dataProvider=ds.data.country;
 				 
 				dc.invalidateDisplayList();
