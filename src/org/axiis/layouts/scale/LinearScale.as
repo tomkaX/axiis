@@ -11,14 +11,13 @@ package org.axiis.layouts.scale
 	{
 			 
 	 
+		
 		/**
 		 * TRUE: Scale will reverse valueToLayout calc based on min/max layout (helpful for vertical charts to accomodate top,left ==  0,0)
 		 * FALSE:  Scale will return normal valueToLayout
 		 */
-		[Bindable]
-		public var invert:Boolean=false;
 	
-		override public function valueToLayout(value:Object):Number
+		override public function valueToLayout(value:Object, invert:Boolean=false):Number
 		{
 			if(invalidated)
 				validate();

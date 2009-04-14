@@ -2,7 +2,7 @@ package org.axiis.layouts.scale
 {
 	public class DateTimeScale extends ContinuousScale implements IScale
 	{
-		override public function valueToLayout(value:Object):Number
+		override public function valueToLayout(value:Object,invert:Boolean=false):Number
 		{
 			if(invalidated)
 				validate();

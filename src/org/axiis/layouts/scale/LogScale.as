@@ -6,7 +6,7 @@ package org.axiis.layouts.scale
 	 */
 	public class LogScale extends ContinuousScale
 	{
-		override public function valueToLayout(value:Object):Number
+		override public function valueToLayout(value:Object,invert:Boolean=false):Number
 		{
 			var logValue:Number = Math.log(Number(value)) / Math.LN10;
 			

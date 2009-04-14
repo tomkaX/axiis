@@ -103,13 +103,22 @@ package org.axiis.core
 			_currentIndex++;
 			_currentDatum = dataItems[_currentIndex];
 			if (dataField)
-				_currentValue = _currentDatum[dataField];
+				_currentValue = getProperty(_currentDatum,dataField);
 			else
 				_currentValue=_currentDatum;
 			if (labelField)
-				_currentLabel = _currentDatum[labelField];
+				_currentLabel = getProperty(_currentDatum,labelField).toString();
 		}
 		
+		private function getProperty(obj:Object, propertyName:String):Object {
+			var chain:Array=propertyName.split(".");
+			if (chain.length<2) {
+				return obj[chain[0]];
+			}
+			else {
+				return getProperty(obj[chain[0]],chain.slice(1,chain.length).join("."));
+			}
+		}
 		/**
 		 * TODO we need to handle removing sprites when data is removed from the dataProvider
 		 *  including removing listeneners so they can be garbage collected.

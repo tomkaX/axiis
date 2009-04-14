@@ -125,7 +125,7 @@
 						var ta:Array;
 						if (y==0 && i > tempPoints.length-1) { //adds a new node if it is the first time
 							ta=new Array();
-							ta.push(new GraphicPoint(-1,verticalScale.valueToLayout(group[collectionName][0][dataField]))); //The first marker
+							ta.push(new GraphicPoint(-1,verticalScale.valueToLayout(group[collectionName][0][dataField],true))); //The first marker
 							tempPoints.push(ta);
 						}
 						var gp:GraphicPoint=new GraphicPoint;
@@ -135,14 +135,14 @@
 							for (var z:int=0; z <= i ;z++) {
 								stackedVal+=group[collectionName][z][dataField];
 							}
-							gp.y=verticalScale.valueToLayout(stackedVal);
+							gp.y=verticalScale.valueToLayout(stackedVal,true);
 						}
 						else {
-							gp.y=verticalScale.valueToLayout(obj[dataField]);
+							gp.y=verticalScale.valueToLayout(obj[dataField],true);
 						}
 						
 						tempPoints[i].push(gp);
-						_maxHeight=Math.max(_maxHeight,verticalScale.valueToLayout(obj[dataField]));
+						_maxHeight=Math.max(_maxHeight,verticalScale.valueToLayout(obj[dataField]),true);
 					} 
 					xo+=_repeatWidth;
 					y++;
@@ -210,16 +210,16 @@
 				</degrafa:Path>
 			</degrafa:RegularRectangle>
 		
-		<!--degrafa:RegularRectangle width="{width}" height="{verticalScale.valueToLayout(this.currentValue)}" x="0" y="{height-verticalScale.valueToLayout(this.currentValue)}">
+		<!--degrafa:RegularRectangle width="{width}" height="{verticalScale.valueToLayout(this.currentValue,true)}" x="0" y="{height-verticalScale.valueToLayout(this.currentValue,true)}">
 			<degrafa:stroke><degrafa:SolidStroke color="0x0000FF"/></degrafa:stroke>
 		</degrafa:RegularRectangle-->
 
 		<degrafa:Circle id="marker"  radius="{markerRadius}" centerY="{yPoint.value}">
-			<degrafa:fill><degrafa:SolidFill color="0xFFFFFF" alpha="1"/></degrafa:fill>
+			<degrafa:fill><degrafa:SolidFill color="0xFFFFFF" alpha=".8"/></degrafa:fill>
 			<degrafa:stroke><degrafa:SolidStroke color="0" pixelHinting="false" alpha=".6"/></degrafa:stroke>
 		</degrafa:Circle>
 		<degrafa:Circle id="innerMarker" radius="{markerRadius*.6}" centerX="{marker.centerX}" centerY="{marker.centerY}">
-			<degrafa:fill><degrafa:SolidFill color="{markerColor}" alpha=".6"/></degrafa:fill>
+			<degrafa:fill><degrafa:SolidFill color="{markerColor}" alpha="1"/></degrafa:fill>
 		</degrafa:Circle>
 		
 		

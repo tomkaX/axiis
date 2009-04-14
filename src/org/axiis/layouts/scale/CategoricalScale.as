@@ -32,7 +32,7 @@ package org.axiis.layouts.scale
 		 * Converts a value to layout-space. If the value is not represented within
 		 * the dataProvider, NaN is returned.
 		 */
-		override public function valueToLayout(value:Object):Number
+		override public function valueToLayout(value:Object,invert:Boolean=false):Number
 		{
 			if(invalidated)
 				validate();
