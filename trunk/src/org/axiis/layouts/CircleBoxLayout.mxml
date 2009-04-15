@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<core:BaseLayout xmlns="*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:core="org.axiis.core.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:layouts="org.axiis.layouts.*" xmlns:scale="org.axiis.layouts.scale.*">
+<layouts:BaseLayout xmlns="*" xmlns:mx="http://www.adobe.com/2006/mxml"  xmlns:degrafa="http://www.degrafa.com/2007" xmlns:layouts="org.axiis.layouts.*" xmlns:scale="org.axiis.layouts.scale.*" xmlns:core="org.axiis.core.*">
 
 	<mx:Number id="innerDiameter">50</mx:Number>
 	<mx:Number id="outerDiameter">150</mx:Number>
@@ -10,7 +10,7 @@
 	<scale:CategoricalScale dataProvider="{this.dataItems}" dataField="{dataField}" minLayout="{innerDiameter}" maxLayout="{outerDiameter}"/>
 	<!--  We need to figure out how to implement this scale correctly -->
 	
-	<core:referenceRepeater>
+	<layouts:referenceRepeater>
 		<core:GeometryRepeater id="myLayout" dataProvider="{this.dataItems}">
 			<core:geometry>
 				<degrafa:RegularRectangle width="{(innerDiameter*Math.PI*2/this.itemCount)*(1-percentGap)}" height="50" x="{this.width/2}" y="{this.height/2}" id="layoutGeometry">
@@ -23,6 +23,6 @@
 				<core:PropertyModifier targets="{[layoutGeometry]}" property="transform.angle" modifier="{360/this.itemCount}" modifierOperator="add"/>
 			</core:modifiers>
 		</core:GeometryRepeater>
-	</core:referenceRepeater>
+	</layouts:referenceRepeater>
 	
-</core:BaseLayout>
+</layouts:BaseLayout>

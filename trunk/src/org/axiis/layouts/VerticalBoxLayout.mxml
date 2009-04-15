@@ -4,7 +4,7 @@ The VerticalBoxLayout is an AbstractLayout that creates a RegularRectangle for
 each item in its dataProvider. The RegularRectangles are sized and spaced evenly across
 the height of the VerticalBoxLayout.
 -->
-<core:BaseLayout xmlns="*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:core="org.axiis.core.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:layouts="org.axiis.layouts.*" xmlns:scale="org.axiis.layouts.scale.*">
+<layouts:BaseLayout xmlns="*" xmlns:mx="http://www.adobe.com/2006/mxml"  xmlns:degrafa="http://www.degrafa.com/2007" xmlns:layouts="org.axiis.layouts.*" xmlns:scale="org.axiis.layouts.scale.*" xmlns:core="org.axiis.core.*">
 
 	<!--- The amount of whitespace that should be left between RegularRectangles
 		as a percentage of the height of the VerticalBoxLayout -->
@@ -16,10 +16,10 @@ the height of the VerticalBoxLayout.
 	-->
 	<!--  We need to figure out how to implement this scale correctly -->
 	
-	<core:referenceRepeater>
+	<layouts:referenceRepeater>
 		<!---
 			just testing documenting nested objects...
-		-->
+		--> 
 		<core:GeometryRepeater id="repeater" dataProvider="{dataItems}">
 			<core:geometry>
 				<degrafa:RegularRectangle x="0" y="0" height="{bounds.height / itemCount - height*percentGap}" width="{bounds.width}"/>
@@ -28,6 +28,6 @@ the height of the VerticalBoxLayout.
 				<core:PropertyModifier property="y" modifier="{bounds.height/itemCount}" modifierOperator="add"/>
 			</core:modifiers>
 		</core:GeometryRepeater>
-	</core:referenceRepeater>
+	</layouts:referenceRepeater>
 	
-</core:BaseLayout>
+</layouts:BaseLayout>

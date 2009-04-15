@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layouts:HorizontalBoxLayout xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:degrafa="http://www.degrafa.com/2007" name="outerlayout"
-	xmlns:core="org.axiis.core.*"
 	xmlns:layouts="org.axiis.layouts.*"
 	xmlns:scale="org.axiis.layouts.scale.*"
 	xmlns:states="org.axiis.states.*">
@@ -9,8 +8,10 @@
 	<!-- public variables -->
 	<mx:Script>
 		<![CDATA[
+			import org.axiis.core.ILayout;
 			import com.degrafa.core.IGraphicsStroke;
 			import com.degrafa.core.IGraphicsFill;
+
 			
 			[Inspectable][Bindable]
 			public var fill:IGraphicsFill;

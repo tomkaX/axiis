@@ -20,7 +20,14 @@ package org.axiis
 	
 	public class DataCanvas extends UIComponent
 	{
-		include "core/DrawingPlaceholders.as";
+		[Bindable]
+		public var fills:Array = [];
+		
+		[Bindable]
+		public var strokes:Array = [];
+		
+		[Bindable]
+		public var palettes:Array = [];
 		
 		public function DataCanvas()
 		{

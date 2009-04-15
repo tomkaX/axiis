@@ -3,7 +3,7 @@
 	layout="absolute"
 	creationComplete="start();" xmlns:core="org.axiis.core.*" xmlns:axiis="http://www.axiis.org/2009"
 	 backgroundGradientColors="[0xDDDDDD,0xF5F5F5]"
-	xmlns:geometry="com.degrafa.geometry.*" xmlns:paint="org.axiis.paint.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:states="org.axiis.states.*" xmlns:utils="org.axiis.utils.*" xmlns:Examples="Examples.*">
+	xmlns:geometry="com.degrafa.geometry.*" xmlns:paint="org.axiis.paint.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:states="org.axiis.states.*" xmlns:utils="org.axiis.utils.*" xmlns:Examples="Examples.*" xmlns:layouts="org.axiis.layouts.*">
 	<mx:Style>
 		ToolTip
 		{
@@ -92,10 +92,10 @@
 
 		<axiis:layouts>
 			<!-- wedgeLayout:  This renders the inner ring of wedges -->
-			<core:BaseLayout id="wedgeLayout" name="innerLayout" dataProvider="{dataProvider}" width="{dc.width}" height="{dc.width}"  dataField="aggregates.medal_count_sum" labelField="name"
+			<layouts:BaseLayout id="wedgeLayout" name="innerLayout" dataProvider="{dataProvider}" width="{dc.width}" height="{dc.width}"  dataField="aggregates.medal_count_sum" labelField="name"
 				itemPreDraw="{innerLabel.width=innerLabel.textWidth+40; if (transposeLabel(wedgeLayout.currentReference)==true) innerLabel.right=(outerRadius.value-wedgeRenderer.outerRadius) + innerLabel.textWidth + 11; else innerLabel.right=outerRadius.value-wedgeRenderer.outerRadius+10;}"
 				dataTipLabelFunction="{dataTipFunction}">
-				<core:referenceRepeater>
+				<layouts:referenceRepeater>
 					<!-- innerRepeater: the reference repeater wedge for the inner ring of wedges -->
 					<core:GeometryRepeater dataProvider="{wedgeLayout.dataItems}" id="innerRepeater" >
 						<core:geometry>
@@ -106,8 +106,8 @@
 							<core:PropertyModifier targets="{[wedge]}" property="startAngle" modifier="{innerValue.value+angleGap}" modifierOperator="subtract"/> 
 						</core:modifiers>
 					</core:GeometryRepeater>
-				</core:referenceRepeater>
-				<core:drawingGeometries>
+				</layouts:referenceRepeater>
+				<layouts:drawingGeometries>
 					<!-- wedgeRenderer: the drawing geometry for the inner ring of wedges -->
 					<geometry:Wedge x="0" y="0" id="wedgeRenderer" 
 					    innerRadius="{wedgeLayout.currentReference['innerRadius']}" outerRadius="{wedgeLayout.currentReference['outerRadius']}"
@@ -129,13 +129,13 @@
 									registrationPoint="topLeft"/>
 						</degrafa:transform>
 					</degrafa:RegularRectangle>
-				</core:drawingGeometries>
-				<core:layouts>
+				</layouts:drawingGeometries>
+				<layouts:layouts>
 					<!-- outerWedgeRenderer:  The layout for the outer ring of wedges -->
-					<core:BaseLayout id="outerWedgeLayout"  name=" outerLayout" dataProvider="{wedgeLayout.currentDatum.medal}" width="{dc.width}" height="{dc.width}"  dataField="count" labelField="category"
+					<layouts:BaseLayout id="outerWedgeLayout"  name=" outerLayout" dataProvider="{wedgeLayout.currentDatum.medal}" width="{dc.width}" height="{dc.width}"  dataField="count" labelField="category"
 						itemPreDraw="{outerLabel.width=outerLabel.textWidth+12; if (transposeLabel(outerWedgeLayout.currentReference)==true) outerLabel.right=-3; else outerLabel.right=-outerLabel.textWidth-5;}"
 						dataTipLabelFunction="{dataTipFunction}">
-						<core:referenceRepeater>
+						<layouts:referenceRepeater>
 							<!-- outerRepeater:  the reference geometry for the outer ring of wedges -->
 							<core:GeometryRepeater dataProvider="{outerWedgeLayout.dataItems}" id="outerRepeater">
 								<core:geometry>
@@ -147,8 +147,8 @@
 									<core:PropertyModifier targets="{[outerWedge]}" property="startAngle" modifier="{(outerWedgeLayout.currentIndex>0) ? outerWedgeScale.valueToLayout(outerWedgeLayout.dataItems[outerWedgeLayout.currentIndex-1][outerWedgeLayout.dataField]) : 0}" modifierOperator="add"/> 	
 								</core:modifiers>  
 							</core:GeometryRepeater>
-						</core:referenceRepeater>
-						<core:drawingGeometries>
+						</layouts:referenceRepeater>
+						<layouts:drawingGeometries>
 								<!-- outerWedgeRenderer:  the drawing geometry for the outer ring of wedges -->
 								<geometry:Wedge id="outerWedgeRenderer"
 								    innerRadius="{outerWedgeLayout.currentReference['innerRadius']}" outerRadius="{outerWedgeLayout.currentReference['outerRadius']}"
@@ -172,10 +172,10 @@
 													registrationPoint="topLeft"/>
 										</degrafa:transform>
 								</degrafa:RegularRectangle>
-						</core:drawingGeometries>
-					</core:BaseLayout>
-				</core:layouts>
-			</core:BaseLayout>
+						</layouts:drawingGeometries>
+					</layouts:BaseLayout>
+				</layouts:layouts>
+			</layouts:BaseLayout>
 		</axiis:layouts>
 		<axiis:palettes>
 			<paint:LayoutPalette colorFrom="0xCC0000" colorTo="0x0000AA" target="{wedgeLayout}" id="wedgePalette"/>

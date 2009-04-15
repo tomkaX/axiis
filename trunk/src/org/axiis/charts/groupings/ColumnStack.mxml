@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<core:BaseLayout xmlns:mx="http://www.adobe.com/2006/mxml"
+<layouts:BaseLayout xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:degrafa="http://www.degrafa.com/2007" name="outerlayout"
-	xmlns:core="org.axiis.core.*"
+	xmlns:layouts="org.axiis.layouts.*"
 	xmlns:scale="org.axiis.layouts.scale.*"
-	xmlns:states="org.axiis.states.*" itemPreDraw="onPreDraw();" preRender="onPreRender();">
+	xmlns:states="org.axiis.states.*" itemPreDraw="onPreDraw();" preRender="onPreRender();" xmlns:core="org.axiis.core.*">
 	
 	<!-- public variables -->
 	<mx:Script>
@@ -38,7 +38,7 @@
 	<mx:Boolean id="showLabel">true</mx:Boolean>
 
 	
-	<core:referenceRepeater>
+	<layouts:referenceRepeater>
 		<core:GeometryRepeater dataProvider="{dataItems}">
 			<core:geometry>
 				<degrafa:RegularRectangle width="{this.width}" height="0" id="refRect"
@@ -50,8 +50,8 @@
 			
 			</core:modifiers>
 		</core:GeometryRepeater>	
-	</core:referenceRepeater>
-	<core:drawingGeometries>
+	</layouts:referenceRepeater>
+	<layouts:drawingGeometries>
 			
 		<!-- main column rectangle that gets repeated vertically -->
 		<degrafa:RegularRectangle id="myCol" x="0"
@@ -71,11 +71,11 @@
 				<degrafa:RotateTransform registrationPoint="topLeft" angle="-90"/>
 			</degrafa:transform>
 		</degrafa:RasterText>
-	</core:drawingGeometries>
-	<core:fills>
+	</layouts:drawingGeometries>
+	<layouts:fills>
 		<degrafa:SolidFill color="0xDDDD00" alpha=".6" id="rollOverFill"/>
-	</core:fills>
-	<core:strokes>
+	</layouts:fills>
+	<layouts:strokes>
 		<degrafa:SolidStroke id="rollOverStroke" weight="1" color="white"/>
-	</core:strokes>
-</core:BaseLayout>
+	</layouts:strokes>
+</layouts:BaseLayout>

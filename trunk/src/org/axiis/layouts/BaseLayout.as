@@ -1,23 +1,22 @@
-package org.axiis.core
+package org.axiis.layouts
 {
 	import com.degrafa.geometry.Geometry;
 	
-	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.geom.Rectangle;
 	import flash.utils.getTimer;
 	
 	import mx.utils.StringUtil;
 	
-	import org.axiis.DataCanvas;
-	import org.axiis.events.LayoutEvent;
+	import org.axiis.core.AbstractLayout;
+	import org.axiis.core.AxiisSprite;
+	import org.axiis.core.ILayout;
 	
 	[Event(name="invalidate", type="org.axiis.LayoutEvent")]
 	[Event(name="preRender", type="flash.events.Event")]
 	[Event(name="itemPreDraw", type="flash.events.Event")]
 	public class BaseLayout extends AbstractLayout
 	{
-		include "DrawingPlaceholders.as";
 		
 		public function BaseLayout()
 		{
@@ -59,7 +58,7 @@ package org.axiis.core
 		public var inheritParentBounds:Boolean = true;
 		
 	
-		override public function render(newSprite:AxiisSprite = null):void
+		override public function render(newSprite:AxiisSprite = null):void 
 		{
 			//trace(name + " render " +currentIndex)
 			var t:Number=flash.utils.getTimer();
@@ -144,7 +143,7 @@ package org.axiis.core
 			_currentChild.scaleFill = scaleFill;
 			_currentChild.geometries = cloneGeometries();
 			_currentChild.render();
-			
+	
 			var i:int=0;
 			for each(var layout:ILayout in layouts)
 			{

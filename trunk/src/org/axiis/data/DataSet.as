@@ -19,6 +19,20 @@ package org.axiis.data
 	 * It will turn flat table (.csv/array) data into object level data.
 	*/
 	
+	
+	/** BENCHMARKS 4/14/09
+	*   2000 rows 30 columns
+	*	5261ms processCsvAsShapeData  .08ms per datapoint
+	*	3281ms processCsvAsTableData  .05ms per datapoint
+	*	
+	*	2000 rows 14 columns
+	*	3970ms processCsvAsShapeData  .13ms per datapoint
+	*	1480ms processCsvAsTableData  .04ms per datapoint
+	*	 
+	*   Range of 40ms per 1000 datapoints --> 130ms per 1000 datapoints
+	*
+	*/
+	
 	public class DataSet extends EventDispatcher
 	{
 		
@@ -79,24 +93,36 @@ package org.axiis.data
 			 * addSummaryFields=TRUE:  Will dynamically add min/max values to each row for each column
 			 */
 			public function processCsvAsTable(payload:String, addSummaryFields:Boolean=false):void {
-	
+				var t:Number=flash.utils.getTimer();
 				//Convert CSV into data.row[n].col[n] format for dynamic object
 				_data=createTableFromCsv(payload,addSummaryFields);
+				
+				trace("DataSet.processCsvShapedData " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
 			}
 			
 			/**
 			 *  groupings: Ordered list of name value pairs (column index, object name) to create heirarchal Groupings
+			 * 
+			 *  Example: processCsvAsShapedData(myData,["0,region","1,country"]);
+			 *  Would take data, and create a 2-level grouped hierarchy, with region being the parent group of country
+			 *   
+			 * 
 			 *  flattenLastGroup:  If the lowest level grouping returns only one row for that group, it will add the COLUMNS of that one row directly to the group object
 			 *  				   (versus a 1 item arrayCollection of rows)
 			*/
 			public function processCsvAsShapedData(payload:String, groupings:Array, flattenLastGroup:Boolean=true):void {
 				//Process CSV Source, use instructions to group into hiearicies
 				//Convert CSV into data.row[n].col[n] format for dynamic object
+				var t:Number=flash.utils.getTimer();
+				
 				var tempData:Object=createTableFromCsv(payload);
 				
 				if (!groupings || groupings.length<1) throw new Error("You must declare groupings to shape data DataSet.processCsvAsShapedData");
 				
 				_data=createShapedObject(tempData.rows,groupings,flattenLastGroup);
+				_data.rows=tempData.rows;
+				_data.header=tempData.header;
+				trace("DataSet.processCsvShapedData " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
 			}
 				
 			public static var AGGREGATE_SUM:int = 0;
@@ -104,20 +130,32 @@ package org.axiis.data
 			
 			/**
 			 * Will perform simple aggregations against the "data" property by dynamically adding properties to the parent object
-			 * parentObject.collectionName_propertyName_sum
-			 * parentObject.collectionName_propertyName_avg
+			 * Collections are traversed hierarchally (if you target a nested collection) and aggregations roll up the hierarchy.
+			 * Aggregations are added as a dynamic object to the owner of the collection
+			 *
 			 * 
-			 * collectionName = "." property path of the collection in question i.e.   myCollection.myNestedCollection
-			 * properties = Array of property values to aggregate
+			 * ownerObject.aggregates.propertyName_sum;
+			 * ownerObject.aggregates.propertyName_min;
+			 * ownerObject.aggregates.propertyName_max;
+			 * ownerObject.aggregates.propertyName_avg;
+			 * 
+			 * If data is a shapedDataSet (created from flattened hierachal CSV data) or TableData with columns
+			 * aggregation will occur for each column under the aggregates object
+			 * aggregates.columns where columns is an ArrayCollection of obj.min, obj.max, obj.sum, obj.avg
+			 * 
+			 * collectionName: The name of the collection within the "data" property.  You can use "." notation to drill down to it
+			 * properties: An array of collection item properties you want to aggregate. You can use "." notation to drill down to specific objects within a collection item.
+			 * 
+			 * If a target property is a org.axis.data.columns class it will automatically aggregate all columns.
 			 */
-			public function aggregateCollection(collectionName:String, properties:Array, aggregateType:int=0 ):void {
+			public function aggregateCollection(collectionName:String, properties:Array):void {
 				//First find our collection
 				var t:Number=flash.utils.getTimer();
-				aggregate(data,collectionName.split("."),properties,aggregateType);
+				aggregate(data,collectionName.split("."),properties);
 				trace("DataSet.aggregateCollection=" + (flash.utils.getTimer()-t) + "ms");
 			}
 			
-			private function aggregate(object:Object, collections:Array, properties:Array, aggregateType:int):void {
+			private function aggregate(object:Object, collections:Array, properties:Array):void {
 				
 				var collection:Object=object[collections[0]];
 				
@@ -125,18 +163,21 @@ package org.axiis.data
 				  	if (collection is ArrayCollection) {
 						for (var i:int=0;i<ArrayCollection(collection).length;i++) {
 							var obj:Object=ArrayCollection(collection).getItemAt(i);
-							aggregate(obj,collections.slice(1,collections.length),properties,aggregateType);
+							aggregate(obj,collections.slice(1,collections.length),properties);
 						}
+						totalAggregates(object, collection, properties, collections[1]);
 					}	
 					else if (collection is Array) {
 						for (var i:int=0;i<Array(collection).length;i++) {
 							var obj:Object=collection[i];
-							aggregate(obj,collections.slice(1,collections.length),properties,aggregateType);
+							aggregate(obj,collections.slice(1,collections.length),properties);
 						}
+						totalAggregates(object, collection, properties, collections[1]);
 					}
 				} 
 				else {   //We are at the deepest collection
-				var aggregates:Object=new Object();
+					var aggregates:Object=object.aggregates;
+					if (!aggregates) { aggregates=new Object(); object.aggregates=aggregates; }
 					if (collection is ArrayCollection) {
 						for (var i:int=0;i<ArrayCollection(collection).length;i++) {
 							var obj:Object=ArrayCollection(collection).getItemAt(i);
@@ -151,17 +192,101 @@ package org.axiis.data
 					}
 					
 					for (var n:int=0;n<properties.length;n++) {
-						aggregates[collections[0] + "_" + cleanName(properties[n]) + "_avg"]=aggregates[collections[0] + "_" + cleanName(properties[n]) + "_sum"]/i
+						if (aggregates["columns"]) {
+							var min:Number=Number.POSITIVE_INFINITY;
+							var max:Number=Number.NEGATIVE_INFINITY;
+							var sum:Number=0;
+							for (var z:int=0;z<aggregates["columns"].length-1;z++) {
+								min=Math.min(aggregates.columns[z].min,min);
+								max=Math.max(aggregates.columns[z].max,max);
+								sum+=aggregates.columns[z].sum;
+								aggregates.columns[z]["avg"]=aggregates.columns[z].sum/i;
+							}	
+							aggregates.columns_sum=sum;
+							aggregates.columns_max=max;
+							aggregates.columns_min=min;
+							aggregates.columns_avg=sum/z;
+						}
+						else {
+							aggregates[cleanName(properties[n],collections[0]) + "_avg"]=aggregates[cleanName(properties[n],collections[0]) + "_sum"]/i;
+						}
 					}
-					
-					object.aggregates=aggregates;
 				}
 				
 			}
 			
-			private function cleanName(propName:String):String {
+			private function totalAggregates(object:Object, collection:Object, properties:Array, collectionName:String):void {
+				var aggregates=object.aggregates;
+				if (!aggregates) { aggregates=new Object(); object.aggregates=aggregates; }
+				
+				for (var i:int=0;i<collection.length-1;i++) {
+					var obj:Object=(collection is Array) ? collection[i]:collection.getItemAt(i);
+					rollUpAggregates(aggregates, obj.aggregates,properties,collectionName);
+				}
+				for (var y:int=0;y<properties.length;y++) {
+					if (aggregates["columns"]) {
+						var min:Number=Number.POSITIVE_INFINITY;
+							var max:Number=Number.NEGATIVE_INFINITY;
+							var sum:Number=0;
+							for (var z:int=0;z<aggregates["columns"].length-1;z++) {
+								min=Math.min(aggregates.columns[z].min,min);
+								max=Math.max(aggregates.columns[z].max,max);
+								sum+=aggregates.columns[z].sum;
+								aggregates.columns[z]["avg"]=aggregates.columns[z].sum/i;
+							}	
+							aggregates.columns_sum=sum;
+							aggregates.columns_max=max;
+							aggregates.columns_min=min;
+							aggregates.columns_avg=sum/z;
+					}
+					else {
+						var property:String=cleanName(properties[y],collectionName);  
+						aggregates[property + "_avg"] = aggregates[property + "_sum"]/i;
+					}
+				}
+			}
+			
+			private function rollUpAggregates(aggregates:Object, objAggregates:Object, properties:Array, collectionName:String):void {
+			
+				for (var y:int=0;y<properties.length;y++) {
+					var property:String=cleanName(properties[y],collectionName);  
+					
+					if (objAggregates["columns"]) {
+						var columns:ArrayCollection=aggregates["columns"];
+						if (!columns) { columns=new ArrayCollection(); aggregates.columns=columns; }
+						for (var i:int=0;i<objAggregates.columns.length-1;i++) {
+							var agg:Object;
+							if(i > columns.length-1) {
+								agg=new Object(); 
+								columns.addItem(agg); }
+							else {
+								agg=columns.getItemAt(i);
+							}
+							if (!agg["sum"]) agg["sum"]=0;
+							if (!agg["min"]) agg["min"]=Number.POSITIVE_INFINITY;
+							if (!agg["max"]) agg["max"]=Number.NEGATIVE_INFINITY;
+							
+							agg["sum"]+=objAggregates.columns[i].sum;
+							agg["min"]=Math.min(objAggregates.columns[i].min, agg["min"]);
+							agg["max"]=Math.max(objAggregates.columns[i].max, agg["max"]);
+						}
+					}
+					else {
+						if (!aggregates[property + "_sum"]) aggregates[property + "_sum"]=0;
+						if (!aggregates[property + "_min"]) aggregates[property + "_min"]=Number.POSITIVE_INFINITY;
+						if (!aggregates[property + "_max"]) aggregates[property + "_max"]=Number.NEGATIVE_INFINITY;
+			
+						aggregates[property + "_sum"]+=objAggregates[property + "_sum"];
+						aggregates[property + "_min"]=Math.min(aggregates[property + "_min"], objAggregates[property + "_min"]);
+						aggregates[property + "_max"]=Math.max(aggregates[property + "_max"], objAggregates[property + "_max"]);
+					}
+				}
+			}
+			
+			private function cleanName(propName:String, collectionName:String=""):String {
 				var pa:Array=propName.split(".");
-				return pa.join(":");
+				var ca:Array=collectionName.split(".");
+				return ca.join(":") + "_" + pa.join(":");
 			}
 			
 			/**
@@ -169,19 +294,40 @@ package org.axiis.data
 			 */
 			private function processAggregateObject(obj:Object, properties:Array, aggregates:Object, collectionName:String):void {
 				for (var y:int=0;y<properties.length;y++) {
-					var property:String=cleanName(properties[y]);  
-					
-					if (!aggregates[collectionName + "_" + property + "_sum"]) aggregates[collectionName + "_" + property + "_sum"]=0;
-					if (!aggregates[collectionName + "_" + property + "_sum"]) aggregates[collectionName + "_" + property + "_sum"]=0;
-					if (!aggregates[collectionName + "_" + property + "_min"]) aggregates[collectionName + "_" + property + "_min"]=Number.POSITIVE_INFINITY;
-					if (!aggregates[collectionName + "_" + property + "_max"]) aggregates[collectionName + "_" + property + "_max"]=Number.NEGATIVE_INFINITY;
 					
 					var valObj:Object=getProperty(obj,properties[y]);
-					var val:Number = isNaN(Number(valObj)) ? 0:Number(valObj);
 					
-					aggregates[collectionName + "_" + property + "_sum"]+=val;
-					aggregates[collectionName + "_" + property + "_min"]=Math.min(val, aggregates[collectionName + "_" + property + "_min"]);
-					aggregates[collectionName + "_" + property + "_max"]=Math.max(val, aggregates[collectionName + "_" + property + "_max"]);
+					if (valObj is Columns) { //If we are columns we need to go one layer deeper and aggregate the columns
+					  var agg=new Object();
+						for (var i:int=0;i<valObj.length-1;i++) {
+							var val:Number = isNaN(Number(valObj.getItemAt(i).value)) ? 0:Number(valObj.getItemAt(i).value);
+							if (!agg["sum"]) agg["sum"]=0;
+							if (!agg["min"]) agg["min"]=Number.POSITIVE_INFINITY;
+							if (!agg["max"]) agg["max"]=Number.NEGATIVE_INFINITY;
+							
+							agg["sum"]+=val;
+							agg["min"]=Math.min(val, agg["min"]);
+							agg["max"]=Math.max(val, agg["max"]);
+						}
+					  var columns:ArrayCollection=aggregates["columns"];
+					  if (!columns) {
+					  	columns=new ArrayCollection();
+					  	aggregates.columns=columns;
+					  }
+					  columns.addItem(agg);
+					}
+					else {
+						var val:Number = isNaN(Number(valObj)) ? 0:Number(valObj);
+						var property:String=cleanName(properties[y],collectionName);  
+						
+						if (!aggregates[property + "_sum"]) aggregates[property + "_sum"]=0;
+						if (!aggregates[property + "_min"]) aggregates[property + "_min"]=Number.POSITIVE_INFINITY;
+						if (!aggregates[property + "_max"]) aggregates[property + "_max"]=Number.NEGATIVE_INFINITY;
+						
+						aggregates[property + "_sum"]+=val;
+						aggregates[property + "_min"]=Math.min(val, aggregates[property + "_min"]);
+						aggregates[property + "_max"]=Math.max(val, aggregates[property + "_max"]);
+					}
 				}
 			}
 			
@@ -241,7 +387,7 @@ package org.axiis.data
 	
 					var row:Array=rowArray[i].split(","); //Create a row
 					var rowOutput:Object=new Object();
-					var cols:Array=new Array();
+					var cols:Columns=new Columns();
 					//We go through this cleanining stage to prepare raw CSV data
 								
 						for (var z:int=0;z<row.length;z++) {
@@ -280,7 +426,7 @@ package org.axiis.data
 							if (addSummaries && !tempPayload["col_"+z+"_sum"]) tempPayload["col_"+z+"_sum"]=0;
 							if (addSummaries) tempPayload["col_"+z+"_sum"]+=cell["value"];
 							
-							cols.push(cell);
+							cols.addItem(cell);
 							
 							
 							
@@ -356,10 +502,13 @@ package org.axiis.data
 								newObject.name=currValue;
 							}
 							else {
-								if (flattenLastGroup && tempCollection.length==1)
+
+								if (flattenLastGroup && tempCollection.length==1)  //We can only flatten if we have unique values
 									newObject.columns=tempCollection.getItemAt(0).columns;
-								else
-									newObject.rows=tempCollection;
+								else if (flattenLastGroup)
+									trace("WARNING: DataSet.createShapeObject - non-unique values for shape criteria, can not flatten rows into single column property");
+								
+								newObject.rows=tempCollection;
 							}
 						
 							tempData[groupName].addItem(newObject);
@@ -374,8 +523,9 @@ package org.axiis.data
 			
 			private function internalCompare(a:Object, b:Object, fields:Array = null):int
 	        {
-	        	var a:Object=a.columns[fields[0].name].value;
-	        	var b:Object=b.columns[fields[0].name].value;
+
+	        	var a:Object=a.columns.getItemAt(fields[0].name).value;
+	        	var b:Object=b.columns.getItemAt(fields[0].name).value;
 	            
 	           if (a == null && b == null)
                 return 0;

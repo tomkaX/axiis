@@ -11,29 +11,55 @@
 		<![CDATA[
 			import org.axiis.data.DataSet; 
 			
-			var ds:DataSet = new DataSet();
+			var ds:DataSet = new DataSet(); 
 			 
 			public function start():void
 			{ 
-				ds.processXmlString(countryData);
-				//Aggregate the detailed data items
-				ds.aggregateCollection("country.medal",["count"]);
-				//Aggegate the higher level items
-				ds.aggregateCollection("country",["aggregates.medal_count_sum"]);
-				vScale.maxValue=ds.data.aggregates['country_aggregates:medal_count_sum_max'];
+			//	ds.processCsvAsTable(oilData,true)
+			//	ds.processCsvAsShapedData(oilData,["0,region","1,country"]);
+				ds.nullValues=ds.nullValues+("- -");
+				ds.processCsvAsShapedData(oilData,["1,country"],true);
+				
+				//Aggregate the detailed data into regions
+				//ds.aggregateCollection("region.country",["columns"]);
+				
+				//
+				ds.aggregateCollection("country",["columns"]);
+
+			
+					//Aggegate the higher level items
+				//ds.aggregateCollection("country",["medal_count_sum"]);
+				vScale.maxValue=ds.data.aggregates.columns_max;
+				
+				
+				//NEED TO WRTIE CODE IN DATASET THAT DOES COLUMN AGGREGATIONS
+				
 				dataProvider=ds.data.country;
 				 
 				dc.invalidateDisplayList();
 			}
 			
+			private function filterData(obj:Object):void {
+				
+			}
 			
+			private function filterColumns(obj:Object):Boolean {
+				//Don't want filter fields
+				if (obj.index < 4) 
+					return false;
+				else
+					return true;
+			}
 		]]>
 </mx:Script> 
 <Examples:ExampleBackground width="{this.width}" height="{this.height}"/>
 <mx:Label fontSize="22" fontFamily="Myriad Pro" htmlText="&lt;b&gt;Axiis&lt;/b&gt; - Horizontal Chart" top="20" right="30" color="0xFFFFFF"/>
 <mx:Label fontSize="14" fontFamily="Myriad Pro" htmlText="Lines and Areas" top="50" right="30" color="0xFFFFFF" alpha=".9"/>
 
-<mx:String id="countryData" source="data/2008_Olympics.xml"/>
+<mx:String id="oilData" source="data/OilConsumedByCountryTrimmed.csv"/>
+
+
+<!--mx:String id="oilData" source="data/FlattenedCSV.csv"/-->
 
 
 
@@ -43,10 +69,6 @@
 <!--  GLOBAL VARIABLES -->
 <mx:Object id="dataProvider"/>
 <mx:String id="verticalField"/>
-<mx:String id="dataField">medal</mx:String>
-<mx:String id="labelField">name</mx:String>
-<mx:String id="childDataField">count</mx:String>
-<mx:String id="childLabelField">category</mx:String>
 <mx:Number id="percentGap">.02</mx:Number>
 
 <!--  EXPRESSIONS -->
@@ -70,27 +92,27 @@
 </mx:Canvas>
 
 <!-- CHART -->
-	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{hLayout.height}" id="vScale"/>
+	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{myLineGroup.height}" id="vScale"/>
 	
 	<axiis:DataCanvas height="70%" width="80%" id="dc" top="200" horizontalCenter="0"
-		 strokes="{strokes}" fills="{fills}" palettes="{palettes}" showDataTips="false">
+		 strokes="{strokes}" fills="{fills}" palettes="{palettes}" showDataTips="true">
 	
 		<!-- Background -->
 		<axiis:backgroundGeometries>
-			<axis:VerticalAxis verticalScale="{vScale}" tickStroke="{axisStroke}" width="{dc.width}"  height="{hLayout.height}" emitDataTips="false"
+			<axis:VerticalAxis verticalScale="{vScale}" tickStroke="{axisStroke}" width="{dc.width}"  height="{myLineGroup.height}" emitDataTips="false"
 				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5" majorTickSpacing="50"/>
-			<degrafa:Line x="0" x1="{hLayout.x+hLayout.width}" y="{hLayout.height}" y1="{hLayout.height}" stroke="{axisStroke}"/>
+			<degrafa:Line x="0" x1="{myLineGroup.x+myLineGroup.width}" y="{myLineGroup.height}" y1="{myLineGroup.height}" stroke="{axisStroke}"/>
 		</axiis:backgroundGeometries>
 	
 		<!-- Layouts -->
 		<axiis:layouts>
-			<axiis:HorizontalBoxLayout id="hLayout" x="25" y="0"  height="{dc.height-70}" width="{dc.width-25}" percentGap="{percentGap}"
-					 dataProvider="{dataProvider}"  dataField="{dataField}" labelField="{labelField}">
-				<axiis:layouts>
-					<groupings:HLineGroup id="myLineGroup"  segmentWidth="{hLayout.width/hLayout.itemCount}" tension="{tension.value}" markerColor="{areaPalette.currentColor}"
-					  width="{hLayout.currentReference.width}" height="{hLayout.currentReference.height}" gutterWidth="5"
-					  dataProvider="{hLayout.currentDatum[dataField]}" groupParent="{dataProvider}" groupName="{dataField}"
-					  dataField="{childDataField}" verticalScale="{vScale}"
+		<axiis:HorizontalBoxLayout id="hLayout" x="25" y="0"  height="{dc.height-70}" width="{dc.width-25}" percentGap="{percentGap}"
+					 dataProvider="{dataProvider[0].columns}"  dataField="index" labelField="name" dataFilterFunction="filterColumns">
+				<axiis:layouts> 
+					<groupings:LineSeriesGroup id="myLineGroup"  segmentWidth="{hLayout.width/hLayout.itemCount}" tension="{tension.value}" markerColor="{areaPalette.currentColor}"
+					  width="{hLayout.currentReference.width}" height="{hLayout.currentReference.height}" gutterWidth="5" seriesFilterFunction="filterColumns"
+					  dataProvider="{dataProvider}" plots="columns" plotField="columns"
+					  dataField="value" labelField="name" verticalScale="{vScale}"
 					  stroke="{myStroke}" fill="{areaFill}"
 					  />
 					
