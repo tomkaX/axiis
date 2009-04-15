@@ -1,6 +1,7 @@
 package org.axiis.utils
 {			
 import com.degrafa.geometry.segment.LineTo;
+import com.degrafa.geometry.segment.MoveTo;
 import com.degrafa.geometry.segment.QuadraticBezierTo;
 
 import flash.geom.Point;
@@ -22,6 +23,7 @@ import flash.geom.Point;
 		 var reverse:Boolean=false;
 		 var len:Number;
 	
+			//This skips coincident points 
 			while (start != end)
 			{
 				if (pts[start + incr].x != pts[start].x ||
@@ -29,6 +31,7 @@ import flash.geom.Point;
 				{
 					break;
 				}
+				
 				start += incr;
 			}
 			if (start == end || start + incr == end)
@@ -129,7 +132,7 @@ import flash.geom.Point;
 				prevNonCoincidentPt = pts[j];
 			}
 
-					segments.push(new QuadraticBezierTo(prevNonCoincidentPt.x + tanRight.x,
+				  segments.push(new QuadraticBezierTo(prevNonCoincidentPt.x + tanRight.x,
 				  prevNonCoincidentPt.y + tanRight.y,
 				  pts[j].x, pts[j].y));
 

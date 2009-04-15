@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<core:BaseLayout xmlns:mx="http://www.adobe.com/2006/mxml"
+<layouts:BaseLayout xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:degrafa="http://www.degrafa.com/2007"
-	xmlns:core="org.axiis.core.*" xmlns:scale="org.axiis.layouts.scale.*">
+	xmlns:layouts="org.axiis.layouts.*" xmlns:scale="org.axiis.layouts.scale.*" xmlns:core="org.axiis.core.*">
 	
 	<mx:Script>
 		<![CDATA[
@@ -49,7 +49,7 @@
 		minLayout="0"
 		maxLayout="{height}"/>
 	
-	<core:referenceRepeater>
+	<layouts:referenceRepeater> 
 		<core:GeometryRepeater dataProvider="{dataItems}">
 			<core:geometry>
 				<degrafa:RegularRectangle x="0" y="0" width="{width / itemCount - 5}" height="{height}"/>
@@ -60,6 +60,6 @@
 				<core:PropertyModifier property="height" modifierOperator="none" modifier="{computeHeight}"/>
 			</core:modifiers>
 		</core:GeometryRepeater>
-	</core:referenceRepeater>
+	</layouts:referenceRepeater>
 	
-</core:BaseLayout>
+</layouts:BaseLayout>

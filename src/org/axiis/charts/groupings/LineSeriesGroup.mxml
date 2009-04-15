@@ -14,6 +14,9 @@
 	<!-- public variables -->
 	<mx:Script>
 		<![CDATA[
+			import org.axiis.core.AxiisSprite;
+			import flash.utils.getTimer;
+			import mx.collections.ArrayCollection;
 			import com.degrafa.paint.SolidFill;
 			import com.degrafa.decorators.axiis.AreaLineDecorator;
 			import com.degrafa.geometry.segment.QuadraticBezierTo;
@@ -31,7 +34,7 @@
 			[Inspectable][Bindable]
 			public var fill:IGraphicsFill;
 			
-			
+			public var seriesFilterFunction:Function;
 			
 			
 			/**
@@ -53,7 +56,11 @@
 			}
 			
 			
-		
+			override public function render(newSprite:AxiisSprite=null):void {
+				var t:Number=flash.utils.getTimer();
+				super.render(newSprite);
+				trace("elapsed render time=" + (flash.utils.getTimer()-t) + "ms");
+			}
 			
 			private function onItemPreDraw():void {
 				
@@ -107,8 +114,8 @@
 			 * segmentGroups[currentIndex][parentLayout.currentIndex]  where currentIndex==the current "series", and parentLayout.currentIndex==the ordinal record position
 			 */
 			public function calculateCurves():void {
-
-				if (!groupParent) return;
+				var t:Number=flash.utils.getTimer();
+				if (!plots) return;
 				
 				_segmentGroups=new Array();	
 				_maxHeight=0;
@@ -118,39 +125,51 @@
 				
 				//Go through each of the parent collections and serially build a list of points, then turn into bezier curves 
 				var y:int=0;
-				var xo:Number=0; 
-				for each (var group:Object in groupParent) { //spans series fields
-					for (var i:int=0;i<group[groupName].length;i++) { //each series field
-						var obj=group[groupName][i];
-						var ta:Array;
-						if (y==0 && i > tempPoints.length-1) { //adds a new node if it is the first time
-							ta=new Array();
-							ta.push(new GraphicPoint(-1,verticalScale.valueToLayout(group[groupName][0][dataField],true))); //The first marker
-							tempPoints.push(ta);
+				
+				for each (var series:Object in dataProvider) { //spans series fields
+					var seriesPlots:Array=new Array();
+					for (var n:int=0;n<series[plots].length;n++) {
+						var vObj:Object; 
+						if (series[plots] is ArrayCollection)  vObj=series[plots].getItemAt(n); else vObj=series[plots][n]; 
+						if (seriesFilterFunction) {
+							if (!seriesFilterFunction.call(this,vObj)) continue;
+						}
+						seriesPlots.push(vObj);
+					}
+					var ta:Array=new Array(); //This stores all the plots for one series
+					tempPoints.push(ta); //This stores all the series plots together
+					var xo:Number=0; 
+					for (var i:int=0;i<seriesPlots.length;i++) { //each series field
+						var obj=seriesPlots[i];
+						
+						if (i==0) { //adds a new node if it is the first time
+							ta.push(new GraphicPoint(-1,verticalScale.valueToLayout(seriesPlots[0][dataField],true))); //The first marker
 						}
 						var gp:GraphicPoint=new GraphicPoint;
 						gp.x=xo;
-						if (i>0 && mode==HLineGroup.MODE_STACK) {
+						if (i>0 && mode==HLineGroup.MODE_STACK) { //looping through to make stacked values
 							var stackedVal:Number=0;
 							for (var z:int=0; z <= i ;z++) {
-								stackedVal+=group[groupName][z][dataField];
+								stackedVal+=seriesPlots[z][dataField];
 							}
 							gp.y=verticalScale.valueToLayout(stackedVal,true);
 						}
 						else {
 							gp.y=verticalScale.valueToLayout(obj[dataField],true);
 						}
-						
-						tempPoints[i].push(gp);
+						ta.push(gp);
 						_maxHeight=Math.max(_maxHeight,verticalScale.valueToLayout(obj[dataField]),true);
+						xo+=_repeatWidth;
 					} 
-					xo+=_repeatWidth;
 					y++;
 				}
 				
+				//Turn the series plots, into curveTo commands
 				for each (var ar:Array in tempPoints) {
 					_segmentGroups.push(GraphicUtils.buildSegmentsFromCurvePoints(ar,tension));
 				}
+				
+				trace("computeCurves elapsed time=" + (flash.utils.getTimer()-t) + "ms");
 			}
 			
 			//Stores all the data points (accounts for stacking and alternate layouts
@@ -181,8 +200,9 @@
 	
 	<mx:int id="mode">0</mx:int>
 	<mx:Boolean id="showArea">false</mx:Boolean>
-	<mx:Object id="groupParent"/>
-	<mx:String id="groupName"/>
+	<mx:Object id="plots"/>
+	<mx:String id="plotField"/>
+	<mx:String id="groupIndex"/>
 	<scale:LinearScale id="verticalScale"/>
 	<mx:int id="fontSize">12</mx:int>
 	<mx:Number id="fontColor">0</mx:Number>
@@ -201,7 +221,7 @@
 	
 	<layouts:drawingGeometries>
 			<degrafa:RegularRectangle width="{parentLayout.width}" height="{parentLayout.height}" x="0" y="0">
-				<degrafa:Path id="myPath"  scaleOnLayout="false"  decorators="{[_decorator]}"
+				<degrafa:Path id="myPath"  scaleOnLayout="false"  decorators="{[_decorator]}" 
 						visible="{(_currentSegments.length>1)}"
 						stroke="{stroke}"
 						fill="{fill}"
@@ -210,9 +230,6 @@
 				</degrafa:Path>
 			</degrafa:RegularRectangle>
 		
-		<!--degrafa:RegularRectangle width="{width}" height="{verticalScale.valueToLayout(this.currentValue,true)}" x="0" y="{height-verticalScale.valueToLayout(this.currentValue,true)}">
-			<degrafa:stroke><degrafa:SolidStroke color="0x0000FF"/></degrafa:stroke>
-		</degrafa:RegularRectangle-->
 
 		<degrafa:Circle id="marker"  radius="{markerRadius}" centerY="{yPoint.value}">
 			<degrafa:fill><degrafa:SolidFill color="0xFFFFFF" alpha=".8"/></degrafa:fill>

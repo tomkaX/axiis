@@ -13,6 +13,15 @@ package org.axiis.core
 	
 	public class AbstractLayout  extends EventDispatcher implements ILayout
 	{
+		[Bindable]
+		public var fills:Array = [];
+		
+		[Bindable]
+		public var strokes:Array = [];
+		
+		[Bindable]
+		public var palettes:Array = [];
+
 		public function set emitDataTips(value:Boolean):void {
 			_emitDataTips=value;
 		}
@@ -163,7 +172,7 @@ package org.axiis.core
 		{
 			return _dataProvider;
 		}
-		private var _dataProvider:Object;
+		protected var _dataProvider:Object;
 		
 		protected function invalidateDataProvider(previousCount:int):void {
 			//Meant to be overridden by child sprites

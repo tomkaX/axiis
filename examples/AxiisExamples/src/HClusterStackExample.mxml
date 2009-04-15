@@ -74,7 +74,7 @@
 						
 					<groupings:HLineGroup id="myLineGroup"  segmentWidth="{hLayout.width/hLayout.itemCount}"  
 					  width="{hLayout.currentReference.width}" height="{hLayout.currentReference.height}"
-					  stroke="{myStroke2}" dataProvider="{hLayout.currentDatum[dataField]}" parentCollection="{dataProvider}" collectionName="{dataField}"
+					  stroke="{myStroke2}" dataProvider="{hLayout.currentDatum[dataField]}" groupParent="{dataProvider}" groupName="{dataField}"
 					  dataField="{childDataField}" verticalScale="{vScale}"/>
 						
 				</axiis:layouts>

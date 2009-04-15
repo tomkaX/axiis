@@ -1,14 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<core:BaseLayout xmlns:mx="http://www.adobe.com/2006/mxml"
+<layouts:BaseLayout xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:degrafa="http://www.degrafa.com/2007"
-	xmlns:core="org.axiis.core.*"
 	xmlns:layouts="org.axiis.layouts.*"
 	xmlns:scale="org.axiis.layouts.scale.*"
-	>
+	xmlns:core="org.axiis.core.*">
+	
+	<mx:Script>
+		<![CDATA[
+			import org.axiis.core.AxiisSprite;
+			
+			override public function render(newSprite:AxiisSprite=null):void {
+				var t:Number=flash.utils.getTimer();  
+				super.render(newSprite);
+				trace("HLayout elapsed render time=" + (flash.utils.getTimer()-t) + "ms");
+			}
+			
+		]]>
+	</mx:Script>
 		
 	<mx:Number id="percentGap">0</mx:Number>
 	
-	<core:referenceRepeater>
+	<layouts:referenceRepeater>
 		<core:GeometryRepeater id="myLayout" dataProvider="{dataItems}">
 			<core:geometry>
 				<degrafa:RegularRectangle id="referenceGeometry" x="0" y="0" width="{(width / itemCount) - (width * percentGap/2)}" height="{height}"/>
@@ -17,6 +29,6 @@
 				<core:PropertyModifier property="x" modifier="{width/itemCount}" modifierOperator="add"/>
 			</core:modifiers>
 		</core:GeometryRepeater>
-	</core:referenceRepeater>
+	</layouts:referenceRepeater>
 	
-</core:BaseLayout>
+</layouts:BaseLayout>
