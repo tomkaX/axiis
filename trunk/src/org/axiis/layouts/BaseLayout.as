@@ -94,7 +94,9 @@ package org.axiis.layouts
 			{
 				_currentIndex=-1;
 				_referenceGeometryRepeater.repeat(preIteration, postIteration);
+	
 			}
+		//	trace("BaseLayout.render elapsed=" + (flash.utils.getTimer()-t) + "ms");
 		}
 		
 		protected function preIteration():void
@@ -124,6 +126,7 @@ package org.axiis.layouts
 		 */
 		protected function postIteration():void
 		{
+			var t:Number=flash.utils.getTimer();
 			_currentReference = referenceRepeater.geometry;
 			
 			// Add a new Sprite if there isn't one available on the display list.
@@ -157,6 +160,7 @@ package org.axiis.layouts
 				layout.render(_currentChild.layoutSprites[i]);
 				i++;
 			}
+		//	trace("BaseLayout.postIteration elapsed=" + (flash.utils.getTimer()-t) + "ms");
 		}
 		
 		

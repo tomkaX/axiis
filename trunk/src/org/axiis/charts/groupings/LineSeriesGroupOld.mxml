@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layouts:HorizontalBoxLayout xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:degrafa="http://www.degrafa.com/2007" name="outerlayout"
+	xmlns:core="org.axiis.core.*"
+	xmlns:layouts="org.axiis.layouts.*"
+	xmlns:scale="org.axiis.layouts.scale.*"
+	xmlns:states="org.axiis.states.*"
+	preRender="onPreRender();" scaleFill="true"
+	itemPreDraw="onItemPreDraw();"
+	xmlns:geom="flash.geom.*"
+ 	inheritParentBounds="false"
+	xmlns:utils="org.axiis.utils.*">
+	
+	<!-- public variables -->
+	<mx:Script>
+		<![CDATA[
+			import org.axiis.core.AxiisSprite;
+			import flash.utils.getTimer;
+			import mx.collections.ArrayCollection;
+			import com.degrafa.paint.SolidFill;
+			import com.degrafa.decorators.axiis.AreaLineDecorator;
+			import com.degrafa.geometry.segment.QuadraticBezierTo;
+			import com.degrafa.geometry.segment.ClosePath;
+			import com.degrafa.geometry.segment.LineTo;
+			import com.degrafa.geometry.segment.MoveTo;
+			import com.degrafa.GraphicPoint;
+			import com.degrafa.core.IGraphicsStroke;
+			import com.degrafa.core.IGraphicsFill;
+			import org.axiis.utils.GraphicUtils;
+			
+			[Inspectable][Bindable]
+			public var stroke:IGraphicsStroke;
+			
+			[Inspectable][Bindable]
+			public var fill:IGraphicsFill;
+			
+			public var seriesFilterFunction:Function;
+			
+			
+			/**
+			 * Stores the pre-computed curve segments
+			 */
+
+			private function onPreRender():void {
+				if (parentLayout && parentLayout.currentIndex==0) {
+					calculateCurves();
+					_decorator.fillBounds=new Rectangle(0,parentLayout.height-_maxHeight,parentLayout.width,_maxHeight);
+					if (!showArea) {
+						myPath.fill=new SolidFill(0,0);					}
+					else {
+						myPath.fill=fill;
+					}
+				}
+				//Align us to the midpoint of the first layout datum
+				this.x=gutterWidth;			
+			}
+			
+			
+			private function onItemPreDraw():void {
+				
+				//Render in reverse order (accomodates stack and fills overlaying markers)
+				var currIndex:int=itemCount-currentIndex-1;
+							
+				//Need to make sure each curve start/stops at same x line (the curves produced are interpolations and have some variance)
+				// If we don't do this the fills will overlap
+				
+				//Always add a "move to for the starting point"
+				if (parentLayout.currentIndex==0) {
+					_currentSegments=_segmentGroups[currIndex].slice(parentLayout.currentIndex,parentLayout.currentIndex+2);
+					_currentSegments.splice(0,0,new MoveTo(_currentSegments[0].x,_currentSegments[0].y));
+					//Clip end point
+					_currentSegments[_currentSegments.length-1].x=_repeatWidth/2;  
+					
+				}
+				else if (parentLayout.currentIndex < parentLayout.itemCount-1) {
+					_currentSegments=_segmentGroups[currIndex].slice(parentLayout.currentIndex*2-1,parentLayout.currentIndex*2+2);
+					//Clip Start point
+					_currentSegments[0].x=_repeatWidth/2+_repeatWidth*(parentLayout.currentIndex-1);
+					_currentSegments.splice(0,1,new MoveTo(_currentSegments[0].x,_currentSegments[0].y));
+					//Clip End Point
+					if (parentLayout.currentIndex < parentLayout.itemCount-2)
+						_currentSegments[_currentSegments.length-1].x=_repeatWidth/2+_repeatWidth*(parentLayout.currentIndex);
+		
+				} 
+				else if (parentLayout.currentIndex == parentLayout.itemCount-1) {
+					_currentSegments=_segmentGroups[currIndex].slice(parentLayout.currentIndex*2-1,parentLayout.currentIndex*2);
+					_currentSegments.splice(0,1,new MoveTo(_currentSegments[0].x,_currentSegments[0].y));
+				} 
+				
+				//Close our path with sides and bottom lines
+				_currentSegments.push(new LineTo(_currentSegments[_currentSegments.length-1].x,height)); //right vertical line
+				_currentSegments.push(new LineTo(_currentSegments[0].x,height)); //bottom line;
+				_currentSegments.push(new ClosePath());
+
+				
+				myPath.segments=_currentSegments;
+				marker.centerX=_repeatWidth*parentLayout.currentIndex;
+				yPoint.value=tempPoints[currIndex][parentLayout.currentIndex+1].y;
+
+			}
+			
+			/**
+			 * This routine pre-calculates all the curves for a series
+			 * While we could calculate on each iteration, it would degrade performance because each curve is depdendent on the previous and next
+			 * Thus we cache all the curves up front, and then just takes slices off them to render
+			 * Curves are stored in multi-dimensional array
+			 * 
+			 * segmentGroups[currentIndex][parentLayout.currentIndex]  where currentIndex==the current "series", and parentLayout.currentIndex==the ordinal record position
+			 */
+			public function calculateCurves():void {
+				var t:Number=flash.utils.getTimer();
+				if (!plots) return;
+				
+				_segmentGroups=new Array();	
+				_maxHeight=0;
+				//Two dimension array used to store each series fields, one row at a time  Array[hField,vField]
+				tempPoints=new Array();
+				_repeatWidth=segmentWidth+(segmentWidth-gutterWidth*2)/parentLayout.itemCount;
+				
+				//Go through each of the parent collections and serially build a list of points, then turn into bezier curves 
+				var y:int=0;
+				
+				for each (var series:Object in dataProvider) { //spans series fields
+					var seriesPlots:Array=new Array();
+					for (var n:int=0;n<series[plots].length;n++) {
+						var vObj:Object; 
+						if (series[plots] is ArrayCollection)  vObj=series[plots].getItemAt(n); else vObj=series[plots][n]; 
+						if (seriesFilterFunction) {
+							if (!seriesFilterFunction.call(this,vObj)) continue;
+						}
+						seriesPlots.push(vObj);
+					}
+					var ta:Array=new Array(); //This stores all the plots for one series
+					tempPoints.push(ta); //This stores all the series plots together
+					var xo:Number=0; 
+					for (var i:int=0;i<seriesPlots.length;i++) { //each series field
+						var obj=seriesPlots[i];
+						
+						if (i==0) { //adds a new node if it is the first time
+							ta.push(new GraphicPoint(-1,verticalScale.valueToLayout(seriesPlots[0][dataField],true))); //The first marker
+						}
+						var gp:GraphicPoint=new GraphicPoint;
+						gp.x=xo;
+						if (i>0 && mode==HLineGroup.MODE_STACK) { //looping through to make stacked values
+							var stackedVal:Number=0;
+							for (var z:int=0; z <= i ;z++) {
+								stackedVal+=seriesPlots[z][dataField];
+							}
+							gp.y=verticalScale.valueToLayout(stackedVal,true);
+						}
+						else {
+							gp.y=verticalScale.valueToLayout(obj[dataField],true);
+						}
+						ta.push(gp);
+						_maxHeight=Math.max(_maxHeight,verticalScale.valueToLayout(obj[dataField]),true);
+						xo+=_repeatWidth;
+					} 
+					y++;
+				}
+				
+				//Turn the series plots, into curveTo commands
+				for each (var ar:Array in tempPoints) {
+					_segmentGroups.push(GraphicUtils.buildSegmentsFromCurvePoints(ar,tension));
+				}
+				
+				trace("computeCurves elapsed time=" + (flash.utils.getTimer()-t) + "ms");
+			}
+			
+			//Stores all the data points (accounts for stacking and alternate layouts
+			private var tempPoints:Array;
+			
+			//Used to help calculate common fill bounds for myPath
+			private var _maxHeight:Number;
+			
+			//Our repeat width depends on the hPadding 
+			[Bindable]
+			private var _repeatWidth:Number;
+			
+			//Stores all the precomputed curve segments
+			private var _segmentGroups:Array;
+			
+			//The segments used to render the series.
+			[Bindable]
+			private var _currentSegments:Array;
+			
+			//Used to remove strokes off the sides and bottom of the path
+			[Bindable]
+			private var _decorator:AreaLineDecorator=new AreaLineDecorator();
+			
+			public static var MODE_BASELINE:int=0;
+			public static var MODE_STACK:int=1;
+		]]>
+	</mx:Script>
+	
+	<mx:int id="mode">0</mx:int>
+	<mx:Boolean id="showArea">false</mx:Boolean>
+	<mx:Object id="plots"/>
+	<mx:String id="plotField"/>
+	<mx:String id="groupIndex"/>
+	<scale:LinearScale id="verticalScale"/>
+	<mx:int id="fontSize">12</mx:int>
+	<mx:Number id="fontColor">0</mx:Number>
+	<mx:String id="fontFamily">Arial</mx:String>
+	<mx:String id="fontWeight">normal</mx:String>
+	<mx:Boolean id="showLabel">true</mx:Boolean>
+	<mx:int id="segmentWidth"></mx:int>
+	<mx:Number id="tension">.25</mx:Number>
+	<mx:int id="gutterWidth">0</mx:int>
+	<mx:int id="markerRadius">5</mx:int>
+	<mx:Number id="markerColor">0xfa8514</mx:Number>
+	
+	
+	<utils:NumericExpression id="yPoint"/>
+	
+	
+	<layouts:drawingGeometries>
+			<degrafa:RegularRectangle width="{parentLayout.width}" height="{parentLayout.height}" x="0" y="0">
+				<degrafa:Path id="myPath"  scaleOnLayout="false"  decorators="{[_decorator]}" 
+						visible="{(_currentSegments.length>1)}"
+						stroke="{stroke}"
+						fill="{fill}"
+						segments="{_currentSegments}"
+						>
+				</degrafa:Path>
+			</degrafa:RegularRectangle>
+		
+
+		<degrafa:Circle id="marker"  radius="{markerRadius}" centerY="{yPoint.value}">
+			<degrafa:fill><degrafa:SolidFill color="0xFFFFFF" alpha=".8"/></degrafa:fill>
+			<degrafa:stroke><degrafa:SolidStroke color="0" pixelHinting="false" alpha=".6"/></degrafa:stroke>
+		</degrafa:Circle>
+		<degrafa:Circle id="innerMarker" radius="{markerRadius*.6}" centerX="{marker.centerX}" centerY="{marker.centerY}">
+			<degrafa:fill><degrafa:SolidFill color="{markerColor}" alpha="1"/></degrafa:fill>
+		</degrafa:Circle>
+		
+		
+	</layouts:drawingGeometries>
+</layouts:HorizontalBoxLayout>

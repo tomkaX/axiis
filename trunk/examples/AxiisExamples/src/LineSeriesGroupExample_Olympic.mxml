@@ -15,21 +15,13 @@
 			 
 			public function start():void
 			{ 
-			//	ds.processCsvAsTable(oilData,true)
-			//	ds.processCsvAsShapedData(oilData,["0,region","1,country"]);
-				ds.nullValues=ds.nullValues+("- -");
-				ds.processCsvAsShapedData(oilData,["1,country"],true);
 				
-				//Aggregate the detailed data into regions
-				//ds.aggregateCollection("region.country",["columns"]);
 				
-				//
-				ds.aggregateCollection("country",["columns"]);
-
-			
-					//Aggegate the higher level items
-				//ds.aggregateCollection("country",["medal_count_sum"]);
-				vScale.maxValue=ds.data.aggregates.columns_max;
+				//Show series by country and plot by medal
+				ds.processXmlString(countryData);
+				ds.aggregateCollection("country.medal",["count"]);
+				ds.aggregateCollection("country",["aggregates.medal_count_sum"]);
+				vScale.maxValue=ds.data.aggregates["country_aggregates:medal_count_sum_sum"]/2;
 				
 				
 				//NEED TO WRTIE CODE IN DATASET THAT DOES COLUMN AGGREGATIONS
@@ -39,7 +31,7 @@
 				dc.invalidateDisplayList();
 			}
 			
-			private function filterData(obj:Object):void {
+			private function filterData(obj:Object):void { 
 				
 			}
 			
@@ -56,13 +48,8 @@
 <mx:Label fontSize="22" fontFamily="Myriad Pro" htmlText="&lt;b&gt;Axiis&lt;/b&gt; - Horizontal Chart" top="20" right="30" color="0xFFFFFF"/>
 <mx:Label fontSize="14" fontFamily="Myriad Pro" htmlText="Lines and Areas" top="50" right="30" color="0xFFFFFF" alpha=".9"/>
 
-<mx:String id="oilData" source="data/OilConsumedByCountryTrimmed.csv"/>
 
-
-<!--mx:String id="oilData" source="data/FlattenedCSV.csv"/-->
-
-
-
+<mx:String id="countryData" source="data/2008_Olympics.xml"/>
 
 
 
@@ -88,7 +75,7 @@
 	</mx:HBox>
 </mx:VBox>
 
-
+   
 </mx:Canvas>
 
 <!-- CHART -->
@@ -103,14 +90,13 @@
 				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5" majorTickSpacing="50"/>
 			<degrafa:Line x="0" x1="{myLineGroup.x+myLineGroup.width}" y="{myLineGroup.height}" y1="{myLineGroup.height}" stroke="{axisStroke}"/>
 		</axiis:backgroundGeometries>
-	
-		<!-- Layouts -->
+	<!-- Layouts -->
 		<axiis:layouts>
 					<groupings:LineSeriesGroup id="myLineGroup" x="35" y="0"  height="{dc.height-70}" width="{dc.width-35}" 
 					  tension="{tension.value}" markerColor="{areaPalette.currentColor}"
 					  dataFilterFunction="filterColumns"
-					  dataProvider="{dataProvider}" plotCollection="columns"
-					  dataField="value" labelField="name" verticalScale="{vScale}"
+					  dataProvider="{dataProvider}" plotCollection="medal"
+					  dataField="count" labelField="category" verticalScale="{vScale}"
 					  stroke="{myStroke}" fill="{areaFill}"
 					  />
 					
