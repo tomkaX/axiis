@@ -73,6 +73,9 @@
 	<mx:HBox>
 		<mx:Label text="Area" textAlign="right" verticalCenter="0" width="100"/><mx:CheckBox id="area" change="{myLineGroup.showArea=(area.selected) ? true:false; dc.invalidateDisplayList();}"/>
 	</mx:HBox>
+	<mx:HBox>
+		<mx:Label text="Marker" textAlign="right" verticalCenter="0" width="100"/><mx:CheckBox id="showMarker" change="{dc.invalidateDisplayList();}"/>
+	</mx:HBox>
 </mx:VBox>
 
    
@@ -94,8 +97,8 @@
 		<axiis:layouts>
 					<groupings:LineSeriesGroup id="myLineGroup" x="35" y="0"  height="{dc.height-70}" width="{dc.width-35}" 
 					  tension="{tension.value}" markerColor="{areaPalette.currentColor}"
-					  dataFilterFunction="filterColumns"
-					  dataProvider="{dataProvider}" plotCollection="medal"
+					  dataFilterFunction="filterColumns"  showMarker="{showMarker.selected}"
+					  dataProvider="{dataProvider}" plotCollection="medal" markerSize="2"
 					  dataField="count" labelField="category" verticalScale="{vScale}"
 					  stroke="{myStroke}" fill="{areaFill}"
 					  />
