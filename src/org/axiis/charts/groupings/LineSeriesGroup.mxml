@@ -66,7 +66,8 @@
 					calculateCurves();
 					_decorator.fillBounds=new Rectangle(0,height-_maxHeight,width,_maxHeight);
 					if (!showArea) {
-						myPath.fill=new SolidFill(0,0);					}
+						myPath.fill=new SolidFill(0,0);
+					}
 					else {
 						myPath.fill=fill;
 					}
@@ -75,8 +76,7 @@
 			
 			
 			private function onPlotItemPreDraw():void {
-				
-				//Render in reverse order (accomodates stack and fills overlaying markers)
+
 				var currIndex:int=plotLayout.currentIndex;
 				_currentSegments=new Array();
 							
@@ -118,13 +118,17 @@
 				}
 				else if (this.mode==LineSeriesGroup.MODE_STACK && this.showArea) {
 					var tempCurves:Array=new Array();
-					for (var i:int=0; i < _currentSegments.length; i++) { //Collect our current topmost curves (we will use on next pass as bottom curves)
+					
+					//Collect our current topmost curves (we will use on next pass as bottom curves if we are stacking areas
+					for (var i:int=0; i < _currentSegments.length; i++) { 
 						tempCurves.push(_currentSegments[i]);
 					}
 					
-					_currentSegments.push(new LineTo(_prevCurvePath[_prevCurvePath.length-1].x,_prevCurvePath[_prevCurvePath.length-1].y));//connect to previous curve
+					//Connect to our previous curve
+					_currentSegments.push(new LineTo(_prevCurvePath[_prevCurvePath.length-1].x,_prevCurvePath[_prevCurvePath.length-1].y)); 
 					
-					for (var i:int=_prevCurvePath.length-1; i >0; i--) { //Add the top most curves s
+					//Add our previous curve
+					for (var i:int=_prevCurvePath.length-1; i >0; i--) {
 						//We need to reverse our curve direction use the same control points, but choose the x,y of prior locatioan 
 						if (_prevCurvePath[i] is QuadraticBezierTo) {
 							var qb:QuadraticBezierTo=_prevCurvePath[i];
@@ -135,14 +139,7 @@
 					_prevCurvePath=tempCurves;
 
 				}
-				//If we are a stack our bottom line is the top line of the previous item
-				
-				
-
-				
 				myPath.segments=_currentSegments;
-				
-
 			}
 			
 			
@@ -235,7 +232,7 @@
 			//Stores all the precomputed curve segments
 			private var _segmentGroups:Array;
 			
-			//The segments used to render the series.
+			//The segments used to render the series by myPath
 			[Bindable]
 			private var _currentSegments:Array;
 			
@@ -258,14 +255,15 @@
 	<mx:String id="fontWeight">normal</mx:String>
 	<mx:Boolean id="showLabel">true</mx:Boolean>
 	<mx:Number id="tension">.25</mx:Number>
-	<mx:int id="markerRadius">5</mx:int>
+	<mx:int id="markerSize">8</mx:int>
 	<mx:Number id="markerColor">0xfa8514</mx:Number>
+	<mx:Boolean id="showMarker">true</mx:Boolean>
 	
 	
 	<utils:NumericExpression id="yPoint"/>
 	
 	<layouts:layouts>
-		<layouts:HorizontalBoxLayout id="plotLayout" width="{currentReference.width}" height="{currentReference.height}"
+		<layouts:RepeaterLayout id="plotLayout" width="{currentReference.width}" height="{currentReference.height}"
 			preRender="onPlotPreRender();" scaleFill="true" x="0" y="0" inheritParentBounds="false"
 			itemPreDraw="onPlotItemPreDraw();">
 			<layouts:drawingGeometries>
@@ -277,35 +275,25 @@
 							segments="{_currentSegments}"
 							>
 					</degrafa:Path>
-				</degrafa:RegularRectangle>
-			
-	
-			<!--degrafa:Circle id="marker"  radius="{markerRadius}" centerY="{yPoint.value}">
-				<degrafa:fill><degrafa:SolidFill color="0xFFFFFF" alpha=".8"/></degrafa:fill>
-				<degrafa:stroke><degrafa:SolidStroke color="0" pixelHinting="false" alpha=".6"/></degrafa:stroke>
-			</degrafa:Circle>
-			<degrafa:Circle id="innerMarker" radius="{markerRadius*.6}" centerX="{marker.centerX}" centerY="{marker.centerY}">
-				<degrafa:fill><degrafa:SolidFill color="{markerColor}" alpha="1"/></degrafa:fill>
-			</degrafa:Circle-->
-			
+				</degrafa:RegularRectangle>	
 		</layouts:drawingGeometries>
 		
-		</layouts:HorizontalBoxLayout>
-		<layouts:HorizontalBoxLayout id="markerLayout" width="{currentReference.width}" height="{currentReference.height}"
+		</layouts:RepeaterLayout>
+		<layouts:RepeaterLayout id="markerLayout" width="{currentReference.width}" height="{currentReference.height}"
 			scaleFill="true" x="0" y="0" inheritParentBounds="false" itemPreDraw="onMarkerItemPreDraw();">
 			<layouts:drawingGeometries>
 			
-			<degrafa:Circle id="marker"  radius="{markerRadius}" centerY="{yPoint.value}">
+			<degrafa:Circle id="marker"  radius="{markerSize/2}" centerY="{yPoint.value}" visible="{showMarker}">
 				<degrafa:fill><degrafa:SolidFill color="0xFFFFFF" alpha=".8"/></degrafa:fill>
 				<degrafa:stroke><degrafa:SolidStroke color="0" pixelHinting="false" alpha=".6"/></degrafa:stroke>
 			</degrafa:Circle>
-			<degrafa:Circle id="innerMarker" radius="{markerRadius*.6}" centerX="{marker.centerX}" centerY="{marker.centerY}">
+			<degrafa:Circle id="innerMarker" radius="{markerSize/2*.6}" centerX="{marker.centerX}" centerY="{marker.centerY}" visible="{showMarker}">
 				<degrafa:fill><degrafa:SolidFill color="{markerColor}" alpha="1"/></degrafa:fill>
 			</degrafa:Circle>
 			
 		</layouts:drawingGeometries>
 		
-		</layouts:HorizontalBoxLayout>
+		</layouts:RepeaterLayout>
 	</layouts:layouts>
 	
 </layouts:RepeaterLayout>

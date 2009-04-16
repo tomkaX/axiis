@@ -101,7 +101,7 @@ package org.axiis.data
 			}
 			
 			/**
-			 *  groupings: Ordered list of name value pairs (column index, object name) to create heirarchal Groupings
+			 *  groupings: Ordered list of name value pairs ["columnIndex, groupName"] to create heirarchal Groupings
 			 * 
 			 *  Example: processCsvAsShapedData(myData,["0,region","1,country"]);
 			 *  Would take data, and create a 2-level grouped hierarchy, with region being the parent group of country
