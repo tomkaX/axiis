@@ -9,7 +9,7 @@
             <medal category="Silver" count="36"/>
             <medal category="Bronze" count="38"/>
         </country>
-        <country name="Russia">
+        <country name="Russia"> 
             <medal category="Gold" count="23"/> 
             <medal category="Silver" count="28"/>
             <medal category="Bronze" count="21"/>

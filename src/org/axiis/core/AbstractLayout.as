@@ -486,7 +486,7 @@ package org.axiis.core
 		{
 			return _referenceGeometryRepeater;
 		}
-		protected var _referenceGeometryRepeater:GeometryRepeater;
+		protected var _referenceGeometryRepeater:GeometryRepeater=new GeometryRepeater();
 		
 	
 		

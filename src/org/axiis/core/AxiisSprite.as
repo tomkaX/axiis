@@ -129,6 +129,7 @@ package org.axiis.core
 		
 		public function render():void
 		{
+			
 			applyStates();
 			
 			graphics.clear();

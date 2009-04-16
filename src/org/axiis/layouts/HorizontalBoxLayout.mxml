@@ -5,18 +5,6 @@
 	xmlns:scale="org.axiis.layouts.scale.*"
 	xmlns:core="org.axiis.core.*">
 	
-	<mx:Script>
-		<![CDATA[
-			import org.axiis.core.AxiisSprite;
-			
-			override public function render(newSprite:AxiisSprite=null):void {
-				var t:Number=flash.utils.getTimer();  
-				super.render(newSprite);
-				trace("HLayout elapsed render time=" + (flash.utils.getTimer()-t) + "ms");
-			}
-			
-		]]>
-	</mx:Script>
 		
 	<mx:Number id="percentGap">0</mx:Number>
 	
