@@ -56,7 +56,7 @@
 <mx:Label fontSize="22" fontFamily="Myriad Pro" htmlText="&lt;b&gt;Axiis&lt;/b&gt; - Horizontal Chart" top="20" right="30" color="0xFFFFFF"/>
 <mx:Label fontSize="14" fontFamily="Myriad Pro" htmlText="Lines and Areas" top="50" right="30" color="0xFFFFFF" alpha=".9"/>
 
-<mx:String id="oilData" source="data/OilConsumedByCountry.csv"/>
+<mx:String id="oilData" source="data/OilConsumedByCountryTrimmed.csv"/>
 
 
 <!--mx:String id="oilData" source="data/FlattenedCSV.csv"/-->
@@ -111,7 +111,7 @@
 		<axiis:layouts>
 					<groupings:LineSeriesGroup id="myLineGroup" x="35" y="0"  height="{dc.height-70}" width="{dc.width-35}" 
 					  tension="{tension.value}" markerColor="{areaPalette.currentColor}"
-					  dataFilterFunction="filterColumns" markerSize="5" showMarker="{showMarker.selected}"
+					  dataFilterFunction="filterColumns" markerSize="8" showMarker="{showMarker.selected}"
 					  dataProvider="{dataProvider}" plotCollection="columns"
 					  dataField="value" labelField="name" verticalScale="{vScale}"
 					  stroke="{myStroke}" fill="{areaFill}"

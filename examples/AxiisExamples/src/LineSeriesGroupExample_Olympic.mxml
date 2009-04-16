@@ -98,7 +98,7 @@
 					<groupings:LineSeriesGroup id="myLineGroup" x="35" y="0"  height="{dc.height-70}" width="{dc.width-35}" 
 					  tension="{tension.value}" markerColor="{areaPalette.currentColor}"
 					  dataFilterFunction="filterColumns"  showMarker="{showMarker.selected}"
-					  dataProvider="{dataProvider}" plotCollection="medal" markerSize="2"
+					  dataProvider="{dataProvider}" plotCollection="medal" markerSize="8"
 					  dataField="count" labelField="category" verticalScale="{vScale}"
 					  stroke="{myStroke}" fill="{areaFill}"
 					  />
