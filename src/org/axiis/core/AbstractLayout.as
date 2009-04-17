@@ -120,7 +120,6 @@ package org.axiis.core
 			if(_dataProvider != value)
 			{
 				_dataProvider = value;
-				var oldLength:Number=(_dataItems) ? _dataItems.length : 0;
 				_dataItems=new Array();
 				if (dataProvider is ArrayCollection) {
 					for (var i:int=0;i<dataProvider.source.length;i++) {
@@ -162,8 +161,8 @@ package org.axiis.core
 				
 				_itemCount=_dataItems.length;
 				
-				if (oldLength > _dataItems.length)
-					invalidateDataProvider(oldLength);
+
+				invalidateDataProvider();
 				
 				dispatchEvent(new Event("dataProviderChange"));
 			}
@@ -174,7 +173,7 @@ package org.axiis.core
 		}
 		protected var _dataProvider:Object;
 		
-		protected function invalidateDataProvider(previousCount:int):void {
+		protected function invalidateDataProvider():void {
 			//Meant to be overridden by child sprites
 		}
 		//---------------------------------------------------------------------

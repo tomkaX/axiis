@@ -42,6 +42,15 @@
 				else
 					return true;
 			}
+			
+			private function filterRows(obj:Object):Boolean {
+				//Don't want filter fields
+				return true;
+				if (obj.name == "China" || obj.name=="USA") 
+					return false;
+				else
+					return true;
+			}
 		]]>
 </mx:Script> 
 <Examples:ExampleBackground width="{this.width}" height="{this.height}"/>
@@ -62,8 +71,8 @@
 <utils:NumericExpression id="tension" value="{slider.value/210}" valueChanged="{if (myLineGroup) dc.invalidateDisplayList();}"/>
 
 <!-- DISPLAY OBJECTS -->
-<mx:Canvas width="300" height="100" top="30" left="50">
-<mx:VBox>
+
+<mx:VBox width="300" top="30" left="50">
 	<mx:HBox>
 		<mx:Label text="Line Curve" textAlign="right" verticalCenter="0" width="100"/><mx:HSlider width="80" id="slider" minimum="1" maximum="80" value="35" liveDragging="true" showTrackHighlight="false" verticalCenter="-5"/>
 	</mx:HBox>
@@ -76,17 +85,18 @@
 	<mx:HBox>
 		<mx:Label text="Marker" textAlign="right" verticalCenter="0" width="100"/><mx:CheckBox id="showMarker" change="{dc.invalidateDisplayList();}"/>
 	</mx:HBox>
+	<mx:HBox>
+		<mx:Label text="Pivot Series" textAlign="right" verticalCenter="0" width="100"/><mx:CheckBox id="pivot" change="{dc.invalidateDisplayList();}"/>
+	</mx:HBox>
 </mx:VBox>
 
-   
-</mx:Canvas>
 
 <!-- CHART -->
 	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{myLineGroup.height}" id="vScale"/>
 	
 	<axiis:DataCanvas height="70%" width="80%" id="dc" top="200" horizontalCenter="0"
 		 strokes="{strokes}" fills="{fills}" palettes="{palettes}" showDataTips="true">
-	
+	 
 		<!-- Background -->
 		<axiis:backgroundGeometries>
 			<axis:VerticalAxis verticalScale="{vScale}" tickStroke="{axisStroke}" width="{dc.width}"  height="{myLineGroup.height}" emitDataTips="false"
@@ -96,10 +106,10 @@
 	<!-- Layouts -->
 		<axiis:layouts>
 					<groupings:LineSeriesGroup id="myLineGroup" x="35" y="0"  height="{dc.height-70}" width="{dc.width-35}" 
-					  tension="{tension.value}" markerColor="{areaPalette.currentColor}"
-					  dataFilterFunction="filterColumns"  showMarker="{showMarker.selected}"
+					  tension="{tension.value}" markerColor="{areaPalette.currentColor}" pivotSeries="{pivot.selected}"
+					  plotFilterFunction="{filterColumns}"  showMarker="{showMarker.selected}" dataFilterFunction="{filterRows}"
 					  dataProvider="{dataProvider}" plotCollection="medal" markerSize="8"
-					  dataField="count" labelField="category" verticalScale="{vScale}"
+					  dataField="count" plotLabelField="category" seriesLabelField="name" verticalScale="{vScale}"
 					  stroke="{myStroke}" fill="{areaFill}"
 					  />
 					
