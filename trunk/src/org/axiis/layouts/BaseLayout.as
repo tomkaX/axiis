@@ -96,6 +96,9 @@ package org.axiis.layouts
 				_referenceGeometryRepeater.repeat(preIteration, postIteration);
 	
 			}
+			
+			if (sprite.drawingSprites.length > _itemCount) 
+				this.trimChildSprites(sprite.drawingSprites.length-_itemCount-1);
 		//	trace("BaseLayout.render elapsed=" + (flash.utils.getTimer()-t) + "ms");
 		}
 		
@@ -132,8 +135,9 @@ package org.axiis.layouts
 			// Add a new Sprite if there isn't one available on the display list.
 			if(_currentIndex > sprite.drawingSprites.length - 1)
 			{
-				var newChildSprite:AxiisSprite = createChildSprite();
+				var newChildSprite:AxiisSprite = createChildSprite(this);
 				sprite.name = "drawing" + StringUtil.trim(name) + "" + sprite.drawingSprites.length;
+				//trace("adding sprite for layout." + this.name + " item count = " + _itemCount + " currentIndex=" + _currentIndex + " dataItems.length=" + _dataItems.length);
 				sprite.addDrawingSprite(newChildSprite);
 				childSprites.push(newChildSprite);
 			}
@@ -145,6 +149,7 @@ package org.axiis.layouts
 			_currentChild.bounds = bounds;
 			_currentChild.scaleFill = scaleFill;
 			_currentChild.geometries = cloneGeometries();
+		//	trace("rendering layout" + this.name + " sprite " + _currentChild.name);
 			_currentChild.render();
 	
 			var i:int=0;
@@ -152,23 +157,36 @@ package org.axiis.layouts
 			{
 				
 				layout.parentLayout = this as ILayout;    //When we have multiple peer layouts the AxiisSprite needs to differentiate between child drawing sprites and child layout sprites
+				
+				/**
+				if (sprite.layoutSprites.length-1 < i) {
+					var ns:AxiisSprite = createChildSprite(layout);
+					ns.name="layout - " + StringUtil.trim(name) + " " + sprite.layoutSprites.length;
+					sprite.addLayoutSprite(ns);
+				}
+				layout.render(sprite.layoutSprites[i]);
+				i++;
+				*/
+				
+			
 				if (_currentChild.layoutSprites.length-1 < i) {
-					var ns:AxiisSprite = createChildSprite();
+					var ns:AxiisSprite = createChildSprite(this);
 					ns.name="layout - " + StringUtil.trim(name) + " " + _currentChild.layoutSprites.length;
 					_currentChild.addLayoutSprite(ns);
 				}
 				layout.render(_currentChild.layoutSprites[i]);
 				i++;
+				
 			}
 		//	trace("BaseLayout.postIteration elapsed=" + (flash.utils.getTimer()-t) + "ms");
 		}
 		
 		
-		private function createChildSprite():AxiisSprite
+		private function createChildSprite(layout:ILayout):AxiisSprite
 		{
 			var newChildSprite:AxiisSprite = new AxiisSprite();
 			newChildSprite.doubleClickEnabled=true;
-			newChildSprite.layout = this;
+			newChildSprite.layout = layout;
 			newChildSprite.states = states;
 			return newChildSprite;
 		}
@@ -188,14 +206,12 @@ package org.axiis.layouts
 			return toReturn;
 		}
 		
-		override protected function invalidateDataProvider(previousCount:int):void {
-			trimChildSprites(previousCount-_dataItems.length);
-		}
 		
 		private function trimChildSprites(trim:Number):void {
 			if (!sprite || sprite.drawingSprites.length<trim) return;
 			for (var i:int=0; i<=trim;i++) {
 				var s:AxiisSprite=AxiisSprite(sprite.removeChild(sprite.drawingSprites[sprite.drawingSprites.length-1]));
+			//	trace("trimming for layout " + name + " sprite " + s.name);
 				s.dispose();
 			}
 		}

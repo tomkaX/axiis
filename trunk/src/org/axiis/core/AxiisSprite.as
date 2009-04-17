@@ -120,7 +120,15 @@ package org.axiis.core
 		
 		public function dispose():void
 		{
+			while (numChildren > 0) {
+				var s:AxiisSprite=this.getChildAt(0) as AxiisSprite;
+				s.dispose();
+				s.graphics.clear();
+				this.removeChild(s);
+			}
+			
 			graphics.clear();
+			
 			for each (var obj:Object in _eventListeners)
 			{
 				super.removeEventListener(obj.type, obj.listener,obj.useCapture);
@@ -128,8 +136,7 @@ package org.axiis.core
 		}
 		
 		public function render():void
-		{
-			
+		{	
 			applyStates();
 			
 			graphics.clear();

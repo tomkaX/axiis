@@ -15,26 +15,15 @@
 			 
 			public function start():void
 			{ 
-			//	ds.processCsvAsTable(oilData,true)
-			//	ds.processCsvAsShapedData(oilData,["0,region","1,country"]);
-				ds.nullValues=ds.nullValues+("- -");
-				ds.processCsvAsShapedData(oilData,["1,country"],true);
-				
-				//Aggregate the detailed data into regions
-				//ds.aggregateCollection("region.country",["columns"]);
-				
-				//
-				ds.aggregateCollection("country",["columns"]);
 
-			
-					//Aggegate the higher level items
-				//ds.aggregateCollection("country",["medal_count_sum"]);
-				vScale.maxValue=ds.data.aggregates.columns_max;
 				
 				
-				//NEED TO WRTIE CODE IN DATASET THAT DOES COLUMN AGGREGATIONS
+				ds.processCsvAsTable(financeData,false);
+				ds.aggregateCollection("rows.columns",["value"]);
+				vScale.maxValue=65;
+				vScale.minValue=10;
 				
-				dataProvider=ds.data.country;
+				dataProvider=ds.data.rows;
 				 
 				dc.invalidateDisplayList();
 			}
@@ -44,8 +33,16 @@
 			}
 			
 			private function filterColumns(obj:Object):Boolean {
-				//Don't want filter fields
-				if (obj.index < 4) 
+				//Don't want filter fields, trim columns
+				if (obj.index < 1 || obj.index > 4) 
+					return false;
+				else
+					return true;
+			}
+			
+			private function filterRows(obj:Object):Boolean {
+				//Trim our rows
+				if (obj.index > 36) 
 					return false;
 				else
 					return true;
@@ -56,10 +53,10 @@
 <mx:Label fontSize="22" fontFamily="Myriad Pro" htmlText="&lt;b&gt;Axiis&lt;/b&gt; - Horizontal Chart" top="20" right="30" color="0xFFFFFF"/>
 <mx:Label fontSize="14" fontFamily="Myriad Pro" htmlText="Lines and Areas" top="50" right="30" color="0xFFFFFF" alpha=".9"/>
 
-<mx:String id="oilData" source="data/OilConsumedByCountryTrimmed.csv"/>
+<!--mx:String id="oilData" source="data/OilConsumedByCountryTrimmed.csv"/-->
 
 
-<!--mx:String id="oilData" source="data/FlattenedCSV.csv"/-->
+<mx:String id="financeData" source="data/historical.csv"/>
 
 
 
@@ -75,8 +72,7 @@
 <utils:NumericExpression id="tension" value="{slider.value/210}" valueChanged="{if (myLineGroup) dc.invalidateDisplayList();}"/>
 
 <!-- DISPLAY OBJECTS -->
-<mx:Canvas width="300" height="100" top="30" left="50">
-<mx:VBox>
+<mx:VBox width="300" top="30" left="50">
 	<mx:HBox>
 		<mx:Label text="Line Curve" textAlign="right" verticalCenter="0" width="100"/><mx:HSlider width="80" id="slider" minimum="1" maximum="80" value="35" liveDragging="true" showTrackHighlight="false" verticalCenter="-5"/>
 	</mx:HBox>
@@ -89,10 +85,11 @@
 	<mx:HBox>
 		<mx:Label text="Marker" textAlign="right" verticalCenter="0" width="100"/><mx:CheckBox id="showMarker" change="{dc.invalidateDisplayList();}"/>
 	</mx:HBox>
+	<mx:HBox>
+		<mx:Label text="Pivot Series" textAlign="right" verticalCenter="0" width="100"/><mx:CheckBox id="pivot" change="{dc.invalidateDisplayList();}" selected="true"/>
+	</mx:HBox>
 </mx:VBox>
 
-
-</mx:Canvas>
 
 <!-- CHART -->
 	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{myLineGroup.height}" id="vScale"/>
@@ -109,11 +106,11 @@
 	
 		<!-- Layouts -->
 		<axiis:layouts>
-					<groupings:LineSeriesGroup id="myLineGroup" x="35" y="0"  height="{dc.height-70}" width="{dc.width-35}" 
-					  tension="{tension.value}" markerColor="{areaPalette.currentColor}"
-					  dataFilterFunction="filterColumns" markerSize="8" showMarker="{showMarker.selected}"
+					<groupings:LineSeriesGroup id="myLineGroup" x="10" y="0"  height="{dc.height-70}" width="{dc.width-35}" 
+					  tension="{tension.value}" markerColor="{areaPalette.currentColor}" pivotSeries="{pivot.selected}" dataFilterFunction="{filterRows}"
+					  plotFilterFunction="{filterColumns}" markerSize="8" showMarker="{showMarker.selected}"
 					  dataProvider="{dataProvider}" plotCollection="columns"
-					  dataField="value" labelField="name" verticalScale="{vScale}"
+					  dataField="value" verticalScale="{vScale}"
 					  stroke="{myStroke}" fill="{areaFill}"
 					  />
 					

@@ -5,8 +5,8 @@
 	xmlns:layouts="org.axiis.layouts.*"
 	xmlns:scale="org.axiis.layouts.scale.*"
 	xmlns:states="org.axiis.states.*"
-	xmlns:geom="flash.geom.*"
-	xmlns:utils="org.axiis.utils.*">
+	xmlns:geom="flash.geom.*" 
+	xmlns:utils="org.axiis.utils.*" preRender="onPreRender();">
 	
 	<!-- public variables -->
 	<mx:Script>
@@ -31,36 +31,101 @@
 			[Inspectable][Bindable]
 			public var fill:IGraphicsFill;
 			
-			public var seriesFilterFunction:Function;
+			public var plotFilterFunction:Function;
+			
+			public var _pivotSeries:Boolean=false;
+			
+			private var _seriesCollection:Object;
+			private var _plotCollection:Object;
 			
 			private var _prevCurvePath:Array;
 			
+			[Inspectable]
+			public function set pivotSeries(value:Boolean):void {
+				if (value!=_pivotSeries)
+				 {
+					_pivotSeries=value;
+					if (_dataProvider) dataProvider=_dataProvider; //Need to refresh the way we do this.
+				 }
+			}
+			
+			public function get pivotSeries():Boolean {
+				return _pivotSeries;
+			}
+			
+
 			override public function set dataProvider(value:Object):void {
-				//We need to invert the data provider and set the dataItems as the first element of our plotCollection to repeat against
+				//Depending on whether "_pivotSeries" is true we will either invert the series collection transpose which collection is the "series" versus the plots.
+		
+				var oldLength=(_dataItems) ? _dataItems.length:0;
 				
-	
 				var firstItem:Object=(value is Array) ? value[0]:value.getItemAt(0);
 				
 				
-				if (this.dataFilterFunction) {
 					var tempItems:Array=new Array();
-					for (var i:int=0;i<firstItem[plotCollection].length;i++) {
-						var obj:Object=(firstItem[plotCollection] is Array) ? firstItem[plotCollection][i]:firstItem[plotCollection].getItemAt(i);
-						if (this.dataFilterFunction.call(this,obj)) tempItems.push(obj);
+					
+					if (!_pivotSeries) {  //This means our series is (vertically) grouped by each primary OUTER object, and  our plots are (horizontally) grouped by the inner objects
+						for (var i:int=0;i<firstItem[plotCollection].length;i++) {
+							var obj:Object=(firstItem[plotCollection] is Array) ? firstItem[plotCollection][i]:firstItem[plotCollection].getItemAt(i);
+							if (plotFilterFunction) {
+								if (plotFilterFunction.call(this,obj)) tempItems.push(obj);
+							}
+							else {
+								tempItems.push(obj);
+							}
+						}
 					}
-					_dataItems=tempItems;
-				}	
-				else {
-					_dataItems=firstItem[plotCollection];
-				}			
+					else {  //This means our series is (vertically) grouped by each INNER object, and  our plots are (horizontally) grouped by the outer objects
+						for (var i:int=0;i<value.length;i++) {
+							var obj:Object=(value is Array) ? value[i]:value.getItemAt(i);
+							if (dataFilterFunction) {
+								if (this.dataFilterFunction.call(this,obj)) tempItems.push(obj);
+							}
+							else {
+								tempItems.push(obj);
+							}
+						}
+					}
+				
+				_dataItems=tempItems;
+				
+				_itemCount=_dataItems.length;
+				
 				_dataProvider=value;
 				
-				plotLayout.dataProvider=value;
-				markerLayout.dataProvider=value;				
+				_seriesCollection=_dataProvider;
+				
+				if (!pivotSeries && dataFilterFunction) {		
+					_seriesCollection=new Array();
+					for each (var so:Object in _dataProvider) {
+						if (dataFilterFunction(so)) _seriesCollection.push(so);
+					}
+				}
+				else if (pivotSeries && plotFilterFunction) {
+					tempItems=new Array();
+					for (var i:int=0;i<firstItem[plotCollection].length;i++) {
+						var obj:Object=(firstItem[plotCollection] is Array) ? firstItem[plotCollection][i]:firstItem[plotCollection].getItemAt(i);
+						if (plotFilterFunction.call(this,obj)) tempItems.push(obj);
+					}
+				}
+				
+				
+				//This will set the repeat cycle for the inner layouts
+				plotLayout.dataProvider=(!_pivotSeries) ?  _seriesCollection: tempItems; 
+				markerLayout.dataProvider=(!_pivotSeries) ?  _seriesCollection: tempItems;	
+
+				
+				_plotCollection=firstItem;	
+				
+				super.invalidateDataProvider();
+				
+			
 			}
-			/**
-			 * Stores the pre-computed curve segments
-			 */
+			
+			private function onPreRender():void {
+				labelField=(!_pivotSeries) ? plotLabelField:seriesLabelField;
+			}
+			
 			private function onPlotPreRender():void {
 				if (currentIndex==0) { //We only do this on the first pass
 					calculateCurves();
@@ -77,37 +142,39 @@
 			
 			private function onPlotItemPreDraw():void {
 
-				var currIndex:int=plotLayout.currentIndex;
+				var seriesIndex:int=(!_pivotSeries || _pivotSeries) ? plotLayout.currentIndex : currentIndex;
+				var plotIndex:int=(!_pivotSeries || _pivotSeries) ? currentIndex:plotLayout.currentIndex;
+				var plotCount:int=(!_pivotSeries || _pivotSeries) ? itemCount:plotLayout.itemCount;
 				_currentSegments=new Array();
 							
 				//Need to make sure each curve start/stops at same x line (the curves produced are interpolations and have some variance)
 				// If we don't do this the fills will overlap
 				
 				//Always add a "move to for the starting point"
-				if (currentIndex==0) {
-					_currentSegments=_segmentGroups[currIndex].slice(currentIndex,currentIndex+2);
+				if (plotIndex==0) {
+					_currentSegments=_segmentGroups[seriesIndex].slice(plotIndex,plotIndex+2);
 					_currentSegments.splice(0,0,new MoveTo(_currentSegments[0].x,_currentSegments[0].y));
 					//Clip end point
 					_currentSegments[_currentSegments.length-1].x=Math.round(_repeatWidth/2);  
 					
 				}
-				else if (currentIndex < itemCount-1) {
-					_currentSegments=_segmentGroups[currIndex].slice(currentIndex*2-1,currentIndex*2+2);
+				else if (plotIndex < plotCount-1) {
+					_currentSegments=_segmentGroups[seriesIndex].slice(plotIndex*2-1,plotIndex*2+2);
 					//Clip Start point
-					_currentSegments[0].x=Math.round(_repeatWidth/2)+Math.round(_repeatWidth*(currentIndex-1));
+					_currentSegments[0].x=Math.round(_repeatWidth/2)+Math.round(_repeatWidth*(plotIndex-1));
 					_currentSegments.splice(0,1,new MoveTo(_currentSegments[0].x,_currentSegments[0].y));
 					//Clip End Point
-					if (currentIndex < itemCount-2)
+					if (plotIndex < plotCount-2)
 						_currentSegments[_currentSegments.length-1].x=Math.round(_repeatWidth/2)+Math.round(_repeatWidth*(currentIndex));
 		
 				} 
-				else if (currentIndex == itemCount-1) {
-					_currentSegments=_segmentGroups[currIndex].slice(currentIndex*2-1,currentIndex*2);
+				else if (plotIndex == plotCount-1) {
+					_currentSegments=_segmentGroups[seriesIndex].slice(plotIndex*2-1,plotIndex*2);
 					_currentSegments.splice(0,1,new MoveTo(_currentSegments[0].x,_currentSegments[0].y));
 				} 
 				
 				//Close our path with sides and bottom lines on first pass or not Stack
-				if (currIndex==0 ||  this.mode==LineSeriesGroup.MODE_BASELINE || !this.showArea) {
+				if (seriesIndex==0 ||  this.mode==LineSeriesGroup.MODE_BASELINE || !this.showArea) {
 					_prevCurvePath=new Array();
 					for (var i:int=0; i < _currentSegments.length; i++) {
 						_prevCurvePath.push(_currentSegments[i]);
@@ -145,7 +212,7 @@
 			
 			private function onMarkerItemPreDraw():void {
 				marker.centerX=_repeatWidth*currentIndex-1;
-				yPoint.value=tempPoints[markerLayout.currentIndex][currentIndex+1].y;
+				yPoint.value=seriesPoints[markerLayout.currentIndex][currentIndex+1].y;
 			}
 			
 			/**
@@ -160,44 +227,83 @@
 				var t:Number=flash.utils.getTimer();
 				if (!plotCollection) return;
 				//var segmentWidth:Number=width/itemCount;
-				
+				 
 				_segmentGroups=new Array();	
 				_maxHeight=0;
 				//Two dimension array used to store each series fields, one row at a time  Array[hField,vField]
-				tempPoints=new Array();
+				seriesPoints=new Array();
 				_repeatWidth=(width)/(itemCount-1);
 				
-				//Go through each of the parent collections and serially build a list of points, then turn into bezier curves 
 				var y:int=0;
 				var stackedValues:Object=new Object();
-				for each (var series:Object in _dataProvider) { //spans series fields
+				
+				//This stores all the plotCollection for one series
+				var ta:Array=new Array();
+				
+				var xo:Number=0; 
+				
+				for each (var series:Object in _seriesCollection) { //loop through all series to build our plot locations (to be used to generate curves)
+					
+					//Gather the data values for our plots
 					var seriesPlots:Array=new Array();
 					for (var n:int=0;n<series[plotCollection].length;n++) {
 						var vObj:Object; 
 						if (series[plotCollection] is ArrayCollection)  vObj=series[plotCollection].getItemAt(n); else vObj=series[plotCollection][n]; 
-						if (dataFilterFunction) {
-							if (!dataFilterFunction.call(this,vObj)) continue;
+						if (plotFilterFunction) {
+							if (!plotFilterFunction.call(this,vObj)) continue;
 						}
 						seriesPlots.push(vObj);
 					}
-					var ta:Array=new Array(); //This stores all the plotCollection for one series
-					tempPoints.push(ta); //This stores all the series plotCollection together
-					var xo:Number=0; 
+					
+					
+					
+					//Depending on  whether we are pivoting the series we need to always structure the seriesPoints so that each inner array represents all the plot points
+					//for inner layout (which repeats horizontally)
+					if (!_pivotSeries) {
+					 	ta=new Array(); 
+					 	seriesPoints.push(ta);
+					} 
+					
+					if(!_pivotSeries) xo=0;
 					
 					for (var i:int=0;i<seriesPlots.length;i++) { //each series field
-						var obj=seriesPlots[i];
+					
+						//If we are pivoting the series we need to transpose how the points get organized and invert the 2D array;
+						if (_pivotSeries) {
+							ta=seriesPoints[i];
+							if (!ta) {
+								ta=new Array();
+								seriesPoints.push(ta);
+								xo=0;
+							}
+							
+						}
 						
-						if (i==0) { //adds a new node if it is the first time
+						var obj=seriesPlots[i];
+						if (ta.length==0) { //adds a new node if it is the first time
 							ta.push(new GraphicPoint(-1,verticalScale.valueToLayout(seriesPlots[0][dataField],true))); //The first marker
 						}
+						
 						var gp:GraphicPoint=new GraphicPoint;
 						gp.x=xo;
 						
 						
 						if (mode==HLineGroup.MODE_STACK) { //looping through to make stacked values
-							if (!stackedValues[i]) stackedValues[i]=0;
-							stackedValues[i]+=obj[dataField];
-							gp.y=verticalScale.valueToLayout(stackedValues[i],true);
+							var stackedValue:Number=0;
+							if (!_pivotSeries) {
+								if (!stackedValues[i]) stackedValues[i]=0;
+								stackedValues[i]+=obj[dataField];
+								stackedValue=stackedValues[i];
+							}
+							else {
+								for (var z:int=0; z <= i ;z++) {
+									if (plotFilterFunction) {
+										if (!plotFilterFunction.call(this,series[plotCollection][z])) continue;
+									}
+									stackedValue+=series[plotCollection][z][dataField];
+								}
+							}
+							gp.y=verticalScale.valueToLayout(stackedValue,true);
 						}
 						else {
 							gp.y=verticalScale.valueToLayout(obj[dataField],true);
@@ -205,14 +311,14 @@
 						
 						ta.push(gp);
 						_maxHeight=Math.max(_maxHeight,verticalScale.valueToLayout(obj[dataField]),true);
-						xo+=_repeatWidth;
+						if (!_pivotSeries) xo+=_repeatWidth;
 					} 
 					y++;
-					trace("stack end");
+					if (_pivotSeries) xo+=_repeatWidth;
 				}
 				
 				//Turn the series plotCollection, into curveTo commands
-				for each (var ar:Array in tempPoints) {
+				for each (var ar:Array in seriesPoints) {
 					_segmentGroups.push(GraphicUtils.buildSegmentsFromCurvePoints(ar,tension));
 				}
 				
@@ -220,7 +326,7 @@
 			}
 			
 			//Stores all the data points (accounts for stacking and alternate layouts
-			private var tempPoints:Array;
+			private var seriesPoints:Array;
 			
 			//Used to help calculate common fill bounds for myPath
 			private var _maxHeight:Number;
@@ -240,6 +346,8 @@
 			[Bindable]
 			private var _decorator:AreaLineDecorator=new AreaLineDecorator();
 			
+			//private var _seriesCollection:Object;
+			
 			public static var MODE_BASELINE:int=0;
 			public static var MODE_STACK:int=1;
 		]]>
@@ -258,12 +366,13 @@
 	<mx:int id="markerSize">8</mx:int>
 	<mx:Number id="markerColor">0xfa8514</mx:Number>
 	<mx:Boolean id="showMarker">true</mx:Boolean>
-	
+	<mx:String id="seriesLabelField"></mx:String>
+	<mx:String id="plotLabelField"></mx:String>
 	
 	<utils:NumericExpression id="yPoint"/>
 	
 	<layouts:layouts>
-		<layouts:RepeaterLayout id="plotLayout" width="{currentReference.width}" height="{currentReference.height}"
+		<layouts:RepeaterLayout id="plotLayout" width="{currentReference.width}" height="{currentReference.height}" name="plotLayout"
 			preRender="onPlotPreRender();" scaleFill="true" x="0" y="0" inheritParentBounds="false"
 			itemPreDraw="onPlotItemPreDraw();">
 			<layouts:drawingGeometries>
@@ -279,7 +388,7 @@
 		</layouts:drawingGeometries>
 		
 		</layouts:RepeaterLayout>
-		<layouts:RepeaterLayout id="markerLayout" width="{currentReference.width}" height="{currentReference.height}"
+		<layouts:RepeaterLayout id="markerLayout" width="{currentReference.width}" height="{currentReference.height}" name="markerLayout"
 			scaleFill="true" x="0" y="0" inheritParentBounds="false" itemPreDraw="onMarkerItemPreDraw();">
 			<layouts:drawingGeometries>
 			
