@@ -15,9 +15,6 @@
 			 
 			public function start():void
 			{ 
-
-				
-				
 				ds.processCsvAsTable(financeData,false);
 				ds.aggregateCollection("rows.columns",["value"]);
 				vScale.maxValue=65;
@@ -42,7 +39,7 @@
 			
 			private function filterRows(obj:Object):Boolean {
 				//Trim our rows
-				if (obj.index > 36) 
+				if (obj.index > 136) 
 					return false;
 				else
 					return true;
