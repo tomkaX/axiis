@@ -37,7 +37,7 @@ package org.axiis.layouts
 			if(value != _scaleFill)
 			{
 				_scaleFill = value;
-				invalidate();
+				this.invalidate();
 				dispatchEvent(new Event("scaleFillChange"));
 			}
 		}
@@ -61,6 +61,8 @@ package org.axiis.layouts
 		override public function render(newSprite:AxiisSprite = null):void 
 		{
 			//trace(name + " render " +currentIndex)
+			if (!visible) return;
+			
 			var t:Number=flash.utils.getTimer();
 			
 			this.dispatchEvent(new Event("preRender"));
@@ -99,7 +101,7 @@ package org.axiis.layouts
 			
 			if (sprite.drawingSprites.length > _itemCount) 
 				this.trimChildSprites(sprite.drawingSprites.length-_itemCount-1);
-		//	trace("BaseLayout.render elapsed=" + (flash.utils.getTimer()-t) + "ms");
+			trace("BaseLayout.render elapsed=" + (flash.utils.getTimer()-t) + "ms");
 		}
 		
 		protected function preIteration():void
@@ -216,6 +218,10 @@ package org.axiis.layouts
 			}
 		}
 			
+		override public function invalidate():void {
+			if (sprite)
+				sprite.visible=visible;
+		}
 	
 	}
 }
