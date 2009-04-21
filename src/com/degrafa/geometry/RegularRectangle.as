@@ -22,7 +22,6 @@
 package com.degrafa.geometry{
         
         import com.degrafa.IGeometry;
-        import com.degrafa.core.ICloneable;
         
         import flash.display.Graphics;
         import flash.geom.Rectangle;
@@ -40,7 +39,7 @@ package com.degrafa.geometry{
         *  @see http://samples.degrafa.com/RegularRectangle/RegularRectangle.html
         *  
         **/     
-        public class RegularRectangle extends Geometry implements IGeometry, ICloneable{
+        public class RegularRectangle extends Geometry implements IGeometry{
                 
                 /**
                 * Constructor.
@@ -255,25 +254,6 @@ package com.degrafa.geometry{
                         if (!_y){_y = value.y;}
                         if (!_width){_width = value.width;}
                         if (!_height){_height = value.height;}
-                }
-                
-                public function clone():ICloneable
-                {
-                	var copy:RegularRectangle = new RegularRectangle();
-                	var properties:Array = ["x","y","width","height","fill","stroke","id"];
-                	for each(var property:String in properties)
-                	{
-                		/*
-                		if(this[property] is ICloneable)
-                		{
-                			// clone the property
-                		}
-                		*/
-                		copy[property] = this[property];
-                	}
-                	
-                	return copy;
-                }
-                
+                }                
         }
 }

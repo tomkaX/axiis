@@ -22,7 +22,6 @@
 package com.degrafa.geometry {
 	
 	import com.degrafa.IGeometry;
-	import com.degrafa.core.ICloneable;
 	import com.degrafa.geometry.command.CommandStackItem;
 	import com.degrafa.geometry.utilities.ArcUtils;
 	
