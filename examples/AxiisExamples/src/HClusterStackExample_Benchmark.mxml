@@ -32,7 +32,7 @@
 <mx:Label fontSize="22" fontFamily="Myriad Pro" htmlText="&lt;b&gt;Axiis&lt;/b&gt; - Horizontal Chart" top="20" right="30" color="0xFFFFFF"/>
 <mx:Label fontSize="14" fontFamily="Myriad Pro" htmlText="Clusters and Stacks" top="50" right="30" color="0xFFFFFF" alpha=".9"/>
 
-<mx:String id="countryData" source="data/2008_Olympics.xml"/>
+<mx:String id="countryData" source="data/2008_Olympics_Large.xml"/>
 
 
 <!--  GLOBAL VARIABLES -->

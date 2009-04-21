@@ -21,6 +21,18 @@ package org.axiis.core
 		
 		[Bindable]
 		public var palettes:Array = [];
+		
+		[Bindable]
+		private var _visible:Boolean=true;
+		
+		public function set visible(value:Boolean):void {
+			_visible=value;
+			this.invalidate();
+		}
+		
+		public function get visible():Boolean {
+			return _visible;
+		}
 
 		public function set emitDataTips(value:Boolean):void {
 			_emitDataTips=value;

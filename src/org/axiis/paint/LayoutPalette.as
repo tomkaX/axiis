@@ -33,18 +33,20 @@ package org.axiis.paint
 		private var palette:InterpolatedColorPalette=new InterpolatedColorPalette();
 
 		public function set colorFrom(value:Number):void {
-			_colorFrom=value;
+			if (!isNaN(value))
+				_colorFrom=value;
 			generatePalette();
 		}
 		
-		private var _colorFrom:Number;
+		private var _colorFrom:Number=0;
 		
 		public function set colorTo(value:Number):void {
-			_colorTo=value;
+			if (!isNaN(value))
+				_colorTo=value;
 			generatePalette();
 		}
 		
-		private var _colorTo:Number;
+		private var _colorTo:Number=0xFFFFFF;
 		
 		
 		public function set colors(value:Array):void {
@@ -83,9 +85,11 @@ package org.axiis.paint
 		private function generatePalette():void {
 			if ( _target==null) return;
 			
-			palette.colorFrom=_colorFrom;
-			palette.colorTo=_colorTo;
+			//palette.colorFrom=_colorFrom;
+			//palette.colorTo=_colorTo;
+			palette.colors=[_colorFrom,_colorTo];
 			palette.requestedSize=_target.itemCount;
+		
 			
 			if (autoInterpolate) {
 				_colors=new Array();
