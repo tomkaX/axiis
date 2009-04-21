@@ -148,8 +148,7 @@ package org.axiis
 			
 			while(invalidatedLayouts.length > 0)
 			{
-				var layout:ILayout = ILayout(invalidatedLayouts.pop());
-				//trace("rendering layout");
+				var layout:ILayout = ILayout(invalidatedLayouts.pop());				
 				layout.render();
 			}
 			
@@ -228,19 +227,15 @@ package org.axiis
 		}
 		
 		public function onItemMouseDown(e:MouseEvent):void {
-			//trace("mouseDown");
 		}
 		
 		public function onItemMouseUp(e:MouseEvent):void {
-			//trace("mouseUp");
 		}
 
 		public function onItemMouseClick(e:MouseEvent):void {
-			//trace("mouseClick");
 		}
 		
 		public function onItemMouseDoubleClick(e:MouseEvent):void {
-			//trace("mouseDoubleClick");
 		}
 		
 		private function getHitSiblings(axiisSprite:AxiisSprite):Array
