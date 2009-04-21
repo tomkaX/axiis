@@ -107,6 +107,7 @@ package org.axiis.layouts
 		protected function preIteration():void
 		{
 			_currentIndex++;
+		//	if (!_currentDatum) {
 			_currentDatum = dataItems[_currentIndex];
 			if (dataField)
 				_currentValue = getProperty(_currentDatum,dataField);
@@ -114,6 +115,7 @@ package org.axiis.layouts
 				_currentValue=_currentDatum;
 			if (labelField)
 				_currentLabel = getProperty(_currentDatum,labelField).toString();
+		//	}
 		}
 		
 		private function getProperty(obj:Object, propertyName:String):Object {
@@ -132,7 +134,10 @@ package org.axiis.layouts
 		protected function postIteration():void
 		{
 			var t:Number=flash.utils.getTimer();
-			_currentReference = referenceRepeater.geometry;
+			
+	//		if (!_currentReference) 
+				_currentReference = referenceRepeater.geometry;
+			
 			
 			// Add a new Sprite if there isn't one available on the display list.
 			if(_currentIndex > sprite.drawingSprites.length - 1)
@@ -144,6 +149,7 @@ package org.axiis.layouts
 				childSprites.push(newChildSprite);
 			}
 			_currentChild = AxiisSprite(sprite.drawingSprites[currentIndex]);
+		//	_currentChild=this.sprite;
 			_currentChild.data = currentDatum;
 			
 			dispatchEvent(new Event("itemPreDraw"));
@@ -159,17 +165,6 @@ package org.axiis.layouts
 			{
 				
 				layout.parentLayout = this as ILayout;    //When we have multiple peer layouts the AxiisSprite needs to differentiate between child drawing sprites and child layout sprites
-				
-				/**
-				if (sprite.layoutSprites.length-1 < i) {
-					var ns:AxiisSprite = createChildSprite(layout);
-					ns.name="layout - " + StringUtil.trim(name) + " " + sprite.layoutSprites.length;
-					sprite.addLayoutSprite(ns);
-				}
-				layout.render(sprite.layoutSprites[i]);
-				i++;
-				*/
-				
 			
 				if (_currentChild.layoutSprites.length-1 < i) {
 					var ns:AxiisSprite = createChildSprite(this);

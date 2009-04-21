@@ -9,9 +9,9 @@
 <!--mx:Style source="styles/Undefined.css"/-->
 <mx:Script>
 		<![CDATA[
-			import org.axiis.data.DataSet; 
+			import org.axiis.data.DataSet;  
 			
-			var ds:DataSet = new DataSet(); 
+			var ds:DataSet = new DataSet();  
 			 
 			public function start():void
 			{ 
@@ -27,19 +27,20 @@
 			
 			private function filterData(obj:Object):void {
 				
-			}
+			} 
 			
 			private function filterColumns(obj:Object):Boolean {
 				//Don't want filter fields, trim columns
 				if (obj.index < 1 || obj.index > 4) 
-					return false;
+					return false; 
 				else
 					return true;
 			}
 			
 			private function filterRows(obj:Object):Boolean {
 				//Trim our rows
-				if (obj.index > 136) 
+				return true
+				if (obj.index > 36) 
 					return false;
 				else
 					return true;
@@ -56,7 +57,7 @@
 <mx:String id="financeData" source="data/historical.csv"/>
 
 
-
+ 
 
 
 

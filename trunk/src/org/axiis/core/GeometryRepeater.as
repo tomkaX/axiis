@@ -149,16 +149,18 @@ package org.axiis.core
 				_currentIteration=i;
 				if(postIterationCallback != null)
 					postIterationCallback.call(this);			
-			}
+		}
 			
 			_cachedValues=new Array();
 		
+			
 			if (_modifiers) {
 				for each (modifier in _modifiers) {
 					_cachedValues.push(modifier.cachedValues);
 					modifier.end();
 				}
 			}
+			
 			_currentIteration = -1;
 		}
 		

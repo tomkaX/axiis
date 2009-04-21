@@ -14,6 +14,9 @@ package org.axiis.core
 	 */
 	public interface ILayout extends IEventDispatcher
 	{
+		function set visible(value:Boolean):void;
+		function get visible():Boolean;
+		
 		function get emitDataTips():Boolean;
 		function set emitDataTips(value:Boolean):void;
 		

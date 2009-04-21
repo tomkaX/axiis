@@ -95,7 +95,8 @@ package org.axiis.core
 					continue;
 				}
 			}
-			super.removeChild(child);
+			if (child)
+				super.removeChild(child);
 			return child;
 		}
 		

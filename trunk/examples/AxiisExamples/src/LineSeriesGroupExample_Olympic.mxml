@@ -45,7 +45,7 @@
 			
 			private function filterRows(obj:Object):Boolean {
 				//Don't want filter fields
-				return true;
+				//return true;
 				if (obj.name == "China" || obj.name=="USA") 
 					return false;
 				else
@@ -91,7 +91,7 @@
 </mx:VBox>
 
 
-<!-- CHART -->
+<!-- CHART --> 
 	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{myLineGroup.height}" id="vScale"/>
 	
 	<axiis:DataCanvas height="70%" width="80%" id="dc" top="200" horizontalCenter="0"
