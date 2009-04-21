@@ -33,7 +33,14 @@
 				else
 				{
 					var prev:Object = arr.getItemAt(index - 1);
-					return prev.count > o.count ? minusFill : plusFill;
+					if(prev.count > o.count)
+					{
+						return minusFill;
+					}
+					else
+					{
+						return plusFill;
+					}
 				}
 			}
 		]]>

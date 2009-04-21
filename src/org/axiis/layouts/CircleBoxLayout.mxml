@@ -20,7 +20,7 @@
 				</degrafa:RegularRectangle>
 			</core:geometry>
 			<core:modifiers>
-				<core:PropertyModifier targets="{[layoutGeometry]}" property="transform.angle" modifier="{360/this.itemCount}" modifierOperator="add"/>
+				<core:PropertyModifier property="transform.angle" modifier="{360/this.itemCount}" modifierOperator="add"/>
 			</core:modifiers>
 		</core:GeometryRepeater>
 	</layouts:referenceRepeater>

@@ -41,8 +41,7 @@ package org.axiis.states
 				var obj:Object=targets[i];
 				if(obj.id == geometry.id && propertyValues[i])
 					geometry[properties[i]]=propertyValues[i];
-			}
-			
+			}			
 		}
 	}
 }

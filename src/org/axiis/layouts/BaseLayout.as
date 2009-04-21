@@ -107,7 +107,6 @@ package org.axiis.layouts
 		protected function preIteration():void
 		{
 			_currentIndex++;
-		//	if (!_currentDatum) {
 			_currentDatum = dataItems[_currentIndex];
 			if (dataField)
 				_currentValue = getProperty(_currentDatum,dataField);
@@ -115,7 +114,6 @@ package org.axiis.layouts
 				_currentValue=_currentDatum;
 			if (labelField)
 				_currentLabel = getProperty(_currentDatum,labelField).toString();
-		//	}
 		}
 		
 		private function getProperty(obj:Object, propertyName:String):Object {
@@ -134,30 +132,24 @@ package org.axiis.layouts
 		protected function postIteration():void
 		{
 			var t:Number=flash.utils.getTimer();
-			
-	//		if (!_currentReference) 
-				_currentReference = referenceRepeater.geometry;
-			
+			_currentReference = referenceRepeater.geometry;
 			
 			// Add a new Sprite if there isn't one available on the display list.
 			if(_currentIndex > sprite.drawingSprites.length - 1)
 			{
 				var newChildSprite:AxiisSprite = createChildSprite(this);
 				sprite.name = "drawing" + StringUtil.trim(name) + "" + sprite.drawingSprites.length;
-				//trace("adding sprite for layout." + this.name + " item count = " + _itemCount + " currentIndex=" + _currentIndex + " dataItems.length=" + _dataItems.length);
 				sprite.addDrawingSprite(newChildSprite);
 				childSprites.push(newChildSprite);
 			}
 			_currentChild = AxiisSprite(sprite.drawingSprites[currentIndex]);
-		//	_currentChild=this.sprite;
 			_currentChild.data = currentDatum;
 			
 			dispatchEvent(new Event("itemPreDraw"));
 			
 			_currentChild.bounds = bounds;
 			_currentChild.scaleFill = scaleFill;
-			_currentChild.geometries = cloneGeometries();
-		//	trace("rendering layout" + this.name + " sprite " + _currentChild.name);
+			_currentChild.geometries = drawingGeometries;
 			_currentChild.render();
 	
 			var i:int=0;
@@ -165,6 +157,17 @@ package org.axiis.layouts
 			{
 				
 				layout.parentLayout = this as ILayout;    //When we have multiple peer layouts the AxiisSprite needs to differentiate between child drawing sprites and child layout sprites
+				
+				/**
+				if (sprite.layoutSprites.length-1 < i) {
+					var ns:AxiisSprite = createChildSprite(layout);
+					ns.name="layout - " + StringUtil.trim(name) + " " + sprite.layoutSprites.length;
+					sprite.addLayoutSprite(ns);
+				}
+				layout.render(sprite.layoutSprites[i]);
+				i++;
+				*/
+				
 			
 				if (_currentChild.layoutSprites.length-1 < i) {
 					var ns:AxiisSprite = createChildSprite(this);
@@ -175,7 +178,6 @@ package org.axiis.layouts
 				i++;
 				
 			}
-		//	trace("BaseLayout.postIteration elapsed=" + (flash.utils.getTimer()-t) + "ms");
 		}
 		
 		
@@ -188,34 +190,19 @@ package org.axiis.layouts
 			return newChildSprite;
 		}
 
-		
-		private function cloneGeometries():Array
-		{
-			var toReturn:Array = new Array();
-			for each(var geometry:Geometry in drawingGeometries)
-			{
-				//if(geometry is ICloneable)
-				//	toReturn.push(ICloneable(geometry).clone());
-				//else
-					//trace("error: geometry is not cloneable");
-					toReturn.push(geometry)
-			}
-			return toReturn;
-		}
-		
-		
 		private function trimChildSprites(trim:Number):void {
 			if (!sprite || sprite.drawingSprites.length<trim) return;
 			for (var i:int=0; i<=trim;i++) {
 				var s:AxiisSprite=AxiisSprite(sprite.removeChild(sprite.drawingSprites[sprite.drawingSprites.length-1]));
-			//	trace("trimming for layout " + name + " sprite " + s.name);
 				s.dispose();
 			}
 		}
 			
-		override public function invalidate():void {
+		override public function invalidate():void
+		{
+			super.invalidate();
 			if (sprite)
-				sprite.visible=visible;
+				sprite.visible = visible;
 		}
 	
 	}

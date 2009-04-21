@@ -17,9 +17,11 @@ package org.axiis.core
 			super();
 		}
 		
-		private var activeStateTargets:Array = [];
+		public var revertingModifications:Array = [];
 		
-		private var _eventListeners:Array = [];
+		private var activeStates:Array = [];
+		
+		private var eventListeners:Array = [];
 		
 		public var data:Object;
 		
@@ -28,6 +30,8 @@ package org.axiis.core
 		public var bounds:Rectangle;
 		
 		public var geometries:Array = [];
+		
+		public var modifications:Array = [];
 		
 		public var scaleFill:Boolean = true;
 		
@@ -110,10 +114,10 @@ package org.axiis.core
 		}
 		
 		override public function removeEventListener(type:String, listener:Function, useCapture:Boolean=false):void {
-			for (var i:int=0;i<_eventListeners.length;i++) {
-				if (_eventListeners[i].type==type && _eventListeners.listener==listener) {
-					_eventListeners.splice(i,1);
-					i=_eventListeners.length;
+			for (var i:int=0;i<eventListeners.length;i++) {
+				if (eventListeners[i].type==type && eventListeners.listener==listener) {
+					eventListeners.splice(i,1);
+					i=eventListeners.length;
 				}
 			}
 			super.removeEventListener(type,listener,useCapture);
@@ -130,16 +134,14 @@ package org.axiis.core
 			
 			graphics.clear();
 			
-			for each (var obj:Object in _eventListeners)
+			for each (var obj:Object in eventListeners)
 			{
 				super.removeEventListener(obj.type, obj.listener,obj.useCapture);
 			}
 		}
 		
 		public function render():void
-		{	
-			applyStates();
-			
+		{
 			graphics.clear();
 			for each(var geometry:Geometry in geometries)
 			{
@@ -148,31 +150,29 @@ package org.axiis.core
 				var drawingBounds:Rectangle = scaleFill
 						? new Rectangle(bounds.x+geometry.x, bounds.y+geometry.y,bounds.width,bounds.height)
 						: geometry.commandStack.bounds;
-						
+				
 				geometry.draw(graphics,drawingBounds);
 			}
-			
-			removeStates();
 		}
-		
+				
 		private function applyStates():void
 		{
-			for each(var activeStateTarget:StateTarget in activeStateTargets)
+			for each(var activeState:State in activeStates)
 			{
 				for each(var geometry:Geometry in geometries)
 				{
-					activeStateTarget.state.apply(geometry);
+					activeState.apply(geometry);
 				}
 			}
 		}
 		
 		private function removeStates():void
 		{
-			for each(var activeStateTarget:StateTarget in activeStateTargets)
+			for each(var activeState:State in activeStates)
 			{
 				for each(var geometry:Geometry in geometries)
 				{
-					activeStateTarget.state.remove(geometry);
+					activeState.remove(geometry);
 				}
 			}
 		}
@@ -183,9 +183,9 @@ package org.axiis.core
 				return;	
 			
 			updateActiveStates(event);
-			setActiveStatesForAncestors(activeStateTargets);
-			setActiveStatesForDescendents(activeStateTargets);
-			render();
+			setActiveStatesForAncestors(activeStates);
+			setActiveStatesForDescendents(activeStates);
+			//render();
 		}
 		
 		protected function updateActiveStates(event:Event):void
@@ -198,23 +198,20 @@ package org.axiis.core
 				var state:State = State(states[i]);
 				if(state.enterStateEvent == eventType)
 				{
-					var stateTarget:StateTarget = new StateTarget();
-					stateTarget.eventTarget = sprite;
-					stateTarget.state = state;
-					activeStateTargets.push(stateTarget);
+					activeStates.push(state);
 				}
 			}
 			
-			for(var a:int = 0; a < activeStateTargets.length; a++)
+			for(var a:int = 0; a < activeStates.length; a++)
 			{
-				var activeStateTarget:StateTarget = activeStateTargets[a]
-				if(activeStateTarget.state.exitStateEvent == eventType && activeStateTarget.eventTarget == sprite)
+				var activeState:State = activeStates[a]
+				if(activeState.exitStateEvent == eventType)
 				{
 					for each(var geometry:Geometry in geometries)
 					{
-						activeStateTarget.state.remove(geometry);
+						activeState.remove(geometry);
 					}
-					activeStateTargets.splice(a,1);
+					activeStates.splice(a,1);
 				}
 			}
 		}
@@ -223,9 +220,9 @@ package org.axiis.core
 		{
 			if(parent is AxiisSprite)
 			{
-				AxiisSprite(parent).activeStateTargets = stateTargets;
+				AxiisSprite(parent).activeStates = stateTargets;
 				AxiisSprite(parent).setActiveStatesForAncestors(stateTargets);
-				AxiisSprite(parent).render();
+				//AxiisSprite(parent).render();
 			}
 		}
 		
@@ -236,20 +233,11 @@ package org.axiis.core
 				var currChild:DisplayObject = getChildAt(a);
 				if(currChild is AxiisSprite)
 				{
-					AxiisSprite(currChild).activeStateTargets = stateTargets;
+					AxiisSprite(currChild).activeStates = stateTargets;
 					AxiisSprite(currChild).setActiveStatesForDescendents(stateTargets);
-					AxiisSprite(currChild).render();
+					//AxiisSprite(currChild).render();
 				}
 			}
 		}
 	}
-}
-
-import org.axiis.core.AxiisSprite;
-import org.axiis.states.State;
-
-internal class StateTarget
-{
-	public var eventTarget:AxiisSprite;
-	public var state:State;
 }
