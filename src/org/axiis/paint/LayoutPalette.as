@@ -53,6 +53,7 @@ package org.axiis.paint
 			_colors=value;
 		}
 		
+		[Bindable]
 		public function get colors():Array {
 			return _colors;
 		}
@@ -97,6 +98,7 @@ package org.axiis.paint
 					_colors.push(palette.paletteEntries["pal_"+i].value);
 				}
 			}
+			colors=_colors;
 		}
 		
 		private function removeListeners():void {

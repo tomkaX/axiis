@@ -5,6 +5,7 @@ package org.axiis.core
 	import flash.display.Sprite;
 	import flash.events.EventDispatcher;
 	import flash.geom.Rectangle;
+	import flash.utils.getTimer;
 	
 	import mx.collections.ArrayCollection;
 	
@@ -129,6 +130,7 @@ package org.axiis.core
 		[Bindable(event="dataProviderChange")]
 		public function set dataProvider(value:Object):void
 		{
+			var t:Number=flash.utils.getTimer();
 			if(_dataProvider != value)
 			{
 				_dataProvider = value;
@@ -177,6 +179,8 @@ package org.axiis.core
 				invalidateDataProvider();
 				
 				dispatchEvent(new Event("dataProviderChange"));
+				
+				trace("AbstractLayout.setDataProvider= " + (flash.utils.getTimer()-t) + "ms");
 			}
 		}
 		public function get dataProvider():Object
@@ -247,7 +251,7 @@ package org.axiis.core
 		{
 			return __currentValue;
 		}
-		private var __currentValue:Object;
+		private var __currentValue:Object=0;
 		
 		[Bindable(event="currentLabelChange")]
 		public function get currentLabel():String
@@ -294,7 +298,7 @@ package org.axiis.core
 		{
 			return _dataField;
 		}
-		private var _dataField:String;
+		protected var _dataField:String;
 		
 		[Bindable(event="labelFieldChange")]
 		public function set labelField(value:String):void
@@ -309,7 +313,7 @@ package org.axiis.core
 		{
 			return _labelField;
 		}
-		private var _labelField:String;
+		protected var _labelField:String;
 		
 			
 		[Bindable(event="xChange")]
