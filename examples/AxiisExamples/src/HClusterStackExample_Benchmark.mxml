@@ -10,6 +10,8 @@
 		<![CDATA[
 			import org.axiis.data.DataSet;
 			
+			use namespace mx_internal;
+			
 			var ds:DataSet = new DataSet();
 			
 			public function start():void
@@ -23,6 +25,10 @@
 				dataProvider=ds.data.country;
 				
 				dc.invalidateDisplayList();
+				
+			//	var doc:Object=this.document;
+			//	var bindings:Array=doc._bindings;
+			//	mx.binding.BindingManager.setEnabled(doc,false);
 			}
 			
 			
@@ -33,7 +39,7 @@
 <mx:Label fontSize="14" fontFamily="Myriad Pro" htmlText="Clusters and Stacks" top="50" right="30" color="0xFFFFFF" alpha=".9"/>
 
 <mx:String id="countryData" source="data/2008_Olympics_Large.xml"/>
-
+<!--mx:String id="countryData" source="data/2008_Olympics.xml"/-->
 
 <!--  GLOBAL VARIABLES -->
 <mx:Object id="dataProvider"/>
@@ -45,16 +51,7 @@
 <mx:Number id="percentGap">.02</mx:Number>
 
 	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{hLayout.height}" id="vScale"/>
-	
-	<mx:VBox width="300" top="30" left="50">
-		<mx:HBox>
-			<mx:Label text="Show Line" textAlign="right" verticalCenter="0" width="100"/><mx:CheckBox id="showLine" selected="false" change="{dc.invalidateDisplayList();}"/>
-		</mx:HBox>
-		<mx:HBox visible="{showLine.selected}">
-			<mx:Label text="Line Curve" textAlign="right" verticalCenter="0" width="100"/><mx:HSlider width="80" id="lineTension" minimum="1" maximum="60" value="35" liveDragging="false" showTrackHighlight="false"  change="{dc.invalidateDisplayList();}" verticalCenter="-5"/>
-		</mx:HBox>
-		
-	</mx:VBox>
+
 	
 	<axiis:DataCanvas height="{this.height*.7}" width="{this.width*.8}" id="dc" verticalCenter="0" horizontalCenter="0" showDataTips="true"
 		 strokes="{strokes}" fills="{fills}" palettes="{palettes}">
@@ -71,7 +68,7 @@
 					dataProvider="{dataProvider}" dataField="{dataField}" labelField="{labelField}">
 				<axiis:layouts>
 					
-					<!-- Cluster Group -->
+					<!-- Cluster Group --> 
 					<groupings:ColumnCluster id="myCluster" width="{hLayout.currentReference.width*.83}" height="{hLayout.currentReference.height}" y="0" x="0"
 						dataProvider="{hLayout.currentValue}" dataField="{childDataField}" labelField="{childLabelField}" percentGap=".07"
 						fill="{clusterFill}" stroke="{colStroke}" verticalScale="{vScale}" fontFamily="Myriad Pro" fontColor="{outerPalette.currentColor}" />
@@ -81,11 +78,7 @@
 						width="{hLayout.currentReference.width*.15}" height="{hLayout.currentReference.height}" 
 						dataProvider="{hLayout.currentValue}" dataField="{childDataField}" labelField="{childLabelField}" 
 						fill="{stackFill}" stroke="{colStroke}" verticalScale="{vScale}" fontFamily="Arial" showLabel="false"/>
-						
-					<groupings:HLineGroup id="myLineGroup"  segmentWidth="{hLayout.width/hLayout.itemCount}" tension="{lineTension.value/120}" visible="{showLine.selected}"
-					  width="{hLayout.currentReference.width}" height="{hLayout.currentReference.height}" markerRadius="3"
-					  stroke="{myStroke2}" dataProvider="{hLayout.currentDatum[dataField]}" groupParent="{dataProvider}" groupName="{dataField}"
-					  dataField="{childDataField}" verticalScale="{vScale}"/>
+
 						
 				</axiis:layouts>
 				

@@ -102,8 +102,8 @@
 							<geometry:Wedge  id="wedge" centerX="{wedgeLayout.width/2}" centerY="{wedgeLayout.width/2}" innerRadius="{(wedgeLayout.width/2)*innerRadi1}" outerRadius="{(wedgeLayout.width/2)*innerRadi2}" startAngle="360" arc="1"/>
 						</core:geometry>
 						<core:modifiers>
-							<core:PropertyModifier targets="{[wedge]}" property="arc" modifier="{innerValue.value-angleGap}" modifierOperator="none"/>
-							<core:PropertyModifier targets="{[wedge]}" property="startAngle" modifier="{innerValue.value+angleGap}" modifierOperator="subtract"/> 
+							<core:PropertyModifier property="arc" modifier="{innerValue.value-angleGap}" modifierOperator="none"/>
+							<core:PropertyModifier property="startAngle" modifier="{innerValue.value+angleGap}" modifierOperator="subtract"/> 
 						</core:modifiers>
 					</core:GeometryRepeater>
 				</layouts:referenceRepeater>
@@ -143,8 +143,8 @@
 										startAngle="{wedgeLayout.currentReference['startAngle']}" arc="{wedgeScale.valueToLayout(outerWedgeLayout.currentValue)-angleGap}"/>
 								</core:geometry>
 								<core:modifiers>
-									<core:PropertyModifier targets="{[outerWedge]}" property="arc" modifier="{outerWedgeScale.valueToLayout(outerWedgeLayout.currentValue)}" modifierOperator="none"/>
-									<core:PropertyModifier targets="{[outerWedge]}" property="startAngle" modifier="{(outerWedgeLayout.currentIndex>0) ? outerWedgeScale.valueToLayout(outerWedgeLayout.dataItems[outerWedgeLayout.currentIndex-1][outerWedgeLayout.dataField]) : 0}" modifierOperator="add"/> 	
+									<core:PropertyModifier property="arc" modifier="{outerWedgeScale.valueToLayout(outerWedgeLayout.currentValue)}" modifierOperator="none"/>
+									<core:PropertyModifier property="startAngle" modifier="{(outerWedgeLayout.currentIndex>0) ? outerWedgeScale.valueToLayout(outerWedgeLayout.dataItems[outerWedgeLayout.currentIndex-1][outerWedgeLayout.dataField]) : 0}" modifierOperator="add"/> 	
 								</core:modifiers>  
 							</core:GeometryRepeater>
 						</layouts:referenceRepeater>
