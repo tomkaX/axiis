@@ -11,7 +11,7 @@
 	<layouts:referenceRepeater>
 		<core:GeometryRepeater id="myLayout" dataProvider="{dataItems}">
 			<core:geometry>
-				<degrafa:RegularRectangle id="referenceGeometry" x="0" y="0" width="{(width / itemCount) - (width * percentGap/2)}" height="{height}"/>
+				<degrafa:RegularRectangle id="referenceGeometry" x="0" y="0" width="{(width / itemCount) - (width * percentGap/2)}" height="{height}" enableEvents="false"/>
 			</core:geometry>
 			<core:modifiers>
 				<core:PropertyModifier property="x" modifier="{width/itemCount}" modifierOperator="add"/>

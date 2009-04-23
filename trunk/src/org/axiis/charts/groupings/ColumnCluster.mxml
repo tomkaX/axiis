@@ -3,7 +3,7 @@
 	xmlns:degrafa="http://www.degrafa.com/2007" name="outerlayout"
 	xmlns:layouts="org.axiis.layouts.*"
 	xmlns:scale="org.axiis.layouts.scale.*"
-	xmlns:states="org.axiis.states.*">
+	xmlns:states="org.axiis.states.*" xmlns:utils="org.axiis.utils.*">
 	
 	<!-- public variables -->
 	<mx:Script>
@@ -13,11 +13,16 @@
 			import com.degrafa.core.IGraphicsFill;
 
 			
+			public var labelFunction:Function;
+			
 			[Inspectable][Bindable]
 			public var fill:IGraphicsFill;
 			
 			[Inspectable][Bindable]
 			public var stroke:IGraphicsStroke;
+			
+			public static var LABEL_BOTTOM:int=0;
+			public static var LABEL_COLUMN_BASE:int=1;
 		]]>
 	</mx:Script>
 	
@@ -28,14 +33,16 @@
 	<mx:String id="fontFamily">Arial</mx:String>
 	<mx:String id="fontWeight">normal</mx:String>
 	<mx:Boolean id="showLabel">true</mx:Boolean>
-
+	<mx:int id="labelVPos">0</mx:int>
+	
+	<utils:NumericExpression id="labelLayout" value="{((labelVPos==0) ? bounds.height+103 : (labelVPos==1) ? column.y+column.height+100+(currentValue >0 ? 0:-column.height-100): 0)}"/>
 	
 	<layouts:drawingGeometries>
 			
 		<!-- main column rectangle that gets repeated horizontally -->
-		<degrafa:RegularRectangle id="myCol"
+		<degrafa:RegularRectangle id="column"  enableEvents="false"
 				x="{currentReference.x}"
-				y="{currentReference.height-this.verticalScale.valueToLayout(currentValue)}"
+				y="{((currentValue &gt;=0) ? currentReference.height-this.verticalScale.valueToLayout(currentValue)-this.verticalScale.valueToLayout(0) : currentReference.height-this.verticalScale.valueToLayout(0))}"
 				width="{currentReference.width}"
 				height="{this.verticalScale.valueToLayout(currentValue)}"
 				fill="{fill}"
@@ -44,9 +51,10 @@
 		</degrafa:RegularRectangle>
 		
 		<!-- smaller label for each column -->
-		<degrafa:RasterText text="{(currentLabel ? currentLabel:' ')}"  textColor="{fontColor}" visible="{showLabel}"
-			x="{currentReference.x+(currentReference.width-20)/2}" height="20" width="70" y="{bounds.height+72}" 
-			fontSize="{fontSize}" align="right" fontFamily="{fontFamily}" fontWeight="{fontWeight}">
+		<degrafa:RasterText  enableEvents="false"
+			 htmlText="{(labelFunction) ? labelFunction.call(this,currentDatum) : (currentLabel ? currentLabel:' ')}"  textColor="{fontColor}" visible="{showLabel}" id="label"
+			x="{currentReference.x+(currentReference.width-20)/2}" height="20"  y="{labelLayout.value}" 
+			fontSize="{fontSize}"  align="{(currentValue &lt; 0 &amp;&amp; labelVPos==1) ? 'left' : 'right'}" fontFamily="{fontFamily}" fontWeight="{fontWeight}">
 			<degrafa:transform>
 				<degrafa:RotateTransform angle="-90" registrationPoint="topLeft"/>
 			</degrafa:transform>

@@ -89,8 +89,8 @@
 	
 	<utils:BooleanExpression id="showLabel" value="{ (showLabels &amp;&amp; (showMajorTick.value==true))}"/>
 	<utils:BooleanExpression id="showMinorTick" value="{ !(showMajorTick.value==true)}"/>
-	<utils:BooleanExpression id="showMajorTick" value="{(majorTickSpacing > 0 &amp;&amp; (repeater.currentIteration % _majorTickInterval) == 0)}"/>
-	<utils:BooleanExpression id="showGrid" value="{((repeater.currentIteration % (_majorTickInterval*2))==0 &amp;&amp; currentIndex &lt; itemCount-1)}"/>
+	<utils:BooleanExpression id="showMajorTick" value="{(majorTickSpacing > 0 &amp;&amp; (this.currentIndex % _majorTickInterval) == 0)}"/>
+	<utils:BooleanExpression id="showGrid" value="{((this.currentIndex % (_majorTickInterval*2))==0 &amp;&amp; currentIndex &lt; itemCount-1)}"/>
 	<utils:NumericExpression id="repeaterCount" value="{Math.floor(this.height)}" valueChanged="onValueChanged();" />
 	
 	<degrafa:SolidFill id="gridFill" color="{gridFillColor}" alpha="{gridFillAlpha}"/>
