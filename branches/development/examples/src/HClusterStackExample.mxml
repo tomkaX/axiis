@@ -16,11 +16,11 @@
 			{ 
 				ds.processXmlString(countryData);
 				//Aggregate the detailed data items
-				ds.aggregateCollection("country.medal",["count"]);
+				ds.aggregateObjectData("country.medal",["count"]);
 				//Aggegate the higher level items
-				ds.aggregateCollection("country",["aggregates.medal_count_sum"]);
-				vScale.maxValue=ds.data.aggregates['country_aggregates:medal_count_sum_max'];
-				dataProvider=ds.data.country;
+				ds.aggregateObjectData("country",["aggregates.medal_count_sum"]);
+				vScale.maxValue=ds.data.object.aggregates['country_aggregates:medal_count_sum_max'];
+				dataProvider=ds.data.object.country;
 				
 				dc.invalidateDisplayList();
 			}
@@ -46,9 +46,9 @@
 
 	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{hLayout.height}" id="vScale"/>
 	
-	<mx:VBox width="300" top="30" left="50">
+	<mx:VBox width="300" top="30" left="50" visible="false">
 		<mx:HBox>
-			<mx:Label text="Show Line" textAlign="right" verticalCenter="0" width="100"/><mx:CheckBox id="showLine" selected="false" change="{dc.invalidateDisplayList();}"/>
+			<mx:Label text="Show Line" textAlign="right" verticalCenter="0" width="100"/><mx:CheckBox id="showLine" selected="true" change="{dc.invalidateDisplayList();}"/>
 		</mx:HBox>
 		<mx:HBox visible="{showLine.selected}">
 			<mx:Label text="Line Curve" textAlign="right" verticalCenter="0" width="100"/><mx:HSlider width="80" id="lineTension" minimum="1" maximum="60" value="35" liveDragging="false" showTrackHighlight="false"  change="{dc.invalidateDisplayList();}" verticalCenter="-5"/>
@@ -81,7 +81,8 @@
 						width="{hLayout.currentReference.width*.15}" height="{hLayout.currentReference.height}" 
 						dataProvider="{hLayout.currentValue}" dataField="{childDataField}" labelField="{childLabelField}" 
 						fill="{stackFill}" stroke="{colStroke}" verticalScale="{vScale}" fontFamily="Arial" showLabel="false"/>
-						
+					
+					<!-- Line Group (same data) -->
 					<groupings:HLineGroup id="myLineGroup"  segmentWidth="{hLayout.width/hLayout.itemCount}" tension="{lineTension.value/120}" visible="{showLine.selected}"
 					  width="{hLayout.currentReference.width}" height="{hLayout.currentReference.height}" markerRadius="3"
 					  stroke="{myStroke2}" dataProvider="{hLayout.currentDatum[dataField]}" groupParent="{dataProvider}" groupName="{dataField}"

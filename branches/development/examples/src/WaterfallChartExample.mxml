@@ -13,7 +13,7 @@
 				var ds:DataSet = new DataSet();
 				ds.processXmlString(xmlData);
 				
-				waterfallChart.dataProvider = ds.data.months.month;
+				waterfallChart.dataProvider = ds.data.object.months.month;
 				waterfallChart.invalidateDisplayList();
 			}
 		]]>

@@ -16,7 +16,7 @@
 			private function start():void
 			{
 				ds.processXmlString(xml);
-				clusterLayout.dataProvider = ds.data.nodes.node;
+				clusterLayout.dataProvider = ds.data.object.nodes.node;
 			}
 			
 			private function fillChange(flag:Boolean):void

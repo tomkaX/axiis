@@ -16,11 +16,11 @@
 			public function start():void
 			{ 
 				ds.processCsvAsTable(financeData,false);
-				ds.aggregateCollection("rows.columns",["value"]);
-				vScale.maxValue=65;
+				ds.aggregateTableData("rows.columns",["value"]);
+				vScale.maxValue=165;
 				vScale.minValue=10;
 				
-				dataProvider=ds.data.rows;
+				dataProvider=ds.data.table.rows;
 				 
 				dc.invalidateDisplayList();
 			}

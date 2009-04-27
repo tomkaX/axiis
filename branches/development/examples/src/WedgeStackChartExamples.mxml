@@ -22,11 +22,11 @@
 				
 				ds.processXmlString(countryData);
 				//Aggregate the detailed data items
-				ds.aggregateCollection("country.medal",["count"]);
+				ds.aggregateObjectData("country.medal",["count"]);
 				//Aggegate the higher level items
-				ds.aggregateCollection("country",["aggregates.medal_count_sum"]);
-				wedgeScale.maxValue=ds.data.aggregates['country_aggregates:medal_count_sum_sum'];
-				dataProvider=ds.data.country;
+				ds.aggregateObjectData("country",["aggregates.medal_count_sum"]);
+				wedgeScale.maxValue=ds.data.object.aggregates['country_aggregates:medal_count_sum_sum'];
+				dataProvider=ds.data.object.country;
 				
 				dc.invalidateDisplayList();
 			}

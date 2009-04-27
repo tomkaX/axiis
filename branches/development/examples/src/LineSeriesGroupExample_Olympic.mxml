@@ -19,14 +19,14 @@
 				
 				//Show series by country and plot by medal
 				ds.processXmlString(countryData);
-				ds.aggregateCollection("country.medal",["count"]);
-				ds.aggregateCollection("country",["aggregates.medal_count_sum"]);
-				vScale.maxValue=ds.data.aggregates["country_aggregates:medal_count_sum_sum"]/2;
+				ds.aggregateObjectData("country.medal",["count"]);
+				ds.aggregateObjectData("country",["aggregates.medal_count_sum"]);
+				vScale.maxValue=ds.data.object.aggregates["country_aggregates:medal_count_sum_sum"]/2;
 				
 				
 				//NEED TO WRTIE CODE IN DATASET THAT DOES COLUMN AGGREGATIONS
 				
-				dataProvider=ds.data.country;
+				dataProvider=ds.data.object.country;
 				 
 				dc.invalidateDisplayList();
 			}

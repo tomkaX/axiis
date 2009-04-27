@@ -17,11 +17,11 @@
 			{ 
 				ds.processXmlString(countryData);
 				//Aggregate the detailed data items
-				ds.aggregateCollection("country.medal",["count"]);
+				ds.aggregateObjectData("country.medal",["count"]);
 				//Aggegate the higher level items
-				ds.aggregateCollection("country",["aggregates.medal_count_sum"]);
-				vScale.maxValue=ds.data.aggregates['country_aggregates:medal_count_sum_max'];
-				dataProvider=ds.data.country;
+				ds.aggregateObjectData("country",["aggregates.medal_count_sum"]);
+				vScale.maxValue=60; //ds.data.aggregates['country_aggregates:medal_count_sum_max'];
+				dataProvider=ds.data.object.country;
 				 
 				dc.invalidateDisplayList();
 			}
@@ -54,7 +54,7 @@
 
 <!-- DISPLAY OBJECTS -->
 <mx:Canvas width="300" height="100" top="30" left="50">
-<mx:VBox>
+<mx:VBox visible="true">
 	<mx:HBox>
 		<mx:Label text="Line Curve" textAlign="right" verticalCenter="0" width="100"/><mx:HSlider width="80" id="slider" minimum="1" maximum="80" value="35" liveDragging="true" showTrackHighlight="false" verticalCenter="-5"/>
 	</mx:HBox>
