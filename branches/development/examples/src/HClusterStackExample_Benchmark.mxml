@@ -33,7 +33,7 @@
 			
 			
 		]]>
-</mx:Script> 
+</mx:Script>
 <Examples:ExampleBackground width="{this.width}" height="{this.height}"/>
 <mx:Label fontSize="22" fontFamily="Myriad Pro" htmlText="&lt;b&gt;Axiis&lt;/b&gt; - Horizontal Chart" top="20" right="30" color="0xFFFFFF"/>
 <mx:Label fontSize="14" fontFamily="Myriad Pro" htmlText="Clusters and Stacks" top="50" right="30" color="0xFFFFFF" alpha=".9"/>
@@ -52,13 +52,24 @@
 
 	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{hLayout.height}" id="vScale"/>
 
+	<!--
+	<mx:VBox color="white" bottom="0">
+		<mx:Repeater id="layoutRepeater" dataProvider="{[verticalAxis,hLayout,myCluster,myStack]}">
+			<local:LayoutControls layout="{BaseLayout(layoutRepeater.currentItem)}"/>
+		</mx:Repeater>
+		<mx:Button click="dc.invalidateDisplayList()" label="Render"/>
+	</mx:VBox>
+	-->
 	
-	<axiis:DataCanvas height="{this.height*.7}" width="{this.width*.8}" id="dc" verticalCenter="0" horizontalCenter="0" showDataTips="true"
+	<mx:Label text="{hLayout.rendering ? 'Refreshing...' : ''}" width="100%" textAlign="center" bottom="5"/>
+	
+	<axiis:DataCanvas height="{this.height*.5}" width="{this.width*.8}" id="dc" verticalCenter="0" horizontalCenter="0" showDataTips="true"
 		 strokes="{strokes}" fills="{fills}" palettes="{palettes}">
 	
 		<!-- Background -->
 		<axiis:backgroundGeometries>
-			<axis:VerticalAxis verticalScale="{vScale}" tickStroke="{axisStroke}" width="{dc.width}"  height="{hLayout.height}" emitDataTips="false"
+			<axis:VerticalAxis id="verticalAxis"
+				verticalScale="{vScale}" tickStroke="{axisStroke}" width="{dc.width}"  height="{hLayout.height}" emitDataTips="false"
 				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5"/>
 		</axiis:backgroundGeometries>
 	
@@ -74,12 +85,11 @@
 						fill="{clusterFill}" stroke="{colStroke}" verticalScale="{vScale}" fontFamily="Myriad Pro" fontColor="{outerPalette.currentColor}" />
 					
 					<!-- Stack Group (same data) -->
-					<groupings:ColumnStack id="myStack"  x="{hLayout.currentReference.width*.85}" y="0" 
+					<groupings:ColumnStack id="myStack" x="{hLayout.currentReference.width*.85}" y="0" 
 						width="{hLayout.currentReference.width*.15}" height="{hLayout.currentReference.height}" 
 						dataProvider="{hLayout.currentValue}" dataField="{childDataField}" labelField="{childLabelField}" 
 						fill="{stackFill}" stroke="{colStroke}" verticalScale="{vScale}" fontFamily="Arial" showLabel="false"/>
 
-						
 				</axiis:layouts>
 				
 				<!-- Bottom Bracket -->

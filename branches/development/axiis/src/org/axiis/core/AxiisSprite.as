@@ -146,11 +146,9 @@ package org.axiis.core
 			for each(var geometry:Geometry in geometries)
 			{
 				geometry.preDraw();
-				
 				var drawingBounds:Rectangle = scaleFill
 						? new Rectangle(bounds.x+geometry.x, bounds.y+geometry.y,bounds.width,bounds.height)
 						: geometry.commandStack.bounds;
-				
 				geometry.draw(graphics,drawingBounds);
 			}
 		}

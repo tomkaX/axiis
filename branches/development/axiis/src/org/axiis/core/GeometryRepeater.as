@@ -2,9 +2,12 @@ package org.axiis.core
 {
 	import com.degrafa.geometry.Geometry;
 	
-	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	import flash.events.IEventDispatcher;
+	import flash.utils.clearTimeout;
+	import flash.utils.getTimer;
+	import flash.utils.setTimeout;
+	
+	import mx.core.Application;
 
 	public class GeometryRepeater extends EventDispatcher
 	{
@@ -33,42 +36,66 @@ package org.axiis.core
 		}
 		private var _currentIteration:int;
 		
-		public function repeat(preIterationCallback:Function = null, postIterationCallback:Function=null):void
+		private var timerID:int;
+		
+		public function repeat(preIterationCallback:Function = null, postIterationCallback:Function=null, completeCallback:Function = null):void
+		{
+			clearTimeout(timerID);
+			_currentIteration = 0;
+			repeatHelper(preIterationCallback,postIterationCallback,completeCallback);
+		}
+		
+		protected function repeatHelper(preIterationCallback:Function = null, postIterationCallback:Function=null, completeCallback:Function = null):void
 		{
 			if(!dataProvider)
 				return;
-				
-			_currentIteration = 0;
 			
 			var len:int = dataProvider.length;
-			for (var i:int = 0; i < len; i++)
+			var app:Application = Application(Application.application);
+			var millisecondsPerFrame:Number = app.stage ? 1000 / app.stage.frameRate : 50;
+			var startTime:int = getTimer();
+			var totalTime:int = 0;
+			while(totalTime < millisecondsPerFrame && currentIteration < len)
 			{
 				if(preIterationCallback != null)
 					preIterationCallback.call(this);
 				
-				_currentDatum = dataProvider[i];
+				_currentDatum = dataProvider[currentIteration];
 				
 				if(geometry)
 				{
 					for each (var modifier:PropertyModifier in modifiers)
 					{ 
-						if(i == 0)
+						if(currentIteration == 0)
 							modifier.beginModify(geometry);
 						modifier.apply();
 					}
 				}
-				_currentIteration = i;
+				_currentIteration++;
 				
 				if(postIterationCallback != null)
-					postIterationCallback.call(this);			
+					postIterationCallback.call(this);
+			
+				totalTime = getTimer() - startTime;
 			}
 			
-			for each (modifier in modifiers)
+			// We've finished looping before time ran out. Tear down and call completeCallback
+			if(currentIteration == len)
 			{
-				modifier.end();
+				//trace("finished in time!")
+				for each (modifier in modifiers)
+				{
+					modifier.end();
+				}
+				_currentIteration = -1;
+				completeCallback.call(this);
 			}
-						
-			_currentIteration = -1;
+			// The loop took too long and we had to break out. Give the player 10ms to render and, and try again
+			else
+			{
+				//trace("took too long " + currentIteration)
+				timerID = setTimeout(repeatHelper,10,preIterationCallback,postIterationCallback,completeCallback);
+			}
 		}
 	}
 }

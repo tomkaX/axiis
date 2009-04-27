@@ -132,8 +132,6 @@ package org.axiis
 		{
 			super.updateDisplayList(unscaledWidth,unscaledHeight);
 			
-			
-			
 			_background.graphics.clear();
 			
 			for each (var bg:Object in backgroundGeometries) {

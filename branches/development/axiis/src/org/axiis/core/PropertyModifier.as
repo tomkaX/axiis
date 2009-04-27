@@ -71,8 +71,9 @@ package  org.axiis.core
 		public function beginModify(target:Object):void
 		{
 			if (iteration != -1)
-				return;
+				end();
 			this.target = target;
+			originalValue = target[property];
 			_iteration = 0;
 		}
 		
@@ -83,7 +84,7 @@ package  org.axiis.core
 		public function end():void
 		{
 			if(!target)
-				return;			
+				return;
 			target[property] = originalValue;
 			_iteration = -1;
 		}

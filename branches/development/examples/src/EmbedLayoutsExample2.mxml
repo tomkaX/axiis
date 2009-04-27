@@ -37,7 +37,7 @@
 
 	<axiis:LinearScale id="scale" maxLayout="{dataCanvas.height}" minLayout="0" minValue="0" maxValue="100"/> 
 
-	<axiis:DataCanvas id="dataCanvas" width="800" height="800">
+	<axiis:DataCanvas id="dataCanvas" width="100%" height="100%">
 		<axiis:layouts>
 			<axiis:HorizontalBoxLayout id="clusterLayout" name="A" width="{dataCanvas.width}" height="{dataCanvas.height}" x="0" y="0" scaleFill="true" dataField="value">
 				<axiis:drawingGeometries>

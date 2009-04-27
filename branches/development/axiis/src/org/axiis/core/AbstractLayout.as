@@ -24,16 +24,15 @@ package org.axiis.core
 		public var palettes:Array = [];
 		
 		[Bindable]
-		private var _visible:Boolean=true;
-		
-		public function set visible(value:Boolean):void {
-			_visible=value;
-			this.invalidate();
+		public function set visible(value:Boolean):void
+		{
+			_visible = value;
 		}
-		
-		public function get visible():Boolean {
+		public function get visible():Boolean
+		{
 			return _visible;
 		}
+		private var _visible:Boolean=true;
 
 		public function set emitDataTips(value:Boolean):void {
 			_emitDataTips=value;
@@ -180,7 +179,7 @@ package org.axiis.core
 				
 				dispatchEvent(new Event("dataProviderChange"));
 				
-				trace("AbstractLayout.setDataProvider= " + (flash.utils.getTimer()-t) + "ms");
+				//trace("AbstractLayout.setDataProvider= " + (flash.utils.getTimer()-t) + "ms");
 			}
 		}
 		public function get dataProvider():Object
@@ -555,6 +554,24 @@ package org.axiis.core
 			dispatchEvent(new LayoutEvent(LayoutEvent.INVALIDATE,this as ILayout));
 		} 
 		
+		[Bindable(event="renderingChange")]
+		public function get rendering():Boolean
+		{
+			return _rendering;
+		}
+		public function set _rendering(value:Boolean):void
+		{
+			if(value != __rendering)
+			{
+				__rendering = value;
+				dispatchEvent(new Event("renderingChange"));
+			}
+		}
+		public function get _rendering():Boolean
+		{
+			return __rendering;
+		}
+		private var __rendering:Boolean = false;
 
 	}
 }

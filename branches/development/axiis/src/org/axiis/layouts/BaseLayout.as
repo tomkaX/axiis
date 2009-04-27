@@ -60,15 +60,17 @@ package org.axiis.layouts
 	
 		override public function render(newSprite:AxiisSprite = null):void 
 		{
-			//trace(name + " render " +currentIndex)
-			if (!visible) return;
+			if (!visible)
+				return;
 			
 			var t:Number=flash.utils.getTimer();
-			
+					
 			this.dispatchEvent(new Event("preRender"));
 			
 			if(newSprite)
 				this.sprite = newSprite;
+			sprite.visible = false;
+			_rendering = true;
 			
 				
 			if(!sprite || !_referenceGeometryRepeater)
@@ -94,19 +96,14 @@ package org.axiis.layouts
 			
 			if (_dataItems && _dataItems.length > 0)
 			{
-				_currentIndex=-1;
-				_referenceGeometryRepeater.repeat(preIteration, postIteration);
-	
+				_currentIndex = -1;
+				_referenceGeometryRepeater.repeat(preIteration, postIteration, repeatComplete);
 			}
-			
-			if (sprite.drawingSprites.length > _itemCount) 
-				this.trimChildSprites(sprite.drawingSprites.length-_itemCount-1);
-			trace("BaseLayout.render elapsed=" + (flash.utils.getTimer()-t) + "ms");
 		}
 		
 		protected function preIteration():void
 		{
-			_currentIndex++;
+			_currentIndex = referenceRepeater.currentIteration;
 
 			_currentDatum = dataItems[_currentIndex];
 			if (dataField)
@@ -116,6 +113,68 @@ package org.axiis.layouts
 			if (labelField)
 				_currentLabel = getProperty(_currentDatum,labelField).toString();
 		
+		}
+
+		protected function postIteration():void
+		{ 
+			_currentReference = referenceRepeater.geometry;
+			
+			// Add a new Sprite if there isn't one available on the display list.
+			if(_currentIndex > sprite.drawingSprites.length - 1)
+			{
+				var newChildSprite:AxiisSprite = createChildSprite(this);
+				sprite.name = "drawing" + StringUtil.trim(name) + "" + sprite.drawingSprites.length;
+				sprite.addDrawingSprite(newChildSprite);
+				childSprites.push(newChildSprite);
+			}
+			_currentChild = AxiisSprite(sprite.drawingSprites[currentIndex]);
+			_currentChild.data = currentDatum;
+			
+			dispatchEvent(new Event("itemPreDraw"));
+			
+			_currentChild.bounds = bounds;
+			_currentChild.scaleFill = scaleFill;
+			_currentChild.geometries = drawingGeometries;
+			_currentChild.render();
+	
+			var i:int=0;
+			for each(var layout:ILayout in layouts)
+			{
+				//When we have multiple peer layouts the AxiisSprite needs to differentiate between child drawing sprites and child layout sprites
+				layout.parentLayout = this as ILayout;
+				if (_currentChild.layoutSprites.length-1 < i) {
+					var ns:AxiisSprite = createChildSprite(this);
+					_currentChild.addLayoutSprite(ns);
+				}
+				layout.render(_currentChild.layoutSprites[i]);
+				i++;
+			}
+		}
+		
+		protected function repeatComplete():void
+		{
+			if (sprite.drawingSprites.length > _itemCount) 
+				trimChildSprites(sprite.drawingSprites.length - _itemCount - 1);
+			sprite.visible = visible;
+			_rendering = false;
+			//trace("BaseLayout.render elapsed=" + (flash.utils.getTimer()-t) + "ms");
+		}
+		
+		private function createChildSprite(layout:ILayout):AxiisSprite
+		{
+			var newChildSprite:AxiisSprite = new AxiisSprite();
+			newChildSprite.doubleClickEnabled=true;
+			newChildSprite.layout = layout;
+			newChildSprite.states = states;
+			return newChildSprite;
+		}
+
+		private function trimChildSprites(trim:Number):void {
+			if (!sprite || sprite.drawingSprites.length<trim) return;
+			for (var i:int=0; i<=trim;i++) {
+				var s:AxiisSprite=AxiisSprite(sprite.removeChild(sprite.drawingSprites[sprite.drawingSprites.length-1]));
+				s.dispose();
+			}
 		}
 		
 		private function getProperty(obj:Object, propertyName:String):Object {
@@ -127,93 +186,12 @@ package org.axiis.layouts
 				return getProperty(obj[chain[0]],chain.slice(1,chain.length).join("."));
 			}
 		}
-		/**
-		 * TODO we need to handle removing sprites when data is removed from the dataProvider
-		 *  including removing listeneners so they can be garbage collected.
-		 */
-		protected function postIteration():void
+		
+		override public function set visible(value:Boolean):void
 		{
-			var t:Number=flash.utils.getTimer();
-			
-	//		if (!_currentReference) 
-				_currentReference = referenceRepeater.geometry;
-			
-			
-			// Add a new Sprite if there isn't one available on the display list.
-			if(_currentIndex > sprite.drawingSprites.length - 1)
-			{
-				var newChildSprite:AxiisSprite = createChildSprite(this);
-				sprite.name = "drawing" + StringUtil.trim(name) + "" + sprite.drawingSprites.length;
-				//trace("adding sprite for layout." + this.name + " item count = " + _itemCount + " currentIndex=" + _currentIndex + " dataItems.length=" + _dataItems.length);
-				sprite.addDrawingSprite(newChildSprite);
-				childSprites.push(newChildSprite);
-			}
-			_currentChild = AxiisSprite(sprite.drawingSprites[currentIndex]);
-		//	_currentChild=this.sprite;
-			_currentChild.data = currentDatum;
-			
-			dispatchEvent(new Event("itemPreDraw"));
-			
-			_currentChild.bounds = bounds;
-			_currentChild.scaleFill = scaleFill;
-			_currentChild.geometries = cloneGeometries();
-		//	trace("rendering layout" + this.name + " sprite " + _currentChild.name);
-			_currentChild.render();
-	
-			var i:int=0;
-			for each(var layout:ILayout in layouts)
-			{
-				layout.parentLayout = this as ILayout;    //When we have multiple peer layouts the AxiisSprite needs to differentiate between child drawing sprites and child layout sprites
-			
-				if (_currentChild.layoutSprites.length-1 < i) {
-					var ns:AxiisSprite = createChildSprite(this);
-					//ns.name="layout - " + StringUtil.trim(name) + " " + _currentChild.layoutSprites.length;
-					_currentChild.addLayoutSprite(ns);
-				}
-				layout.render(_currentChild.layoutSprites[i]);
-				i++;
-				
-			}
-		//	trace("BaseLayout.postIteration elapsed=" + (flash.utils.getTimer()-t) + "ms");
+			super.visible = value;
+			if(sprite)
+				sprite.visible = visible;
 		}
-		
-		
-		private function createChildSprite(layout:ILayout):AxiisSprite
-		{
-			var newChildSprite:AxiisSprite = new AxiisSprite();
-			newChildSprite.doubleClickEnabled=true;
-			newChildSprite.layout = layout;
-			newChildSprite.states = states;
-			return newChildSprite;
-		}
-
-		
-		private function cloneGeometries():Array
-		{
-		//	return drawingGeometries;
-			
-			var toReturn:Array = new Array();
-			for each(var geometry:Geometry in drawingGeometries)
-			{
-					toReturn.push(geometry)
-			}
-			return toReturn;
-		}
-		
-		
-		private function trimChildSprites(trim:Number):void {
-			if (!sprite || sprite.drawingSprites.length<trim) return;
-			for (var i:int=0; i<=trim;i++) {
-				var s:AxiisSprite=AxiisSprite(sprite.removeChild(sprite.drawingSprites[sprite.drawingSprites.length-1]));
-			//	trace("trimming for layout " + name + " sprite " + s.name);
-				s.dispose();
-			}
-		}
-			
-		override public function invalidate():void {
-			if (sprite)
-				sprite.visible=visible;
-		}
-	
 	}
 }
