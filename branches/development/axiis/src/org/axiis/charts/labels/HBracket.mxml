@@ -12,7 +12,7 @@
 		public var markerStroke:SolidStroke=new SolidStroke(0xFFFFFF,.5,1);
 		
 	]]>
-</mx:Script>
+</mx:Script> 
 	<mx:String id="fontFamily">Arial</mx:String>
 	<mx:Number id="fontSize">12</mx:Number>
 	<mx:Number id="fontColor">0</mx:Number>

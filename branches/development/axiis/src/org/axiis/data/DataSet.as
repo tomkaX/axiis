@@ -95,7 +95,10 @@ package org.axiis.data
 			public function processCsvAsTable(payload:String, addSummaryFields:Boolean=false):void {
 				var t:Number=flash.utils.getTimer();
 				//Convert CSV into data.row[n].col[n] format for dynamic object
-				_data=createTableFromCsv(payload,addSummaryFields);
+				
+				if (!_data) _data=new Object();
+				
+				_data["table"]=createTableFromCsv(payload,addSummaryFields);
 				
 				trace("DataSet.processCsvShapedData " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
 			}
@@ -119,9 +122,33 @@ package org.axiis.data
 				
 				if (!groupings || groupings.length<1) throw new Error("You must declare groupings to shape data DataSet.processCsvAsShapedData");
 				
-				_data=createShapedObject(tempData.rows,groupings,flattenLastGroup);
-				_data.rows=tempData.rows;
-				_data.header=tempData.header;
+				if (!_data) _data=new Object();
+				
+				_data.shaped=createShapedObject(tempData.rows,groupings,flattenLastGroup);
+				
+				trace("DataSet.processCsvShapedData " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
+			}
+			
+			/**
+			 *  groupings: Ordered list of name value pairs ["columnIndex, groupName"] to create heirarchal Groupings
+			 * 
+			 *  Example: shapeTable(myData,["0,region","1,country"]);
+			 *  Would take data, and create a 2-level grouped hierarchy, with region being the parent group of country
+			 *   
+			 * 
+			 *  flattenLastGroup:  If the lowest level grouping returns only one row for that group, it will add the COLUMNS of that one row directly to the group object
+			 *  				   (versus a 1 item arrayCollection of rows)
+			*/
+			public function shapeTable(groupings:Array, flattenLastGroup:Boolean=true):void {
+					var t:Number=flash.utils.getTimer();
+			
+				if (!data["table"]) return; //No table to process)
+				
+				if (!groupings || groupings.length<1) throw new Error("You must declare groupings to shape data DataSet.processCsvAsShapedData");
+				
+				if (!_data) _data=new Object();
+				_data.shaped=createShapedObject(data["table"].rows,groupings,flattenLastGroup);
+				
 				trace("DataSet.processCsvShapedData " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
 			}
 				
@@ -148,10 +175,24 @@ package org.axiis.data
 			 * 
 			 * If a target property is a org.axis.data.columns class it will automatically aggregate all columns.
 			 */
-			public function aggregateCollection(collectionName:String, properties:Array):void {
+			public function aggregateObjectData(collectionName:String, properties:Array):void {
 				//First find our collection
 				var t:Number=flash.utils.getTimer();
-				aggregate(data,collectionName.split("."),properties);
+				aggregate(data.object,collectionName.split("."),properties);
+				trace("DataSet.aggregateCollection=" + (flash.utils.getTimer()-t) + "ms");
+			}
+			
+			public function aggregateShapedData(collectionName:String, properties:Array):void {
+				//First find our collection
+				var t:Number=flash.utils.getTimer();
+				aggregate(data.shaped,collectionName.split("."),properties);
+				trace("DataSet.aggregateCollection=" + (flash.utils.getTimer()-t) + "ms");
+			}
+			
+			public function aggregateTableData(collectionName:String, properties:Array):void {
+				//First find our collection
+				var t:Number=flash.utils.getTimer();
+				aggregate(data.table,collectionName.split("."),properties);
 				trace("DataSet.aggregateCollection=" + (flash.utils.getTimer()-t) + "ms");
 			}
 			
@@ -563,8 +604,10 @@ package org.axiis.data
                 {
                      dispatchEvent(new FaultEvent("xml_decode_fault"));
                 }
+                
+                if (!_data) _data=new Object();
         
-				_data=decoded;
+				_data["object"]=decoded;
 			
 			
 		}

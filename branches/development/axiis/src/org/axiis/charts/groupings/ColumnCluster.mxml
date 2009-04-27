@@ -4,7 +4,7 @@
 	xmlns:layouts="org.axiis.layouts.*"
 	xmlns:scale="org.axiis.layouts.scale.*"
 	xmlns:states="org.axiis.states.*" xmlns:utils="org.axiis.utils.*">
-	
+
 	<!-- public variables -->
 	<mx:Script>
 		<![CDATA[
