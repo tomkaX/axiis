@@ -18,7 +18,7 @@
 				ds.processCsvAsTable(payload,false);
 				ds.pivotTable(0);
 				ds.aggregateData(ds.data.pivot,"rows.columns",["value"]);
-				vScale.maxValue=ds.data.pivot.aggregates.columns_value_max*4;
+				vScale.maxValue=ds.data.pivot.aggregates.columns_value_max/6;
 				
 				dataProvider=ds.data.pivot.rows;
 				 
@@ -31,7 +31,7 @@
 			
 			private function filterColumns(obj:Object):Boolean {
 				//Don't want filter fields, trim columns
-				if (obj.index < 1 || obj.index > 50) 
+				if (obj.index < 1 || obj.index > dataSlice.value) 
 					return false;
 				else
 					return true;
@@ -66,10 +66,14 @@
 <utils:NumericExpression id="tension" value="{slider.value/210}" valueChanged="{if (myLineGroup) dc.invalidateDisplayList();}"/>
 
 <!-- DISPLAY OBJECTS -->
-<Examples:PanelBackground width="700" height="50" top="30" left="60" cornerRadius="8"/>
-<mx:HBox id="myBox" top="45" left="55">
+<Examples:PanelBackground width="800" height="50" top="30" left="60" cornerRadius="8"/>
+<mx:HBox id="myBox" top="45" left="65">
 		<mx:HBox>
 			<mx:Label text="Line Curve" textAlign="right" verticalCenter="0"/><mx:HSlider width="80" id="slider" minimum="1" maximum="80" value="35" liveDragging="true" showTrackHighlight="false" verticalCenter="-5"/>
+		</mx:HBox>
+			<mx:Label text="|"/>
+			<mx:HBox>
+		<mx:Label text="% Data" textAlign="right" verticalCenter="0"/><mx:HSlider width="80" id="dataSlice" minimum="1" maximum="244" value="50" change="{dc.invalidateDisplayList(); myLineGroup.invalidateDataProvider();}" showTrackHighlight="false" verticalCenter="-5"/>
 		</mx:HBox>
 			<mx:Label text="|"/>
 		<mx:HBox>
@@ -144,7 +148,7 @@
 		</degrafa:LinearGradientStroke>
 		<degrafa:SolidStroke color="0xFFFFFF" alpha=".3"/>
 		<degrafa:SolidStroke color="0x222222" id="axisStroke" pixelHinting="true"/>
-		<degrafa:SolidStroke color="{areaPalette.currentColor}" id="myStroke" weight="2" alpha="1" caps="none" pixelHinting="true"/>
+		<degrafa:SolidStroke color="{areaPalette.currentColor}" id="myStroke" weight="1" alpha="1" caps="none" pixelHinting="true"/>
 	</mx:Array>
 	
 </mx:Application>

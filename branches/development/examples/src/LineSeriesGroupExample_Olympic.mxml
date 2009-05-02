@@ -64,8 +64,8 @@
 
 <!-- DISPLAY OBJECTS -->
 <!-- DISPLAY OBJECTS -->
-<Examples:PanelBackground width="700" height="50" top="30" left="60" cornerRadius="8"/>
-<mx:HBox id="myBox" top="45" left="55">
+<Examples:PanelBackground width="800" height="50" top="30" left="60" cornerRadius="8"/>
+<mx:HBox id="myBox" top="45" left="65">
 		<mx:HBox>
 			<mx:Label text="Line Curve" textAlign="right" verticalCenter="0"/><mx:HSlider width="80" id="slider" minimum="1" maximum="80" value="35" liveDragging="true" showTrackHighlight="false" verticalCenter="-5"/>
 		</mx:HBox>
