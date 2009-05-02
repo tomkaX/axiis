@@ -69,7 +69,7 @@ package org.axiis.layouts
 			
 			if(newSprite)
 				this.sprite = newSprite;
-			sprite.visible = false;
+			//sprite.visible = false;
 			_rendering = true;
 			
 				

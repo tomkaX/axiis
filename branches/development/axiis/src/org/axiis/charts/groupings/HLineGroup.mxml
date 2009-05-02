@@ -214,11 +214,11 @@
 			<degrafa:stroke><degrafa:SolidStroke color="0x0000FF"/></degrafa:stroke>
 		</degrafa:RegularRectangle-->
 
-		<degrafa:Circle id="marker"  radius="{markerRadius}" centerY="{yPoint.value}">
+		<degrafa:Circle id="marker"  radius="{markerRadius}" centerY="{yPoint.value}" visible="false">
 			<degrafa:fill><degrafa:SolidFill color="0xFFFFFF" alpha=".8"/></degrafa:fill>
 			<degrafa:stroke><degrafa:SolidStroke color="0" pixelHinting="false" alpha=".6"/></degrafa:stroke>
 		</degrafa:Circle>
-		<degrafa:Circle id="innerMarker" radius="{markerRadius*.6}" centerX="{marker.centerX}" centerY="{marker.centerY}">
+		<degrafa:Circle id="innerMarker" radius="{markerRadius*.6}" centerX="{marker.centerX}" centerY="{marker.centerY}" visible="false">
 			<degrafa:fill><degrafa:SolidFill color="{markerColor}" alpha="1"/></degrafa:fill>
 		</degrafa:Circle>
 		

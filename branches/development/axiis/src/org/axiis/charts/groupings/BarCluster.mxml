@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layouts:HorizontalBoxLayout xmlns:mx="http://www.adobe.com/2006/mxml"
+<layouts:VerticalBoxLayout xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:degrafa="http://www.degrafa.com/2007" name="outerlayout"
 	xmlns:layouts="org.axiis.layouts.*"
 	xmlns:scale="org.axiis.layouts.scale.*"
@@ -25,7 +25,7 @@
 	</mx:Script>
 	
 	<mx:Number id="percentGap">.05</mx:Number>
-	<scale:LinearScale id="verticalScale"/>
+	<scale:LinearScale id="horizontalScale"/>
 	<mx:Number id="fontSize">12</mx:Number>
 	<mx:Number id="fontColor">0</mx:Number>
 	<mx:String id="fontFamily">Arial</mx:String>
@@ -33,25 +33,25 @@
 	<mx:Boolean id="showLabel">true</mx:Boolean>
 	<mx:Boolean id="showValueLabel">true</mx:Boolean>
 		
-	<utils:NumericExpression id="labelLayout" value="{column.y+column.height+label.width+5+(currentValue >0 ? 0:-column.height-label.width-10)}"/>
-	<utils:NumericExpression id="labelLayout2" value="{column.y-valueLabel.height-3 + (currentValue > 0 ? 0:column.height+valueLabel.height+3)}"/>
+	<utils:NumericExpression id="labelLayout" value="{bar.y+bar.height+label.width+5+(currentValue >0 ? 0:-bar.height-label.width-10)}"/>
+	<utils:NumericExpression id="labelLayout2" value="{bar.y-valueLabel.height-3 + (currentValue > 0 ? 0:bar.height+valueLabel.height+3)}"/>
 
 	
 	<layouts:drawingGeometries>
 			
-		<!-- main column rectangle that gets repeated horizontally -->
-		<degrafa:RegularRectangle id="column"
-				x="{currentReference.x}"
-				y="{((currentValue >= 0) ? currentReference.height-this.verticalScale.valueToLayout(currentValue) : currentReference.height-this.verticalScale.valueToLayout(0))}"
-				width="{Math.max(15,currentReference.width)}"
-				height="{(currentValue > 0 ? this.verticalScale.valueToLayout(currentValue)-this.verticalScale.valueToLayout(0) : this.verticalScale.valueToLayout(0)-this.verticalScale.valueToLayout(currentValue)) }"
+		<!-- main bar rectangle that gets repeated horizontally -->
+		<degrafa:RegularRectangle id="bar"
+				y="{currentReference.y}"
+				x="{(currentValue >= 0) ? this.horizontalScale.valueToLayout(0) : this.horizontalScale.valueToLayout(currentValue)}"
+				height="{Math.max(15,currentReference.height)}"
+				width="{(currentValue > 0 ? this.horizontalScale.valueToLayout(currentValue)-this.horizontalScale.valueToLayout(0) : this.horizontalScale.valueToLayout(0)-this.horizontalScale.valueToLayout(currentValue)) }"
 				fill="{fill}"
 				stroke="{stroke}"
 				>
 		</degrafa:RegularRectangle>
 		
 		
-		<!-- smaller label for each column -->
+		<!-- smaller label for each bar -->
 		<degrafa:RasterText  htmlText="{currentLabel ? currentLabel:' '}"  textColor="{fontColor}" visible="{showLabel}" id="label"
 			x="{currentReference.x+(currentReference.width-label.height)/2}" height="20"  y="{labelLayout.value}"  width="100"
 			fontSize="{fontSize}"  align="{(currentValue &lt; 0) ? 'left' : 'right'}" fontFamily="{fontFamily}" fontWeight="{fontWeight}">
@@ -60,8 +60,8 @@
 			</degrafa:transform>
 		</degrafa:RasterText>	
 		<degrafa:RasterText  htmlText="{(labelFunction) ? labelFunction.call(this,currentDatum) : (currentValue ? currentValue:' ')}"  textColor="0x444444" visible="{showLabel}" id="valueLabel"
-			x="{currentReference.x+(currentReference.width-valueLabel.textWidth)/2}" height="20"  y="{labelLayout2.value}" 
+			y="{currentReference.y+(currentReference.height-valueLabel.height)/2}" height="20"  x="{bar.x+bar.width+5}" 
 			fontSize="{fontSize}"  align="left" fontFamily="{fontFamily}" fontWeight="normal"/>
 
 	</layouts:drawingGeometries>
-</layouts:HorizontalBoxLayout>
+</layouts:VerticalBoxLayout>

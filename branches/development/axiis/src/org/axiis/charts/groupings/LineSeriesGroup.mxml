@@ -10,7 +10,7 @@
 	
 	<!-- public variables -->
 	<mx:Script>
-		<![CDATA[
+		<![CDATA[ 
 			import org.axiis.core.AxiisSprite;
 			import flash.utils.getTimer;
 			import mx.collections.ArrayCollection;
@@ -40,31 +40,14 @@
 			
 			private var _prevCurvePath:Array;
 			
-			[Inspectable]
-			public function set pivotSeries(value:Boolean):void {
-				if (value!=_pivotSeries)
-				 {
-					_pivotSeries=value;
-					if (_dataProvider) dataProvider=_dataProvider; //Need to refresh the way we do this.
-				 }
-			}
 			
-			public function get pivotSeries():Boolean {
-				return _pivotSeries;
-			}
+			override public function invalidateDataProvider():void {
+					super.invalidateDataProvider();
+					
+					var firstItem:Object=(_dataProvider is Array) ? _dataProvider[0]:_dataProvider.getItemAt(0);
 			
-
-			override public function set dataProvider(value:Object):void {
-				//Depending on whether "_pivotSeries" is true we will either invert the series collection transpose which collection is the "series" versus the plots.
-		
-				var oldLength=(_dataItems) ? _dataItems.length:0;
-				
-				var firstItem:Object=(value is Array) ? value[0]:value.getItemAt(0);
-				
-				
 					var tempItems:Array=new Array();
 					
-					if (!_pivotSeries) {  //This means our series is (vertically) grouped by each primary OUTER object, and  our plots are (horizontally) grouped by the inner objects
 						for (var i:int=0;i<firstItem[plotCollection].length;i++) {
 							var obj:Object=(firstItem[plotCollection] is Array) ? firstItem[plotCollection][i]:firstItem[plotCollection].getItemAt(i);
 							if (plotFilterFunction) {
@@ -74,54 +57,20 @@
 								tempItems.push(obj);
 							}
 						}
-					}
-					else {  //This means our series is (vertically) grouped by each INNER object, and  our plots are (horizontally) grouped by the outer objects
-						for (var i:int=0;i<value.length;i++) {
-							var obj:Object=(value is Array) ? value[i]:value.getItemAt(i);
-							if (dataFilterFunction) {
-								if (this.dataFilterFunction.call(this,obj)) tempItems.push(obj);
-							}
-							else {
-								tempItems.push(obj);
-							}
-						}
-					}
+					
+				_seriesCollection=_dataItems;
 				
 				_dataItems=tempItems;
 				
 				_itemCount=_dataItems.length;
-				
-				_dataProvider=value;
-				
-				_seriesCollection=_dataProvider;
-				
-				if (!pivotSeries && dataFilterFunction) {		
-				//	_seriesCollection=new Array();
-				//	for each (var so:Object in _dataProvider) {
-				//		if (dataFilterFunction(so)) _seriesCollection.push(so);
-				//	}
-				}
-				else if (pivotSeries && plotFilterFunction) {
-					tempItems=new Array();
-					for (var i:int=0;i<firstItem[plotCollection].length;i++) {
-						var obj:Object=(firstItem[plotCollection] is Array) ? firstItem[plotCollection][i]:firstItem[plotCollection].getItemAt(i);
-						if (plotFilterFunction.call(this,obj)) tempItems.push(obj);
-					}
-				}
-				
-				
+			
 				//This will set the repeat cycle for the inner layouts
-				plotLayout.dataProvider=(!_pivotSeries) ?  _seriesCollection: tempItems; 
-				markerLayout.dataProvider=(!_pivotSeries) ?  _seriesCollection: tempItems;	
+				plotLayout.dataProvider=  _seriesCollection; 
+				markerLayout.dataProvider= _seriesCollection;		
 
 				
 				_plotCollection=firstItem;	
-				
-				super.invalidateDataProvider();
-				
-			
 			}
-			
 			private function onPreRender():void {
 				labelField=(!_pivotSeries) ? plotLabelField:seriesLabelField;
 			}
@@ -139,63 +88,56 @@
 				}
 			}
 			
+			//Gets our current curves and rounds at borders between repeater sprites
+			private function getSegments(seriesIndex:int, paths:Array):Array {
+				
+				var segments:Array=new Array();
+				if (currentIndex==0) {
+					segments=paths[seriesIndex].slice(currentIndex,currentIndex+2);
+					segments.splice(0,0,new MoveTo(segments[0].x,segments[0].y));
+					//Clip end point
+					segments[segments.length-1].x=Math.round(_repeatWidth/2);  
+					
+				}
+				else if (currentIndex < itemCount-1) {
+					segments=paths[seriesIndex].slice(currentIndex*2-1,currentIndex*2+2);
+					//Clip Start point
+					segments[0].x=Math.round(_repeatWidth/2)+Math.round(_repeatWidth*(currentIndex-1));
+					segments.splice(0,1,new MoveTo(segments[0].x,segments[0].y));
+					//Clip End Point
+					if (currentIndex < itemCount-2)
+						segments[segments.length-1].x=Math.round(_repeatWidth/2)+Math.round(_repeatWidth*(currentIndex));
+		
+				} 
+				else if (currentIndex == itemCount-1) {
+					segments=paths[seriesIndex].slice(currentIndex*2-1,currentIndex*2);
+					segments.splice(0,1,new MoveTo(segments[0].x,segments[0].y));
+				} 
+				
+				return segments;
+			}
 			
+			/**
+			 * We are going to take slices out of our _curvePathsTop, one slice (2 curves) for each horizontal repeater item
+			 * If we have an area we then close the path with another slice out of the _curvePathsBottom
+			 */
 			private function onPlotItemPreDraw():void {
 
 				myPath.stroke=stroke;
 				
+				var t:Number=flash.utils.getTimer();
+				
 				var seriesIndex:int=plotLayout.currentIndex;
-				var plotIndex:int=currentIndex;
-				var plotCount:int=itemCount;
-				_currentSegments=new Array();
+
+				_currentSegments=getSegments(seriesIndex,_curvePathsTop);
 							
-				//Need to make sure each curve start/stops at same x line (the curves produced are interpolations and have some variance)
-				// If we don't do this the fills will overlap
-				
-				//Always add a "move to for the starting point"
-				if (plotIndex==0) {
-					_currentSegments=_segmentGroups[seriesIndex].slice(plotIndex,plotIndex+2);
-					_currentSegments.splice(0,0,new MoveTo(_currentSegments[0].x,_currentSegments[0].y));
-					//Clip end point
-					_currentSegments[_currentSegments.length-1].x=Math.round(_repeatWidth/2);  
+				if (this.showArea) {
 					
-				}
-				else if (plotIndex < plotCount-1) {
-					_currentSegments=_segmentGroups[seriesIndex].slice(plotIndex*2-1,plotIndex*2+2);
-					//Clip Start point
-					_currentSegments[0].x=Math.round(_repeatWidth/2)+Math.round(_repeatWidth*(plotIndex-1));
-					_currentSegments.splice(0,1,new MoveTo(_currentSegments[0].x,_currentSegments[0].y));
-					//Clip End Point
-					if (plotIndex < plotCount-2)
-						_currentSegments[_currentSegments.length-1].x=Math.round(_repeatWidth/2)+Math.round(_repeatWidth*(currentIndex));
-		
-				} 
-				else if (plotIndex == plotCount-1) {
-					_currentSegments=_segmentGroups[seriesIndex].slice(plotIndex*2-1,plotIndex*2);
-					_currentSegments.splice(0,1,new MoveTo(_currentSegments[0].x,_currentSegments[0].y));
-				} 
-				
-				//Close our path with sides and bottom lines on first pass or not Stack
-				if (seriesIndex==0 ||  this.mode==LineSeriesGroup.MODE_BASELINE || !this.showArea) {
-					_prevCurvePath=new Array();
-					for (var i:int=0; i < _currentSegments.length; i++) {
-						_prevCurvePath.push(_currentSegments[i]);
-					}
-					_currentSegments.push(new LineTo(_currentSegments[_currentSegments.length-1].x,plotLayout.height))//;
-					_currentSegments.push(new LineTo(_currentSegments[0].x,plotLayout.height)); //bottom line;
-					_currentSegments.push(new ClosePath());
-				}
-				else if (this.mode==LineSeriesGroup.MODE_STACK && this.showArea) {
-					var tempCurves:Array=new Array();
+					_prevCurvePath=getSegments(seriesIndex,_curvePathsBottom);
 					
-					//Collect our current topmost curves (we will use on next pass as bottom curves if we are stacking areas
-					for (var i:int=0; i < _currentSegments.length; i++) { 
-						tempCurves.push(_currentSegments[i]);
-					}
-					
-					//Connect to our previous curve
+					//Connect to our previous curves	
 					_currentSegments.push(new LineTo(_prevCurvePath[_prevCurvePath.length-1].x,_prevCurvePath[_prevCurvePath.length-1].y)); 
-					
+				
 					//Add our previous curve
 					for (var i:int=_prevCurvePath.length-1; i >0; i--) {
 						//We need to reverse our curve direction use the same control points, but choose the x,y of prior locatioan 
@@ -205,44 +147,68 @@
 						}
 					}
 					_currentSegments.push(new ClosePath());
-					_prevCurvePath=tempCurves;
 
 				}
 				myPath.segments=_currentSegments;
+				
+				trace("onPlotItemPreDraw elapsed time=" + (flash.utils.getTimer()-t) + "ms");
 			}
 			
 			
 			private function onMarkerItemPreDraw():void {
 				marker.centerX=_repeatWidth*currentIndex-1;
-				yPoint.value=seriesPoints[markerLayout.currentIndex][currentIndex+1].y;
+				marker.visible=this.showMarker;
+				innerMarker.visible=this.showMarker;
+				
+				if (!this.showMarker) return;
+				
+				if (mode==LineSeriesGroup.MODE_STACK_FLOW && markerLayout.currentIndex==0) {
+					yPoint.value=verticalScale.valueToLayout(0,true);
+					trace("yPoint Value=" + yPoint.value);
+				}
+				else if (mode==LineSeriesGroup.MODE_STACK_FLOW && (markerLayout.currentIndex==1 || markerLayout.currentIndex==3)) {  //Resolves the fact that the first series is bisected
+					marker.visible=false;
+					innerMarker.visible=false;
+				}
+				else if (mode==LineSeriesGroup.MODE_STACK_FLOW && markerLayout.currentIndex==2) {
+					yPoint.value=seriesPoints[markerLayout.itemCount][currentIndex+1].y;
+					//marker.centerX+=10;
+				}
+				else {
+					
+					yPoint.value=seriesPoints[markerLayout.currentIndex][currentIndex+1].y;
+				}
 			}
 			
 			/**
 			 * This routine pre-calculates all the curves for a series
-			 * While we could calculate on each iteration, it would degrade performance because each curve is depdendent on the previous and next
-			 * Thus we cache all the curves up front, and then just takes slices off them to render
+			 * While we could calculate on each iteration, it would degrade performance because each curve is depdendent on the previous and next point along its path
+			 * Thus we cache all the curve segments up front, and then just takes slices off them to render
 			 * Curves are stored in multi-dimensional array
 			 * 
-			 * segmentGroups[currentIndex][parentLayout.currentIndex]  where currentIndex==the current "series", and parentLayout.currentIndex==the ordinal record position
+			 * segmentGroups[currentIndex][parentLayout.currentIndex]  where currentIndex==the current "series", and parentLayout.currentIndex==the plot point along the curve
 			 */
 			private function calculateCurves():void {
 				var t:Number=flash.utils.getTimer();
 				if (!plotCollection) return;
 				//var segmentWidth:Number=width/itemCount;
 				 
-				_segmentGroups=new Array();	
+				_curvePathsTop=new Array();	
 				_maxHeight=0;
 				//Two dimension array used to store each series fields, one row at a time  Array[hField,vField]
 				seriesPoints=new Array();
 				_repeatWidth=(width)/(itemCount-1);
 				
 				var y:int=0;
-				var stackedValues:Object=new Object();
+				var stackedValues:Object=new Object();  //Represents positive values for STACK layouts
+				var stackedValues2:Object=new Object();
 				
 				//This stores all the plotCollection for one series
 				var ta:Array=new Array();
+				var flowTa:Array;
 				
 				var xo:Number=0; 
+		
 				
 				for each (var series:Object in _seriesCollection) { //loop through all series to build our plot locations (to be used to generate curves)
 					
@@ -258,28 +224,12 @@
 						seriesPlots.push(vObj);
 					}
 					
-					//Depending on  whether we are pivoting the series we need to always structure the seriesPoints so that each inner array represents all the plot points
-					//for inner layout (which repeats horizontally)
-					if (!_pivotSeries) {
-					 	ta=new Array(); 
-					 	seriesPoints.push(ta);
-					} 
-					
-					if(!_pivotSeries) xo=0;
+					//Create temp array to store points
+					ta=new Array(); 					
+					xo=0;
 				
 					for (var i:int=0;i<seriesPlots.length;i++) { //each series field
-					
-						//If we are pivoting the series we need to transpose how the points get organized and invert the 2D array;
-						if (_pivotSeries) {
-							ta=seriesPoints[i];
-							if (!ta) {
-								ta=new Array();
-								seriesPoints.push(ta);
-								xo=0;
-							}
-							
-						}
-						
+
 						var obj=seriesPlots[i];
 						if (ta.length==0) { //adds a new node if it is the first time
 							ta.push(new GraphicPoint(-1,verticalScale.valueToLayout(seriesPlots[0][dataField],true))); //The first marker
@@ -289,23 +239,46 @@
 						gp.x=xo;
 						
 						
-						if (mode==HLineGroup.MODE_STACK) { //looping through to make stacked values
+						if (mode==LineSeriesGroup.MODE_STACK_ZERO) { //looping through to make stacked values
 							var stackedValue:Number=0;
-							if (!_pivotSeries) {
+
+							if (!stackedValues[i]) stackedValues[i]=0;
+							stackedValues[i]+=obj[dataField];
+							stackedValue=stackedValues[i];
+							
+							gp.y=verticalScale.valueToLayout(stackedValue,true);
+						}
+						else if (mode==LineSeriesGroup.MODE_STACK_FLOW) {
+							var stackedValue:Number;
+							//First item gets split across the zero line
+							//Then we alternate positions
+							if (y==0) {
+								if (!flowTa) flowTa=new Array();
+								//For now make two gp's that are bisected at zero
+								var gp2:GraphicPoint = new GraphicPoint;
+								gp2.x=gp.x;								
+								if (!stackedValues2[i]) stackedValues2[i]=0;
+								stackedValues2[i]-=obj[dataField]/2;
+								gp2.y=verticalScale.valueToLayout(stackedValues2[i],true);
+								if (flowTa.length==0) flowTa.push(new GraphicPoint(-1,gp2.y));  //First point in series
+								flowTa.push(gp2);
+								if (!stackedValues[i]) stackedValues[i]=0;
+								stackedValues[i]+=obj[dataField]/2;
+								gp.y=verticalScale.valueToLayout(stackedValues[i],true);
+								
+							}
+							else if (y % 2 == 1) {
 								if (!stackedValues[i]) stackedValues[i]=0;
 								stackedValues[i]+=obj[dataField];
 								stackedValue=stackedValues[i];
+								gp.y=verticalScale.valueToLayout(stackedValue,true);
 							}
 							else {
-								stackedValue=0;
-								for (var z:int=0; z <= i ;z++) {
-									if (plotFilterFunction) {
-										if (!plotFilterFunction.call(this,series[plotCollection][z])) continue;
-									}
-									stackedValue+=series[plotCollection][z][dataField];
-								}
+								if (!stackedValues2[i]) stackedValues2[i]=0;
+								stackedValues2[i]-=obj[dataField];
+								stackedValue=stackedValues2[i];
+								gp.y=verticalScale.valueToLayout(stackedValue,true);
 							}
-							gp.y=verticalScale.valueToLayout(stackedValue,true);
 						}
 						else {
 							gp.y=verticalScale.valueToLayout(obj[dataField],true);
@@ -313,16 +286,66 @@
 						
 						ta.push(gp);
 						_maxHeight=Math.max(_maxHeight,verticalScale.valueToLayout(obj[dataField]),true);
-						if (!_pivotSeries) xo+=_repeatWidth;
+						 xo+=_repeatWidth;
 					} 
+					//We have a STACK_FLOW and are at first series we add a series for the bisection
+					if (mode==LineSeriesGroup.MODE_STACK_FLOW && y==0) {
+						seriesPoints.push(flowTa);
+					}
+					seriesPoints.push(ta);
+					
 					y++;
-					if (_pivotSeries) xo+=_repeatWidth;
+				}
+		
+				//Turn the series plotCollection, into curveTo commands
+				
+				for each (var ar:Array in seriesPoints) {
+					_curvePathsTop.push(GraphicUtils.buildSegmentsFromCurvePoints(ar,tension));
 				}
 				
-				//Turn the series plotCollection, into curveTo commands
-				for each (var ar:Array in seriesPoints) {
-					_segmentGroups.push(GraphicUtils.buildSegmentsFromCurvePoints(ar,tension));
+				//Create a set of paths we can connect as bottom curves
+				if (this.showArea) {
+					_curvePathsBottom=new Array();
+					
+					var i:int=0;
+					for (var obj:Object in _curvePathsTop) {
+						if (mode==LineSeriesGroup.MODE_STACK_FLOW) {  //Our series alternate with the first one being split into two, then going positive/negative
+							if (i==1) {
+								_curvePathsBottom.push(_curvePathsTop[0]);
+							}
+							else if (i > 1 ) { //We should be a positive value here, so our "bottom" was the last positive value
+								_curvePathsBottom.push(_curvePathsTop[i-2]);
+							}
+							
+							
+						}
+						else { //When we have a baseline axis we will create a straight line for the bottom by adding a new path and ignoring the last one
+							if (i==0) {
+								//First bottom curve is a straigh line;
+								var path:Array=new Array();
+								for (var n:int=0;n<_curvePathsTop[0].length;n++) {
+									var q:QuadraticBezierTo=new QuadraticBezierTo(_curvePathsTop[0][n].cx,verticalScale.valueToLayout(0,true),_curvePathsTop[0][n].x,verticalScale.valueToLayout(0,true));
+									path.push(q);
+								}
+							 _curvePathsBottom.push(path);
+							}
+							else {
+								_curvePathsBottom.push(_curvePathsTop[i-1]);
+							}
+							
+						}
+						
+						i++;
+					}
+					
+					if (mode==LineSeriesGroup.MODE_STACK_FLOW) { //Remove the first one as it was the result of splitting the first series by bisecting the zero line
+						_curvePathsTop.splice(0,1);
+					}
+					
+					
 				}
+				//Now we have our continuous path we need to break them up into segments
+				
 				
 				trace("computeCurves elapsed time=" + (flash.utils.getTimer()-t) + "ms");
 			}
@@ -338,7 +361,10 @@
 			private var _repeatWidth:Number;
 			
 			//Stores all the precomputed curve segments
-			private var _segmentGroups:Array;
+			private var _curvePathsTop:Array;
+			
+			//Stores all the precomputed curve segments
+			private var _curvePathsBottom:Array;
 			
 			//The segments used to render the series by myPath
 			[Bindable]
@@ -351,7 +377,8 @@
 			//private var _seriesCollection:Object;
 			
 			public static var MODE_BASELINE:int=0;
-			public static var MODE_STACK:int=1;
+			public static var MODE_STACK_ZERO:int=1;
+			public static var MODE_STACK_FLOW:int=2;
 		]]>
 	</mx:Script>
 	

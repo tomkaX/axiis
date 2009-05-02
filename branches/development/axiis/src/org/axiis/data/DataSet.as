@@ -104,6 +104,63 @@ package org.axiis.data
 			}
 			
 			/**
+			 * Takes a specified column and turns each row value into a new column
+			 * converts existing column information and turns into a unique rows with an additional column labeled "RowName"
+			 * 
+			 * This will only pivot on TABLE data that is present
+			 */
+			public function pivotTable(pivotColumn:int):void {
+				if (!data.table) return //No data to pivot
+				
+				var tempData:Array=new Array();
+				var tempNewHeader:Array=new Array();
+				var tempRows:ArrayCollection=new ArrayCollection();
+		
+				
+				tempNewHeader.push("pivotedColumn");
+				for each (var row:Object in _data.table.rows) {
+					//Each row now reperesents a new column
+					var columns:Columns=new Columns();
+					
+					tempNewHeader.push(row.columns[pivotColumn].value);
+					var rowIndex:int=0;
+					for each (var col:Object in row.columns) {
+					
+						if (col.index!=pivotColumn) {
+							var newRow:Object;
+							var cell:Object;
+							if (rowIndex > tempRows.length-1 ) {
+								newRow=new Object; 
+								newRow.columns=new Columns(); 
+								cell=new Object();
+								cell.name="pivotedColumn";
+								cell.index=0;
+								cell.value=col.name;
+								newRow.columns.addItem(cell);
+								tempRows.addItem(newRow); 
+							}
+							else newRow=tempRows.getItemAt(rowIndex);
+							
+							cell=new Object();
+							cell.index=newRow.columns.length;
+							cell.name=row.columns[pivotColumn].value;
+							cell.value=col.value;
+							newRow.columns.addItem(cell);
+							newRow.index=rowIndex+1;
+							rowIndex++;	
+						}	
+									
+					}
+				
+				}
+				
+				var pivotedTable:Object=new Object();
+				pivotedTable.rows=tempRows;
+				pivotedTable.header=tempNewHeader;
+				_data.pivot=pivotedTable;
+				
+			}
+			/**
 			 *  groupings: Ordered list of name value pairs ["columnIndex, groupName"] to create heirarchal Groupings
 			 * 
 			 *  Example: processCsvAsShapedData(myData,["0,region","1,country"]);
@@ -113,7 +170,7 @@ package org.axiis.data
 			 *  flattenLastGroup:  If the lowest level grouping returns only one row for that group, it will add the COLUMNS of that one row directly to the group object
 			 *  				   (versus a 1 item arrayCollection of rows)
 			*/
-			public function processCsvAsShapedData(payload:String, groupings:Array, flattenLastGroup:Boolean=true):void {
+			/*public function processCsvAsShapedData(payload:String, groupings:Array, flattenLastGroup:Boolean=true):void {
 				//Process CSV Source, use instructions to group into hiearicies
 				//Convert CSV into data.row[n].col[n] format for dynamic object
 				var t:Number=flash.utils.getTimer();
@@ -128,8 +185,11 @@ package org.axiis.data
 				
 				trace("DataSet.processCsvShapedData " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
 			}
+			*/
 			
 			/**
+			 *  Takes table data and uses cell unique values for specified columns to group data into hierarchal object
+			 * 
 			 *  groupings: Ordered list of name value pairs ["columnIndex, groupName"] to create heirarchal Groupings
 			 * 
 			 *  Example: shapeTable(myData,["0,region","1,country"]);
@@ -175,26 +235,13 @@ package org.axiis.data
 			 * 
 			 * If a target property is a org.axis.data.columns class it will automatically aggregate all columns.
 			 */
-			public function aggregateObjectData(collectionName:String, properties:Array):void {
+			public function aggregateData(data:Object, collectionName:String, properties:Array):void {
 				//First find our collection
 				var t:Number=flash.utils.getTimer();
-				aggregate(data.object,collectionName.split("."),properties);
+				aggregate(data,collectionName.split("."),properties);
 				trace("DataSet.aggregateCollection=" + (flash.utils.getTimer()-t) + "ms");
 			}
 			
-			public function aggregateShapedData(collectionName:String, properties:Array):void {
-				//First find our collection
-				var t:Number=flash.utils.getTimer();
-				aggregate(data.shaped,collectionName.split("."),properties);
-				trace("DataSet.aggregateCollection=" + (flash.utils.getTimer()-t) + "ms");
-			}
-			
-			public function aggregateTableData(collectionName:String, properties:Array):void {
-				//First find our collection
-				var t:Number=flash.utils.getTimer();
-				aggregate(data.table,collectionName.split("."),properties);
-				trace("DataSet.aggregateCollection=" + (flash.utils.getTimer()-t) + "ms");
-			}
 			
 			private function aggregate(object:Object, collections:Array, properties:Array):void {
 				

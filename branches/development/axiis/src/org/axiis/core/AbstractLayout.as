@@ -133,7 +133,21 @@ package org.axiis.core
 			if(_dataProvider != value)
 			{
 				_dataProvider = value;
-				_dataItems=new Array();
+				
+				invalidateDataProvider();
+				
+				dispatchEvent(new Event("dataProviderChange"));
+				
+			}
+		}
+		public function get dataProvider():Object
+		{
+			return _dataProvider;
+		}
+		protected var _dataProvider:Object;
+		
+		public function invalidateDataProvider():void {
+			_dataItems=new Array();
 				if (dataProvider is ArrayCollection) {
 					for (var i:int=0;i<dataProvider.source.length;i++) {
 						if (dataFilterFunction != null) {
@@ -173,23 +187,6 @@ package org.axiis.core
 				}
 				
 				_itemCount=_dataItems.length;
-				
-
-				invalidateDataProvider();
-				
-				dispatchEvent(new Event("dataProviderChange"));
-				
-				//trace("AbstractLayout.setDataProvider= " + (flash.utils.getTimer()-t) + "ms");
-			}
-		}
-		public function get dataProvider():Object
-		{
-			return _dataProvider;
-		}
-		protected var _dataProvider:Object;
-		
-		protected function invalidateDataProvider():void {
-			//Meant to be overridden by child sprites
 		}
 		//---------------------------------------------------------------------
 		// "Current" properties

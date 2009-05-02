@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layouts:BaseLayout xmlns="*" 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:layouts="org.axiis.layouts.*" 
+	xmlns:degrafa="http://www.degrafa.com/2007" 
+	xmlns:scale="org.axiis.layouts.scale.*"
+	xmlns:utils="org.axiis.utils.*" 
+	itemPreDraw="onItemPreDraw();"
+	xmlns:core="org.axiis.core.*">
+    
+	<mx:Script>
+		<![CDATA[
+			import org.axiis.layouts.scale.IScale;
+			
+			private function onValueChanged():void {
+				if (this.width==0 || isNaN(this.width)) return;
+				//First determine the minor tick interval
+				
+				var tempArray:Array=new Array();
+				
+				_totalMajorTicks=Math.floor(this.width/majorTickSpacing);
+				var totalMinorTicks:int=Math.floor((this.width/_totalMajorTicks)/tickGap)*_totalMajorTicks;
+			
+				_majorTickInterval=totalMinorTicks/_totalMajorTicks;
+				
+				_gapStep=this.width/totalMinorTicks;
+				
+				for (var i:int=0;i<totalMinorTicks+1;i++) {
+					tempArray.push(i);
+				}
+				this.dataProvider=tempArray;
+				
+				gridRect.width=width/_totalMajorTicks;
+			}
+			
+			private function onItemPreDraw():void {
+				label.fontFamily=fontFamily;
+				label.x=currentReference.x-(label.textWidth)/2;
+				label.y=this.height;
+			}
+			
+			
+			public function set labelFunction(value:Function):void {
+				_labelFunction=value;
+			}
+			
+			public function get labelFunction():Function {
+				return _labelFunction;
+			}
+			
+			private var _labelFunction:Function=internalLabelFunction;
+			
+			private function internalLabelFunction(value:Object):String {
+				return (Math.round(Number(value)).toString());
+			}
+			
+			[Bindable]
+			private var _totalMajorTicks:int;
+			
+			[Bindable] 
+			private var _gapStep:Number;
+			
+			[Bindable]
+			private var _majorTickInterval:Number;
+			
+			[Bindable]
+			private var _labelInterval:Number;
+			
+
+		]]>
+	</mx:Script>
+	
+	<mx:Boolean id="showLabels">true</mx:Boolean>
+	<mx:Number id="tickGap">4</mx:Number>
+	<mx:Number id="majorTickSpacing">35</mx:Number>
+	<mx:Number id="majorTickLength">12</mx:Number>
+	<mx:Number id="minorTickLength">6</mx:Number>
+	<mx:Number id="gridFillColor">0xFFFFFF</mx:Number>
+	<mx:Number id="gridFillAlpha">.1</mx:Number>
+		
+	<scale:AbstractScale id="horizontalScale"/>
+	
+	<degrafa:SolidStroke id="tickStroke"/>
+	
+	<mx:String id="fontFamily">Arial</mx:String>
+	<mx:Number id="fontSize">12</mx:Number>
+	<mx:Number id="fontColor">0</mx:Number>
+	<mx:String id="fontWeight">normal</mx:String>
+	
+	<utils:BooleanExpression id="showLabel" value="{ (showLabels &amp;&amp; (showMajorTick.value==true))}"/>
+	<utils:BooleanExpression id="showMinorTick" value="{ !(showMajorTick.value==true)}"/>
+	<utils:BooleanExpression id="showMajorTick" value="{(majorTickSpacing > 0 &amp;&amp; (this.currentIndex % _majorTickInterval) == 0)}"/>
+	<utils:BooleanExpression id="showGrid" value="{(((this.currentIndex+_majorTickInterval) % (_majorTickInterval*2))==0 &amp;&amp; currentIndex &lt; itemCount-1)}"/>
+	<utils:NumericExpression id="repeaterCount" value="{Math.floor(this.width)}" valueChanged="onValueChanged();" />
+	
+	<degrafa:SolidFill id="gridFill" color="{gridFillColor}" alpha="{gridFillAlpha}"/>
+	
+	<layouts:referenceRepeater>
+		<core:GeometryRepeater id="repeater"> 
+			<core:geometry>
+				<degrafa:Line id="refLine" y="0" y1="0" height="{this.height}" x="0" x1="0" width="{this.width}"/>
+			</core:geometry>
+			<core:modifiers>
+				<core:PropertyModifier property="x" modifier="{_gapStep}" modifierOperator="add"/>
+			</core:modifiers>
+		</core:GeometryRepeater>
+	</layouts:referenceRepeater>
+	<layouts:drawingGeometries>
+		<degrafa:RegularRectangle y="0"  x="{currentReference['x']}" id="gridRect"
+			height="{height}" 
+			visible="{(showGrid.value)}" fill="{gridFill}">				  
+		</degrafa:RegularRectangle>
+		<degrafa:Line id="minorTick" stroke="{tickStroke}"
+			y="{height}" y1="{height-minorTickLength}"  visible="{showMinorTick.value}"
+			x="{currentReference['x']}" x1="{currentReference['x']}"
+			/>
+		<degrafa:Line id="majorTick" stroke="{tickStroke}" 
+			y="{height}" y1="{height-majorTickLength}" visible="{showMajorTick.value}"
+			x="{currentReference['x']}" x1="{currentReference['x']}"
+			/>
+		<degrafa:RasterText id="label" align="right" autoSizeField="true"
+			fontFamily="fontFamily" fontSize="{fontSize}" fontWeight="{fontWeight}" textColor="{fontColor}"
+			text="{_labelFunction(Number(horizontalScale.layoutToValue(horizontalScale.minLayout+currentReference['x'])))}" visible="{showLabel.value}"/>
+	</layouts:drawingGeometries>
+
+</layouts:BaseLayout>

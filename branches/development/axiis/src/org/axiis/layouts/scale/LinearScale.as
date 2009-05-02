@@ -22,18 +22,18 @@ package org.axiis.layouts.scale
 			if(invalidated)
 				validate();
 				
-			var percentage:Number= getPercentageBetweenValues(Number(value),Number(minValue),Number(maxValue));
+			var per:Number= getPercentageBetweenValues(Number(value),Number(minValue),Number(maxValue));
 		
-			percentage = Math.max(0,Math.min(1.0,percentage));
+			per = Math.max(0,Math.min(1.0,per));
 			
 		
 			
 			//trace("value to Layout " + value + " --> " + (percentage * (maxLayout - minLayout) + minLayout).toString());
 			
-			if  (!invert)
-				return percentage * (maxLayout - minLayout) + minLayout;
-			else
-				return maxLayout - (percentage * (maxLayout - minLayout) + minLayout);
+			if  (invert)
+				per=1-per;
+
+			return (maxLayout-minLayout)*per + minLayout;
 		}
 		
 		/*********  TODO - THIS FUNCTION NEEDS TO ACCOUNT FOR ZERO BASED, IT DOES NOT RIGHT NOW  ************/
@@ -50,13 +50,15 @@ package org.axiis.layouts.scale
 		}
 		
 		// This comes up a lot... maybe it should be in a util class
-		private function getPercentageBetweenValues(value:Number,minimum:Number,maximum:Number):Number
+		private function getPercentageBetweenValues(value:Number,min:Number,max:Number):Number
 		{
-			if (zeroBased  && value==0) {
-				return Math.abs(minimum)/(maximum-minimum);
+			var per:Number=Math.abs(value)/(max-min);
+			
+			 if (zeroBased && min < 0) {
+				per=Math.abs(min)/(max-min) + (value < 0 ? -per:per);
 			}
-			else
-				return 1 - (maximum - minimum - Math.abs(value)) / (maximum - minimum);
+			
+			return per;
 		}
 	}
 }

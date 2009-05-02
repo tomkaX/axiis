@@ -94,7 +94,7 @@ package org.axiis.core
 			else
 			{
 				//trace("took too long " + currentIteration)
-				timerID = setTimeout(repeatHelper,10,preIterationCallback,postIterationCallback,completeCallback);
+				timerID = setTimeout(repeatHelper,1,preIterationCallback,postIterationCallback,completeCallback);
 			}
 		}
 	}
