@@ -15,12 +15,12 @@
 			 
 			public function start():void
 			{ 
-				ds.processCsvAsTable(financeData,false);
-				ds.aggregateTableData("rows.columns",["value"]);
-				vScale.maxValue=165;
-				vScale.minValue=10;
+				ds.processCsvAsTable(payload,false);
+				ds.pivotTable(0);
+				ds.aggregateData(ds.data.pivot,"rows.columns",["value"]);
+				vScale.maxValue=ds.data.pivot.aggregates.columns_value_max*4;
 				
-				dataProvider=ds.data.table.rows;
+				dataProvider=ds.data.pivot.rows;
 				 
 				dc.invalidateDisplayList();
 			}
@@ -31,18 +31,17 @@
 			
 			private function filterColumns(obj:Object):Boolean {
 				//Don't want filter fields, trim columns
-				if (obj.index < 1 || obj.index > 4) 
-					return false; 
+				if (obj.index < 1 || obj.index > 50) 
+					return false;
 				else
 					return true;
 			}
 			
 			private function filterRows(obj:Object):Boolean {
 				//Trim our rows
-				return true
-				if (obj.index > 36) 
+				if (obj.columns[0].value=="Baseline") 
 					return false;
-				else
+				else 
 					return true;
 			}
 		]]>
@@ -51,10 +50,7 @@
 <mx:Label fontSize="22" fontFamily="Myriad Pro" htmlText="&lt;b&gt;Axiis&lt;/b&gt; - Horizontal Chart" top="20" right="30" color="0xFFFFFF"/>
 <mx:Label fontSize="14" fontFamily="Myriad Pro" htmlText="Lines and Areas" top="50" right="30" color="0xFFFFFF" alpha=".9"/>
 
-<!--mx:String id="oilData" source="data/OilConsumedByCountryTrimmed.csv"/-->
-
-
-<mx:String id="financeData" source="data/historical.csv"/>
+<mx:String id="payload" source="data/LineSeriesData.csv"/>
 
 
  
@@ -70,27 +66,33 @@
 <utils:NumericExpression id="tension" value="{slider.value/210}" valueChanged="{if (myLineGroup) dc.invalidateDisplayList();}"/>
 
 <!-- DISPLAY OBJECTS -->
-<mx:VBox width="300" top="30" left="50">
-	<mx:HBox>
-		<mx:Label text="Line Curve" textAlign="right" verticalCenter="0" width="100"/><mx:HSlider width="80" id="slider" minimum="1" maximum="80" value="35" liveDragging="true" showTrackHighlight="false" verticalCenter="-5"/>
-	</mx:HBox>
-	<mx:HBox>
-		<mx:Label text="Stack" textAlign="right" verticalCenter="0" width="100"/><mx:CheckBox id="stack" change="{myLineGroup.mode=(stack.selected) ? 1:0; dc.invalidateDisplayList();}"/>
-	</mx:HBox>
-	<mx:HBox>
-		<mx:Label text="Area" textAlign="right" verticalCenter="0" width="100"/><mx:CheckBox id="area" change="{myLineGroup.showArea=(area.selected) ? true:false; dc.invalidateDisplayList();}"/>
-	</mx:HBox>
-	<mx:HBox>
-		<mx:Label text="Marker" textAlign="right" verticalCenter="0" width="100"/><mx:CheckBox id="showMarker" change="{dc.invalidateDisplayList();}"/>
-	</mx:HBox>
-	<mx:HBox>
-		<mx:Label text="Pivot Series" textAlign="right" verticalCenter="0" width="100"/><mx:CheckBox id="pivot" change="{dc.invalidateDisplayList();}" selected="true"/>
-	</mx:HBox>
-</mx:VBox>
+<Examples:PanelBackground width="700" height="50" top="30" left="60" cornerRadius="8"/>
+<mx:HBox id="myBox" top="45" left="55">
+		<mx:HBox>
+			<mx:Label text="Line Curve" textAlign="right" verticalCenter="0"/><mx:HSlider width="80" id="slider" minimum="1" maximum="80" value="35" liveDragging="true" showTrackHighlight="false" verticalCenter="-5"/>
+		</mx:HBox>
+			<mx:Label text="|"/>
+		<mx:HBox>
+			<mx:Label text="Area" textAlign="right" verticalCenter="0"/><mx:CheckBox id="area" change="{dc.invalidateDisplayList();}" selected="true"/>
+		</mx:HBox>
+			<mx:Label text="|"/>
+		<mx:HBox>
+			<mx:Label text="Marker" textAlign="right" verticalCenter="0"/><mx:CheckBox id="showMarker" change="{dc.invalidateDisplayList();}"/>
+		</mx:HBox>
+		<mx:Label text="|"/>
+		<mx:Spacer width="20"/>
+		<mx:HBox>
+			<mx:RadioButtonGroup id="layoutGroup" change="{dc.invalidateDisplayList();}"/>
+			<mx:RadioButton label="Overlay" group="{layoutGroup}" value="{LineSeriesGroup.MODE_BASELINE}"  selected="true" />
+			<mx:RadioButton label="Stack" group="{layoutGroup}" value="{LineSeriesGroup.MODE_STACK_ZERO}"/>
+			<mx:RadioButton label="Flow" group="{layoutGroup}" value="{LineSeriesGroup.MODE_STACK_FLOW}"/>
+		</mx:HBox>
+</mx:HBox>
+
 
 
 <!-- CHART -->
-	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{myLineGroup.height}" id="vScale"/>
+	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{myLineGroup.height}" id="vScale" minValue="{(layoutGroup.selectedValue == LineSeriesGroup.MODE_STACK_FLOW) ? -Number(vScale.maxValue) : 0}"/>
 	
 	<axiis:DataCanvas height="70%" width="80%" id="dc" top="200" horizontalCenter="0"
 		 strokes="{strokes}" fills="{fills}" palettes="{palettes}" showDataTips="true">
@@ -105,8 +107,8 @@
 		<!-- Layouts -->
 		<axiis:layouts>
 					<groupings:LineSeriesGroup id="myLineGroup" x="10" y="0"  height="{dc.height-70}" width="{dc.width-35}" 
-					  tension="{tension.value}" markerColor="{areaPalette.currentColor}" pivotSeries="{pivot.selected}" dataFilterFunction="{filterRows}"
-					  plotFilterFunction="{filterColumns}" markerSize="8" showMarker="{showMarker.selected}"
+					  tension="{tension.value}" markerColor="{areaPalette.currentColor}" dataFilterFunction="{filterRows}" showArea="{area.selected}"
+					  plotFilterFunction="{filterColumns}" markerSize="8" showMarker="{showMarker.selected}" mode="{int(layoutGroup.selectedValue)}"
 					  dataProvider="{dataProvider}" plotCollection="columns"
 					  dataField="value" verticalScale="{vScale}"
 					  stroke="{myStroke}" fill="{areaFill}"

@@ -19,8 +19,8 @@
 				
 				//Show series by country and plot by medal
 				ds.processXmlString(countryData);
-				ds.aggregateObjectData("country.medal",["count"]);
-				ds.aggregateObjectData("country",["aggregates.medal_count_sum"]);
+				ds.aggregateData(ds.data.object,"country.medal",["count"]);
+				ds.aggregateData(ds.data.object,"country",["aggregates.medal_count_sum"]);
 				vScale.maxValue=ds.data.object.aggregates["country_aggregates:medal_count_sum_sum"]/2;
 				
 				
@@ -43,14 +43,6 @@
 					return true;
 			}
 			
-			private function filterRows(obj:Object):Boolean {
-				//Don't want filter fields
-				//return true;
-				if (obj.name == "China" || obj.name=="USA") 
-					return false;
-				else
-					return true;
-			}
 		]]>
 </mx:Script> 
 <Examples:ExampleBackground width="{this.width}" height="{this.height}"/>
@@ -71,28 +63,33 @@
 <utils:NumericExpression id="tension" value="{slider.value/210}" valueChanged="{if (myLineGroup) dc.invalidateDisplayList();}"/>
 
 <!-- DISPLAY OBJECTS -->
-
-<mx:VBox width="300" top="30" left="50">
-	<mx:HBox>
-		<mx:Label text="Line Curve" textAlign="right" verticalCenter="0" width="100"/><mx:HSlider width="80" id="slider" minimum="1" maximum="80" value="35" liveDragging="true" showTrackHighlight="false" verticalCenter="-5"/>
-	</mx:HBox>
-	<mx:HBox>
-		<mx:Label text="Stack" textAlign="right" verticalCenter="0" width="100"/><mx:CheckBox id="stack" change="{myLineGroup.mode=(stack.selected) ? 1:0; dc.invalidateDisplayList();}"/>
-	</mx:HBox>
-	<mx:HBox>
-		<mx:Label text="Area" textAlign="right" verticalCenter="0" width="100"/><mx:CheckBox id="area" change="{myLineGroup.showArea=(area.selected) ? true:false; dc.invalidateDisplayList();}"/>
-	</mx:HBox>
-	<mx:HBox>
-		<mx:Label text="Marker" textAlign="right" verticalCenter="0" width="100"/><mx:CheckBox id="showMarker" change="{dc.invalidateDisplayList();}"/>
-	</mx:HBox>
-	<mx:HBox>
-		<mx:Label text="Pivot Series" textAlign="right" verticalCenter="0" width="100"/><mx:CheckBox id="pivot" change="{dc.invalidateDisplayList();}"/>
-	</mx:HBox>
-</mx:VBox>
+<!-- DISPLAY OBJECTS -->
+<Examples:PanelBackground width="700" height="50" top="30" left="60" cornerRadius="8"/>
+<mx:HBox id="myBox" top="45" left="55">
+		<mx:HBox>
+			<mx:Label text="Line Curve" textAlign="right" verticalCenter="0"/><mx:HSlider width="80" id="slider" minimum="1" maximum="80" value="35" liveDragging="true" showTrackHighlight="false" verticalCenter="-5"/>
+		</mx:HBox>
+			<mx:Label text="|"/>
+		<mx:HBox>
+			<mx:Label text="Area" textAlign="right" verticalCenter="0"/><mx:CheckBox id="area" change="{dc.invalidateDisplayList();}" selected="true"/>
+		</mx:HBox>
+			<mx:Label text="|"/>
+		<mx:HBox>
+			<mx:Label text="Marker" textAlign="right" verticalCenter="0"/><mx:CheckBox id="showMarker" change="{dc.invalidateDisplayList();}"/>
+		</mx:HBox>
+		<mx:Label text="|"/>
+		<mx:Spacer width="20"/>
+		<mx:HBox>
+			<mx:RadioButtonGroup id="layoutGroup" change="{dc.invalidateDisplayList();}"/>
+			<mx:RadioButton label="Overlay" group="{layoutGroup}" value="{LineSeriesGroup.MODE_BASELINE}"  selected="true" />
+			<mx:RadioButton label="Stack" group="{layoutGroup}" value="{LineSeriesGroup.MODE_STACK_ZERO}"/>
+			<mx:RadioButton label="Flow" group="{layoutGroup}" value="{LineSeriesGroup.MODE_STACK_FLOW}"/>
+		</mx:HBox>
+</mx:HBox>
 
 
 <!-- CHART --> 
-	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{myLineGroup.height}" id="vScale"/>
+	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{myLineGroup.height}"  minValue="{(layoutGroup.selectedValue == LineSeriesGroup.MODE_STACK_FLOW) ? -Number(vScale.maxValue) : 0}" id="vScale"/>
 	
 	<axiis:DataCanvas height="70%" width="80%" id="dc" top="200" horizontalCenter="0"
 		 strokes="{strokes}" fills="{fills}" palettes="{palettes}" showDataTips="true">
@@ -106,8 +103,8 @@
 	<!-- Layouts -->
 		<axiis:layouts>
 					<groupings:LineSeriesGroup id="myLineGroup" x="35" y="0"  height="{dc.height-70}" width="{dc.width-35}" 
-					  tension="{tension.value}" markerColor="{areaPalette.currentColor}" pivotSeries="{pivot.selected}"
-					  plotFilterFunction="{filterColumns}"  showMarker="{showMarker.selected}" dataFilterFunction="{filterRows}"
+					  tension="{tension.value}" markerColor="{areaPalette.currentColor}"   showArea="{area.selected}"
+					  plotFilterFunction="{filterColumns}"  showMarker="{showMarker.selected}" mode="{int(layoutGroup.selectedValue)}"
 					  dataProvider="{dataProvider}" plotCollection="medal" markerSize="8"
 					  dataField="count" plotLabelField="category" seriesLabelField="name" verticalScale="{vScale}"
 					  stroke="{myStroke}" fill="{areaFill}"

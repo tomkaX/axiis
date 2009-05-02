@@ -10,15 +10,15 @@
 		<![CDATA[
 			import org.axiis.data.DataSet;
 			
-			var ds:DataSet = new DataSet();
+			var ds:DataSet = new DataSet(); 
 			
 			public function start():void
 			{ 
 				ds.processXmlString(countryData);
 				//Aggregate the detailed data items
-				ds.aggregateObjectData("country.medal",["count"]);
+				ds.aggregateData(ds.data.object,"country.medal",["count"]);
 				//Aggegate the higher level items
-				ds.aggregateObjectData("country",["aggregates.medal_count_sum"]);
+				ds.aggregateData(ds.data.object,"country",["aggregates.medal_count_sum"]);
 				vScale.maxValue=ds.data.object.aggregates['country_aggregates:medal_count_sum_max'];
 				dataProvider=ds.data.object.country;
 				
@@ -43,6 +43,7 @@
 <mx:String id="childDataField">count</mx:String>
 <mx:String id="childLabelField">category</mx:String>
 <mx:Number id="percentGap">.02</mx:Number>
+
 
 	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{hLayout.height}" id="vScale"/>
 	

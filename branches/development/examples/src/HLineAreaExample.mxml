@@ -17,9 +17,9 @@
 			{ 
 				ds.processXmlString(countryData);
 				//Aggregate the detailed data items
-				ds.aggregateObjectData("country.medal",["count"]);
+				ds.aggregateData(ds.data.object,"country.medal",["count"]);
 				//Aggegate the higher level items
-				ds.aggregateObjectData("country",["aggregates.medal_count_sum"]);
+				ds.aggregateData(ds.data.object,"country",["aggregates.medal_count_sum"]);
 				vScale.maxValue=60; //ds.data.aggregates['country_aggregates:medal_count_sum_max'];
 				dataProvider=ds.data.object.country;
 				 
