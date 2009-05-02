@@ -36,7 +36,7 @@
 	<utils:NumericExpression id="labelLayout" value="{(currentValue > 0) ? -label.width-5 : bar.x + bar.width+5}"/>
 	<utils:NumericExpression id="valueLabelLayout" value="{(currentValue > 0) ? bar.x+bar.width+5 : bar.x-bar.height-valueLabel.textWidth-5}"/>
 
-	
+	<degrafa:SolidFill color="0xFFFF00" alpha=".5" id="stateFill"/>
 	<layouts:drawingGeometries>
 			
 		<!-- main bar rectangle that gets repeated horizontally -->
@@ -62,4 +62,7 @@
 			fontSize="{fontSize}"  align="left" fontFamily="{fontFamily}" fontWeight="normal"/>
 
 	</layouts:drawingGeometries>
+	<layouts:states>
+		<states:State targets="{[bar]}" enterStateEvent="mouseOver" exitStateEvent="mouseOut" properties="{['fill']}" values="{[stateFill]}"/>
+	</layouts:states>
 </layouts:VerticalBoxLayout>
