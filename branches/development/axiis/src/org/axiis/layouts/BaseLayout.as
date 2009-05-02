@@ -1,7 +1,5 @@
 package org.axiis.layouts
 {
-	import com.degrafa.geometry.Geometry;
-	
 	import flash.events.Event;
 	import flash.geom.Rectangle;
 	import flash.utils.getTimer;
@@ -23,10 +21,6 @@ package org.axiis.layouts
 			super();
 		}
 		
-		private var _currentChild:AxiisSprite;
-		
-		private var activeStates:Array = [];
-
 		[Bindable(event="scaleFillChange")]
 		/**
 		 * Set to TRUE - this will use a common bounds to fill all layout items being drawn
@@ -71,7 +65,6 @@ package org.axiis.layouts
 				this.sprite = newSprite;
 			//sprite.visible = false;
 			_rendering = true;
-			
 				
 			if(!sprite || !_referenceGeometryRepeater)
 				return;			
@@ -111,7 +104,10 @@ package org.axiis.layouts
 			else
 				_currentValue=_currentDatum;
 			if (labelField)
-				_currentLabel = getProperty(_currentDatum,labelField).toString();
+			{
+				var s:String = String(getProperty(_currentDatum,labelField))
+				_currentLabel = s != null ? s : "";
+			}
 		
 		}
 
@@ -127,37 +123,58 @@ package org.axiis.layouts
 				sprite.addDrawingSprite(newChildSprite);
 				childSprites.push(newChildSprite);
 			}
-			_currentChild = AxiisSprite(sprite.drawingSprites[currentIndex]);
-			_currentChild.data = currentDatum;
+			var currentChild:AxiisSprite = AxiisSprite(sprite.drawingSprites[currentIndex]);
+			currentChild.data = currentDatum;
 			
 			dispatchEvent(new Event("itemPreDraw"));
 			
-			_currentChild.bounds = bounds;
-			_currentChild.scaleFill = scaleFill;
-			_currentChild.geometries = drawingGeometries;
-			_currentChild.render();
+			currentChild.bounds = bounds;
+			currentChild.scaleFill = scaleFill;
+			currentChild.geometries = drawingGeometries;
+			currentChild.states = states;
+			currentChild.clearModifications();
+			currentChild.addModificationListeners();
+			currentChild.render();
 	
 			var i:int=0;
 			for each(var layout:ILayout in layouts)
 			{
 				//When we have multiple peer layouts the AxiisSprite needs to differentiate between child drawing sprites and child layout sprites
 				layout.parentLayout = this as ILayout;
-				if (_currentChild.layoutSprites.length-1 < i) {
+				if (currentChild.layoutSprites.length-1 < i) {
 					var ns:AxiisSprite = createChildSprite(this);
-					_currentChild.addLayoutSprite(ns);
+					currentChild.addLayoutSprite(ns);
 				}
-				layout.render(_currentChild.layoutSprites[i]);
+				layout.render(currentChild.layoutSprites[i]);
 				i++;
 			}
 		}
 		
 		protected function repeatComplete():void
 		{
+			preIteration();
+			_currentReference = referenceRepeater.geometry;
+			
 			if (sprite.drawingSprites.length > _itemCount) 
 				trimChildSprites(sprite.drawingSprites.length - _itemCount - 1);
 			sprite.visible = visible;
 			_rendering = false;
+			
+			if(parentLayout == null)
+			{
+				removeModificationListenersFromChildren(sprite);
+			}
 			//trace("BaseLayout.render elapsed=" + (flash.utils.getTimer()-t) + "ms");
+		}
+		
+		private function removeModificationListenersFromChildren(sprite:AxiisSprite):void
+		{
+			sprite.removeModificationListeners();
+			for(var a:int = 0; a < sprite.numChildren; a++)
+			{
+				var currChild:AxiisSprite = sprite.getChildAt(a) as AxiisSprite;
+				removeModificationListenersFromChildren(currChild);
+			}
 		}
 		
 		private function createChildSprite(layout:ILayout):AxiisSprite
@@ -165,7 +182,6 @@ package org.axiis.layouts
 			var newChildSprite:AxiisSprite = new AxiisSprite();
 			newChildSprite.doubleClickEnabled=true;
 			newChildSprite.layout = layout;
-			newChildSprite.states = states;
 			return newChildSprite;
 		}
 
@@ -178,6 +194,8 @@ package org.axiis.layouts
 		}
 		
 		private function getProperty(obj:Object, propertyName:String):Object {
+			if(!obj)
+				return null;
 			var chain:Array=propertyName.split(".");
 			if (chain.length<2) {
 				return obj[chain[0]];

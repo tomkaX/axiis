@@ -64,7 +64,7 @@
 					</degrafa:transform>
 				</degrafa:RegularRectangle>
 				<degrafa:RasterText fontSize="11" fontFamily="Verdana"
-					text="{waterfallLayout.currentDatum[labelField]}"
+					text="{waterfallLayout.currentLabel}"
 					x="{waterfallLayout.currentReference.x}"
 					y="{height}"/>
 			</layouts:drawingGeometries>

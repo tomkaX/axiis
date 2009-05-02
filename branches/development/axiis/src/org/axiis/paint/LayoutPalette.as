@@ -118,8 +118,6 @@ package org.axiis.paint
 				generatePalette();
 			}
 			_currentColor=_colors[_target.currentIndex];
-			
-
 		}
 	}
 }

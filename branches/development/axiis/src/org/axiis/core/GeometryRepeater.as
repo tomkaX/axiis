@@ -82,7 +82,6 @@ package org.axiis.core
 			// We've finished looping before time ran out. Tear down and call completeCallback
 			if(currentIteration == len)
 			{
-				//trace("finished in time!")
 				for each (modifier in modifiers)
 				{
 					modifier.end();
@@ -93,7 +92,6 @@ package org.axiis.core
 			// The loop took too long and we had to break out. Give the player 10ms to render and, and try again
 			else
 			{
-				//trace("took too long " + currentIteration)
 				timerID = setTimeout(repeatHelper,1,preIterationCallback,postIterationCallback,completeCallback);
 			}
 		}

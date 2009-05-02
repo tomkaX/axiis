@@ -4,43 +4,47 @@ package org.axiis.states
 	
 	public class State
 	{
-
 		public function State()
 		{
+			super();
 		}
 		
-		public var targets:Array=new Array();
-		public var properties:Array=new Array();
-		public var values:Array=new Array();
-		public var enterStateEvent:String;
-		public var exitStateEvent:String;
+		private var oldValues:Array = [];
 		
-		private var propertyValues:Array=new Array();
+		public var targets:Array = [];
+		
+		public var properties:Array = [];
+		
+		public var values:Array = [];
+		
+		public var enterStateEvent:String;
+		
+		public var exitStateEvent:String;
 
-		public function apply(geometry:Geometry):void
+		public function apply():void
 		{
-			if (targets.length!=properties.length) return;
-			propertyValues=new Array();
+			if (targets.length!=properties.length)
+				return;
+				
+			oldValues = [];
 			
 			for (var i:int=0;i<targets.length;i++)
 			{
-				var obj:Object=targets[i];
-				if(obj.id == geometry.id)
-				{
-					propertyValues.push(obj[properties[i]]);
-					geometry[properties[i]]=values[i];
-				}
+				var obj:Object = targets[i];
+				oldValues.push(obj[properties[i]]);
+				obj[properties[i]] = values[i];
 			}
-			
 		}
 		
-		public function remove(geometry:Geometry):void
+		public function remove():void
 		{
-			if (targets.length!=properties.length || properties.length!=propertyValues.length) return;
-			for (var i:int=0;i<targets.length;i++) {
-				var obj:Object=targets[i];
-				if(obj.id == geometry.id && propertyValues[i])
-					geometry[properties[i]]=propertyValues[i];
+			if (targets.length != properties.length || properties.length != oldValues.length)
+				return;
+				
+			for (var i:int=0;i<targets.length;i++)
+			{
+				var obj:Object = targets[i];
+				obj[properties[i]]=oldValues[i];
 			}			
 		}
 	}

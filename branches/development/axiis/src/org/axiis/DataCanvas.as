@@ -43,7 +43,7 @@ package org.axiis
 		
 		public var toolTipClass:IFactory;
 		
-		public var hitRadius:Number = 10;
+		public var hitRadius:Number = 1;
 		
 		private var toolTips:Array = [];
 		

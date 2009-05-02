@@ -60,11 +60,35 @@
 										width="{subColumnLayout.currentReference.width}"/>
 								</axiis:drawingGeometries>
 								
+								<axiis:states>
+									<axiis:State enterStateEvent="mouseOver"
+										exitStateEvent="mouseOut"
+										properties="{['fill']}"
+										values="{[rollOverFill2]}"
+										targets="{[subColumn]}"/>
+								</axiis:states>
+								
 							</axiis:HorizontalBoxLayout>
 						</axiis:layouts>
 						
+						<axiis:states>
+							<axiis:State enterStateEvent="mouseOver"
+								exitStateEvent="mouseOut"
+								properties="{['fill']}"
+								values="{[rollOverFill1]}"
+								targets="{[subColumn]}"/>
+						</axiis:states>
+						
 					</axiis:HorizontalBoxLayout>
 				</axiis:layouts>
+				
+				<axiis:states>
+					<axiis:State enterStateEvent="mouseOver"
+						exitStateEvent="mouseOut"
+						properties="{['fill']}"
+						values="{[rollOverFill0]}"
+						targets="{[subColumn]}"/>
+				</axiis:states>
 				
 			</axiis:HorizontalBoxLayout>
 		</axiis:layouts>
