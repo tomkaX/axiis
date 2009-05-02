@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<degrafa:RegularRectangle xmlns="*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:degrafa="http://www.degrafa.com/2007">
+<mx:Script>
+	<![CDATA[
+		import com.degrafa.paint.SolidStroke;
+		import org.axiis.core.AxiisSprite;
+		
+		[Bindable]
+		public var labelValue:String="";
+
+		[Bindable]
+		public var markerStroke:SolidStroke=new SolidStroke(0xFFFFFF,.5,1);
+		
+	]]>
+</mx:Script> 
+	<mx:String id="fontFamily">Arial</mx:String>
+	<mx:Number id="fontSize">12</mx:Number>
+	<mx:Number id="fontColor">0</mx:Number>
+	<mx:String id="fontWeight">normal</mx:String>
+
+	<degrafa:geometry>
+		<degrafa:Line y="{this.y}" y1="{this.y+height}" x="{this.x+width*.2}" x1="{this.x+width*.2}" stroke="{markerStroke}" id="leftLine"/>
+		<degrafa:Line y="{this.y}" y1="{this.y}" x="{this.x+width*.2}" x1="{this.x+width}" stroke="{markerStroke}" id="topLine"/>
+		<degrafa:Line y="{this.y+height}" y1="{this.y+height}" x="{this.x+width*.2}" x1="{this.x+width}" stroke="{markerStroke}" id="bottomLine"/>
+		<degrafa:Line y="{this.y+height/2}" y1="{this.y+height/2}" x="{this.x+width*.2}" x1="{this.x}" stroke="{markerStroke}" id="centerLine"/>
+		
+		<degrafa:RasterText text="{labelValue}" y="{this.y+width+10}"  x="{this.x-width*.2-5}" width="{width+10}" height="20" align="center"
+			fontSize="{fontSize}" textColor="{fontColor}" fontWeight="{fontWeight}"  fontFamily="{fontFamily}">
+			<degrafa:transform>
+				<degrafa:RotateTransform registrationPoint="topLeft" angle="-90"/>
+			</degrafa:transform>
+		</degrafa:RasterText>
+	</degrafa:geometry>	
+
+
+</degrafa:RegularRectangle>

@@ -33,8 +33,8 @@
 	<mx:Boolean id="showLabel">true</mx:Boolean>
 	<mx:Boolean id="showValueLabel">true</mx:Boolean>
 		
-	<utils:NumericExpression id="labelLayout" value="{bar.y+bar.height+label.width+5+(currentValue >0 ? 0:-bar.height-label.width-10)}"/>
-	<utils:NumericExpression id="labelLayout2" value="{bar.y-valueLabel.height-3 + (currentValue > 0 ? 0:bar.height+valueLabel.height+3)}"/>
+	<utils:NumericExpression id="labelLayout" value="{(currentValue > 0) ? -label.width-5 : bar.x + bar.width+5}"/>
+	<utils:NumericExpression id="valueLabelLayout" value="{(currentValue > 0) ? bar.x+bar.width+5 : bar.x-bar.height-valueLabel.textWidth-5}"/>
 
 	
 	<layouts:drawingGeometries>
@@ -52,15 +52,13 @@
 		
 		
 		<!-- smaller label for each bar -->
-		<degrafa:RasterText  htmlText="{currentLabel ? currentLabel:' '}"  textColor="{fontColor}" visible="{showLabel}" id="label"
-			x="{currentReference.x+(currentReference.width-label.height)/2}" height="20"  y="{labelLayout.value}"  width="100"
-			fontSize="{fontSize}"  align="{(currentValue &lt; 0) ? 'left' : 'right'}" fontFamily="{fontFamily}" fontWeight="{fontWeight}">
-		<degrafa:transform>
-				<degrafa:RotateTransform angle="-90" registrationPoint="topLeft"/>
-			</degrafa:transform>
-		</degrafa:RasterText>	
-		<degrafa:RasterText  htmlText="{(labelFunction) ? labelFunction.call(this,currentDatum) : (currentValue ? currentValue:' ')}"  textColor="0x444444" visible="{showLabel}" id="valueLabel"
-			y="{currentReference.y+(currentReference.height-valueLabel.height)/2}" height="20"  x="{bar.x+bar.width+5}" 
+		<degrafa:RasterText id="label"  htmlText="{currentLabel ? currentLabel:' '}"  textColor="{fontColor}" visible="{showLabel}" 
+			x="{labelLayout.value}" height="15"    width="100"
+			y="{currentReference.y + (currentReference.height-label.height)*.5}"
+			fontSize="{fontSize}"  align="{(currentValue > 0) ? 'right' : 'left'}" fontFamily="{fontFamily}" fontWeight="{fontWeight}"/>
+		
+		<degrafa:RasterText id="valueLabel"  htmlText="{(labelFunction) ? labelFunction.call(this,currentDatum) : (currentValue ? currentValue:' ')}"  textColor="0x444444" visible="{showLabel}" 
+			y="{currentReference.y+(currentReference.height-valueLabel.height)*.5}" height="20"  x="{valueLabelLayout.value}" 
 			fontSize="{fontSize}"  align="left" fontFamily="{fontFamily}" fontWeight="normal"/>
 
 	</layouts:drawingGeometries>

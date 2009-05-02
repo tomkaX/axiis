@@ -3,7 +3,7 @@
 	xmlns:degrafa="http://www.degrafa.com/2007" name="outerlayout"
 	xmlns:layouts="org.axiis.layouts.*"
 	xmlns:scale="org.axiis.layouts.scale.*"
-	xmlns:states="org.axiis.states.*" itemPreDraw="onPreDraw();" preRender="onPreRender();" xmlns:core="org.axiis.core.*">
+	xmlns:states="org.axiis.states.*"  xmlns:core="org.axiis.core.*">
 	
 	<!-- NOTE: Currently only tested for positive values -->
 	
@@ -20,20 +20,10 @@
 			public var stroke:IGraphicsStroke;
 			
 			
-			private function onPreDraw():void {
-			//	trace("preDraw refRect.y=" + refRect.y);
-				
-			} 
-			
-			private function onPreRender():void {
-				//We need this because of a binding collision on the height - need to investigate to see why this is happening.
-				if(dataItems && dataItems.length>0)
-					refRect.y=this.height-verticalScale.valueToLayout(dataItems[0][dataField]);
-			} 
 		]]>
 	</mx:Script>
 	
-	<scale:LinearScale id="verticalScale"/>
+	<scale:LinearScale id="horizontalScale"/>
 	<mx:Number id="fontSize">10</mx:Number>
 	<mx:String id="fontFamily">Arial</mx:String>
 	<mx:String id="fontWeight">normal</mx:String>
@@ -44,21 +34,20 @@
 	<layouts:referenceRepeater>
 		<core:GeometryRepeater dataProvider="{dataItems}">
 			<core:geometry>
-				<degrafa:RegularRectangle width="{this.width}" height="0" id="refRect"  enableEvents="false"
-					x="0"/> 
+				<degrafa:RegularRectangle width="{0}" height="{height}" id="refRect" enableEvents="false"
+					x="0" y="0"/> 
 			</core:geometry>
 			<core:modifiers>
-				<core:PropertyModifier id="heightModifier" property="height" modifier="{this.verticalScale.valueToLayout(currentValue)}" modifierOperator="none"/>
-				<core:PropertyModifier id="yModifier" property="y" modifier="{this.verticalScale.valueToLayout(currentValue)}" modifierOperator="subtract"/>
-			
+				<core:PropertyModifier id="widthModifier" property="width" modifier="{this.horizontalScale.valueToLayout(currentValue)}" modifierOperator="none"/>
+				<core:PropertyModifier id="xModifier" property="x" modifier="{(currentIndex == 0) ? 0 : this.horizontalScale.valueToLayout(dataItems[currentIndex-1][dataField])}" modifierOperator="add"/>
 			</core:modifiers>
 		</core:GeometryRepeater>	
 	</layouts:referenceRepeater>
 	<layouts:drawingGeometries>
 			
 		<!-- main column rectangle that gets repeated vertically -->
-		<degrafa:RegularRectangle id="myCol" x="0"  enableEvents="false"
-				y="{currentReference['y']}"
+		<degrafa:RegularRectangle id="myBar" y="0"  enableEvents="false"
+				x="{currentReference.x}"
 				width="{currentReference.width}"
 				height="{currentReference.height}"
 				fill="{fill}"
@@ -67,12 +56,9 @@
 		</degrafa:RegularRectangle>
 		
 		<!-- smaller label for each column -->
-		<degrafa:RasterText text="{(currentLabel ? currentLabel:' ')}" visible="{showLabel}"  enableEvents="false"
-			x="{currentReference.width}" height="20" width="70" y="{currentReference['y']+yModifier.modifier}" 
-			fontSize="{fontSize}" align="left" fontFamily="{fontFamily}" fontWeight="{fontWeight}" textColor="{fontColor}">
-			<degrafa:transform>
-				<degrafa:RotateTransform registrationPoint="topLeft" angle="-90"/>
-			</degrafa:transform>
+		<degrafa:RasterText text="{(currentLabel ? currentLabel:' ')}" visible="{showLabel}"  enableEvents="false" id="label"
+			x="{myBar.x+myBar.width-label.width}" height="15" width="70" y="{myBar.y+(myBar.height-label.height)/2}" 
+			fontSize="{fontSize}" align="right" fontFamily="{fontFamily}" fontWeight="{fontWeight}" textColor="{fontColor}">
 		</degrafa:RasterText>
 	</layouts:drawingGeometries>
 	<layouts:fills>

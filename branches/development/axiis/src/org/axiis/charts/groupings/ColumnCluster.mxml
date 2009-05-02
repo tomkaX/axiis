@@ -34,7 +34,7 @@
 	<mx:Boolean id="showValueLabel">true</mx:Boolean>
 		
 	<utils:NumericExpression id="labelLayout" value="{column.y+column.height+label.width+5+(currentValue >0 ? 0:-column.height-label.width-10)}"/>
-	<utils:NumericExpression id="labelLayout2" value="{column.y-valueLabel.height-3 + (currentValue > 0 ? 0:column.height+valueLabel.height+3)}"/>
+	<utils:NumericExpression id="valueLabelLayout" value="{column.y-valueLabel.height-3 + (currentValue > 0 ? 0:column.height+valueLabel.height+3)}"/>
 
 	
 	<layouts:drawingGeometries>
@@ -60,7 +60,7 @@
 			</degrafa:transform>
 		</degrafa:RasterText>	
 		<degrafa:RasterText  htmlText="{(labelFunction) ? labelFunction.call(this,currentDatum) : (currentValue ? currentValue:' ')}"  textColor="0x444444" visible="{showLabel}" id="valueLabel"
-			x="{currentReference.x+(currentReference.width-valueLabel.textWidth)/2}" height="20"  y="{labelLayout2.value}" 
+			x="{currentReference.x+(currentReference.width-valueLabel.textWidth)/2}" height="20"  y="{valueLabelLayout.value}" 
 			fontSize="{fontSize}"  align="left" fontFamily="{fontFamily}" fontWeight="normal"/>
 
 	</layouts:drawingGeometries>
