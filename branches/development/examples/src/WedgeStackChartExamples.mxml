@@ -55,6 +55,9 @@
 				}
 			}
 			
+			public function colorFunction(val:Object):Number {
+				return Number(val) & -0x555555;
+			}
 			
 		]]>
 	</mx:Script>
@@ -201,9 +204,9 @@
 					<layouts:states>
 						<axiis:State enterStateEvent="mouseOver"
 							exitStateEvent="mouseOut"
-							properties="{['fill']}"
-							values="{[rollOverFill1]}"
-							targets="{[outerWedgeRenderer]}"/>
+							properties="{['color']}"
+							values="{[colorFunction]}"
+							targets="{[outerWedgeFill]}"/>
 					</layouts:states>
 					
 				</layouts:BaseLayout>
