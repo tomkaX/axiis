@@ -16,6 +16,8 @@ package org.axiis.core
 			super();
 		}
 		
+		public var iterationLoopComplete:Boolean=true;  //Used by base layout to stop propogating propertychange events when everything gets returned to original state
+		
 		public var geometry:Geometry;
 		
 		[Inspectable(category="General", arrayType="org.axiis.core.PropertyModifier")]
@@ -40,6 +42,7 @@ package org.axiis.core
 		
 		public function repeat(preIterationCallback:Function = null, postIterationCallback:Function=null, completeCallback:Function = null):void
 		{
+			iterationLoopComplete=false;
 			clearTimeout(timerID);
 			_currentIteration = 0;
 			repeatHelper(preIterationCallback,postIterationCallback,completeCallback);
@@ -73,21 +76,25 @@ package org.axiis.core
 				}
 				_currentIteration++;
 				
-				if(postIterationCallback != null)
+				if (postIterationCallback != null)
 					postIterationCallback.call(this);
 			
 				totalTime = getTimer() - startTime;
 			}
+		
 			
 			// We've finished looping before time ran out. Tear down and call completeCallback
 			if(currentIteration == len)
 			{
+					
+				iterationLoopComplete=true;
 				for each (modifier in modifiers)
 				{
 					modifier.end();
 				}
 				_currentIteration = -1;
-				completeCallback.call(this);
+				completeCallback.call(this); //Call back now, before we set all our properties back to the original values
+				
 			}
 			// The loop took too long and we had to break out. Give the player 10ms to render and, and try again
 			else

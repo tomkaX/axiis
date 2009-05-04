@@ -44,7 +44,7 @@
 	<layouts:referenceRepeater>
 		<core:GeometryRepeater dataProvider="{dataItems}">
 			<core:geometry>
-				<degrafa:RegularRectangle width="{this.width}" height="0" id="refRect"  enableEvents="false"
+				<degrafa:RegularRectangle width="{this.width}" height="0" id="refRect" 
 					x="0"/> 
 			</core:geometry>
 			<core:modifiers>
@@ -57,7 +57,7 @@
 	<layouts:drawingGeometries>
 			
 		<!-- main column rectangle that gets repeated vertically -->
-		<degrafa:RegularRectangle id="myCol" x="0"  enableEvents="false"
+		<degrafa:RegularRectangle id="myCol" x="0"  
 				y="{currentReference['y']}"
 				width="{currentReference.width}"
 				height="{currentReference.height}"
@@ -67,7 +67,7 @@
 		</degrafa:RegularRectangle>
 		
 		<!-- smaller label for each column -->
-		<degrafa:RasterText text="{(currentLabel ? currentLabel:' ')}" visible="{showLabel}"  enableEvents="false"
+		<degrafa:RasterText text="{(currentLabel ? currentLabel:' ')}" visible="{showLabel}" 
 			x="{currentReference.width}" height="20" width="70" y="{currentReference['y']+yModifier.modifier}" 
 			fontSize="{fontSize}" align="left" fontFamily="{fontFamily}" fontWeight="{fontWeight}" textColor="{fontColor}">
 			<degrafa:transform>

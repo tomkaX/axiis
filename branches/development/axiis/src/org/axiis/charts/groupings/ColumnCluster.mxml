@@ -8,6 +8,7 @@
 	<!-- public variables -->
 	<mx:Script>
 		<![CDATA[
+			import mx.events.PropertyChangeEvent;
 			import org.axiis.core.ILayout;
 			import com.degrafa.core.IGraphicsStroke;
 			import com.degrafa.core.IGraphicsFill;
@@ -20,7 +21,20 @@
 			
 			[Inspectable][Bindable]
 			public var stroke:IGraphicsStroke;
-
+			
+			override protected function updateSpritePropertySetters():void {
+				super.updateSpritePropertySetters();
+			
+			}
+			
+			override protected function handleGeometryPropertyChange(event:PropertyChangeEvent):void
+			{ 
+				if (currentIndex==itemCount-1 && this.referenceRepeater.iterationLoopComplete) {
+					trace("stop here");
+				}
+				super.handleGeometryPropertyChange(event);
+			}
+			
 		]]>
 	</mx:Script>
 	
@@ -36,6 +50,7 @@
 	<utils:NumericExpression id="labelLayout" value="{column.y+column.height+label.width+5+(currentValue >0 ? 0:-column.height-label.width-10)}"/>
 	<utils:NumericExpression id="valueLabelLayout" value="{column.y-valueLabel.height-3 + (currentValue > 0 ? 0:column.height+valueLabel.height+3)}"/>
 
+	<degrafa:SolidFill color="0xFFFF00" alpha=".5" id="stateFill"/> 
 	
 	<layouts:drawingGeometries>
 			
@@ -64,4 +79,7 @@
 			fontSize="{fontSize}"  align="left" fontFamily="{fontFamily}" fontWeight="normal"/>
 
 	</layouts:drawingGeometries>
+	<layouts:states>
+		<states:State targets="{[column]}" enterStateEvent="mouseOver" exitStateEvent="mouseOut" properties="{['fill']}" values="{[stateFill]}"/>
+	</layouts:states>
 </layouts:HorizontalBoxLayout>

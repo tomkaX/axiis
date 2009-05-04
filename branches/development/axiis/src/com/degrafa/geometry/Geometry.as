@@ -54,6 +54,7 @@ package com.degrafa.geometry{
 	import flash.utils.Dictionary;
 	
 	import mx.binding.utils.ChangeWatcher;
+	import mx.collections.ArrayCollection;
 	import mx.core.UIComponent;
 	import mx.events.FlexEvent;
 	import mx.events.PropertyChangeEvent;
@@ -665,7 +666,7 @@ package com.degrafa.geometry{
 			}	
 			
 		}
-				
+		
 		/**
 		* Principle event handler for any property changes to a 
 		* geometry object or it's child objects.
@@ -679,6 +680,7 @@ package com.degrafa.geometry{
 			else{
 				dispatchEvent(event)
 			}
+		
 		}
 		
 		

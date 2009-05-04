@@ -40,7 +40,16 @@
 			
 			private var _prevCurvePath:Array;
 			
+			var t:Number;
+			override public function render(newSprite:AxiisSprite=null):void {
+				t=flash.utils.getTimer();
+				super.render(newSprite);
+				
+			}
 			
+			override protected function repeatComplete():void {
+				trace("LineSeriesGroup.render elapsed=" + (flash.utils.getTimer()-t) + "ms");
+			}
 			override public function invalidateDataProvider():void {
 					super.invalidateDataProvider();
 					
@@ -151,7 +160,7 @@
 				}
 				myPath.segments=_currentSegments;
 				
-				trace("onPlotItemPreDraw elapsed time=" + (flash.utils.getTimer()-t) + "ms");
+				//trace("onPlotItemPreDraw elapsed time=" + (flash.utils.getTimer()-t) + "ms");
 			}
 			
 			
@@ -406,7 +415,7 @@
 			itemPreDraw="onPlotItemPreDraw();">
 			<layouts:drawingGeometries>
 				<degrafa:RegularRectangle width="{width}" height="{height}" x="0" y="0">
-					<degrafa:Path id="myPath"  scaleOnLayout="false"  decorators="{[_decorator]}" 
+					<degrafa:Path id="myPath"  scaleOnLayout="false"  decorators="{[_decorator]}"  enableEvents="false"
 							visible="{(_currentSegments.length>1)}"
 							stroke="{stroke}"
 							fill="{fill}"
@@ -421,11 +430,11 @@
 			scaleFill="true" x="0" y="0" inheritParentBounds="false" itemPreDraw="onMarkerItemPreDraw();">
 			<layouts:drawingGeometries>
 			
-			<degrafa:Circle id="marker"  radius="{markerSize/2}" centerY="{yPoint.value}" visible="{showMarker}">
+			<degrafa:Circle id="marker"  radius="{markerSize/2}" centerY="{yPoint.value}" visible="{showMarker}" enableEvents="false">
 				<degrafa:fill><degrafa:SolidFill color="0xFFFFFF" alpha=".8"/></degrafa:fill>
 				<degrafa:stroke><degrafa:SolidStroke color="0" pixelHinting="false" alpha=".6"/></degrafa:stroke>
 			</degrafa:Circle>
-			<degrafa:Circle id="innerMarker" radius="{markerSize/2*.6}" centerX="{marker.centerX}" centerY="{marker.centerY}" visible="{showMarker}">
+			<degrafa:Circle id="innerMarker" radius="{markerSize/2*.6}" centerX="{marker.centerX}" centerY="{marker.centerY}" visible="{showMarker}" enableEvents="false">
 				<degrafa:fill><degrafa:SolidFill color="{markerColor}" alpha="1"/></degrafa:fill>
 			</degrafa:Circle>
 			

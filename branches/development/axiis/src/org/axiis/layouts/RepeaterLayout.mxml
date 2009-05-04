@@ -10,7 +10,7 @@
 	<layouts:referenceRepeater>
 		<core:GeometryRepeater>
 			<core:geometry>
-				<degrafa:RegularRectangle id="referenceGeometry" x="0" y="0" width="{width}" height="{height}"/>
+				<degrafa:RegularRectangle id="referenceGeometry" x="0" y="0" width="{width}" height="{height}" enableEvents="false"/>
 			</core:geometry>
 		</core:GeometryRepeater>
 	</layouts:referenceRepeater>

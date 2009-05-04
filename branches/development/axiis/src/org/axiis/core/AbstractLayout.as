@@ -147,6 +147,7 @@ package org.axiis.core
 		protected var _dataProvider:Object;
 		
 		public function invalidateDataProvider():void {
+			
 			_dataItems=new Array();
 				if (dataProvider is ArrayCollection) {
 					for (var i:int=0;i<dataProvider.source.length;i++) {
