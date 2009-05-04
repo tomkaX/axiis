@@ -22,18 +22,6 @@
 			[Inspectable][Bindable]
 			public var stroke:IGraphicsStroke;
 			
-			override protected function updateSpritePropertySetters():void {
-				super.updateSpritePropertySetters();
-			
-			}
-			
-			override protected function handleGeometryPropertyChange(event:PropertyChangeEvent):void
-			{ 
-				if (currentIndex==itemCount-1 && this.referenceRepeater.iterationLoopComplete) {
-					trace("stop here");
-				}
-				super.handleGeometryPropertyChange(event);
-			}
 			
 		]]>
 	</mx:Script>
@@ -80,6 +68,6 @@
 
 	</layouts:drawingGeometries>
 	<layouts:states>
-		<states:State targets="{[column]}" enterStateEvent="mouseOver" exitStateEvent="mouseOut" properties="{['fill']}" values="{[stateFill]}"/>
+		<states:State enterStateEvent="mouseOver" exitStateEvent="mouseOut"  targets="{[column]}"  properties="{['fill']}" values="{[stateFill]}"/>
 	</layouts:states>
 </layouts:HorizontalBoxLayout>

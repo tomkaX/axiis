@@ -31,8 +31,10 @@ package org.axiis.states
 			for (var i:int=0;i<targets.length;i++)
 			{
 				var obj:Object = targets[i];
+	
 				oldValues.push(obj[properties[i]]);
-				obj[properties[i]] = values[i];
+
+				obj[properties[i]] = (values[i] is Function) ? values[i].call(this,obj[properties[i]]) : values[i];
 			}
 		}
 		
