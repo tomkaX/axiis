@@ -22,7 +22,7 @@ package org.axiis.core
 	
 		private var watchingForModifications:Boolean = false;
 	
-		private var revertingModifications:Array = [];
+		public var revertingModifications:Array = [];
 		
 		private var activeStates:Array = [];
 		
@@ -125,45 +125,7 @@ package org.axiis.core
 		{
 			revertingModifications = [];
 		}
-		
-		public function addModificationListeners():void
-		{
-			for each(var geometry:Geometry in geometries)
-			{
-				geometry.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,handleGeometryPropertyChange);
-			}
-			watchingForModifications = true;
-		}
-		
-		public function removeModificationListeners():void
-		{
-			for each(var geometry:Geometry in geometries)
-			{
-				geometry.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,handleGeometryPropertyChange);
-			}
-			watchingForModifications = false;
-		}
-		
-		protected function handleGeometryPropertyChange(event:PropertyChangeEvent):void
-		{
-			if(!hasModificationForProperty(event.source,event.property))
-			{
-				var modification:RevertingModification = new RevertingModification(event.source,event.property,event.oldValue);
-				revertingModifications.push(modification);
-				//revertingModifications.unshift(modification);
-				//trace(this,modification.target,modification.property,modification.oldValue,"stored");
-			}
-		}
-		
-		protected function hasModificationForProperty(target:Object,property:Object):Boolean
-		{
-			for each(var modficiation:RevertingModification in revertingModifications)
-			{
-				if(modficiation.target == target && modficiation.property == property)
-					return true;
-			}
-			return false;
-		}
+	
 		
 		protected function handleStateTriggeringEvent(event:Event):void
 		{
@@ -215,11 +177,13 @@ package org.axiis.core
 		{
 			//if(revertingModifications.length > 0)
 			//	trace();
-			for each(var modification:RevertingModification in revertingModifications)
+			
+
+			for each(var modification:PropertySetter in revertingModifications)
 			{
 				modification.apply();
-				//trace(this,modification.target,modification.property,modification.oldValue,"applied");
 			}
+		
 			
 			for each(var activeState:State in activeStates)
 			{
@@ -260,29 +224,6 @@ package org.axiis.core
 			}
 			states = null;
 			revertingModifications = null;
-			removeModificationListeners();
 		}
-	}
-}
-
-internal class RevertingModification
-{
-	public function RevertingModification(target:Object = null,property:Object = null,oldValue:Object = null)
-	{
-		this.target = target;
-		this.property = property;
-		this.oldValue = oldValue;
-	}
-	
-	public var target:Object;
-	
-	public var property:Object;
-	
-	public var oldValue:Object;
-	
-	public function apply():void
-	{
-		if(target && property)
-			target[property] = oldValue;
 	}
 }
