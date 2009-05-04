@@ -190,9 +190,9 @@
 							<layouts:states>
 								<axiis:State enterStateEvent="mouseOver"
 									exitStateEvent="mouseOut"
-									properties="{['fill']}"
-									values="{[rollOverFill0]}"
-									targets="{[outerWedgeRenderer]}"/>
+									properties="{['fill','outerRadius']}"
+									values="{[rollOverFill0,outerRadius.value*1.2]}"
+									targets="{[outerWedgeRenderer,outerWedgeRenderer]}"/>
 							</layouts:states>
 							
 						</layouts:BaseLayout>

@@ -81,7 +81,7 @@
 					<groupings:BarStack id="myStack"  y="{hLayout.currentReference.height*.75}" x="0" 
 						height="{hLayout.currentReference.height*.2}" width="{hLayout.currentReference.width}" 
 						dataProvider="{hLayout.currentValue}" dataField="{childDataField}" labelField="{childLabelField}"  fontColor="0xFFFFFF"
-						fill="{stackFill}" stroke="{barStroke}" horizontalScale="{vScale}" fontFamily="Arial" showLabel="true"/>
+						fill="{clusterFill}" stroke="{barStroke}" horizontalScale="{vScale}" fontFamily="Arial" showLabel="true"/>
 						
 				</axiis:layouts>
 				

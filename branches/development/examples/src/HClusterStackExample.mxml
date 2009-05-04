@@ -8,7 +8,7 @@
 <mx:Style source="styles/Axiis_Examples.css"/>
 <mx:Script>
 		<![CDATA[
-			import org.axiis.data.DataSet;
+			import org.axiis.data.DataSet; 
 			
 			var ds:DataSet = new DataSet(); 
 			
@@ -47,7 +47,7 @@
 
 	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{hLayout.height}" id="vScale"/>
 	
-	<mx:VBox width="300" top="30" left="50" visible="false">
+	<mx:VBox width="300" top="30" left="50">
 		<mx:HBox>
 			<mx:Label text="Show Line" textAlign="right" verticalCenter="0" width="100"/><mx:CheckBox id="showLine" selected="true" change="{dc.invalidateDisplayList();}"/>
 		</mx:HBox>
@@ -83,11 +83,11 @@
 						dataProvider="{hLayout.currentValue}" dataField="{childDataField}" labelField="{childLabelField}" 
 						fill="{stackFill}" stroke="{colStroke}" verticalScale="{vScale}" fontFamily="Arial" showLabel="false"/>
 					
-					<!-- Line Group (same data) -->
-					<groupings:HLineGroup id="myLineGroup"  segmentWidth="{hLayout.width/hLayout.itemCount}" tension="{lineTension.value/120}" visible="{showLine.selected}"
-					  width="{hLayout.currentReference.width}" height="{hLayout.currentReference.height}" markerRadius="3"
+					<!-- Line Group (same data) --> 
+					<!--groupings:HLineGroup id="myLineGroup"  segmentWidth="{hLayout.width/hLayout.itemCount}" tension="{lineTension.value/120}" visible="{showLine.selected}"
+					  width="{hLayout.currentReference.width}" height="{hLayout.currentReference.height}" markerRadius="3" 
 					  stroke="{myStroke2}" dataProvider="{hLayout.currentDatum[dataField]}" groupParent="{dataProvider}" groupName="{dataField}"
-					  dataField="{childDataField}" verticalScale="{vScale}"/>
+					  dataField="{childDataField}" verticalScale="{vScale}"/-->
 						
 				</axiis:layouts>
 				

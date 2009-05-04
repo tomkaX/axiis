@@ -73,7 +73,7 @@
 		</mx:HBox>
 			<mx:Label text="|"/>
 			<mx:HBox>
-		<mx:Label text="% Data" textAlign="right" verticalCenter="0"/><mx:HSlider width="80" id="dataSlice" minimum="1" maximum="244" value="50" change="{dc.invalidateDisplayList(); myLineGroup.invalidateDataProvider();}" showTrackHighlight="false" verticalCenter="-5"/>
+		<mx:Label text="% Data" textAlign="right" verticalCenter="0"/><mx:HSlider width="80" id="dataSlice" minimum="3" maximum="220" value="30" snapInterval="1" change="{dc.invalidateDisplayList(); myLineGroup.invalidateDataProvider();}" showTrackHighlight="false" verticalCenter="-5"/>
 		</mx:HBox>
 			<mx:Label text="|"/>
 		<mx:HBox>
@@ -128,21 +128,21 @@
 		<!--paint:LayoutPalette id="stackPalette" target="{myStack}" colorFrom="{outerPalette.currentColor}" colorTo="{outerPalette.currentColor | 0x337f00}"/-->
 	</mx:Array>
 	<mx:Array id="fills">
-		<degrafa:LinearGradientFill id="areaFill" angle="0">
+		<degrafa:LinearGradientFill id="areaFill" angle="0" enableEvents="false">
 			<degrafa:GradientStop color="{areaPalette.currentColor}" alpha=".75"/>
 			<degrafa:GradientStop color="{areaPalette.currentColor | 0x999933}" alpha=".55"/>
 		</degrafa:LinearGradientFill>
-		<degrafa:LinearGradientFill id="clusterFill" angle="45">
+		<degrafa:LinearGradientFill id="clusterFill" angle="45" enableEvents="false">
 			<degrafa:GradientStop color="{clusterPalette.currentColor}"/>
 			<degrafa:GradientStop color="{clusterPalette.currentColor | 0xFFFFFF}" alpha=".85"/>
 		</degrafa:LinearGradientFill>
-		<!--degrafa:LinearGradientFill id="stackFill" angle="90">
+		<!--degrafa:LinearGradientFill id="stackFill" angle="90" >
 			<degrafa:GradientStop color="{stackPalette.currentColor}"/>
 			<degrafa:GradientStop color="{stackPalette.currentColor | 0x333333}" alpha=".7"/>
 		</degrafa:LinearGradientFill-->
 	</mx:Array>
 	<mx:Array id="strokes">
-		<degrafa:LinearGradientStroke  id="colStroke" pixelHinting="true" angle="45">
+		<degrafa:LinearGradientStroke  id="colStroke" pixelHinting="true" angle="45" enableEvents="false">
 			<degrafa:GradientStop color="0xFFFFFF" alpha=".7"/>
 			<degrafa:GradientStop color="0xFFFFFF" alpha=".3"/>
 		</degrafa:LinearGradientStroke>
