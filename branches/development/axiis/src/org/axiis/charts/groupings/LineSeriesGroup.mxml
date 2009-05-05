@@ -442,5 +442,7 @@
 		
 		</layouts:RepeaterLayout>
 	</layouts:layouts>
-	
+	<layouts:states>
+		<states:State targets="{[myPath]}" properties="['fill.color']" values="[0xFFFF00]" enterStateEvent="mouseOver" exitStateEvent="mouseExit"/>
+	</layouts:states>
 </layouts:RepeaterLayout>

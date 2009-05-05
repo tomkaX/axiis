@@ -149,7 +149,7 @@ package org.axiis.layouts
 		{
 			if (currentIndex==itemCount-1 && this.referenceRepeater.iterationLoopComplete) {
 					currentPropertySetters=this.propertySettersArrays[0]; //Grab the first one
-					trace("setting iteration 0 " + event.property + "=" + event.newValue);
+					//trace("setting iteration 0 " + event.property + "=" + event.newValue);
 			}
 			
 			if(!hasModificationForProperty(originalPropertySetters,event.source,event.property))
@@ -293,7 +293,7 @@ package org.axiis.layouts
 				updateSpritePropertySetters();
 			}
 			
-			trace("BaseLayout.render elapsed=" + (flash.utils.getTimer()-t) + "ms");
+			//trace("BaseLayout.render elapsed=" + (flash.utils.getTimer()-t) + "ms");
 		}
 		
 		protected function updateSpritePropertySetters():void
