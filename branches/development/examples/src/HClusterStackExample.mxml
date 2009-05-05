@@ -83,7 +83,7 @@
 						dataProvider="{hLayout.currentValue}" dataField="{childDataField}" labelField="{childLabelField}" 
 						fill="{stackFill}" stroke="{colStroke}" verticalScale="{vScale}" fontFamily="Arial" showLabel="false"/>
 					
-					<!-- Line Group (same data) --> 
+				 	<!-- Line Group (same data) --> 
 					<!--groupings:HLineGroup id="myLineGroup"  segmentWidth="{hLayout.width/hLayout.itemCount}" tension="{lineTension.value/120}" visible="{showLine.selected}"
 					  width="{hLayout.currentReference.width}" height="{hLayout.currentReference.height}" markerRadius="3" 
 					  stroke="{myStroke2}" dataProvider="{hLayout.currentDatum[dataField]}" groupParent="{dataProvider}" groupName="{dataField}"
@@ -100,7 +100,7 @@
 			</axiis:HorizontalBoxLayout>
 		</axiis:layouts>
 	</axiis:DataCanvas>
-	
+	 
 	<mx:Array id="palettes">
 		<paint:LayoutPalette id="outerPalette" target="{hLayout}" colorFrom="0xCC3333" colorTo="0x3333CC"/>
 		<paint:LayoutPalette id="clusterPalette" target="{myCluster}" colorFrom="{outerPalette.currentColor}" colorTo="{outerPalette.currentColor | 0x337f00}"/>

@@ -56,7 +56,7 @@
 			}
 			
 			public function colorFunction(val:Object):Number {
-				return Number(val) & -0x555555;
+				return Number(val) & -0x333333;
 			}
 			
 		]]>
@@ -204,9 +204,9 @@
 					<layouts:states>
 						<axiis:State enterStateEvent="mouseOver"
 							exitStateEvent="mouseOut"
-							properties="{['color']}"
-							values="{[colorFunction]}"
-							targets="{[outerWedgeFill]}"/>
+							properties="{['color','color']}"
+							values="{[colorFunction,colorFunction]}"
+							targets="{[outerWedgeFill,wedgeFillStop1]}"/>
 					</layouts:states>
 					
 				</layouts:BaseLayout>
@@ -220,7 +220,7 @@
 			<axiis:fills>
 				<degrafa:RadialGradientFill  id="wedgeFill" cx="{wedgeLayout.width/2}" cy="{wedgeLayout.width/2}" radius="{(wedgeLayout.width/2)*innerRadi2}">
 					<degrafa:GradientStop color="{wedgePalette.currentColor | 0x333333}" ratio=".6" />
-					<degrafa:GradientStop  color="{wedgePalette.currentColor}" />
+					<degrafa:GradientStop  color="{wedgePalette.currentColor}" id="wedgeFillStop1"/>
 				</degrafa:RadialGradientFill>
 				<degrafa:SolidFill color="{wedgePalette.currentColor}" alpha="1"/>
 				<degrafa:SolidFill color="{outerWedgePalette.currentColor}" id="outerWedgeFill" alpha="1"/>

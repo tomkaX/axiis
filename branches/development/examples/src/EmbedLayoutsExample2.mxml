@@ -44,20 +44,20 @@
 					<geometry:Column stroke="{blackStroke}" fill="{fill1}" scale="{scale}" dataField="value"
 						height="{scale.valueToLayout(clusterLayout.currentValue)}" x="{clusterLayout.currentReference.x}" y="{clusterLayout.height-scale.valueToLayout(clusterLayout.currentValue)}"
 						width="{clusterLayout.currentReference.width}"/>
-				</axiis:drawingGeometries>
+				</axiis:drawingGeometries> 
 				<axiis:layouts>
 					<axiis:HorizontalBoxLayout id="columnLayout" width="{clusterLayout.currentReference.width}" height="{clusterLayout.currentReference.height}"  dataProvider="{clusterLayout.currentDatum.node}" percentGap="0" x="0" y="5" name=" B" dataField="value">
 						<axiis:drawingGeometries>
-							<geometry:Column stroke="{blackStroke}" fill="{fill2}" scale="{scale}" dataField="value"
+							<geometry:Column stroke="{blackStroke}" fill="{fill2}" scale="{scale}" dataField="mytest" id="column"
 								height="{scale.valueToLayout(columnLayout.currentValue)}" x="{columnLayout.currentReference.x}" y="{clusterLayout.height-scale.valueToLayout(columnLayout.currentValue)}"
 								width="{columnLayout.currentReference.width}"/>
-						</axiis:drawingGeometries>
+						</axiis:drawingGeometries> 
 						<axiis:layouts>
 							<axiis:HorizontalBoxLayout id="subColumnLayout" width="{columnLayout.currentReference.width}" height="{columnLayout.currentReference.height}" dataProvider="{columnLayout.currentDatum.node}" y="0" x="0" percentGap="0" name="  C" dataField="value">
 								<axiis:drawingGeometries>
 									<geometry:Column id="subColumn" stroke="{blackStroke}" fill="{fill3}" scale="{scale}" x="{subColumnLayout.currentReference.x}" dataField="value"
 										height="{scale.valueToLayout(subColumnLayout.currentValue)}" y="{clusterLayout.height-scale.valueToLayout(subColumnLayout.currentValue)}"
-										width="{subColumnLayout.currentReference.width}"/>
+ 										width="{subColumnLayout.currentReference.width}"/>
 								</axiis:drawingGeometries>
 								
 								<axiis:states>
@@ -65,7 +65,7 @@
 										exitStateEvent="mouseOut"
 										properties="{['fill']}"
 										values="{[rollOverFill2]}"
-										targets="{[subColumn]}"/>
+										targets="{[subColumn]}"/> 
 								</axiis:states>
 								
 							</axiis:HorizontalBoxLayout>
