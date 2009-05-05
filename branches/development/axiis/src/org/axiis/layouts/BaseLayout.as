@@ -63,6 +63,10 @@ package org.axiis.layouts
 			if (!visible)
 				return;
 			
+			_currentDatum=null;
+			_currentValue=null;
+			_currentLabel=null;
+			
 			t=flash.utils.getTimer();
 			
 			trimChildSprites();
@@ -145,7 +149,7 @@ package org.axiis.layouts
 		{
 			if (currentIndex==itemCount-1 && this.referenceRepeater.iterationLoopComplete) {
 					currentPropertySetters=this.propertySettersArrays[0]; //Grab the first one
-				//	trace("setting iteration 0 " + event.property + "=" + event.newValue);
+					trace("setting iteration 0 " + event.property + "=" + event.newValue);
 			}
 			
 			if(!hasModificationForProperty(originalPropertySetters,event.source,event.property))
@@ -221,6 +225,7 @@ package org.axiis.layouts
 				_currentValue = getProperty(_currentDatum,dataField);
 			else
 				_currentValue=_currentDatum;
+				
 			if (labelField)
 				_currentLabel = getProperty(_currentDatum,labelField).toString();
 		}
@@ -272,6 +277,11 @@ package org.axiis.layouts
 			_rendering = false;
 			
 			removeModificationListeners();
+			
+		//	for each(var propertySetter:PropertySetter in propertySettersArrays[0])
+        //    {
+        //        propertySetter.apply();
+		//	}
 			
 			/* for(var a:int = 0; a < propertySettersArrays.length; a++)
 			{

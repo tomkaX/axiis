@@ -22,6 +22,9 @@
 			
 			[Inspectable][Bindable]
 			public var scale:IScale;
+			
+			
+			
 		]]>
 	</mx:Script> 
 	<mx:String id="dataField"/>
