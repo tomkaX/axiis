@@ -18,7 +18,12 @@
 		 	height="{this.height}"
 		 	percentGap="{percentGap}">
 			<layouts:drawingGeometries>
-				<geometry:Bar id="myBar" y="{myLayout.currentReference.y}" fill="{barFill}" stroke="{myStroke}" scale="{hScale}" dataField="{horizontalField}"
+				<geometry:Bar id="myBar"
+					y="{myLayout.currentReference.y}"
+					fill="{barFill}"
+					stroke="{myStroke}"
+					scale="{hScale}"
+					dataField="{horizontalField}"
 					/>
 				<degrafa:RasterText fontSize="16" fontFamily="Arial" text="{myLayout.currentDatum[verticalField]}" y="{myLayout.currentReference.y}" width="100" x="{myBar.x+myBar.width+5}"/>
 			</layouts:drawingGeometries>

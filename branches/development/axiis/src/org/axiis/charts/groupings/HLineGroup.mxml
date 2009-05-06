@@ -121,7 +121,7 @@
 				var xo:Number=0; 
 				for each (var group:Object in groupParent) { //spans series fields
 					for (var i:int=0;i<group[groupName].length;i++) { //each series field
-						var obj=group[groupName][i];
+						var obj:Object=group[groupName][i];
 						var ta:Array;
 						if (y==0 && i > tempPoints.length-1) { //adds a new node if it is the first time
 							ta=new Array();

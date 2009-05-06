@@ -106,21 +106,21 @@
 		</layouts:GeometryRepeater>
 	</core:referenceRepeater>
 	<core:drawingGeometries>
-		<degrafa:RegularRectangle y="0"  x="{currentReference['x']}" id="gridRect"
+		<degrafa:RegularRectangle y="0"  x="{currentReference.x}" id="gridRect"
 			height="{height}" 
 			visible="{(showGrid.value)}" fill="{gridFill}">				  
 		</degrafa:RegularRectangle>
 		<degrafa:Line id="minorTick" stroke="{tickStroke}"
 			y="{height}" y1="{height-minorTickLength}"  visible="{showMinorTick.value}"
-			x="{currentReference['x']}" x1="{currentReference['x']}"
+			x="{currentReference.x}" x1="{currentReference.x}"
 			/>
 		<degrafa:Line id="majorTick" stroke="{tickStroke}" 
 			y="{height}" y1="{height-majorTickLength}" visible="{showMajorTick.value}"
-			x="{currentReference['x']}" x1="{currentReference['x']}"
+			x="{currentReference.x}" x1="{currentReference.x}"
 			/>
 		<degrafa:RasterText id="label" align="right" autoSizeField="true"
 			fontFamily="fontFamily" fontSize="{fontSize}" fontWeight="{fontWeight}" textColor="{fontColor}"
-			text="{_labelFunction(Number(horizontalScale.layoutToValue(horizontalScale.minLayout+currentReference['x'])))}" visible="{showLabel.value}"/>
+			text="{_labelFunction(Number(horizontalScale.layoutToValue(horizontalScale.minLayout+currentReference.x)))}" visible="{showLabel.value}"/>
 	</core:drawingGeometries>
 
 </core:BaseLayout>

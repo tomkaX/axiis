@@ -13,7 +13,7 @@
 			import com.degrafa.core.IGraphicsStroke;
 			import com.degrafa.core.IGraphicsFill;
 
-			
+			[Bindable]
 			public var labelFunction:Function;
 			
 			[Inspectable][Bindable]

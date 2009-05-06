@@ -1,7 +1,6 @@
 package org.axiis.utils
 {			
 import com.degrafa.geometry.segment.LineTo;
-import com.degrafa.geometry.segment.MoveTo;
 import com.degrafa.geometry.segment.QuadraticBezierTo;
 
 import flash.geom.Point;
@@ -15,7 +14,7 @@ import flash.geom.Point;
 	    
 	    public static function buildSegmentsFromCurvePoints(pts:Array, tension:Number=.25):Array
 		{
-		 var incr=1;
+		 var incr:Number=1;
 	     var start:int = 0;
 	     var end:int=pts.length;
 		 var innerEnd:int = pts.length - incr;

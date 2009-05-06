@@ -43,7 +43,7 @@
 			private var _maxY:Array;
 			private var _minY:Array;
 			
-			var t:Number;
+			private var t:Number;
 			override public function render(newSprite:AxiisSprite=null):void {
 				t=flash.utils.getTimer();
 				super.render(newSprite);
@@ -63,7 +63,7 @@
 					
 						for (var i:int=0;i<firstItem[plotCollection].length;i++) {
 							var obj:Object=(firstItem[plotCollection] is Array) ? firstItem[plotCollection][i]:firstItem[plotCollection].getItemAt(i);
-							if (plotFilterFunction) {
+							if (plotFilterFunction != null) {
 								if (plotFilterFunction.call(this,obj)) tempItems.push(obj);
 							}
 							else {
@@ -138,7 +138,8 @@
 			 */
 			private function onPlotItemPreDraw():void {
 				
-					
+				var h:Number;
+				var y:Number;
 				var seriesIndex:int=plotLayout.currentIndex;
 				
 				/**
@@ -148,8 +149,6 @@
 					_decorator.fillBounds=new Rectangle(0,int(_minY[seriesIndex]),width,height-int(_minY[seriesIndex]));
 				}
 				else if (mode==LineSeriesGroup.MODE_STACK_ZERO) {
-					var h:Number;
-					var y:Number;
 					if (seriesIndex==0) {
 						h=height-_minY[seriesIndex];
 						y=_minY[seriesIndex];
@@ -162,8 +161,6 @@
 				}
 				
 				else if (mode==LineSeriesGroup.MODE_STACK_FLOW) {
-					var h:Number;
-					var y:Number;
 					if (seriesIndex==0) {
 						h=(_maxY[seriesIndex]-_minY[seriesIndex])*2;
 						y=_minY[seriesIndex];
@@ -279,7 +276,7 @@
 					for (var n:int=0;n<series[plotCollection].length;n++) {
 						var vObj:Object; 
 						if (series[plotCollection] is ArrayCollection)  vObj=series[plotCollection].getItemAt(n); else vObj=series[plotCollection][n]; 
-						if (plotFilterFunction) {
+						if (plotFilterFunction != null) {
 							if (!plotFilterFunction.call(this,vObj)) continue;
 						}
 						
@@ -293,8 +290,8 @@
 					
 					
 					for (var i:int=0;i<seriesPlots.length;i++) { //each series field
-
-						var obj=seriesPlots[i];
+						var stackedValue:Number=0;
+						var obj:Object=seriesPlots[i];
 						if (ta.length==0) { //adds a new node if it is the first time
 							ta.push(new GraphicPoint(-1,verticalScale.valueToLayout(seriesPlots[0][dataField],true))); //The first marker
 						}
@@ -304,7 +301,6 @@
 						
 						
 						if (mode==LineSeriesGroup.MODE_STACK_ZERO) { //looping through to make stacked values
-							var stackedValue:Number=0;
 
 							if (!stackedValues[i]) stackedValues[i]=0;
 							stackedValues[i]+=obj[dataField];
@@ -313,7 +309,6 @@
 							gp.y=verticalScale.valueToLayout(stackedValue,true);
 						}
 						else if (mode==LineSeriesGroup.MODE_STACK_FLOW) {
-							var stackedValue:Number;
 							//First item gets split across the zero line
 							//Then we alternate positions
 							if (y==0) {
@@ -374,8 +369,8 @@
 				if (this.showArea) {
 					_curvePathsBottom=new Array();
 					
-					var i:int=0;
-					for (var obj:Object in _curvePathsTop) {
+					i=0;
+					for (obj in _curvePathsTop) {
 						if (mode==LineSeriesGroup.MODE_STACK_FLOW) {  //Our series alternate with the first one being split into two, then going positive/negative
 							if (i==1) {
 								_curvePathsBottom.push(_curvePathsTop[0]);
@@ -393,7 +388,7 @@
 							if (i==0 || mode==LineSeriesGroup.MODE_BASELINE) {
 								//First bottom curve is a straigh line;
 								var path:Array=new Array();
-								for (var n:int=0;n<_curvePathsTop[0].length;n++) {
+								for (n=0;n<_curvePathsTop[0].length;n++) {
 									var q:QuadraticBezierTo=new QuadraticBezierTo(_curvePathsTop[0][n].cx,verticalScale.valueToLayout(0,true),_curvePathsTop[0][n].x,verticalScale.valueToLayout(0,true));
 									path.push(q);
 								}
@@ -445,10 +440,9 @@
 			private var _decorator:AreaLineDecorator=new AreaLineDecorator();
 			
 			//private var _seriesCollection:Object;
-			
-			public static var MODE_BASELINE:int=0;
-			public static var MODE_STACK_ZERO:int=1;
-			public static var MODE_STACK_FLOW:int=2;
+			public static const MODE_BASELINE:int=0;			
+			public static const MODE_STACK_ZERO:int=1;
+			public static const MODE_STACK_FLOW:int=2;
 		]]>
 	</mx:Script>
 	
