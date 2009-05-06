@@ -10,7 +10,8 @@
 	
 	<!-- public variables -->
 	<mx:Script>
-		<![CDATA[ 
+		<![CDATA[
+			import com.degrafa.paint.LinearGradientFill; 
 			import org.axiis.core.AxiisSprite;
 			import flash.utils.getTimer;
 			import mx.collections.ArrayCollection;
@@ -39,11 +40,14 @@
 			private var _plotCollection:Object;
 			
 			private var _prevCurvePath:Array;
+			private var _maxY:Array;
+			private var _minY:Array;
 			
 			var t:Number;
 			override public function render(newSprite:AxiisSprite=null):void {
 				t=flash.utils.getTimer();
 				super.render(newSprite);
+				
 				
 			}
 			
@@ -87,7 +91,7 @@
 			private function onPlotPreRender():void {
 				if (currentIndex==0) { //We only do this on the first pass
 					calculateCurves();
-					_decorator.fillBounds=new Rectangle(0,height-_maxHeight,width,_maxHeight);
+			
 					if (!showArea) {
 						myPath.fill=new SolidFill(0,0);
 					}
@@ -95,6 +99,8 @@
 						myPath.fill=fill;
 					}
 				}
+				
+				
 			}
 			
 			//Gets our current curves and rounds at borders between repeater sprites
@@ -131,12 +137,54 @@
 			 * If we have an area we then close the path with another slice out of the _curvePathsBottom
 			 */
 			private function onPlotItemPreDraw():void {
-
+				
+					
+				var seriesIndex:int=plotLayout.currentIndex;
+				
+				/**
+				 * Need to set our fill bounds for each series
+				 */
+				if (mode==LineSeriesGroup.MODE_BASELINE) {
+					_decorator.fillBounds=new Rectangle(0,int(_minY[seriesIndex]),width,height-int(_minY[seriesIndex]));
+				}
+				else if (mode==LineSeriesGroup.MODE_STACK_ZERO) {
+					var h:Number;
+					var y:Number;
+					if (seriesIndex==0) {
+						h=height-_minY[seriesIndex];
+						y=_minY[seriesIndex];
+					}
+					else {
+						h=_maxY[seriesIndex-1]-_minY[seriesIndex];
+						y=_minY[seriesIndex];
+					}
+					_decorator.fillBounds=new Rectangle(0,y,width,h);
+				}
+				
+				else if (mode==LineSeriesGroup.MODE_STACK_FLOW) {
+					var h:Number;
+					var y:Number;
+					if (seriesIndex==0) {
+						h=(_maxY[seriesIndex]-_minY[seriesIndex])*2;
+						y=_minY[seriesIndex];
+					}
+					else if (seriesIndex % 2 == 1) {
+						h=_maxY[seriesIndex-1]-_minY[seriesIndex];
+						y=_minY[seriesIndex];
+					}
+					else {
+						h=(_maxY[seriesIndex]-_minY[seriesIndex])*-1;
+						y=_maxY[seriesIndex];
+					}
+					
+					_decorator.fillBounds=new Rectangle(0,y,width,h);
+				}
+				trace ("decorator y=" + _decorator.fillBounds.y + " height=" + _decorator.fillBounds.height);
+				
 				myPath.stroke=stroke;
 				
 				var t:Number=flash.utils.getTimer();
-				
-				var seriesIndex:int=plotLayout.currentIndex;
+			
 
 				_currentSegments=getSegments(seriesIndex,_curvePathsTop);
 							
@@ -160,6 +208,7 @@
 				}
 				myPath.segments=_currentSegments;
 				
+			
 				//trace("onPlotItemPreDraw elapsed time=" + (flash.utils.getTimer()-t) + "ms");
 			}
 			
@@ -187,6 +236,8 @@
 					
 					yPoint.value=seriesPoints[markerLayout.currentIndex][currentIndex+1].y;
 				}
+				
+				
 			}
 			
 			/**
@@ -198,12 +249,14 @@
 			 * segmentGroups[currentIndex][parentLayout.currentIndex]  where currentIndex==the current "series", and parentLayout.currentIndex==the plot point along the curve
 			 */
 			private function calculateCurves():void {
+				_minY=new Array();
+				_maxY=new Array();
 				var t:Number=flash.utils.getTimer();
 				if (!plotCollection) return;
 				//var segmentWidth:Number=width/itemCount;
 				 
 				_curvePathsTop=new Array();	
-				_maxHeight=0;
+			
 				//Two dimension array used to store each series fields, one row at a time  Array[hField,vField]
 				seriesPoints=new Array();
 				_repeatWidth=(width)/(itemCount-1);
@@ -237,6 +290,8 @@
 					ta=new Array(); 					
 					xo=0;
 				
+					
+					
 					for (var i:int=0;i<seriesPlots.length;i++) { //each series field
 
 						var obj=seriesPlots[i];
@@ -294,7 +349,10 @@
 						}
 						
 						ta.push(gp);
-						_maxHeight=Math.max(_maxHeight,verticalScale.valueToLayout(obj[dataField]),true);
+						if (y > _minY.length-1) _minY.push(height);
+						if (y > _maxY.length-1) _maxY.push(0);
+						_minY[y]=Math.min(_minY[y],gp.y);
+						_maxY[y]=Math.max(_maxY[y],gp.y);
 						 xo+=_repeatWidth;
 					} 
 					//We have a STACK_FLOW and are at first series we add a series for the bisection
@@ -322,14 +380,17 @@
 							if (i==1) {
 								_curvePathsBottom.push(_curvePathsTop[0]);
 							}
-							else if (i > 1 ) { //We should be a positive value here, so our "bottom" was the last positive value
+							else if (i == 3) {
+								_curvePathsBottom.push(_curvePathsTop[0]);
+							}
+							else if (i > 0) { //We should be a positive value here, so our "bottom" was the last positive value
 								_curvePathsBottom.push(_curvePathsTop[i-2]);
 							}
 							
 							
 						}
 						else { //When we have a baseline axis we will create a straight line for the bottom by adding a new path and ignoring the last one
-							if (i==0) {
+							if (i==0 || mode==LineSeriesGroup.MODE_BASELINE) {
 								//First bottom curve is a straigh line;
 								var path:Array=new Array();
 								for (var n:int=0;n<_curvePathsTop[0].length;n++) {
