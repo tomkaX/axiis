@@ -28,7 +28,7 @@
 			
 		]]>
 </mx:Script> 
-<Examples:ExampleBackground width="{this.width}" height="{this.height}" title="Vertical Chart" subTitle="Clusters and Stacks"/>
+<Examples:ExampleBackground width="100%" height="100%" title="Vertical Chart" subTitle="Clusters and Stacks"/>
 
 <mx:String id="countryData" source="data/2008_Olympics.xml"/>
 

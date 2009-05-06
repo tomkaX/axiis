@@ -47,7 +47,7 @@
 			}
 		]]>
 </mx:Script> 
-<Examples:ExampleBackground width="{this.width}" height="{this.height}" title="Horizontal Chart" subTitle="Lines and Areas"/>
+<Examples:ExampleBackground width="100%" height="100%" title="Horizontal Chart" subTitle="Lines and Areas"/>
 
 <mx:String id="payload" source="data/LineSeriesData.csv"/>
 
@@ -102,7 +102,7 @@
 	<mx:Array id="fills">
 		<degrafa:LinearGradientFill id="areaFill" angle="90" enableEvents="false">
 			<degrafa:GradientStop color="{areaPalette.currentColor}" alpha=".95"/>
-			<degrafa:GradientStop color="{areaPalette.currentColor | 0x999933}" alpha=".55"/>
+			<degrafa:GradientStop color="{areaPalette.currentColor | 0x999933}" alpha=".65"/>
 		</degrafa:LinearGradientFill>
 		<degrafa:LinearGradientFill id="clusterFill" angle="45" enableEvents="false">
 			<degrafa:GradientStop color="{clusterPalette.currentColor}"/>

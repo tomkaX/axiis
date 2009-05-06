@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:axiis="http://www.axiis.org/2009"
-	layout="vertical"
-	applicationComplete="start()">
+	layout="absolute"
+	applicationComplete="start()" xmlns:Examples="Examples.*">
 	
 	<mx:Script>
 		<![CDATA[
@@ -36,7 +36,12 @@
 		</months>
 	</mx:XML>
 	
-	<axiis:WaterfallChart id="waterfallChart" width="100%" height="100%"
+	<mx:Style source="styles/Axiis_Examples.css"/>
+	
+	<Examples:ExampleBackground width="100%" height="100%" title="Waterfall Chart" subTitle="Custom Visualization"/>
+	
+	
+	<axiis:WaterfallChart id="waterfallChart" width="90%" top="130" bottom="100" horizontalCenter="0"
 		labelField="name" dataField="count"/>
 	
 </mx:Application>
