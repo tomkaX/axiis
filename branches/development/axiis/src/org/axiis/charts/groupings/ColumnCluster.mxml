@@ -62,7 +62,7 @@
 				<degrafa:RotateTransform angle="-90" registrationPoint="topLeft"/>
 			</degrafa:transform>
 		</degrafa:RasterText>	
-		<degrafa:RasterText  htmlText="{(labelFunction) ? labelFunction.call(this,currentDatum) : (currentValue ? currentValue:' ')}"  textColor="0x444444" visible="{showLabel}" id="valueLabel"
+		<degrafa:RasterText  htmlText="{(labelFunction != null) ? labelFunction.call(this,currentDatum) : (currentValue ? currentValue:' ')}"  textColor="0x444444" visible="{showLabel}" id="valueLabel"
 			x="{currentReference.x+(currentReference.width-valueLabel.textWidth)/2}" height="20"  y="{valueLabelLayout.value}" 
 			fontSize="{fontSize}"  align="left" fontFamily="{fontFamily}" fontWeight="normal"/>
 

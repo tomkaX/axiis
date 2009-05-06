@@ -15,7 +15,7 @@
 		
 			import org.axiis.data.DataSet; 
 			
-			var ds:DataSet = new DataSet();
+			private var ds:DataSet = new DataSet();
 			
 			public function start():void
 			{ 

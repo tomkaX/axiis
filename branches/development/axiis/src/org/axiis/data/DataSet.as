@@ -66,13 +66,13 @@ package org.axiis.data
 				return _rowCount;
 			}
 			
-			private var _rowCount;
+			private var _rowCount:int;
 			
 			public function get columnCount():int {
 				return _colCount;
 			}
 			
-			private var _colCount;
+			private var _colCount:int;
 			
 			public function processXmlString(payload:String):void {
 				//Process xml and convert to object
@@ -246,18 +246,20 @@ package org.axiis.data
 			private function aggregate(object:Object, collections:Array, properties:Array):void {
 				
 				var collection:Object=object[collections[0]];
+				var i:int = 0;
+				var obj:Object;
 				
 				if  (collections.length>1) { //We need to go deeper into the collection
 				  	if (collection is ArrayCollection) {
-						for (var i:int=0;i<ArrayCollection(collection).length;i++) {
-							var obj:Object=ArrayCollection(collection).getItemAt(i);
+						for (i=0;i<ArrayCollection(collection).length;i++) {
+							obj=ArrayCollection(collection).getItemAt(i);
 							aggregate(obj,collections.slice(1,collections.length),properties);
 						}
 						totalAggregates(object, collection, properties, collections[1]);
 					}	
 					else if (collection is Array) {
-						for (var i:int=0;i<Array(collection).length;i++) {
-							var obj:Object=collection[i];
+						for (i=0;i<(collection as Array).length;i++) {
+							obj=collection[i];
 							aggregate(obj,collections.slice(1,collections.length),properties);
 						}
 						totalAggregates(object, collection, properties, collections[1]);
@@ -267,14 +269,14 @@ package org.axiis.data
 					var aggregates:Object=object.aggregates;
 					if (!aggregates) { aggregates=new Object(); object.aggregates=aggregates; }
 					if (collection is ArrayCollection) {
-						for (var i:int=0;i<ArrayCollection(collection).length;i++) {
-							var obj:Object=ArrayCollection(collection).getItemAt(i);
+						for (i=0;i<ArrayCollection(collection).length;i++) {
+							obj=ArrayCollection(collection).getItemAt(i);
 							processAggregateObject(obj,properties,aggregates,collections[0]);
 						}
 					}	
 					else if (collection is Array) {
-						for (var i:int=0;i<Array(collection).length;i++) {
-							var obj:Object=collection[i];
+						for (i=0;i<(collection as Array).length;i++) {
+							obj=collection[i];
 							processAggregateObject(obj,properties,aggregates,collections[0]);
 						}
 					}
@@ -304,7 +306,7 @@ package org.axiis.data
 			}
 			
 			private function totalAggregates(object:Object, collection:Object, properties:Array, collectionName:String):void {
-				var aggregates=object.aggregates;
+				var aggregates:Object =object.aggregates;
 				if (!aggregates) { aggregates=new Object(); object.aggregates=aggregates; }
 				
 				for (var i:int=0;i<collection.length-1;i++) {
@@ -384,11 +386,12 @@ package org.axiis.data
 				for (var y:int=0;y<properties.length;y++) {
 					
 					var valObj:Object=getProperty(obj,properties[y]);
+					var val:Number;
 					
 					if (valObj is Columns) { //If we are columns we need to go one layer deeper and aggregate the columns
-					  var agg=new Object();
+					  var agg:Object=new Object();
 						for (var i:int=0;i<valObj.length-1;i++) {
-							var val:Number = isNaN(Number(valObj.getItemAt(i).value)) ? 0:Number(valObj.getItemAt(i).value);
+							val = isNaN(Number(valObj.getItemAt(i).value)) ? 0:Number(valObj.getItemAt(i).value);
 							if (!agg["sum"]) agg["sum"]=0;
 							if (!agg["min"]) agg["min"]=Number.POSITIVE_INFINITY;
 							if (!agg["max"]) agg["max"]=Number.NEGATIVE_INFINITY;
@@ -405,7 +408,7 @@ package org.axiis.data
 					  columns.addItem(agg);
 					}
 					else {
-						var val:Number = isNaN(Number(valObj)) ? 0:Number(valObj);
+						val = isNaN(Number(valObj)) ? 0:Number(valObj);
 						var property:String=cleanName(properties[y],collectionName);  
 						
 						if (!aggregates[property + "_sum"]) aggregates[property + "_sum"]=0;
@@ -534,7 +537,7 @@ package org.axiis.data
 				
 				tempPayload["rows"]=rows;
 				tempPayload["header"]=new Array();
-				for (var i:int=0;i<header.length;i++) {
+				for (i=0;i<header.length;i++) {
 					tempPayload["header"].push(header[i]);
 					//Adding avg for each column here.
 					if (addSummaries) tempPayload["col_" + i + "_avg"]=tempPayload["col_" + i + "_sum"]/_rowCount;

@@ -57,7 +57,7 @@
 			y="{currentReference.y + (currentReference.height-label.height)*.5}"
 			fontSize="{fontSize}"  align="{(currentValue > 0) ? 'right' : 'left'}" fontFamily="{fontFamily}" fontWeight="{fontWeight}"/>
 		
-		<degrafa:RasterText id="valueLabel"  htmlText="{(labelFunction) ? labelFunction.call(this,currentDatum) : (currentValue ? currentValue:' ')}"  textColor="0x444444" visible="{showLabel}" 
+		<degrafa:RasterText id="valueLabel"  htmlText="{(labelFunction != null) ? labelFunction.call(this,currentDatum) : (currentValue ? currentValue:' ')}"  textColor="0x444444" visible="{showLabel}" 
 			y="{currentReference.y+(currentReference.height-valueLabel.height)*.5}" height="20"  x="{valueLabelLayout.value}" 
 			fontSize="{fontSize}"  align="left" fontFamily="{fontFamily}" fontWeight="normal"/>
 

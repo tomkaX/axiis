@@ -10,7 +10,7 @@
 		<![CDATA[
 			import org.axiis.data.DataSet; 
 			
-			var ds:DataSet = new DataSet(); 
+			private var ds:DataSet = new DataSet(); 
 			
 			public function start():void
 			{ 
@@ -49,10 +49,12 @@
 	
 	<mx:VBox width="300" top="30" left="50">
 		<mx:HBox>
-			<mx:Label text="Show Line" textAlign="right" verticalCenter="0" width="100"/><mx:CheckBox id="showLine" selected="true" change="{dc.invalidateDisplayList();}"/>
+			<mx:Label text="Show Line" textAlign="right" verticalCenter="0" width="100"/>
+			<mx:CheckBox id="showLine" selected="true" change="{dc.invalidateDisplayList();}"/>
 		</mx:HBox>
 		<mx:HBox visible="{showLine.selected}">
-			<mx:Label text="Line Curve" textAlign="right" verticalCenter="0" width="100"/><mx:HSlider width="80" id="lineTension" minimum="1" maximum="60" value="35" liveDragging="false" showTrackHighlight="false"  change="{dc.invalidateDisplayList();}" verticalCenter="-5"/>
+			<mx:Label text="Line Curve" textAlign="right" verticalCenter="0" width="100"/>
+			<mx:HSlider width="80" id="lineTension" minimum="1" maximum="60" value="35" liveDragging="false" showTrackHighlight="false"  change="{dc.invalidateDisplayList();}" verticalCenter="-5"/>
 		</mx:HBox>
 		
 	</mx:VBox>
