@@ -50,16 +50,16 @@
 		maxLayout="{height}"/>
 	
 	<core:referenceRepeater> 
-		<core:GeometryRepeater dataProvider="{dataItems}">
-			<core:geometry>
+		<layouts:GeometryRepeater dataProvider="{dataItems}">
+			<layouts:geometry>
 				<degrafa:RegularRectangle x="0" y="0" width="{width / itemCount - 5}" height="{height}"/>
-			</core:geometry>
-			<core:modifiers>
-				<core:PropertyModifier property="x" modifierOperator="add" modifier="{width / itemCount}"/>
-				<core:PropertyModifier property="y" modifierOperator="none" modifier="{computeY}"/>
-				<core:PropertyModifier property="height" modifierOperator="none" modifier="{computeHeight}"/>
-			</core:modifiers>
-		</core:GeometryRepeater>
+			</layouts:geometry>
+			<layouts:modifiers>
+				<layouts:PropertyModifier property="x" modifierOperator="add" modifier="{width / itemCount}"/>
+				<layouts:PropertyModifier property="y" modifierOperator="none" modifier="{computeY}"/>
+				<layouts:PropertyModifier property="height" modifierOperator="none" modifier="{computeHeight}"/>
+			</layouts:modifiers>
+		</layouts:GeometryRepeater>
 	</core:referenceRepeater>
 	
 </core:BaseLayout>

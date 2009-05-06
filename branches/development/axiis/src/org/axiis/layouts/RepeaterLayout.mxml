@@ -8,11 +8,11 @@
 	<!-- You can use this when you want a repeater to fire, but have no modifications -->
 	
 	<core:referenceRepeater>
-		<core:GeometryRepeater>
-			<core:geometry>
+		<layouts:GeometryRepeater>
+			<layouts:geometry>
 				<degrafa:RegularRectangle id="referenceGeometry" x="0" y="0" width="{width}" height="{height}" enableEvents="false"/>
-			</core:geometry>
-		</core:GeometryRepeater>
+			</layouts:geometry>
+		</layouts:GeometryRepeater>
 	</core:referenceRepeater>
 	
 </core:BaseLayout>

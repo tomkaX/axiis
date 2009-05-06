@@ -11,18 +11,18 @@
 	<!--  We need to figure out how to implement this scale correctly -->
 	
 	<core:referenceRepeater>
-		<core:GeometryRepeater id="myLayout" dataProvider="{this.dataItems}">
-			<core:geometry>
+		<layouts:GeometryRepeater id="myLayout" dataProvider="{this.dataItems}">
+			<layouts:geometry>
 				<degrafa:RegularRectangle width="{(innerDiameter*Math.PI*2/this.itemCount)*(1-percentGap)}" height="50" x="{this.width/2}" y="{this.height/2}" id="layoutGeometry">
 					<degrafa:transform>
 						<degrafa:RotateTransform  centerX="{this.width/2+(layoutGeometry.width/2)}" centerY="{this.height/2-((pointOut) ? innerDiameter:outerDiameter)}" angle="0" id="rotate"/>
 					</degrafa:transform>
 				</degrafa:RegularRectangle>
-			</core:geometry>
-			<core:modifiers>
-				<core:PropertyModifier property="transform.angle" modifier="{360/this.itemCount}" modifierOperator="add"/>
-			</core:modifiers>
-		</core:GeometryRepeater>
+			</layouts:geometry>
+			<layouts:modifiers>
+				<layouts:PropertyModifier property="transform.angle" modifier="{360/this.itemCount}" modifierOperator="add"/>
+			</layouts:modifiers>
+		</layouts:GeometryRepeater>
 	</core:referenceRepeater>
 	
 </core:BaseLayout>

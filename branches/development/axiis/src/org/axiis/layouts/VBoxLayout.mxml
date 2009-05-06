@@ -20,14 +20,14 @@ the height of the VerticalBoxLayout.
 		<!---
 			just testing documenting nested objects...
 		--> 
-		<core:GeometryRepeater id="repeater" dataProvider="{dataItems}">
-			<core:geometry>
+		<layouts:GeometryRepeater id="repeater" dataProvider="{dataItems}">
+			<layouts:geometry>
 				<degrafa:RegularRectangle x="0" y="0" height="{height / itemCount - (height*percentGap/2)}" width="{width}"/>
-			</core:geometry>
-			<core:modifiers>
-				<core:PropertyModifier property="y" modifier="{height/itemCount}" modifierOperator="add"/>
-			</core:modifiers>
-		</core:GeometryRepeater>
+			</layouts:geometry>
+			<layouts:modifiers>
+				<layouts:PropertyModifier property="y" modifier="{height/itemCount}" modifierOperator="add"/>
+			</layouts:modifiers>
+		</layouts:GeometryRepeater>
 	</core:referenceRepeater>
 	
 </core:BaseLayout>

@@ -9,14 +9,14 @@
 	<mx:Number id="percentGap">0</mx:Number>
 	
 	<core:referenceRepeater>
-		<core:GeometryRepeater id="myLayout" dataProvider="{dataItems}">
-			<core:geometry>
+		<layouts:GeometryRepeater id="myLayout" dataProvider="{dataItems}">
+			<layouts:geometry>
 				<degrafa:RegularRectangle id="referenceGeometry" x="0" y="0" width="{(width / itemCount) - (width * percentGap/2)}" height="{height}" enableEvents="false"/>
-			</core:geometry>
-			<core:modifiers>
-				<core:PropertyModifier property="x" modifier="{width/itemCount}" modifierOperator="add"/>
-			</core:modifiers>
-		</core:GeometryRepeater>
+			</layouts:geometry>
+			<layouts:modifiers>
+				<layouts:PropertyModifier property="x" modifier="{width/itemCount}" modifierOperator="add"/>
+			</layouts:modifiers>
+		</layouts:GeometryRepeater>
 	</core:referenceRepeater>
 	
 </core:BaseLayout>

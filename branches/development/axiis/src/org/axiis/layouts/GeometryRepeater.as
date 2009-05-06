@@ -1,4 +1,4 @@
-package org.axiis.core
+package org.axiis.layouts
 {
 	import com.degrafa.geometry.Geometry;
 	
@@ -20,8 +20,8 @@ package org.axiis.core
 		
 		public var geometry:Geometry;
 		
-		[Inspectable(category="General", arrayType="org.axiis.core.PropertyModifier")]
-		[ArrayElementType("org.axiis.core.PropertyModifier")]
+		[Inspectable(category="General", arrayType="org.axiis.layouts.PropertyModifier")]
+		[ArrayElementType("org.axiis.layouts.PropertyModifier")]
 		public var modifiers:Array;
 		
 		public var dataProvider:Array;

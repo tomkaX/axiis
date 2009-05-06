@@ -42,17 +42,16 @@
 
 	
 	<core:referenceRepeater>
-		<core:GeometryRepeater dataProvider="{dataItems}">
-			<core:geometry>
+		<layouts:GeometryRepeater dataProvider="{dataItems}">
+			<layouts:geometry>
 				<degrafa:RegularRectangle width="{this.width}" height="0" id="refRect" 
 					x="0"/> 
-			</core:geometry>
-			<core:modifiers>
-				<core:PropertyModifier id="heightModifier" property="height" modifier="{this.verticalScale.valueToLayout(currentValue)}" modifierOperator="none"/>
-				<core:PropertyModifier id="yModifier" property="y" modifier="{this.verticalScale.valueToLayout(currentValue)}" modifierOperator="subtract"/>
-			
-			</core:modifiers>
-		</core:GeometryRepeater>	
+			</layouts:geometry>
+			<layouts:modifiers>
+				<layouts:PropertyModifier id="heightModifier" property="height" modifier="{this.verticalScale.valueToLayout(currentValue)}" modifierOperator="none"/>
+				<layouts:PropertyModifier id="yModifier" property="y" modifier="{this.verticalScale.valueToLayout(currentValue)}" modifierOperator="subtract"/>
+			</layouts:modifiers>
+		</layouts:GeometryRepeater>	
 	</core:referenceRepeater>
 	<core:drawingGeometries>
 			

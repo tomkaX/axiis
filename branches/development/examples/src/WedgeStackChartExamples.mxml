@@ -98,15 +98,15 @@
 					itemPreDraw="{innerLabel.width=innerLabel.textWidth+40; if (transposeLabel(wedgeLayout.currentReference)==true) innerLabel.right=(outerRadius.value-wedgeRenderer.outerRadius) + innerLabel.textWidth + 11; else innerLabel.right=outerRadius.value-wedgeRenderer.outerRadius+10;}">
 					<axiis:referenceRepeater>
 						<!-- innerRepeater: the reference repeater wedge for the inner ring of wedges -->
-						<core:GeometryRepeater dataProvider="{wedgeLayout.dataItems}" id="innerRepeater" >
-							<core:geometry>
+						<layouts:GeometryRepeater dataProvider="{wedgeLayout.dataItems}" id="innerRepeater" >
+							<layouts:geometry>
 								<geometry:Wedge  id="wedge" centerX="{wedgeLayout.width/2}" centerY="{wedgeLayout.width/2}" innerRadius="{(wedgeLayout.width/2)*innerRadi1}" outerRadius="{(wedgeLayout.width/2)*innerRadi2}" startAngle="360" arc="1"/>
-							</core:geometry>
-							<core:modifiers>
-								<core:PropertyModifier property="arc" modifier="{innerValue.value-angleGap}" modifierOperator="none"/>
-								<core:PropertyModifier property="startAngle" modifier="{innerValue.value+angleGap}" modifierOperator="subtract"/> 
-							</core:modifiers>
-						</core:GeometryRepeater>
+							</layouts:geometry>
+							<layouts:modifiers>
+								<layouts:PropertyModifier property="arc" modifier="{innerValue.value-angleGap}" modifierOperator="none"/>
+								<layouts:PropertyModifier property="startAngle" modifier="{innerValue.value+angleGap}" modifierOperator="subtract"/> 
+							</layouts:modifiers>
+						</layouts:GeometryRepeater>
 					</axiis:referenceRepeater>
 					<axiis:drawingGeometries>
 						<!-- wedgeRenderer: the drawing geometry for the inner ring of wedges -->
@@ -147,16 +147,16 @@
 							
 							<axiis:referenceRepeater>
 								<!-- outerRepeater:  the reference geometry for the outer ring of wedges -->
-								<core:GeometryRepeater dataProvider="{outerWedgeLayout.dataItems}" id="outerRepeater">
-									<core:geometry>
+								<layouts:GeometryRepeater dataProvider="{outerWedgeLayout.dataItems}" id="outerRepeater">
+									<layouts:geometry>
 										<geometry:Wedge  id="outerWedge" centerX="{wedgeLayout.width/2}" centerY="{wedgeLayout.width/2}" innerRadius="{(wedgeLayout.width/2)*outerRadi1}" outerRadius="{(wedgeLayout.width/2)*outerRadi2}" 
 											startAngle="{wedgeLayout.currentReference['startAngle']}" arc="{wedgeScale.valueToLayout(outerWedgeLayout.currentValue)-angleGap}"/>
-									</core:geometry>
-									<core:modifiers>
-										<core:PropertyModifier property="arc" modifier="{outerWedgeScale.valueToLayout(outerWedgeLayout.currentValue)}" modifierOperator="none"/>
-										<core:PropertyModifier property="startAngle" modifier="{(outerWedgeLayout.currentIndex>0) ? outerWedgeScale.valueToLayout(outerWedgeLayout.dataItems[outerWedgeLayout.currentIndex-1][outerWedgeLayout.dataField]) : 0}" modifierOperator="add"/> 	
-									</core:modifiers>  
-								</core:GeometryRepeater>
+									</layouts:geometry>
+									<layouts:modifiers>
+										<layouts:PropertyModifier property="arc" modifier="{outerWedgeScale.valueToLayout(outerWedgeLayout.currentValue)}" modifierOperator="none"/>
+										<layouts:PropertyModifier property="startAngle" modifier="{(outerWedgeLayout.currentIndex>0) ? outerWedgeScale.valueToLayout(outerWedgeLayout.dataItems[outerWedgeLayout.currentIndex-1][outerWedgeLayout.dataField]) : 0}" modifierOperator="add"/> 	
+									</layouts:modifiers>  
+								</layouts:GeometryRepeater>
 							</axiis:referenceRepeater>
 							<axiis:drawingGeometries>
 									<!-- outerWedgeRenderer:  the drawing geometry for the outer ring of wedges -->

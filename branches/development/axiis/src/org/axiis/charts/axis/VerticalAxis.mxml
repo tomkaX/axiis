@@ -96,14 +96,14 @@
 	<degrafa:SolidFill id="gridFill" color="{gridFillColor}" alpha="{gridFillAlpha}"/>
 	
 	<core:referenceRepeater>
-		<core:GeometryRepeater id="repeater"> 
-			<core:geometry>
+		<layouts:GeometryRepeater id="repeater"> 
+			<layouts:geometry>
 				<degrafa:Line id="refLine" x="0" x1="{this.width}" height="{this.height}" y="0" y1="0" width="{this.width}"/>
-			</core:geometry>
-			<core:modifiers>
-				<core:PropertyModifier property="y" modifier="{_gapStep}" modifierOperator="add"/>
-			</core:modifiers>
-		</core:GeometryRepeater>
+			</layouts:geometry>
+			<layouts:modifiers>
+				<layouts:PropertyModifier property="y" modifier="{_gapStep}" modifierOperator="add"/>
+			</layouts:modifiers>
+		</layouts:GeometryRepeater>
 	</core:referenceRepeater>
 	<core:drawingGeometries>
 		<degrafa:RegularRectangle x="0"  y="{currentReference['y']}" id="gridRect"

@@ -10,6 +10,7 @@ package org.axiis.core
 	import mx.collections.ArrayCollection;
 	
 	import org.axiis.DataCanvas;
+	import org.axiis.layouts.GeometryRepeater;
 	
 	public class AbstractLayout  extends EventDispatcher implements ILayout
 	{

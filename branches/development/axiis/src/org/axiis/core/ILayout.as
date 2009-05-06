@@ -7,6 +7,7 @@ package org.axiis.core
 	import flash.geom.Rectangle;
 	
 	import org.axiis.DataCanvas;
+	import org.axiis.layouts.GeometryRepeater;
 	
 	[Bindable]
 	/**

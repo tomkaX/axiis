@@ -32,16 +32,16 @@
 
 	
 	<core:referenceRepeater>
-		<core:GeometryRepeater dataProvider="{dataItems}">
-			<core:geometry>
+		<layouts:GeometryRepeater dataProvider="{dataItems}">
+			<layouts:geometry>
 				<degrafa:RegularRectangle width="{0}" height="{height}" id="refRect" enableEvents="false"
 					x="0" y="0"/> 
-			</core:geometry>
-			<core:modifiers>
-				<core:PropertyModifier id="widthModifier" property="width" modifier="{this.horizontalScale.valueToLayout(currentValue)}" modifierOperator="none"/>
-				<core:PropertyModifier id="xModifier" property="x" modifier="{(currentIndex == 0) ? 0 : this.horizontalScale.valueToLayout(dataItems[currentIndex-1][dataField])}" modifierOperator="add"/>
-			</core:modifiers>
-		</core:GeometryRepeater>	
+			</layouts:geometry>
+			<layouts:modifiers>
+				<layouts:PropertyModifier id="widthModifier" property="width" modifier="{this.horizontalScale.valueToLayout(currentValue)}" modifierOperator="none"/>
+				<layouts:PropertyModifier id="xModifier" property="x" modifier="{(currentIndex == 0) ? 0 : this.horizontalScale.valueToLayout(dataItems[currentIndex-1][dataField])}" modifierOperator="add"/>
+			</layouts:modifiers>
+		</layouts:GeometryRepeater>	
 	</core:referenceRepeater>
 	<core:drawingGeometries>
 			
