@@ -1,29 +1,57 @@
 <?xml version="1.0"?>
 <componentPackage>
-    
-    <!-- root -->
-    <component id="DataCanvas" class="org.axiis.DataCanvas"/>
-
+	
+	<component id="DataCanvas" class="org.axiis.DataCanvas"/>
+	
 	<!-- charts -->
+		<!-- axis -->
+		<component id="HAxis" class="org.axiis.charts.axis.HAxis"/>
+		<component id="VAxis" class="org.axiis.charts.axis.VAxis"/>
+		<!-- geometry -->
+		<component id="Bar" class="org.axiis.charts.geometry.Bar"/>
+		<component id="Column" class="org.axiis.charts.geometry.Column"/>
+		<!-- groupings -->
+		<component id="BarCluster" class="org.axiis.charts.groupings.BarCluster"/>
+		<component id="BarStack" class="org.axiis.charts.groupings.BarStack"/>
+		<component id="ColumnCluster" class="org.axiis.charts.groupings.ColumnCluster"/>
+		<component id="ColumnStack" class="org.axiis.charts.groupings.ColumnStack"/>
+		<component id="HLineGroup" class="org.axiis.charts.groupings.HLineGroup"/>
+		<component id="LineSeriesGroup" class="org.axiis.charts.groupings.LineSeriesGroup"/>
+		<!-- labels -->
+		<component id="HBracket" class="org.axiis.charts.labels.HBracket"/>
+		<component id="VBracket" class="org.axiis.charts.labels.VBracket"/>
 	<component id="BarChart" class="org.axiis.charts.BarChart"/>
 	<component id="ColumnChart" class="org.axiis.charts.ColumnChart"/>
+	<component id="PlotChart" class="org.axiis.charts.PlotChart"/>
 	<component id="PolarColumnChart" class="org.axiis.charts.PolarColumnChart"/>
 	<component id="WaterfallChart" class="org.axiis.charts.WaterfallChart"/>
 
-	<!-- layouts -->
-	<component id="AbsoluteLayout" class="org.axiis.layouts.AbsoluteLayout"/>
-	<component id="HBoxLayout" class="org.axiis.layouts.HBoxLayout"/>
-	<component id="VBoxLayout" class="org.axiis.layouts.VBoxLayout"/>
-	
-	<!-- scales -->
-	<component id="LinearScale" class="org.axiis.layouts.scale.LinearScale"/>
-	<component id="LogScale" class="org.axiis.layouts.scale.LogScale"/>
-	<!--<component id="NumericalScale" class="org.axiis.layouts.scale.NumericalScale"/>-->
-	
 	<!-- data -->
 	<component id="SVGDashLine" class="org.axiis.data.DataSet"/>
+
+	<!-- layouts -->
+		<!-- scales -->
+		<component id="CategoricalScale" class="org.axiis.layouts.scale.CategoricalScale"/>
+		<component id="ContinuousScale" class="org.axiis.layouts.scale.ContinuousScale"/>
+		<component id="DateTimeScale" class="org.axiis.layouts.scale.DateTimeScale"/>
+		<component id="LinearScale" class="org.axiis.layouts.scale.LinearScale"/>
+		<component id="LogScale" class="org.axiis.layouts.scale.LogScale"/>
+	<component id="AbsoluteLayout" class="org.axiis.layouts.AbsoluteLayout"/>
+	<component id="HBoxLayout" class="org.axiis.layouts.HBoxLayout"/>
+	<component id="GeometryRepeater" class="org.axiis.layouts.GeometryRepeater"/>
+	<component id="HWaterfallLayout" class="org.axiis.layouts.HWaterfallLayout"/>
+	<component id="PropertyModifier" class="org.axiis.layouts.PropertyModifier"/>
+	<component id="RepeaterLayout" class="org.axiis.layouts.RepeaterLayout"/>
+	<component id="VBoxLayout" class="org.axiis.layouts.VBoxLayout"/>
+	
+	<!-- paint -->
+	<component id="LayoutPalette" class="org.axiis.paint.LayoutPalette"/>
 	
 	<!-- states -->
 	<component id="State" class="org.axiis.states.State"/>
 	
-</componentPackage>    
+	<!-- utils -->
+	<component id="BooleanExpression" class="org.axiis.utils.BooleanExpression"/>
+	<component id="NumericExpression" class="org.axiis.utils.NumericExpression"/>
+	
+</componentPackage>

@@ -62,7 +62,7 @@
 	
 		<!-- Background -->
 		<axiis:backgroundGeometries>
-			<axis:HorizontalAxis horizontalScale="{vScale}" tickStroke="{axisStroke}" x="70" width="{dc.width-70}" y="5"  height="{hLayout.height}" emitDataTips="false"
+			<axis:HAxis horizontalScale="{vScale}" tickStroke="{axisStroke}" x="70" width="{dc.width-70}" y="5"  height="{hLayout.height}" emitDataTips="false"
 				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5"/>
 		</axiis:backgroundGeometries>
 	

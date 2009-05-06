@@ -96,7 +96,7 @@
 	 
 		<!-- Background -->
 		<axiis:backgroundGeometries>
-			<axis:VerticalAxis verticalScale="{vScale}" tickStroke="{axisStroke}" width="{dc.width}"  height="{myLineGroup.height}" emitDataTips="false"
+			<axis:VAxis verticalScale="{vScale}" tickStroke="{axisStroke}" width="{dc.width}"  height="{myLineGroup.height}" emitDataTips="false"
 				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5" majorTickSpacing="50"/>
 			<degrafa:Line x="0" x1="{myLineGroup.x+myLineGroup.width}" y="{myLineGroup.height}" y1="{myLineGroup.height}" stroke="{axisStroke}"/>
 		</axiis:backgroundGeometries>

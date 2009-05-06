@@ -77,7 +77,7 @@
 	
 		<!-- Background -->
 		<axiis:backgroundGeometries>
-			<axis:VerticalAxis verticalScale="{vScale}" tickStroke="{axisStroke}" width="{dc.width}"  height="{hLayout.height}" emitDataTips="false"
+			<axis:VAxis verticalScale="{vScale}" tickStroke="{axisStroke}" width="{dc.width}"  height="{hLayout.height}" emitDataTips="false"
 				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5" majorTickSpacing="50"/>
 			<degrafa:Line x="0" x1="{hLayout.x+hLayout.width}" y="{hLayout.height}" y1="{hLayout.height}" stroke="{axisStroke}"/>
 		</axiis:backgroundGeometries>
