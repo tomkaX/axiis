@@ -39,6 +39,7 @@
 			
 			private function filterRows(obj:Object):Boolean {
 				//Trim our rows
+				
 				if (obj.columns[0].value=="Baseline") 
 					return false;
 				else 
@@ -50,7 +51,7 @@
 <mx:Label fontSize="22" fontFamily="Myriad Pro" htmlText="&lt;b&gt;Axiis&lt;/b&gt; - Horizontal Chart" top="20" right="30" color="0xFFFFFF"/>
 <mx:Label fontSize="14" fontFamily="Myriad Pro" htmlText="Lines and Areas" top="50" right="30" color="0xFFFFFF" alpha=".9"/>
 
-<mx:String id="payload" source="data/LineSeriesData.csv"/>
+<mx:String id="payload" source="data/LineSeriesData2.csv"/>
 
 
  
@@ -128,8 +129,8 @@
 		<!--paint:LayoutPalette id="stackPalette" target="{myStack}" colorFrom="{outerPalette.currentColor}" colorTo="{outerPalette.currentColor | 0x337f00}"/-->
 	</mx:Array>
 	<mx:Array id="fills">
-		<degrafa:LinearGradientFill id="areaFill" angle="0" enableEvents="false">
-			<degrafa:GradientStop color="{areaPalette.currentColor}" alpha=".75"/>
+		<degrafa:LinearGradientFill id="areaFill" angle="90" enableEvents="false">
+			<degrafa:GradientStop color="{areaPalette.currentColor}" alpha=".95"/>
 			<degrafa:GradientStop color="{areaPalette.currentColor | 0x999933}" alpha=".55"/>
 		</degrafa:LinearGradientFill>
 		<degrafa:LinearGradientFill id="clusterFill" angle="45" enableEvents="false">
