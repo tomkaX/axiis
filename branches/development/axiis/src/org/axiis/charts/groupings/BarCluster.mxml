@@ -3,7 +3,7 @@
 	xmlns:degrafa="http://www.degrafa.com/2007" name="outerlayout"
 	xmlns:layouts="org.axiis.layouts.*"
 	xmlns:scale="org.axiis.layouts.scale.*"
-	xmlns:states="org.axiis.states.*" xmlns:utils="org.axiis.utils.*">
+	xmlns:states="org.axiis.states.*" xmlns:utils="org.axiis.utils.*" xmlns:core="org.axiis.core.*">
 	
 	<!-- public variables -->
 	<mx:Script>

@@ -76,11 +76,11 @@
 	<utils:NumericExpression id="center" value="{boundsRadius.value/2}"/>
 	<utils:NumericExpression id="boundsRadius" value="{Math.min(this.height,this.width)*.5}"/>
 	
-	<utils:NumericExpression id="innerValue" value="{wedgeScale.valueToLayout(innerWedgeLayout.currentValue)}"/>
+	<utils:NumericExpression id="innerValue" value="{wedgeScale.valueToLayout(wedgeLayout.currentValue)}"/>
 	
 	<mx:Object id="dataProvider"/>
-	<axiis:LinearScale id="wedgeScale" minLayout="0" maxLayout="{360-innerWedgeLayout.itemCount*angleGap}" minValue="0" dataProvider="{dataProvider}" />
-	<axiis:LinearScale id="outerWedgeScale" minLayout="0" maxLayout="{innerWedgeLayout.currentReference['arc']}" minValue="0" dataProvider="{innerWedgeLayout.currentDatum}" maxValue="{innerWedgeLayout.currentDatum.aggregates['medal_count_sum']}"/>
+	<axiis:LinearScale id="wedgeScale" minLayout="0" maxLayout="{360-wedgeLayout.itemCount*angleGap}" minValue="0" dataProvider="{dataProvider}" />
+	<axiis:LinearScale id="outerWedgeScale" minLayout="0" maxLayout="{wedgeLayout.currentReference['arc']}" minValue="0" dataProvider="{wedgeLayout.currentDatum}" maxValue="{wedgeLayout.currentDatum.aggregates['medal_count_sum']}"/>
 	
 	<Examples:ExampleBackground width="{this.width}" height="{this.height}"/>
  
@@ -92,29 +92,29 @@
 	<mx:Canvas width="100%" height="100%">
 		<axiis:DataCanvas id="dc" width="{boundsRadius.value}" height="{boundsRadius.value}" verticalCenter="0" horizontalCenter="0" showDataTips="false">
 			<axiis:layouts>
-				<!-- innerWedgeLayout:  This renders the inner ring of wedges -->
-				<layouts:BaseLayout id="innerWedgeLayout" name="innerLayout" dataProvider="{dataProvider}" width="{dc.width}" height="{dc.width}"  dataField="aggregates.medal_count_sum" labelField="name"
+				<!-- wedgeLayout:  This renders the inner ring of wedges -->
+				<axiis:AbsoluteLayout id="wedgeLayout" name="innerLayout" dataProvider="{dataProvider}" width="{dc.width}" height="{dc.width}"  dataField="aggregates.medal_count_sum" labelField="name"
 					dataTipLabelFunction="{dataTipFunction}"
-					itemPreDraw="{innerLabel.width=innerLabel.textWidth+40; if (transposeLabel(innerWedgeLayout.currentReference)==true) innerLabel.right=(outerRadius.value-innerRenderer.outerRadius) + innerLabel.textWidth + 11; else innerLabel.right=outerRadius.value-innerRenderer.outerRadius+10;}">
-					<layouts:referenceRepeater>
+					itemPreDraw="{innerLabel.width=innerLabel.textWidth+40; if (transposeLabel(wedgeLayout.currentReference)==true) innerLabel.right=(outerRadius.value-wedgeRenderer.outerRadius) + innerLabel.textWidth + 11; else innerLabel.right=outerRadius.value-wedgeRenderer.outerRadius+10;}">
+					<axiis:referenceRepeater>
 						<!-- innerRepeater: the reference repeater wedge for the inner ring of wedges -->
-						<core:GeometryRepeater dataProvider="{innerWedgeLayout.dataItems}" id="innerRepeater" >
+						<core:GeometryRepeater dataProvider="{wedgeLayout.dataItems}" id="innerRepeater" >
 							<core:geometry>
-								<geometry:Wedge  id="wedge" centerX="{innerWedgeLayout.width/2}" centerY="{innerWedgeLayout.width/2}" innerRadius="{(innerWedgeLayout.width/2)*innerRadi1}" outerRadius="{(innerWedgeLayout.width/2)*innerRadi2}" startAngle="360" arc="1"/>
+								<geometry:Wedge  id="wedge" centerX="{wedgeLayout.width/2}" centerY="{wedgeLayout.width/2}" innerRadius="{(wedgeLayout.width/2)*innerRadi1}" outerRadius="{(wedgeLayout.width/2)*innerRadi2}" startAngle="360" arc="1"/>
 							</core:geometry>
 							<core:modifiers>
 								<core:PropertyModifier property="arc" modifier="{innerValue.value-angleGap}" modifierOperator="none"/>
 								<core:PropertyModifier property="startAngle" modifier="{innerValue.value+angleGap}" modifierOperator="subtract"/> 
 							</core:modifiers>
 						</core:GeometryRepeater>
-					</layouts:referenceRepeater>
-					<layouts:drawingGeometries>
-						<!-- innerRenderer: the drawing geometry for the inner ring of wedges -->
+					</axiis:referenceRepeater>
+					<axiis:drawingGeometries>
+						<!-- wedgeRenderer: the drawing geometry for the inner ring of wedges -->
 						
-						<geometry:Wedge x="0" y="0" id="innerRenderer" 
-						    innerRadius="{innerWedgeLayout.currentReference['innerRadius']}" outerRadius="{innerWedgeLayout.currentReference['outerRadius']}"
-		 					startAngle="{innerWedgeLayout.currentReference['startAngle']}" arc="{innerWedgeLayout.currentReference['arc']}" 
-		 					centerX="{innerWedgeLayout.currentReference['centerX']}" centerY="{innerWedgeLayout.currentReference['centerY']}"
+						<geometry:Wedge x="0" y="0" id="wedgeRenderer" 
+						    innerRadius="{wedgeLayout.currentReference['innerRadius']}" outerRadius="{wedgeLayout.currentReference['outerRadius']}"
+		 					startAngle="{wedgeLayout.currentReference['startAngle']}" arc="{wedgeLayout.currentReference['arc']}" 
+		 					centerX="{wedgeLayout.currentReference['centerX']}" centerY="{wedgeLayout.currentReference['centerY']}"
 							fill="{wedgeFill}">
 							<geometry:stroke>
 								<degrafa:SolidStroke pixelHinting="true" alpha=".5"/>
@@ -123,42 +123,42 @@
 						
 						<degrafa:RegularRectangle width="{outerRadius.value}" x="{center.value}" y="{center.value}" height="1" id="innerRect">
 							<degrafa:geometry>
-								<degrafa:RasterText id="innerLabel" fontFamily="Myriad Pro"  fontSize="13" text="{(innerWedgeLayout.currentLabel) ? innerWedgeLayout.currentLabel : ''}" 
+								<degrafa:RasterText id="innerLabel" fontFamily="Myriad Pro"  fontSize="13" text="{(wedgeLayout.currentLabel) ? wedgeLayout.currentLabel : ''}" 
 									autoSize="right">
 									<degrafa:fill>
 										<degrafa:SolidFill color="0xFFFFFF"/>
 									</degrafa:fill>
 									<degrafa:transform>
-										<degrafa:RotateTransform registrationPoint="topRight" angle="{(transposeLabel(innerWedgeLayout.currentReference)==true) ? 180:0}"/>
+										<degrafa:RotateTransform registrationPoint="topRight" angle="{(transposeLabel(wedgeLayout.currentReference)==true) ? 180:0}"/>
 									</degrafa:transform>
 								</degrafa:RasterText>
 							</degrafa:geometry>
 							<degrafa:transform>
-								<degrafa:RotateTransform angle="{innerWedgeLayout.currentReference['startAngle'] + innerWedgeLayout.currentReference['arc']/2+((transposeLabel(innerWedgeLayout.currentReference)==true) ? 3:-3)}" 
+								<degrafa:RotateTransform angle="{wedgeLayout.currentReference['startAngle'] + wedgeLayout.currentReference['arc']/2+((transposeLabel(wedgeLayout.currentReference)==true) ? 3:-3)}" 
 									registrationPoint="topLeft"/>
 							</degrafa:transform>
 						</degrafa:RegularRectangle>
-					</layouts:drawingGeometries>
-					<layouts:layouts>
+					</axiis:drawingGeometries>
+					<axiis:layouts>
 						<!-- outerWedgeRenderer:  The layout for the outer ring of wedges -->
-						<layouts:BaseLayout id="outerWedgeLayout"  name=" outerLayout" dataProvider="{innerWedgeLayout.currentDatum.medal}" width="{dc.width}" height="{dc.width}"  dataField="count" labelField="category"
+						<axiis:AbsoluteLayout id="outerWedgeLayout"  name=" outerLayout" dataProvider="{wedgeLayout.currentDatum.medal}" width="{dc.width}" height="{dc.width}"  dataField="count" labelField="category"
 							itemPreDraw="{outerLabel.width=outerLabel.textWidth+12; if (transposeLabel(outerWedgeLayout.currentReference)==true) outerLabel.right=-3; else outerLabel.right=-outerLabel.textWidth-5;}"
 							dataTipLabelFunction="{dataTipFunction}">
 							
-							<layouts:referenceRepeater>
+							<axiis:referenceRepeater>
 								<!-- outerRepeater:  the reference geometry for the outer ring of wedges -->
 								<core:GeometryRepeater dataProvider="{outerWedgeLayout.dataItems}" id="outerRepeater">
 									<core:geometry>
-										<geometry:Wedge  id="outerRenderer" centerX="{innerWedgeLayout.width/2}" centerY="{innerWedgeLayout.width/2}" innerRadius="{(innerWedgeLayout.width/2)*outerRadi1}" outerRadius="{(innerWedgeLayout.width/2)*outerRadi2}" 
-											startAngle="{innerWedgeLayout.currentReference['startAngle']}" arc="{wedgeScale.valueToLayout(outerWedgeLayout.currentValue)-angleGap}"/>
+										<geometry:Wedge  id="outerWedge" centerX="{wedgeLayout.width/2}" centerY="{wedgeLayout.width/2}" innerRadius="{(wedgeLayout.width/2)*outerRadi1}" outerRadius="{(wedgeLayout.width/2)*outerRadi2}" 
+											startAngle="{wedgeLayout.currentReference['startAngle']}" arc="{wedgeScale.valueToLayout(outerWedgeLayout.currentValue)-angleGap}"/>
 									</core:geometry>
 									<core:modifiers>
 										<core:PropertyModifier property="arc" modifier="{outerWedgeScale.valueToLayout(outerWedgeLayout.currentValue)}" modifierOperator="none"/>
 										<core:PropertyModifier property="startAngle" modifier="{(outerWedgeLayout.currentIndex>0) ? outerWedgeScale.valueToLayout(outerWedgeLayout.dataItems[outerWedgeLayout.currentIndex-1][outerWedgeLayout.dataField]) : 0}" modifierOperator="add"/> 	
 									</core:modifiers>  
 								</core:GeometryRepeater>
-							</layouts:referenceRepeater>
-							<layouts:drawingGeometries>
+							</axiis:referenceRepeater>
+							<axiis:drawingGeometries>
 									<!-- outerWedgeRenderer:  the drawing geometry for the outer ring of wedges -->
 									<geometry:Wedge id="outerWedgeRenderer"
 									    innerRadius="{outerWedgeLayout.currentReference['innerRadius']}" outerRadius="{outerWedgeLayout.currentReference['outerRadius']}"
@@ -176,7 +176,7 @@
 									<degrafa:RegularRectangle width="{outerRadius.value}" x="{center.value}" y="{center.value}" height="1">
 										<degrafa:geometry>
 											<degrafa:RasterText id="outerLabel" fontFamily="Myriad Pro"  fontSize="11" text="{(outerWedgeLayout.currentLabel) ? outerWedgeLayout.currentLabel : ''}" 
-												right="0" width="{outerRadius.value}" align="right" textColor="{int(wedgeFillStop2.color)}">
+												right="0" width="{outerRadius.value}" align="right" fill="{outerWedgeFill}">
 												<degrafa:transform>
 													<degrafa:RotateTransform registrationPoint="topRight" angle="{(transposeLabel(outerWedgeLayout.currentReference)==true) ? 180:0}"/>
 												</degrafa:transform>
@@ -188,46 +188,42 @@
 										</degrafa:transform>
 									</degrafa:RegularRectangle>
 									
-							</layouts:drawingGeometries>
+							</axiis:drawingGeometries>
 							
-							<layouts:states>
+							<axiis:states>
 								<axiis:State enterStateEvent="mouseOver"
 									exitStateEvent="mouseOut"
-									properties="{['color','outerRadius','textColor']}"
-									values="{[colorFunction,outerRadius.value*1.2,0xFFFFFF]}"
-									targets="{[wedgeFillStop2,outerWedgeRenderer,outerLabel]}"/>
-							</layouts:states>
+									properties="{['fill','outerRadius']}"
+									values="{[rollOverFill0,outerRadius.value*1.2]}"
+									targets="{[outerWedgeRenderer,outerWedgeRenderer]}"/>
+							</axiis:states>
 							
-						</layouts:BaseLayout>
-					</layouts:layouts>
+						</axiis:AbsoluteLayout>
+					</axiis:layouts>
 					
-					<layouts:states>
+					<axiis:states>
 						<axiis:State enterStateEvent="mouseOver"
 							exitStateEvent="mouseOut"
 							properties="{['color','color']}"
 							values="{[colorFunction,colorFunction]}"
-							targets="{[wedgeFillStop2,wedgeFillStop1]}"/>
-					</layouts:states>
+							targets="{[outerWedgeFill,wedgeFillStop1]}"/>
+					</axiis:states>
 					
-				</layouts:BaseLayout>
+				</axiis:AbsoluteLayout>
 			</axiis:layouts>
 			
 			<axiis:palettes>
-				<paint:LayoutPalette colorFrom="0xCC0000" colorTo="0x0000AA" target="{innerWedgeLayout}" id="wedgePalette"/>
+				<paint:LayoutPalette colorFrom="0xCC0000" colorTo="0x0000AA" target="{wedgeLayout}" id="wedgePalette"/>
 				<paint:LayoutPalette colorFrom="{wedgePalette.currentColor | 0x2B2B11}" colorTo="{wedgePalette.currentColor | 0x151511}" target="{outerWedgeLayout}" id="outerWedgePalette"/>
 			</axiis:palettes>
 			
 			<axiis:fills>
-				<degrafa:RadialGradientFill  id="wedgeFill" cx="{innerWedgeLayout.width/2}" cy="{innerWedgeLayout.width/2}" radius="{(innerWedgeLayout.width/2)*innerRadi2}">
+				<degrafa:RadialGradientFill  id="wedgeFill" cx="{wedgeLayout.width/2}" cy="{wedgeLayout.width/2}" radius="{(wedgeLayout.width/2)*innerRadi2}">
 					<degrafa:GradientStop color="{wedgePalette.currentColor | 0x333333}" ratio=".6" />
 					<degrafa:GradientStop  color="{wedgePalette.currentColor}" id="wedgeFillStop1"/>
 				</degrafa:RadialGradientFill>
-				<degrafa:RadialGradientFill  id="outerWedgeFill" cx="{innerWedgeLayout.width/2}" cy="{innerWedgeLayout.width/2}" radius="{(innerWedgeLayout.width/2)*innerRadi2}">
-					<degrafa:GradientStop color="{outerWedgePalette.currentColor | 0x333333}" ratio=".8" />
-					<degrafa:GradientStop  color="{outerWedgePalette.currentColor}" id="wedgeFillStop2"/>
-				</degrafa:RadialGradientFill>
 				<degrafa:SolidFill color="{wedgePalette.currentColor}" alpha="1"/>
-				<!--degrafa:SolidFill color="{outerWedgePalette.currentColor}" id="outerWedgeFill" alpha="1"/-->
+				<degrafa:SolidFill color="{outerWedgePalette.currentColor}" id="outerWedgeFill" alpha="1"/>
 				<degrafa:SolidFill color="0xFFFF00" id="rollOverFill0" alpha=".9"/>
 				<degrafa:SolidFill color="0xFF00FF" id="rollOverFill1" alpha=".9"/>
 			</axiis:fills>

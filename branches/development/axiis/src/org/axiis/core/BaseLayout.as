@@ -1,4 +1,4 @@
-package org.axiis.layouts
+package org.axiis.core
 {
 	import com.degrafa.geometry.Geometry;
 	

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layouts:BaseLayout xmlns="*" 
+<core:BaseLayout xmlns="*" 
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
 	xmlns:layouts="org.axiis.layouts.*" 
 	xmlns:degrafa="http://www.degrafa.com/2007" 
@@ -95,7 +95,7 @@
 	
 	<degrafa:SolidFill id="gridFill" color="{gridFillColor}" alpha="{gridFillAlpha}"/>
 	
-	<layouts:referenceRepeater>
+	<core:referenceRepeater>
 		<core:GeometryRepeater id="repeater"> 
 			<core:geometry>
 				<degrafa:Line id="refLine" x="0" x1="{this.width}" height="{this.height}" y="0" y1="0" width="{this.width}"/>
@@ -104,8 +104,8 @@
 				<core:PropertyModifier property="y" modifier="{_gapStep}" modifierOperator="add"/>
 			</core:modifiers>
 		</core:GeometryRepeater>
-	</layouts:referenceRepeater>
-	<layouts:drawingGeometries>
+	</core:referenceRepeater>
+	<core:drawingGeometries>
 		<degrafa:RegularRectangle x="0"  y="{currentReference['y']}" id="gridRect"
 			width="{width}" 
 			visible="{(showGrid.value)}" fill="{gridFill}">				  
@@ -121,6 +121,6 @@
 		<degrafa:RasterText id="label" align="right" autoSizeField="true"
 			fontFamily="fontFamily" fontSize="{fontSize}" fontWeight="{fontWeight}" textColor="{fontColor}"
 			text="{_labelFunction(Number(verticalScale.layoutToValue(verticalScale.maxLayout-currentReference['y'])))}" visible="{showLabel.value}"/>
-	</layouts:drawingGeometries>
+	</core:drawingGeometries>
 
-</layouts:BaseLayout>
+</core:BaseLayout>

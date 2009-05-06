@@ -1,6 +1,6 @@
 package org.axiis.layouts
 {
-	import org.axiis.layouts.BaseLayout;
+	import org.axiis.core.BaseLayout;
 	import org.axiis.core.ILayout;
 
 	/*
