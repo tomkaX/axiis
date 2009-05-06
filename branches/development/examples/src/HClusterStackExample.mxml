@@ -28,9 +28,7 @@
 			
 		]]>
 </mx:Script> 
-<Examples:ExampleBackground width="{this.width}" height="{this.height}"/>
-<mx:Label fontSize="22" fontFamily="Myriad Pro" htmlText="&lt;b&gt;Axiis&lt;/b&gt; - Horizontal Chart" top="20" right="30" color="0xFFFFFF"/>
-<mx:Label fontSize="14" fontFamily="Myriad Pro" htmlText="Clusters and Stacks" top="50" right="30" color="0xFFFFFF" alpha=".9"/>
+<Examples:ExampleBackground width="{this.width}" height="{this.height}" title="Horizontal Chart" subTitle="Clusters and Stacks"/>
 
 <mx:String id="countryData" source="data/2008_Olympics.xml"/>
 
@@ -47,19 +45,9 @@
 
 	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{hLayout.height}" id="vScale"/>
 	
-	<mx:VBox width="300" top="30" left="50">
-		<mx:HBox>
-			<mx:Label text="Show Line" textAlign="right" verticalCenter="0" width="100"/>
-			<mx:CheckBox id="showLine" selected="true" change="{dc.invalidateDisplayList();}"/>
-		</mx:HBox>
-		<mx:HBox visible="{showLine.selected}">
-			<mx:Label text="Line Curve" textAlign="right" verticalCenter="0" width="100"/>
-			<mx:HSlider width="80" id="lineTension" minimum="1" maximum="60" value="35" liveDragging="false" showTrackHighlight="false"  change="{dc.invalidateDisplayList();}" verticalCenter="-5"/>
-		</mx:HBox>
-		
-	</mx:VBox>
 	
-	<axiis:DataCanvas height="{this.height*.7}" width="{this.width*.8}" id="dc" verticalCenter="0" horizontalCenter="0" showDataTips="true"
+	
+	<axiis:DataCanvas top="100" bottom="120" width="{this.width*.8}" id="dc" verticalCenter="0" horizontalCenter="0" showDataTips="true"
 		 strokes="{strokes}" fills="{fills}" palettes="{palettes}">
 	
 		<!-- Background -->
@@ -86,10 +74,10 @@
 						fill="{stackFill}" stroke="{colStroke}" verticalScale="{vScale}" fontFamily="Arial" showLabel="false"/>
 					
 				 	<!-- Line Group (same data) --> 
-					<!--groupings:HLineGroup id="myLineGroup"  segmentWidth="{hLayout.width/hLayout.itemCount}" tension="{lineTension.value/120}" visible="{showLine.selected}"
+					<groupings:HLineGroup id="myLineGroup"  segmentWidth="{hLayout.width/hLayout.itemCount}" tension="{lineTension.value/120}" visible="{showLine.selected}"
 					  width="{hLayout.currentReference.width}" height="{hLayout.currentReference.height}" markerRadius="3" 
 					  stroke="{myStroke2}" dataProvider="{hLayout.currentDatum[dataField]}" groupParent="{dataProvider}" groupName="{dataField}"
-					  dataField="{childDataField}" verticalScale="{vScale}"/-->
+					  dataField="{childDataField}" verticalScale="{vScale}"/>
 						
 				</axiis:layouts>
 				
@@ -128,5 +116,17 @@
 		<degrafa:SolidStroke color="{outerPalette.currentColor}" id="myStroke" alpha=".5"/>
 		<degrafa:SolidStroke color="{outerPalette.currentColor}" id="myStroke2" alpha=".7" weight="6" caps="none"/>
 	</mx:Array>
+	
+	<mx:HBox  bottom="30" horizontalCenter="0">
+		<mx:HBox>
+			<mx:Label text="Show Line" textAlign="right" verticalCenter="0" width="100"/>
+			<mx:CheckBox id="showLine" selected="true" change="{dc.invalidateDisplayList();}"/>
+		</mx:HBox>
+		<mx:HBox visible="{showLine.selected}">
+			<mx:Label text="Line Curve" textAlign="right" verticalCenter="0" width="100"/>
+			<mx:HSlider width="80" id="lineTension" minimum="1" maximum="60" value="35" liveDragging="false" showTrackHighlight="false"  change="{dc.invalidateDisplayList();}" verticalCenter="-5"/>
+		</mx:HBox>
+		
+	</mx:HBox>
 	
 </mx:Application>

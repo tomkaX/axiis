@@ -28,9 +28,7 @@
 			
 		]]>
 </mx:Script> 
-<Examples:ExampleBackground width="{this.width}" height="{this.height}"/>
-<mx:Label fontSize="22" fontFamily="Myriad Pro" htmlText="&lt;b&gt;Axiis&lt;/b&gt; - Vertical Chart" top="20" right="30" color="0xFFFFFF"/>
-<mx:Label fontSize="14" fontFamily="Myriad Pro" htmlText="Clusters and Stacks" top="50" right="30" color="0xFFFFFF" alpha=".9"/>
+<Examples:ExampleBackground width="{this.width}" height="{this.height}" title="Vertical Chart" subTitle="Clusters and Stacks"/>
 
 <mx:String id="countryData" source="data/2008_Olympics.xml"/>
 

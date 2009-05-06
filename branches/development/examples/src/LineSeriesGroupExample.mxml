@@ -25,9 +25,9 @@
 				dc.invalidateDisplayList();
 			}
 			
-			private function filterData(obj:Object):void {
-				
-			} 
+			private function axisLabel(obj:Object):String {
+				return formatter.format(Number(obj)/1000);
+			}
 			
 			private function filterColumns(obj:Object):Boolean {
 				//Don't want filter fields, trim columns
@@ -47,13 +47,11 @@
 			}
 		]]>
 </mx:Script> 
-<Examples:ExampleBackground width="{this.width}" height="{this.height}"/>
-<mx:Label fontSize="22" fontFamily="Myriad Pro" htmlText="&lt;b&gt;Axiis&lt;/b&gt; - Horizontal Chart" top="20" right="30" color="0xFFFFFF"/>
-<mx:Label fontSize="14" fontFamily="Myriad Pro" htmlText="Lines and Areas" top="50" right="30" color="0xFFFFFF" alpha=".9"/>
+<Examples:ExampleBackground width="{this.width}" height="{this.height}" title="Horizontal Chart" subTitle="Lines and Areas"/>
 
 <mx:String id="payload" source="data/LineSeriesData.csv"/>
 
-
+<mx:CurrencyFormatter currencySymbol="k" precision="0" id="formatter" alignSymbol="right" useThousandsSeparator="true"/>
  
 
 
@@ -66,46 +64,17 @@
 <!--  EXPRESSIONS -->
 <utils:NumericExpression id="tension" value="{slider.value/210}" valueChanged="{if (myLineGroup) dc.invalidateDisplayList();}"/>
 
-<!-- DISPLAY OBJECTS -->
-<Examples:PanelBackground width="800" height="50" top="30" left="60" cornerRadius="8"/>
-<mx:HBox id="myBox" top="45" left="65">
-		<mx:HBox>
-			<mx:Label text="Line Curve" textAlign="right" verticalCenter="0"/><mx:HSlider width="80" id="slider" minimum="1" maximum="80" value="35" liveDragging="true" showTrackHighlight="false" verticalCenter="-5"/>
-		</mx:HBox>
-			<mx:Label text="|"/>
-			<mx:HBox>
-		<mx:Label text="% Data" textAlign="right" verticalCenter="0"/><mx:HSlider width="80" id="dataSlice" minimum="3" maximum="220" value="30" snapInterval="1" change="{dc.invalidateDisplayList(); myLineGroup.invalidateDataProvider();}" showTrackHighlight="false" verticalCenter="-5"/>
-		</mx:HBox>
-			<mx:Label text="|"/>
-		<mx:HBox>
-			<mx:Label text="Area" textAlign="right" verticalCenter="0"/><mx:CheckBox id="area" change="{dc.invalidateDisplayList();}" selected="true"/>
-		</mx:HBox>
-			<mx:Label text="|"/>
-		<mx:HBox>
-			<mx:Label text="Marker" textAlign="right" verticalCenter="0"/><mx:CheckBox id="showMarker" change="{dc.invalidateDisplayList();}"/>
-		</mx:HBox>
-		<mx:Label text="|"/>
-		<mx:Spacer width="20"/>
-		<mx:HBox>
-			<mx:RadioButtonGroup id="layoutGroup" change="{dc.invalidateDisplayList();}"/>
-			<mx:RadioButton label="Overlay" group="{layoutGroup}" value="{LineSeriesGroup.MODE_BASELINE}"  selected="true" />
-			<mx:RadioButton label="Stack" group="{layoutGroup}" value="{LineSeriesGroup.MODE_STACK_ZERO}"/>
-			<mx:RadioButton label="Flow" group="{layoutGroup}" value="{LineSeriesGroup.MODE_STACK_FLOW}"/>
-		</mx:HBox>
-</mx:HBox>
-
-
 
 <!-- CHART -->
 	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{myLineGroup.height}" id="vScale" minValue="{(layoutGroup.selectedValue == LineSeriesGroup.MODE_STACK_FLOW) ? -Number(vScale.maxValue) : 0}"/>
 	
-	<axiis:DataCanvas height="70%" width="80%" id="dc" top="200" horizontalCenter="0"
+	<axiis:DataCanvas width="80%" id="dc" top="120" bottom="100" horizontalCenter="0"
 		 strokes="{strokes}" fills="{fills}" palettes="{palettes}" showDataTips="true">
 	
 		<!-- Background -->
 		<axiis:backgroundGeometries>
 			<axis:VAxis verticalScale="{vScale}" tickStroke="{axisStroke}" width="{dc.width}"  height="{myLineGroup.height}" emitDataTips="false"
-				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5" majorTickSpacing="50"/>
+				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5" majorTickSpacing="50" labelFunction="{axisLabel}"/>
 			<degrafa:Line x="0" x1="{myLineGroup.x+myLineGroup.width}" y="{myLineGroup.height}" y1="{myLineGroup.height}" stroke="{axisStroke}"/>
 		</axiis:backgroundGeometries>
 	
@@ -122,6 +91,8 @@
 		</axiis:layouts>
 	</axiis:DataCanvas>
 	
+<!--  FILLS & STROKES -->
+
 	<mx:Array id="palettes">
 		<paint:LayoutPalette id="outerPalette" target="{myLineGroup}" colorFrom="0xCC3333" colorTo="0x3333CC"/> <!-- colorFrom= -->
 		<paint:LayoutPalette id="clusterPalette" target="{myLineGroup}" colorFrom="{outerPalette.currentColor}" colorTo="{outerPalette.currentColor | 0x337f00}"/>
@@ -151,5 +122,33 @@
 		<degrafa:SolidStroke color="0x222222" id="axisStroke" pixelHinting="true"/>
 		<degrafa:SolidStroke color="{areaPalette.currentColor}" id="myStroke" weight="1" alpha="1" caps="none" pixelHinting="true"/>
 	</mx:Array>
+	
+<!-- DISPLAY OBJECTS -->
+
+	<mx:HBox id="myBox" bottom="50" horizontalCenter="0">
+		<mx:HBox>
+			<mx:Label text="Line Curve" textAlign="right" verticalCenter="0"/><mx:HSlider width="80" id="slider" minimum="1" maximum="80" value="35" liveDragging="true" showTrackHighlight="false" verticalCenter="-5"/>
+		</mx:HBox>
+			<mx:Label text="|"/>
+			<mx:HBox>
+		<mx:Label text="% Data" textAlign="right" verticalCenter="0"/><mx:HSlider width="80" id="dataSlice" minimum="3" maximum="220" value="30" snapInterval="1" change="{dc.invalidateDisplayList(); myLineGroup.invalidateDataProvider();}" showTrackHighlight="false" verticalCenter="-5"/>
+		</mx:HBox>
+			<mx:Label text="|"/>
+		<mx:HBox>
+			<mx:Label text="Area" textAlign="right" verticalCenter="0"/><mx:CheckBox id="area" change="{dc.invalidateDisplayList();}" selected="true"/>
+		</mx:HBox>
+			<mx:Label text="|"/>
+		<mx:HBox>
+			<mx:Label text="Marker" textAlign="right" verticalCenter="0"/><mx:CheckBox id="showMarker" change="{dc.invalidateDisplayList();}"/>
+		</mx:HBox>
+		<mx:Label text="|"/>
+		<mx:Spacer width="20"/>
+		<mx:HBox>
+			<mx:RadioButtonGroup id="layoutGroup" change="{dc.invalidateDisplayList();}"/>
+			<mx:RadioButton label="Overlay" group="{layoutGroup}" value="{LineSeriesGroup.MODE_BASELINE}"  selected="true" />
+			<mx:RadioButton label="Stack" group="{layoutGroup}" value="{LineSeriesGroup.MODE_STACK_ZERO}"/>
+			<mx:RadioButton label="Flow" group="{layoutGroup}" value="{LineSeriesGroup.MODE_STACK_FLOW}"/>
+		</mx:HBox>
+</mx:HBox>
 	
 </mx:Application>

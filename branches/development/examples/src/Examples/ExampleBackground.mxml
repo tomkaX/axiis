@@ -1,32 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<degrafa:Surface xmlns:degrafa="http://www.degrafa.com/2007" xmlns:mx="http://www.adobe.com/2006/mxml">
-<mx:Script>
-	<![CDATA[
-		//Need this hack for some bug in Degrafa with surface and group
-	
-		override public function set width(value:Number):void {
-			super.width=value;
-			myGroup.width=myRect.width=value;			
-		}
-		
-		override public function set height(value:Number):void {
-			super.height=value;
-			myGroup.height=myRect.height=value;			
-		}
-	]]>
-</mx:Script>
-	<degrafa:graphicsData>
-	<degrafa:GeometryGroup width="{this.width}" height="{this.height}" id="myGroup">
-		<degrafa:RegularRectangle width="100%" height="100%" id="myRect">
+<mx:Canvas  xmlns:degrafa="http://www.degrafa.com/2007" xmlns:mx="http://www.adobe.com/2006/mxml" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+
+	<degrafa:GeometryComposition width="{this.width}" height="{this.height}" id="myGroup" graphicsTarget="{[this]}">
+		<degrafa:RegularRectangle width="{this.width}" height="{this.height}" id="myRect">
 			<degrafa:fill>
 				<degrafa:LinearGradientFill angle="90">
-					<degrafa:GradientStop color="#3e3e3e" ratio="0"/>
-					<degrafa:GradientStop color="#e0e0e0" ratio=".55"/>
-					<degrafa:GradientStop color="#a5a5a5" ratio="1"/>
+					<degrafa:GradientStop color="#a2a4a5" ratio="0"/>
+					<degrafa:GradientStop color="#939ba2" ratio=".55"/>
+					<degrafa:GradientStop color="#747576" ratio="1"/>
 				</degrafa:LinearGradientFill>
 			</degrafa:fill>
 		</degrafa:RegularRectangle>
-	</degrafa:GeometryGroup>
-	</degrafa:graphicsData>
-</degrafa:Surface>
+		<degrafa:Ellipse id="myEllipse" horizontalCenter="0" width="{width*.95}" height="{height*1.3}" top="{-height*.45}" >
+			<degrafa:fill>
+				<degrafa:RadialGradientFill>
+					<degrafa:GradientStop color="0xFFFFFF" alpha=".52"/>
+					<degrafa:GradientStop color="0xFFFFFF" alpha="0"/>
+				</degrafa:RadialGradientFill>
+			</degrafa:fill>
+		</degrafa:Ellipse>
+		<degrafa:Ellipse id="myEllipse2" horizontalCenter="0" width="{width*2.2}" height="{height*.48}" bottom="{-height*.1}" >
+			<degrafa:fill>
+				<degrafa:RadialGradientFill>
+					<degrafa:GradientStop color="0xFFFFFF" alpha=".7"/>
+					<degrafa:GradientStop color="0xFFFFFF" alpha=".5" ratio=".4"/>
+					<degrafa:GradientStop color="0xFFFFFF" alpha=".05" ratio=".9"/>
+					<degrafa:GradientStop color="0xFFFFFF" alpha="0"/>
+				</degrafa:RadialGradientFill>
+			</degrafa:fill>
+		</degrafa:Ellipse>
+	</degrafa:GeometryComposition>
+	
+	
+	<mx:String id="title">Title</mx:String>
+	<mx:String id="subTitle">Sub Title</mx:String>
+	
+	<mx:Label fontSize="22" fontFamily="Myriad Pro" htmlText="{title}" top="25" right="20" color="0"/>
+	<mx:Label fontSize="14" fontFamily="Myriad Pro" htmlText="{subTitle}" top="52" right="20" color="0x333333" alpha=".9" />
+	<mx:Image source="@Embed(source='Examples/axiis_logo_55.png')" left="20" top="15"/>
 
+</mx:Canvas>
