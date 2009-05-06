@@ -14,7 +14,7 @@
 	</mx:Script>
 	
 	<layouts>		
-		<layouts:HorizontalBoxLayout id="layout" dataProvider="{dataProvider}" width="{width}" height="{height}">
+		<layouts:HBoxLayout id="layout" dataProvider="{dataProvider}" width="{width}" height="{height}">
 			<layouts:drawingGeometries>
 				<geometry:Column id="myCol" x="{layout.currentReference.x}" scale="{scale}" dataField="{dataField}">
 					<geometry:fill>
@@ -22,7 +22,7 @@
 					</geometry:fill>
 				</geometry:Column>
 			</layouts:drawingGeometries>
-		</layouts:HorizontalBoxLayout>
+		</layouts:HBoxLayout>
 	</layouts>
 	
 </DataCanvas>

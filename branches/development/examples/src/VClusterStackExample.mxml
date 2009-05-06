@@ -68,7 +68,7 @@
 	
 		<!-- Layouts -->
 		<axiis:layouts>
-			<axiis:VerticalBoxLayout id="hLayout" x="70" y="0"  height="{dc.height-25}" width="{dc.width-70}" percentGap="{percentGap}"
+			<axiis:VBoxLayout id="hLayout" x="70" y="0"  height="{dc.height-25}" width="{dc.width-70}" percentGap="{percentGap}"
 					dataProvider="{dataProvider}" dataField="{dataField}" labelField="{labelField}">
 				<axiis:layouts>
 					
@@ -91,7 +91,7 @@
 						y="{hLayout.currentReference.y}" x="-70" labelValue="{hLayout.currentLabel}" markerStroke="{myStroke}"/>
 				</axiis:drawingGeometries>
 				
-			</axiis:VerticalBoxLayout>
+			</axiis:VBoxLayout>
 		</axiis:layouts>
 	</axiis:DataCanvas>
 	

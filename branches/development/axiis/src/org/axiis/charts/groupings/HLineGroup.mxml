@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layouts:HorizontalBoxLayout xmlns:mx="http://www.adobe.com/2006/mxml"
+<layouts:HBoxLayout xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:degrafa="http://www.degrafa.com/2007" name="outerlayout"
 	xmlns:core="org.axiis.core.*"
 	xmlns:layouts="org.axiis.layouts.*"
@@ -224,4 +224,4 @@
 		
 		
 	</layouts:drawingGeometries>
-</layouts:HorizontalBoxLayout>
+</layouts:HBoxLayout>

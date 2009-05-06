@@ -11,9 +11,9 @@
 	<component id="WaterfallChart" class="org.axiis.charts.WaterfallChart"/>
 
 	<!-- layouts -->
-	<component id="AbsoluteLayout" class="org.axiis.layouts.HorizontalBoxLayout"/>
-	<component id="HorizontalBoxLayout" class="org.axiis.layouts.HorizontalBoxLayout"/>
-	<component id="VerticalBoxLayout" class="org.axiis.layouts.VerticalBoxLayout"/>
+	<component id="AbsoluteLayout" class="org.axiis.layouts.AbsoluteLayout"/>
+	<component id="HBoxLayout" class="org.axiis.layouts.HBoxLayout"/>
+	<component id="VBoxLayout" class="org.axiis.layouts.VBoxLayout"/>
 	
 	<!-- scales -->
 	<component id="LinearScale" class="org.axiis.layouts.scale.LinearScale"/>

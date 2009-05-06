@@ -7,7 +7,6 @@ package org.axiis.core
 	import flash.geom.Rectangle;
 	
 	import mx.core.FlexSprite;
-	import mx.events.PropertyChangeEvent;
 	
 	import org.axiis.states.State;
 
@@ -19,11 +18,7 @@ package org.axiis.core
 		}
 		
 		private var eventListeners:Array = [];
-	
-		private var watchingForModifications:Boolean = false;
-	
-		public var revertingModifications:Array = [];
-		
+
 		private var activeStates:Array = [];
 		
 		public var data:Object;
@@ -33,6 +28,8 @@ package org.axiis.core
 		public var bounds:Rectangle;
 		
 		public var geometries:Array = [];
+		
+		public var revertingModifications:Array = [];
 		
 		public var scaleFill:Boolean = true;
 		
@@ -133,9 +130,31 @@ package org.axiis.core
 				return;	
 			
 			activeStates = findStatesForEventType(event.type);
-			setActiveStatesForAncestors(activeStates);
+			
+			var statesForChildren:Array = [];
+			var statesForSiblings:Array = [];
+			//var statesForSiblingChildren:Array = [];
+			var statesForParents:Array = [];
+			var statesForParentSiblings:Array = [];
+			for each(var state:State in activeStates)
+			{
+				if(state.propagateToDescendents)
+					statesForChildren.push(state);
+				if(state.propagateToSiblings)
+					statesForSiblings.push(state);
+				//if(state.propagateToSiblingChildren)
+				//	statesForSiblingChildren.push(state);
+				if(state.propagateToAncestors)
+					statesForParents.push(state);
+				if(state.propagateToAncestorsSiblings)
+					statesForParentSiblings.push(state);
+			}
+			
+			setActiveStatesForParents(statesForParents,statesForParentSiblings);
+			//setActiveStatesForSiblings(statesForSiblings,statesForSiblingChildren);
+			setActiveStatesForSiblings(statesForSiblings);
+			setActiveStatesForChildren(statesForChildren);
 			render();
-			setActiveStatesForDescendents(activeStates);
 		}
 		
 		protected function findStatesForEventType(eventType:String):Array
@@ -149,17 +168,7 @@ package org.axiis.core
 			return toReturn;
 		}
 		
-		protected function setActiveStatesForAncestors(states:Array):void
-		{
-			if(parent is AxiisSprite)
-			{
-				AxiisSprite(parent).activeStates = states;
-				AxiisSprite(parent).setActiveStatesForAncestors(states);
-				AxiisSprite(parent).render();
-			}
-		}
-		
-		protected function setActiveStatesForDescendents(states:Array):void
+		protected function setActiveStatesForChildren(states:Array):void
 		{	
 			for(var a:int = 0; a < numChildren; a++)
 			{
@@ -167,23 +176,47 @@ package org.axiis.core
 				if(currChild is AxiisSprite)
 				{
 					AxiisSprite(currChild).activeStates = states;
-					AxiisSprite(currChild).setActiveStatesForDescendents(states);
+					AxiisSprite(currChild).setActiveStatesForChildren(states);
 					AxiisSprite(currChild).render();
 				}
 			}
 		}
 		
+		protected function setActiveStatesForSiblings(statesForSiblings:Array):void
+		{
+			if(!parent)
+				return;
+			
+			for(var a:int = 0; a < parent.numChildren; a++)
+			{
+				var currChild:DisplayObject = parent.getChildAt(a);
+				if(currChild != this && currChild is AxiisSprite)
+				{
+					AxiisSprite(currChild).activeStates = statesForSiblings;
+					//AxiisSprite(currChild).setActiveStatesForChildren(statesForSiblingChildren);
+					AxiisSprite(currChild).render();
+				}
+			}
+		}
+		
+		protected function setActiveStatesForParents(statesForAncestors:Array,statesForAncestorSiblings:Array):void
+		{
+			if(parent is AxiisSprite)
+			{
+				AxiisSprite(parent).activeStates = statesForAncestors;
+				//AxiisSprite(parent).setActiveStatesForSiblings(statesForAncestorSiblings,[])
+				AxiisSprite(parent).setActiveStatesForSiblings(statesForAncestorSiblings)
+				AxiisSprite(parent).setActiveStatesForParents(statesForAncestors,statesForAncestorSiblings);
+				AxiisSprite(parent).render();
+			}
+		}
+		
 		public function render():void
 		{
-			//if(revertingModifications.length > 0)
-			//	trace();
-			
-
 			for each(var modification:PropertySetter in revertingModifications)
 			{
 				modification.apply();
 			}
-		
 			
 			for each(var activeState:State in activeStates)
 			{

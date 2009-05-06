@@ -1,6 +1,6 @@
 package org.axiis.states
 {
-	import com.degrafa.geometry.Geometry;
+	import mx.controls.Alert;
 	
 	public class State
 	{
@@ -20,6 +20,16 @@ package org.axiis.states
 		public var enterStateEvent:String;
 		
 		public var exitStateEvent:String;
+		
+		public var propagateToDescendents:Boolean = false;
+		
+		public var propagateToSiblings:Boolean = false;
+		
+		//public var propagateToSiblingChildren:Boolean = false;
+
+		public var propagateToAncestors:Boolean = false;		
+		
+		public var propagateToAncestorsSiblings:Boolean = false;
 
 		public function apply():void
 		{

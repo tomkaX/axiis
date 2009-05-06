@@ -84,7 +84,7 @@
 	
 		<!-- Layouts -->
 		<axiis:layouts>
-			<axiis:HorizontalBoxLayout id="hLayout" x="25" y="0"  height="{dc.height-70}" width="{dc.width-25}" percentGap="{percentGap}"
+			<axiis:HBoxLayout id="hLayout" x="25" y="0"  height="{dc.height-70}" width="{dc.width-25}" percentGap="{percentGap}"
 					 dataProvider="{dataProvider}"  dataField="{dataField}" labelField="{labelField}">
 				<axiis:layouts>
 					<groupings:HLineGroup id="myLineGroup"  segmentWidth="{hLayout.width/hLayout.itemCount}" tension="{tension.value}" markerColor="{areaPalette.currentColor}"
@@ -96,7 +96,7 @@
 					
 				</axiis:layouts>
 				
-			</axiis:HorizontalBoxLayout>
+			</axiis:HBoxLayout>
 		</axiis:layouts>
 	</axiis:DataCanvas>
 	

@@ -13,18 +13,23 @@ package org.axiis.layouts
 	import org.axiis.core.ILayout;
 	import org.axiis.core.PropertySetter;
 	
-	[Event(name="invalidate", type="org.axiis.LayoutEvent")]
+	[Event(name="invalidateLayout", type="flash.events.Event")]
 	[Event(name="preRender", type="flash.events.Event")]
 	[Event(name="itemPreDraw", type="flash.events.Event")]
 	public class BaseLayout extends AbstractLayout
 	{
-		
 		public function BaseLayout()
 		{
 			super();
 		}
 		
-		private var activeStates:Array = [];
+		private var t:Number;
+		
+		private var propertySettersArrays:Array = [];
+		
+		private var currentPropertySetters:Array = [];
+		
+		private var originalPropertySetters:Array = [];
 
 		[Bindable(event="scaleFillChange")]
 		/**
@@ -56,16 +61,17 @@ package org.axiis.layouts
 		 */
 		public var inheritParentBounds:Boolean = true;
 		
-		var t:Number;
-	
+		override public function set visible(value:Boolean):void
+		{
+			super.visible = value;
+			if(sprite)
+				sprite.visible = visible;
+		}
+		
 		override public function render(newSprite:AxiisSprite = null):void 
 		{
 			if (!visible)
 				return;
-			
-			_currentDatum=null;
-			_currentValue=null;
-			_currentLabel=null;
 			
 			t=flash.utils.getTimer();
 			
@@ -75,7 +81,6 @@ package org.axiis.layouts
 			
 			if(newSprite)
 				this.sprite = newSprite;
-			//sprite.visible = false;
 			_rendering = true;
 			
 				
@@ -102,117 +107,17 @@ package org.axiis.layouts
 			
 			if (_dataItems && _dataItems.length > 0 )
 			{
+				_currentDatum = null;
+				_currentValue = null;
+				_currentLabel = null;
 				_currentIndex = -1;
 				
 				if(parentLayout == null)
-				{
-					clearSetterArrays();
-				}
-				/* originalPropertySetters = [];
-				currentPropertySetters = [];
-				propertySettersArrays = []; */
+					clearPropertySetterArrays();
 				addModificationListeners();
 				
 				_referenceGeometryRepeater.repeat(preIteration, postIteration, repeatComplete);
 			}
-		}
-		
-		protected function clearSetterArrays():void
-		{
-			propertySettersArrays = [];
-			currentPropertySetters = [];
-			originalPropertySetters = [];
-			
-			for each(var layout:BaseLayout in layouts)
-			{
-				layout.clearSetterArrays();
-			}
-		}
-		
-		public function addModificationListeners():void
-		{
-			for each(var geometry:Geometry in drawingGeometries)
-			{
-				geometry.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,handleGeometryPropertyChange);
-			}
-		}
-		
-		public function removeModificationListeners():void
-		{
-			for each(var geometry:Geometry in drawingGeometries)
-			{
-				geometry.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,handleGeometryPropertyChange);
-			}
-		}
-		
-		protected function handleGeometryPropertyChange(event:PropertyChangeEvent):void
-		{
-			if (currentIndex==itemCount-1 && this.referenceRepeater.iterationLoopComplete) {
-					currentPropertySetters=this.propertySettersArrays[0]; //Grab the first one
-					//trace("setting iteration 0 " + event.property + "=" + event.newValue);
-			}
-			
-			if(!hasModificationForProperty(originalPropertySetters,event.source,event.property))
-			{
-				var oldPropertySetter:PropertySetter = new PropertySetter(event.source,event.property,event.oldValue);
-				originalPropertySetters.push(oldPropertySetter);
-				var i:int = 0;
-				for each(var arr:Array in propertySettersArrays)
-				{
-					arr.push(oldPropertySetter.clone());
-					i++
-				}
-			}
-			
-			/* if(referenceRepeater.currentIteration == -1)
-				return; */
-			
-			var found:Boolean = false;
-			for each(var propertySetter:PropertySetter in currentPropertySetters)
-			{
-				if(propertySetter.target == event.source && propertySetter.property == event.property)
-				{
-					
-					propertySetter.value = event.newValue;
-					found = true
-					
-					
-				//	trace(name,"U",referenceRepeater.currentIteration,propertySetter.target,propertySetter.property,propertySetter.value)
-				}
-			}
-			if(!found)
-			{
-				
-				var newPropertySetter:PropertySetter = new PropertySetter(event.source,event.property,event.newValue);
-				currentPropertySetters.push(newPropertySetter);
-			//	trace(name,"N",referenceRepeater.currentIteration,oldPropertySetter.target,oldPropertySetter.property,oldPropertySetter.value)
-			}
-		}
-		
-		protected function hasModificationForProperty(propertySetters:Array,target:Object,property:Object):Boolean
-		{
-			for each(var propertySetter:PropertySetter in propertySetters)
-			{
-				if(propertySetter.target == target && propertySetter.property == property)
-					return true;
-			}
-			return false;
-		}
-		
-		private var propertySettersArrays:Array = [];
-		
-		private var currentPropertySetters:Array = [];
-		
-		private var originalPropertySetters:Array = [];
-		
-		private function clonePropertySetterArray(arr:Array):Array
-		{
-			var toReturn:Array = [];
-			for each(var propertySetter:PropertySetter in arr)
-			{
-				toReturn.push(propertySetter.clone());
-			}
-			return toReturn;
 		}
 		
 		protected function preIteration():void
@@ -255,18 +160,23 @@ package org.axiis.layouts
 			currentChild.revertingModifications = [];
 			currentChild.render();
 			
+			renderChildLayouts(currentChild);
+		}
+		
+		protected function renderChildLayouts(child:AxiisSprite):void
+		{
 			var i:int=0;
 			for each(var layout:ILayout in layouts)
 			{
 				// When we have multiple peer layouts the AxiisSprite needs to
 				// differentiate between child drawing sprites and child layout sprites
 				layout.parentLayout = this as ILayout;
-				if (currentChild.layoutSprites.length-1 < i)
+				if (child.layoutSprites.length-1 < i)
 				{
 					var ns:AxiisSprite = createChildSprite(this);
-					currentChild.addLayoutSprite(ns);
+					child.addLayoutSprite(ns);
 				}
-				layout.render(currentChild.layoutSprites[i]);
+				layout.render(child.layoutSprites[i]);
 				i++;
 			}
 		}
@@ -278,22 +188,30 @@ package org.axiis.layouts
 			
 			removeModificationListeners();
 			
-		//	for each(var propertySetter:PropertySetter in propertySettersArrays[0])
-        //    {
-        //        propertySetter.apply();
-		//	}
-			
-			/* for(var a:int = 0; a < propertySettersArrays.length; a++)
-			{
-				AxiisSprite(sprite.drawingSprites[a]).revertingModifications = propertySettersArrays[a];
-			} */
-			
 			if(parentLayout == null)
-			{
 				updateSpritePropertySetters();
-			}
+		}
+		
+		protected function clearPropertySetterArrays():void
+		{
+			propertySettersArrays = [];
+			currentPropertySetters = [];
+			originalPropertySetters = [];
 			
-			//trace("BaseLayout.render elapsed=" + (flash.utils.getTimer()-t) + "ms");
+			for each(var layout:BaseLayout in layouts)
+			{
+				layout.clearPropertySetterArrays();
+			}
+		}
+		
+		private function clonePropertySetterArray(arr:Array):Array
+		{
+			var toReturn:Array = [];
+			for each(var propertySetter:PropertySetter in arr)
+			{
+				toReturn.push(propertySetter.clone());
+			}
+			return toReturn;
 		}
 		
 		protected function updateSpritePropertySetters():void
@@ -302,11 +220,70 @@ package org.axiis.layouts
 			{
 				AxiisSprite(childSprites[a]).revertingModifications = propertySettersArrays[a];
 			}
-			
 			for each(var layout:BaseLayout in layouts)
 			{
 				layout.updateSpritePropertySetters();
 			}
+		}
+		
+		public function addModificationListeners():void
+		{
+			for each(var geometry:Geometry in drawingGeometries)
+			{
+				geometry.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,handleGeometryPropertyChange);
+			}
+		}
+		
+		public function removeModificationListeners():void
+		{
+			for each(var geometry:Geometry in drawingGeometries)
+			{
+				geometry.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,handleGeometryPropertyChange);
+			}
+		}
+		
+		protected function handleGeometryPropertyChange(event:PropertyChangeEvent):void
+		{
+			if (currentIndex==itemCount-1 && this.referenceRepeater.iterationLoopComplete)
+				currentPropertySetters=this.propertySettersArrays[0]; //Grab the first one
+			
+			if(!hasModificationForProperty(originalPropertySetters,event.source,event.property))
+			{
+				var oldPropertySetter:PropertySetter = new PropertySetter(event.source,event.property,event.oldValue);
+				originalPropertySetters.push(oldPropertySetter);
+				var i:int = 0;
+				for each(var arr:Array in propertySettersArrays)
+				{
+					arr.push(oldPropertySetter.clone());
+					i++
+				}
+			}
+			
+			var found:Boolean = false;
+			for each(var propertySetter:PropertySetter in currentPropertySetters)
+			{
+				if(propertySetter.target == event.source && propertySetter.property == event.property)
+				{
+					propertySetter.value = event.newValue;
+					found = true;
+				}
+			}
+			if(!found)
+			{
+				
+				var newPropertySetter:PropertySetter = new PropertySetter(event.source,event.property,event.newValue);
+				currentPropertySetters.push(newPropertySetter);
+			}
+		}
+		
+		protected function hasModificationForProperty(propertySetters:Array,target:Object,property:Object):Boolean
+		{
+			for each(var propertySetter:PropertySetter in propertySetters)
+			{
+				if(propertySetter.target == target && propertySetter.property == property)
+					return true;
+			}
+			return false;
 		}
 		
 		private function createChildSprite(layout:ILayout):AxiisSprite
@@ -339,13 +316,6 @@ package org.axiis.layouts
 				return obj[chain[0]];
 			else
 				return getProperty(obj[chain[0]],chain.slice(1,chain.length).join("."));
-		}
-		
-		override public function set visible(value:Boolean):void
-		{
-			super.visible = value;
-			if(sprite)
-				sprite.visible = visible;
 		}
 	}
 }

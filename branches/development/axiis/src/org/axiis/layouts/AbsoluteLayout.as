@@ -15,6 +15,5 @@ package org.axiis.layouts
 		{
 			super();
 		}
-		
 	}
 }

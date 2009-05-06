@@ -1,6 +1,5 @@
 package org.axiis.core
 {
-	
 	public class PropertySetter
 	{
 		public function PropertySetter(target:Object = null,property:Object = null,value:Object = null)
@@ -20,7 +19,6 @@ package org.axiis.core
 		{
 			if(target && property)
 				target[property] = value;
-			//trace(target,property,value)
 		}
 		
 		public function clone():PropertySetter

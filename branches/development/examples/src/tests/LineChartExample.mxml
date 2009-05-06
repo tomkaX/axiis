@@ -333,7 +333,7 @@
 		
 		<axiis:layouts> 
 			
-			<axiis:HorizontalBoxLayout dataProvider="{dataProvider}" id="hLayout" dataField="medal_count_sum" labelField="name" width="{dc.width-40}" x="40" height="{dc.height-20}"
+			<axiis:HBoxLayout dataProvider="{dataProvider}" id="hLayout" dataField="medal_count_sum" labelField="name" width="{dc.width-40}" x="40" height="{dc.height-20}"
 				 preRender="calculateCurves();"
 				>
 				<axiis:drawingGeometries>
@@ -354,7 +354,7 @@
 				<!--degrafa:BezierSpline id="mySpline" tension="3"><degrafa:stroke><degrafa:SolidStroke color="0xFFFFFF" weight="1"/></degrafa:stroke>
 				</degrafa:BezierSpline-->
 				</axiis:drawingGeometries>
-			</axiis:HorizontalBoxLayout>
+			</axiis:HBoxLayout>
 		</axiis:layouts>	
 		<axiis:palettes>
 			<paint:LayoutPalette colorFrom="0xCC0000" colorTo="0x0000AA" target="{hLayout}" id="circlePalette"/>

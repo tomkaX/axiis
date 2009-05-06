@@ -15,7 +15,6 @@ package org.axiis
 	
 	import org.axiis.core.AxiisSprite;
 	import org.axiis.core.ILayout;
-	import org.axiis.events.LayoutEvent;
 	
 	
 	public class DataCanvas extends UIComponent
@@ -90,7 +89,7 @@ package org.axiis
 				var sprite:Sprite = layout.getSprite(this);
 				addChild(sprite);
 				
-				layout.addEventListener(LayoutEvent.INVALIDATE,handleLayoutInvalidate);
+				layout.addEventListener("layoutInvalidate",handleLayoutInvalidate);
 				if (layout.emitDataTips)
 					sprite.addEventListener(MouseEvent.MOUSE_OVER,onItemMouseOver);
 				sprite.addEventListener(MouseEvent.CLICK,onItemMouseClick);
@@ -170,11 +169,12 @@ package org.axiis
 			_invalidated = false;
 		}
 		
-		protected function handleLayoutInvalidate(event:LayoutEvent):void
+		protected function handleLayoutInvalidate(event:Event):void
 		{
-			if(invalidatedLayouts.indexOf(event.layout) == -1)
+			var layout:ILayout = event.target as ILayout;
+			if(invalidatedLayouts.indexOf(layout) == -1)
 			{
-				invalidatedLayouts.push(event.layout);
+				invalidatedLayouts.push(layout);
 				super.invalidateDisplayList();
 			}
 		}

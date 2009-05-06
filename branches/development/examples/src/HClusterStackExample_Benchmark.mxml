@@ -75,7 +75,7 @@
 	
 		<!-- Layouts -->
 		<axiis:layouts>
-			<axiis:HorizontalBoxLayout id="hLayout" x="25" y="0"  height="{dc.height-70}" width="{dc.width-25}" percentGap="{percentGap}" 
+			<axiis:HBoxLayout id="hLayout" x="25" y="0"  height="{dc.height-70}" width="{dc.width-25}" percentGap="{percentGap}" 
 					dataProvider="{dataProvider}" dataField="{dataField}" labelField="{labelField}">
 				<axiis:layouts>
 					
@@ -85,10 +85,23 @@
 						fill="{clusterFill}" stroke="{colStroke}" verticalScale="{vScale}" fontFamily="Myriad Pro" fontColor="{outerPalette.currentColor}" />
 					
 					<!-- Stack Group (same data) -->
-					<groupings:ColumnStack id="myStack" x="{hLayout.currentReference.width*.85}" y="0" 
+					<groupings:ColumnStack id="myStack" x="{hLayout.currentReference.width*.85}" y="0"
 						width="{hLayout.currentReference.width*.15}" height="{hLayout.currentReference.height}" 
 						dataProvider="{hLayout.currentValue}" dataField="{childDataField}" labelField="{childLabelField}" 
-						fill="{stackFill}" stroke="{colStroke}" verticalScale="{vScale}" fontFamily="Arial" showLabel="false"/>
+						fill="{stackFill}" stroke="{colStroke}" verticalScale="{vScale}" fontFamily="Arial" showLabel="false">
+						<groupings:states>
+							<axiis:State targets="{[myStack]}"
+								properties="['fill']"
+								enterStateEvent="mouseOver"
+								exitStateEvent="mouseOut">
+								<axiis:values>
+									<mx:Array>
+										<degrafa:SolidFill color="0xffff00"/>
+									</mx:Array>
+								</axiis:values>
+							</axiis:State>
+						</groupings:states>
+					</groupings:ColumnStack>
 
 				</axiis:layouts>
 				
@@ -98,7 +111,7 @@
 						y="{hLayout.height+5}" x="{hLayout.currentReference.x}" labelValue="{hLayout.currentLabel}" markerStroke="{myStroke}"/>
 				</axiis:drawingGeometries>
 				
-			</axiis:HorizontalBoxLayout>
+			</axiis:HBoxLayout>
 		</axiis:layouts>
 	</axiis:DataCanvas>
 	

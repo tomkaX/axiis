@@ -11,7 +11,7 @@
 	<scale:LinearScale dataProvider="{dataProvider}" dataField="{horizontalField}" minLayout="0" maxLayout="{width-100}" minValue="0" id="hScale"/>
 	
 	<layouts>
-		<layouts:VerticalBoxLayout id="myLayout" scaleFill="true"
+		<layouts:VBoxLayout id="myLayout" scaleFill="true"
 			dataProvider="{dataProvider}"
 		 	dataField="{horizontalField}"
 		 	width="{this.width-100}"
@@ -22,7 +22,7 @@
 					/>
 				<degrafa:RasterText fontSize="16" fontFamily="Arial" text="{myLayout.currentDatum[verticalField]}" y="{myLayout.currentReference.y}" width="100" x="{myBar.x+myBar.width+5}"/>
 			</layouts:drawingGeometries>
-		</layouts:VerticalBoxLayout>
+		</layouts:VBoxLayout>
 	</layouts>
 			
 	<fills>

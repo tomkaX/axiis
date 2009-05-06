@@ -12,7 +12,7 @@
 	<scale:LinearScale dataProvider="{dataProvider}" dataField="{verticalField}" minLayout="0" maxLayout="{height-100}" minValue="0" id="vScale"/>
 	
 	<layouts>
-		<layouts:HorizontalBoxLayout id="myLayout" scaleFill="false" dataProvider="{dataProvider}" dataField="{verticalField}" width="{this.width}" height="{this.height-100}" percentGap="{percentGap}">
+		<layouts:HBoxLayout id="myLayout" scaleFill="false" dataProvider="{dataProvider}" dataField="{verticalField}" width="{this.width}" height="{this.height-100}" percentGap="{percentGap}">
 			<layouts:drawingGeometries>
 				<geometry:Column id="myCol"
 					x="{myLayout.currentReference.x}"
@@ -32,7 +32,7 @@
 					properties="{['fill','stroke']}"
 					values="{[rollOverFill,rollOverStroke]}"/>
 			</layouts:states>
-		</layouts:HorizontalBoxLayout>
+		</layouts:HBoxLayout>
 	</layouts>
 				
 	<fills>

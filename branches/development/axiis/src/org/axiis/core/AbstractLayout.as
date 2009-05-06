@@ -10,7 +10,6 @@ package org.axiis.core
 	import mx.collections.ArrayCollection;
 	
 	import org.axiis.DataCanvas;
-	import org.axiis.events.LayoutEvent;
 	
 	public class AbstractLayout  extends EventDispatcher implements ILayout
 	{
@@ -549,7 +548,7 @@ package org.axiis.core
 		
 		public function invalidate():void
 		{
-			dispatchEvent(new LayoutEvent(LayoutEvent.INVALIDATE,this as ILayout));
+			dispatchEvent(new Event("layoutInvalidate"));
 		} 
 		
 		[Bindable(event="renderingChange")]

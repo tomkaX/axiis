@@ -47,7 +47,7 @@
 	</mx:Script>
 	
 	<layouts>
-		<layouts:HorizontalWaterfallLayout id="waterfallLayout"
+		<layouts:HWaterfallLayout id="waterfallLayout"
 			dataProvider="{dataProvider}"
 			dataField="{dataField}"
 			width="{width}"
@@ -68,7 +68,7 @@
 					x="{waterfallLayout.currentReference.x}"
 					y="{height}"/>
 			</layouts:drawingGeometries>
-		</layouts:HorizontalWaterfallLayout>
+		</layouts:HWaterfallLayout>
 	</layouts>
 	
 	<fills>

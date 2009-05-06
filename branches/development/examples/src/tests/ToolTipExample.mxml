@@ -82,7 +82,7 @@
 	<mx:VBox y="70" width="100%" height="100%" horizontalAlign="center">
 		<axiis:DataCanvas id="dataCanvas" hitRadius="{hitRadiusSlider.value}" >
 			<axiis:layouts>
-				<axiis:HorizontalBoxLayout id="hBoxLayout" dataField="competitors" labelField="name" width="400" height="400"
+				<axiis:HBoxLayout id="hBoxLayout" dataField="competitors" labelField="name" width="400" height="400"
 					dataTipLabelFunction="{labelToolTip}" dataTipPositionFunction="{positionDataTip}">
 					<axiis:drawingGeometries>
 						<degrafa:RegularRectangle id="column"
@@ -99,7 +99,7 @@
 							properties="{['fill','stroke']}"
 							values="{[rollOverFill,rollOverStroke]}"/>
 					</axiis:states>
-				</axiis:HorizontalBoxLayout>
+				</axiis:HBoxLayout>
 			</axiis:layouts>
 						
 			<axiis:fills>
