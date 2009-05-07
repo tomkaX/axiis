@@ -70,8 +70,12 @@ package org.axiis.core
 		
 		override public function render(newSprite:AxiisSprite = null):void 
 		{
-			if (!visible)
+			if (!visible) {
+				if (newSprite) newSprite.visible=false;
 				return;
+			}
+			
+			if (newSprite) newSprite.visible=true;
 			
 			t=flash.utils.getTimer();
 			

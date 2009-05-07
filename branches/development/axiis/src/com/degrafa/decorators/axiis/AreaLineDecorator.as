@@ -26,8 +26,10 @@ package  com.degrafa.decorators.axiis {
 		override public function initialize(stack:CommandStack):void {
 			_commandStack=stack;
 			_currentFill=CommandStack.currentFill;
-			if (fillBounds)
+			if (fillBounds) {
 				_currentFill.begin(CommandStack.currentContext,fillBounds);
+				trace("Decorator fill.y=" + fillBounds.y + " fill.height=" + fillBounds.height);	
+			}
 			if (CommandStack.currentStroke) {
 					_currentStrokeArgs = CommandStack.currentStroke.lastArgs;
 					var restroke:Function = CommandStack.currentStroke.reApplyFunction;
