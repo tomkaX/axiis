@@ -2,9 +2,9 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:axiis="http://www.axiis.org/2009"
 	xmlns:degrafa="http://www.degrafa.com/2007" backgroundGradientColors="[0xFFFFFF,0xDDDDDD]"
-	layout="vertical"
+	layout="absolute"
 	initialize="start()" xmlns:geometry="org.axiis.charts.geometry.*" xmlns:states="org.axiis.states.*"
-	>
+	xmlns:Examples="Examples.*">
 
 	<mx:Script>
 		<![CDATA[
@@ -30,18 +30,33 @@
 				subColumnLayout.scaleFill = flag;
 				subColumnLayout.invalidate();
 			}
+			
+			public function colorFunction3(val:Object):Number {
+				return Number(val) | 0x000077;
+			}
+			
+			public function colorFunction2(val:Object):Number {
+				return Number(val) | 0x990099;
+			}
+			
+			public function colorFunction1(val:Object):Number {
+				return Number(val) | 0x444444;
+			}
+			
 		]]>
 	</mx:Script>
 	
 	<mx:XML id="xml" source="/data/hierarchicalData.xml"/>
+	
+	<Examples:ExampleBackground width="100%" height="100%" title="Nested Columns" subTitle="Custom Visualization"/>
 
 	<axiis:LinearScale id="scale" maxLayout="{dataCanvas.height}" minLayout="0" minValue="0" maxValue="100"/> 
 
-	<axiis:DataCanvas id="dataCanvas" width="100%" height="100%">
+	<axiis:DataCanvas id="dataCanvas"  left="80" right="80" top="130" bottom="130">
 		<axiis:layouts>
-			<axiis:HBoxLayout id="clusterLayout" name="A" width="{dataCanvas.width}" height="{dataCanvas.height}" x="0" y="0" scaleFill="true" dataField="value">
+			<axiis:HBoxLayout id="clusterLayout" name="A" width="{dataCanvas.width}" height="{dataCanvas.height}" x="0" y="0" scaleFill="true" dataField="value" percentGap=".05">
 				<axiis:drawingGeometries>
-					<geometry:Column stroke="{blackStroke}" fill="{fill1}" scale="{scale}" dataField="value"
+					<geometry:Column stroke="{blackStroke}" fill="{fill1}" scale="{scale}" dataField="value" 
 						height="{scale.valueToLayout(clusterLayout.currentValue)}" x="{clusterLayout.currentReference.x}" y="{clusterLayout.height-scale.valueToLayout(clusterLayout.currentValue)}"
 						width="{clusterLayout.currentReference.width}"/>
 				</axiis:drawingGeometries> 
@@ -63,9 +78,9 @@
 								<axiis:states>
 									<axiis:State enterStateEvent="mouseOver"
 										exitStateEvent="mouseOut"
-										properties="{['fill']}"
-										values="{[rollOverFill2]}"
-										targets="{[subColumn]}"/> 
+										properties="{['color']}"
+										values="{[colorFunction3]}"
+										targets="{[stop3]}"/> 
 								</axiis:states>
 								
 							</axiis:HBoxLayout>
@@ -74,9 +89,9 @@
 						<axiis:states>
 							<axiis:State enterStateEvent="mouseOver"
 								exitStateEvent="mouseOut"
-								properties="{['fill']}"
-								values="{[rollOverFill1]}"
-								targets="{[subColumn]}"
+								properties="{['color']}"
+								values="{[colorFunction2]}"
+								targets="{[stop2]}"
 								propagateToDescendents="true"/>
 						</axiis:states>
 						
@@ -86,9 +101,9 @@
 				<axiis:states>
 					<axiis:State enterStateEvent="mouseOver"
 						exitStateEvent="mouseOut"
-						properties="{['fill']}"
-						values="{[rollOverFill0]}"
-						targets="{[subColumn]}"
+						properties="{['color']}"
+						values="{[colorFunction1]}"
+						targets="{[stop1]}"
 						propagateToDescendents="true"/>
 				</axiis:states>
 				
@@ -101,15 +116,15 @@
 		
 		<axiis:fills>
 			<degrafa:LinearGradientFill id="fill1" angle="295"><!-- still have a bug where the gradient does not work when at angle=0 -->
-				<degrafa:GradientStop color="0x4477FF"/>
-				<degrafa:GradientStop color="0x333388"/>
+				<degrafa:GradientStop color="0x4477FF" />
+				<degrafa:GradientStop color="0x333388" id="stop1"/>
 			</degrafa:LinearGradientFill>
 			<degrafa:LinearGradientFill id="fill2" angle="1">
-				<degrafa:GradientStop color="0xFFFF44"/>
-				<degrafa:GradientStop color="0x888833"/>
+				<degrafa:GradientStop color="0xFFFF44" alpha=".9" id="stop2"/>
+				<degrafa:GradientStop color="0x888833"  />
 			</degrafa:LinearGradientFill>
 			<degrafa:LinearGradientFill id="fill3" angle="1">
-				<degrafa:GradientStop color="0xFF4444"/>
+				<degrafa:GradientStop color="0xFF4444" alpha=".9"   id="stop3"/>
 				<degrafa:GradientStop color="0x883333"/>
 			</degrafa:LinearGradientFill>
 			<degrafa:SolidFill color="0xFF" alpha=".9" id="rollOverFill0"/>
