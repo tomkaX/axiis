@@ -37,6 +37,6 @@
 	
 	<mx:Label fontSize="22" fontFamily="Myriad Pro" htmlText="{title}" top="25" right="20" color="0"/>
 	<mx:Label fontSize="14" fontFamily="Myriad Pro" htmlText="{subTitle}" top="52" right="20" color="0x333333" alpha=".9" />
-	<mx:Image source="@Embed(source='Examples/axiis_logo_55.png')" left="20" top="15"/>
+	<mx:Image source="@Embed(source='Examples/axiis_logo_shadow.png')" left="20" top="15"/>
 
 </mx:Canvas>
