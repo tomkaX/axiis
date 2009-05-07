@@ -170,12 +170,12 @@
 										</geometry:filters>-->
 									</geometry:Wedge>
 									 	
-									<degrafa:RegularRectangle width="{outerRadius.value}" x="{center.value}" y="{center.value}" height="20">
+									<degrafa:RegularRectangle width="{outerRadius.value}" x="{center.value}" y="{center.value}" height="1">
 										<degrafa:geometry>
-											<degrafa:RasterText id="outerLabel" fontFamily="Myriad Pro"  fontSize="11" text="{outerWedgeLayout.currentLabel}" height="20"
+											<degrafa:RasterText id="outerLabel" fontFamily="Myriad Pro"  fontSize="11" text="{outerWedgeLayout.currentLabel}" height="15"
 												right="0" width="{outerRadius.value}" align="right"  textColor="{wedgePalette.currentColor}">
 												<degrafa:transform>
-													<degrafa:RotateTransform registrationPoint="centerRight" angle="{(transposeLabel(outerWedgeLayout.currentReference)==true) ? 180:0}"/>
+													<degrafa:RotateTransform registrationPoint="topRight" angle="{(transposeLabel(outerWedgeLayout.currentReference)==true) ? 180:0}"/>
 												</degrafa:transform>
 											</degrafa:RasterText>
 										</degrafa:geometry>
