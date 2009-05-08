@@ -72,12 +72,6 @@
 						width="{hLayout.currentReference.width*.15}" height="{hLayout.currentReference.height}" 
 						dataProvider="{hLayout.currentValue}" dataField="{childDataField}" labelField="{childLabelField}" 
 						fill="{stackFill}" stroke="{colStroke}" verticalScale="{vScale}" fontFamily="Arial" showLabel="false"/>
-					
-				 	<!-- Line Group (same data) --> 
-					<groupings:HLineGroup id="myLineGroup"  segmentWidth="{hLayout.width/hLayout.itemCount}" tension="{lineTension.value/120}" visible="{showLine.selected}"
-					  width="{hLayout.currentReference.width}" height="{hLayout.currentReference.height}" markerRadius="3" 
-					  stroke="{myStroke2}" dataProvider="{hLayout.currentDatum[dataField]}" groupParent="{dataProvider}" groupName="{dataField}"
-					  dataField="{childDataField}" verticalScale="{vScale}"/>
 						
 				</axiis:layouts>
 				
@@ -117,16 +111,5 @@
 		<degrafa:SolidStroke color="{outerPalette.currentColor}" id="myStroke2" alpha=".7" weight="6" caps="none"/>
 	</mx:Array>
 	
-	<mx:HBox  bottom="30" horizontalCenter="0">
-		<mx:HBox>
-			<mx:Label text="Show Line" textAlign="right" verticalCenter="0" width="100"/>
-			<mx:CheckBox id="showLine" selected="true" change="{dc.invalidateDisplayList();}"/>
-		</mx:HBox>
-		<mx:HBox visible="{showLine.selected}">
-			<mx:Label text="Line Curve" textAlign="right" verticalCenter="0" width="100"/>
-			<mx:HSlider width="80" id="lineTension" minimum="1" maximum="60" value="35" liveDragging="false" showTrackHighlight="false"  change="{dc.invalidateDisplayList();}" verticalCenter="-5"/>
-		</mx:HBox>
-		
-	</mx:HBox>
 	
 </mx:Application>
