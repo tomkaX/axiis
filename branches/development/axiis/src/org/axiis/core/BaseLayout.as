@@ -70,7 +70,7 @@ package org.axiis.core
 		
 		override public function render(newSprite:AxiisSprite = null):void 
 		{
-			if (!visible) {
+			if (!visible || !this.dataItems || itemCount==0) {
 				if (newSprite) newSprite.visible=false;
 				return;
 			}
@@ -220,7 +220,7 @@ package org.axiis.core
 		
 		protected function updateSpritePropertySetters():void
 		{
-			for(var a:int = 0; a < propertySettersArrays.length; a++)
+			for(var a:int = 0; a < childSprites.length; a++)
 			{
 				AxiisSprite(childSprites[a]).revertingModifications = propertySettersArrays[a];
 			}

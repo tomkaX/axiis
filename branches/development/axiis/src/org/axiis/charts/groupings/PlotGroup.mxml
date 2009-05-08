@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<axiis:RepeaterLayout xmlns="*" xmlns:mx="http://www.adobe.com/2006/mxml"  xmlns:degrafa="http://www.degrafa.com/2007" xmlns:axiis="http://www.axiis.org/2009">
+
+	<axiis:LinearScale id="verticalScale"/>
+	<axiis:LinearScale id="horizontalScale"/>
+	
+	<mx:String id="horizontalField"/>
+	<mx:String id="verticalField"/>
+	
+	<axiis:drawingGeometries>
+		<degrafa:Circle radius="10" centerX="{horizontalScale.valueToLayout(currentDatum[horizontalField])}" centerY="{verticalScale.valueToLayout(currentDatum[verticalField],true)}">
+			<degrafa:fill>
+				<degrafa:SolidFill color="0xFF0000" alpha=".3"/>
+			</degrafa:fill>
+		</degrafa:Circle>
+		
+	</axiis:drawingGeometries>
+	
+</axiis:RepeaterLayout>

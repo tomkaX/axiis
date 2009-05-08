@@ -463,7 +463,7 @@
 	<mx:String id="plotLabelField"></mx:String>
 	
 	<utils:NumericExpression id="yPoint"/>
-	
+	<degrafa:SolidFill color="0xFFFF00" alpha=".7" id="rollOverFill"/>
 	<layouts:layouts>
 		<layouts:RepeaterLayout id="plotLayout" width="{currentReference.width}" height="{currentReference.height}" name="plotLayout"
 			preRender="onPlotPreRender();" scaleFill="true" x="0" y="0" inheritParentBounds="false"
@@ -478,26 +478,23 @@
 							>
 					</degrafa:Path>
 				</degrafa:RegularRectangle>	
-		</layouts:drawingGeometries>
-		
+			</layouts:drawingGeometries>
 		</layouts:RepeaterLayout>
-		<layouts:RepeaterLayout id="markerLayout" width="{currentReference.width}" height="{currentReference.height}" name="markerLayout"
-			scaleFill="true" x="0" y="0" inheritParentBounds="false" itemPreDraw="onMarkerItemPreDraw();">
-			<layouts:drawingGeometries>
-			
-			<degrafa:Circle id="marker"  radius="{markerSize/2}" centerY="{yPoint.value}" visible="{showMarker}" enableEvents="false">
-				<degrafa:fill><degrafa:SolidFill color="0xFFFFFF" alpha=".8"/></degrafa:fill>
-				<degrafa:stroke><degrafa:SolidStroke color="0" pixelHinting="false" alpha=".6"/></degrafa:stroke>
-			</degrafa:Circle>
-			<degrafa:Circle id="innerMarker" radius="{markerSize/2*.6}" centerX="{marker.centerX}" centerY="{marker.centerY}" visible="{showMarker}" enableEvents="false">
-				<degrafa:fill><degrafa:SolidFill color="{markerColor}" alpha="1"/></degrafa:fill>
-			</degrafa:Circle>
-			
-		</layouts:drawingGeometries>
+			<layouts:RepeaterLayout id="markerLayout" width="{currentReference.width}" height="{currentReference.height}" name="markerLayout"
+				scaleFill="true" x="0" y="0" inheritParentBounds="false" itemPreDraw="onMarkerItemPreDraw();">
+				<layouts:drawingGeometries>
+				
+				<degrafa:Circle id="marker"  radius="{markerSize/2}" centerY="{yPoint.value}" visible="{showMarker}" enableEvents="false">
+					<degrafa:fill><degrafa:SolidFill color="0xFFFFFF" alpha=".8"/></degrafa:fill>
+					<degrafa:stroke><degrafa:SolidStroke color="0" pixelHinting="false" alpha=".6"/></degrafa:stroke>
+				</degrafa:Circle>
+				<degrafa:Circle id="innerMarker" radius="{markerSize/2*.6}" centerX="{marker.centerX}" centerY="{marker.centerY}" visible="{showMarker}" enableEvents="false">
+					<degrafa:fill><degrafa:SolidFill color="{markerColor}" alpha="1"/></degrafa:fill>
+				</degrafa:Circle>
+				
+			</layouts:drawingGeometries>
 		
 		</layouts:RepeaterLayout>
 	</layouts:layouts>
-	<layouts:states>
-		<states:State targets="{[myPath]}" properties="['fill.color']" values="[0xFFFF00]" enterStateEvent="mouseOver" exitStateEvent="mouseExit"/>
-	</layouts:states>
+	
 </layouts:RepeaterLayout>
