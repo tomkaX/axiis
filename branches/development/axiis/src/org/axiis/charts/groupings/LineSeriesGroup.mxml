@@ -27,10 +27,10 @@
 			import org.axiis.utils.GraphicUtils;
 			
 			[Inspectable][Bindable]
-			public var stroke:IGraphicsStroke;
+			public var stroke:com.degrafa.core.IGraphicsStroke;
 			
 			[Inspectable][Bindable]
-			public var fill:IGraphicsFill;
+			public var fill:com.degrafa.core.IGraphicsFill;
 			
 			public var plotFilterFunction:Function;
 			

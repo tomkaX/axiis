@@ -3,7 +3,9 @@
 	xmlns:degrafa="http://www.degrafa.com/2007" name="outerlayout"
 	xmlns:layouts="org.axiis.layouts.*"
 	xmlns:scale="org.axiis.layouts.scale.*"
-	xmlns:states="org.axiis.states.*" itemPreDraw="onPreDraw();" preRender="onPreRender();" xmlns:core="org.axiis.core.*" xmlns:axiis="http://www.axiis.org/2009">
+	xmlns:states="org.axiis.states.*" itemPreDraw="onPreDraw();" preRender="onPreRender();"
+	xmlns:core="org.axiis.core.*"
+	xmlns:utils="org.axiis.utils.*">
 	
 	<!-- NOTE: Currently only tested for positive values -->
 	
@@ -14,10 +16,10 @@
 			import com.degrafa.core.IGraphicsFill;
 			
 			[Inspectable][Bindable]
-			public var fill:IGraphicsFill;
+			public var fill:com.degrafa.core.IGraphicsFill;
 			
 			[Inspectable][Bindable]
-			public var stroke:IGraphicsStroke;
+			public var stroke:com.degrafa.core.IGraphicsStroke;
 			
 			
 			private function onPreDraw():void {
@@ -39,7 +41,7 @@
 	<mx:String id="fontWeight">normal</mx:String>
 	<mx:Number id="fontColor">0</mx:Number>
 	<mx:Boolean id="showLabel">true</mx:Boolean>
-	<axiis:NumericExpression id="yModifieryValue" value="{verticalScale.valueToLayout(currentValue)}"/>
+	<utils:NumericExpression id="yModifieryValue" value="{verticalScale.valueToLayout(currentValue)}"/>
 
 	
 	<core:referenceRepeater>

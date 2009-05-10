@@ -60,7 +60,7 @@
 <mx:Number id="percentGap">.02</mx:Number>
 
 <!--  EXPRESSIONS -->
-<utils:NumericExpression id="tension" value="{slider.value/210}" valueChanged="{if (myLineGroup) dc.invalidateDisplayList();}"/>
+<utils:NumericExpression id="tension" expression="{slider.value/210}" valueChanged="{if (myLineGroup) dc.invalidateDisplayList();}"/>
 
 <!-- DISPLAY OBJECTS -->
 <!-- DISPLAY OBJECTS -->
@@ -103,7 +103,7 @@
 	<!-- Layouts -->
 		<axiis:layouts>
 					<groupings:LineSeriesGroup id="myLineGroup" x="35" y="0"  height="{dc.height-70}" width="{dc.width-35}" 
-					  tension="{tension.value}" markerColor="{areaPalette.currentColor}"   showArea="{area.selected}"
+					  tension="{tension.expression}" markerColor="{areaPalette.currentColor}"   showArea="{area.selected}"
 					  plotFilterFunction="{filterColumns}"  showMarker="{showMarker.selected}" mode="{int(layoutGroup.selectedValue)}"
 					  dataProvider="{dataProvider}" plotCollection="medal" markerSize="8"
 					  dataField="count" plotLabelField="category" seriesLabelField="name" verticalScale="{vScale}"

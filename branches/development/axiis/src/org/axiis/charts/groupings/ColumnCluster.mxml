@@ -17,10 +17,11 @@
 			public var labelFunction:Function;
 			
 			[Inspectable][Bindable]
-			public var fill:IGraphicsFill;
+			public var fill:com.degrafa.core.IGraphicsFill;
 			
 			[Inspectable][Bindable]
-			public var stroke:IGraphicsStroke;
+			// We need to fully qualify this for asdoc
+			public var stroke:com.degrafa.core.IGraphicsStroke;
 			
 			
 		]]>

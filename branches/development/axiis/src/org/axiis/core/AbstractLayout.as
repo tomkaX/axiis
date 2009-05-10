@@ -3,6 +3,7 @@ package org.axiis.core
 	import com.degrafa.geometry.Geometry;
 	
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.geom.Rectangle;
 	import flash.utils.getTimer;

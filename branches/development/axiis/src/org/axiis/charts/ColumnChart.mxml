@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DataCanvas xmlns="org.axiis.*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:layouts="org.axiis.layouts.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:scale="org.axiis.layouts.scale.*" xmlns:geometry="org.axiis.charts.geometry.*" xmlns:states="org.axiis.states.*">
+<DataCanvas xmlns="org.axiis.*"
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:layouts="org.axiis.layouts.*"
+	xmlns:degrafa="http://www.degrafa.com/2007"
+	xmlns:scale="org.axiis.layouts.scale.*"
+	xmlns:geometry="org.axiis.charts.geometry.*"
+	xmlns:states="org.axiis.states.*"
+	preinitialize="myLayout.states = layoutStates">
+	<!-- little hack to get asdoc to not complain about initializing states -->
 	
 	<mx:String id="verticalField"/>
 	<mx:String id="horizontalField"/>
@@ -10,6 +18,13 @@
 	<mx:Boolean id="showLabels">true</mx:Boolean>
 	
 	<scale:LinearScale dataProvider="{dataProvider}" dataField="{verticalField}" minLayout="0" maxLayout="{height-100}" minValue="0" id="vScale"/>
+	
+	<mx:Array id="layoutStates">
+		<states:State id="rollOverState" enterStateEvent="mouseOver" exitStateEvent="mouseOut"
+					targets="{[myCol,myCol]}"
+					properties="{['fill','stroke']}"
+					values="{[rollOverFill,rollOverStroke]}"/>
+	</mx:Array>
 	
 	<layouts>
 		<layouts:HBoxLayout id="myLayout" scaleFill="false" dataProvider="{dataProvider}" dataField="{verticalField}" width="{this.width}" height="{this.height-100}" percentGap="{percentGap}">
@@ -26,12 +41,6 @@
 					width="{myLayout.currentReference.width}"/>
 				
 			</layouts:drawingGeometries>
-			<layouts:states>
-				<states:State id="rollOverState" enterStateEvent="mouseOver" exitStateEvent="mouseOut"
-					targets="{[myCol,myCol]}"
-					properties="{['fill','stroke']}"
-					values="{[rollOverFill,rollOverStroke]}"/>
-			</layouts:states>
 		</layouts:HBoxLayout>
 	</layouts>
 				

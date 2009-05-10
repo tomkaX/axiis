@@ -50,7 +50,7 @@
 <mx:Number id="percentGap">.02</mx:Number>
 
 <!--  EXPRESSIONS -->
-<utils:NumericExpression id="tension" value="{slider.value/210}" valueChanged="{if (myLineGroup) dc.invalidateDisplayList();}"/>
+<utils:NumericExpression id="tension" expression="{slider.value/210}" valueChanged="{if (myLineGroup) dc.invalidateDisplayList();}"/>
 
 <!-- DISPLAY OBJECTS -->
 <mx:Canvas width="300" height="100" top="30" left="50">
@@ -87,7 +87,7 @@
 			<axiis:HBoxLayout id="hLayout" x="25" y="0"  height="{dc.height-70}" width="{dc.width-25}" percentGap="{percentGap}"
 					 dataProvider="{dataProvider}"  dataField="{dataField}" labelField="{labelField}">
 				<axiis:layouts>
-					<groupings:HLineGroup id="myLineGroup"  segmentWidth="{hLayout.width/hLayout.itemCount}" tension="{tension.value}" markerColor="{areaPalette.currentColor}"
+					<groupings:HLineGroup id="myLineGroup"  segmentWidth="{hLayout.width/hLayout.itemCount}" tension="{tension.expression}" markerColor="{areaPalette.currentColor}"
 					  width="{hLayout.currentReference.width}" height="{hLayout.currentReference.height}" gutterWidth="5"
 					  dataProvider="{hLayout.currentDatum[dataField]}" groupParent="{dataProvider}" groupName="{dataField}"
 					  dataField="{childDataField}" verticalScale="{vScale}"
