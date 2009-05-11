@@ -1,10 +1,10 @@
 package org.axiis.paint
 {
 	import com.degrafa.paint.palette.InterpolatedColorPalette;
-	
+
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	
+
 	import org.axiis.core.ILayout;
 
 	/**
@@ -18,23 +18,16 @@ package org.axiis.paint
 	 * of a fill or stroke used in the Layout's <code>drawingGeometries</code>
 	 * as the Layout renders.
 	 */
-	public class LayoutAutoPalette extends EventDispatcher
+	public class LayoutPalette extends EventDispatcher
 	{
 		/**
 		 * Constructor.
 		 */
-		public function LayoutAutoPalette()
+		public function LayoutPalette()
 		{
 			super();
 		}
 		
-		/**
-		 * The InterpolatedColorPalette use behind the scene to distribute the 
-		 * colors in the palette evenly.
-		 */
-		private var palette:InterpolatedColorPalette = new InterpolatedColorPalette();
-
-		public var autoInterpolate:Boolean = true;
 
 		[Bindable]
 		/**
@@ -51,32 +44,9 @@ package org.axiis.paint
 				_target.removeEventListener("currentIndexChange", onIndexChanged);
 			_target = value;
 			if (_target)
-				_target.addEventListener("currentIndexChange", onIndexChanged);
-			generatePalette();			
+				_target.addEventListener("currentIndexChange", onIndexChanged);		
 		}
 		private var _target:ILayout;
-
-		/**
-		 * The first color in the palette.
-		 */
-		public function set colorFrom(value:Number):void
-		{
-			if (!isNaN(value))
-				_colorFrom = value;
-			generatePalette();
-		}
-		private var _colorFrom:Number = 0;
-
-		/**
-		 * The last color in the palette.
-		 */
-		public function set colorTo(value:Number):void
-		{
-			if (!isNaN(value))
-				_colorTo = value;
-			generatePalette();
-		}
-		private var _colorTo:Number = 0xFFFFFF;
 
 		[Bindable]
 		/**
@@ -90,15 +60,37 @@ package org.axiis.paint
 		{
 			_colors = value;
 		}
-		private var _colors:Array = [];
 		
-		/** 
-		 * used to set multiple color stops for palette generation
-		 * will override colorTo/From
-		 */
-		public function paletteColors(value:Array):void {
-			palette.colors=value;
-		}
+		//Halo default colors from Flex 3
+		private var _colors:Array = [	 0xE48701
+										,0xA5BC4E
+										,0x1B95D9
+										,0xCACA9E
+										,0x6693B0
+										,0xF05E27
+										,0x86D1E4
+										,0xE4F9A0
+										,0xFFD512
+										,0x75B000
+										,0x0662B0
+										,0xEDE8C6
+										,0xCC3300
+										,0xD1DFE7
+										,0x52D4CA
+										,0xC5E05D
+										,0xE7C174
+										,0xFFF797
+										,0xC5F68F
+										,0xBDF1E6
+										,0x9E987D
+										,0xEB988D
+										,0x91C9E5
+										,0x93DC4A
+										,0xFFB900
+										,0x9EBBCD
+										,0x009797
+										,0x0DB2C2
+									];
 
 		[Bindable(event="currentColorChange")]
 		/**
@@ -122,30 +114,11 @@ package org.axiis.paint
 		}
 		private var __currentColor:Number;
 
-		private function generatePalette():void
-		{
-			if (_target == null)
-				return;
-
-			palette.colors = [_colorFrom, _colorTo];
-			palette.requestedSize = _target.itemCount;
-
-			if (autoInterpolate)
-			{
-				_colors = new Array();
-				for (var i:int = 0; i < palette.requestedSize; i++)
-				{
-					_colors.push(palette.paletteEntries["pal_" + i].value);
-				}
-			}
-			colors = _colors;
-		}
 
 		private function onIndexChanged(e:Event):void
 		{
-			if (!_colors || colors.length != _target.itemCount)
-				generatePalette();
-			_currentColor = _colors[_target.currentIndex];
+			
+			_currentColor = _colors[_target.currentIndex % (_colors.length-1)];
 		}
 	}
 }
