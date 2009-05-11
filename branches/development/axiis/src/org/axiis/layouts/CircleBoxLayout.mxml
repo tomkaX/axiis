@@ -11,7 +11,7 @@
 	<!--  We need to figure out how to implement this scale correctly -->
 	
 	<core:referenceRepeater>
-		<layouts:GeometryRepeater id="myLayout" dataProvider="{this.dataItems}">
+		<layouts:GeometryRepeater id="myLayout">
 			<layouts:geometry>
 				<degrafa:RegularRectangle width="{(innerDiameter*Math.PI*2/this.itemCount)*(1-percentGap)}" height="50" x="{this.width/2}" y="{this.height/2}" id="layoutGeometry">
 					<degrafa:transform>

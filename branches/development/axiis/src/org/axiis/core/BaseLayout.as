@@ -105,22 +105,22 @@ package org.axiis.core
 			sprite.x = isNaN(_bounds.x) ? 0 :_bounds.x;
 			sprite.y = isNaN(_bounds.y) ? 0 :_bounds.y;
 			
-			_referenceGeometryRepeater.dataProvider=_dataItems;
 			if (_dataItems)
-				_itemCount = _dataItems.length;
-			
-			if (_dataItems && _dataItems.length > 0 )
 			{
-				_currentDatum = null;
-				_currentValue = null;
-				_currentLabel = null;
-				_currentIndex = -1;
-				
-				if(parentLayout == null)
-					clearPropertySetterArrays();
-				addModificationListeners();
-				
-				_referenceGeometryRepeater.repeat(preIteration, postIteration, repeatComplete);
+				_itemCount = _dataItems.length;
+				if(_itemCount > 0 )
+				{
+					_currentDatum = null;
+					_currentValue = null;
+					_currentLabel = null;
+					_currentIndex = -1;
+					
+					if(parentLayout == null)
+						clearPropertySetterArrays();
+					addModificationListeners();
+					
+					_referenceGeometryRepeater.repeat(itemCount, preIteration, postIteration, repeatComplete);
+				}
 			}
 		}
 		

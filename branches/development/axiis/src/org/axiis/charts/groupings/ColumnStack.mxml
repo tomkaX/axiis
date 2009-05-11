@@ -45,7 +45,7 @@
 
 	
 	<core:referenceRepeater>
-		<layouts:GeometryRepeater dataProvider="{dataItems}">
+		<layouts:GeometryRepeater>
 			<layouts:geometry>
 				<degrafa:RegularRectangle width="{this.width}" height="0" id="refRect" 
 					x="0"/> 

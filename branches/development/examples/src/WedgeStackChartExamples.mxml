@@ -95,7 +95,7 @@
 					itemPreDraw="{innerLabel.width=innerLabel.textWidth+40; if (transposeLabel(wedgeLayout.currentReference)==true) innerLabel.right=(outerRadius.value-wedgeRenderer.outerRadius) + innerLabel.textWidth + 11; else innerLabel.right=outerRadius.value-wedgeRenderer.outerRadius+10;}">
 					<axiis:referenceRepeater>
 						<!-- innerRepeater: the reference repeater wedge for the inner ring of wedges -->
-						<layouts:GeometryRepeater dataProvider="{wedgeLayout.dataItems}" id="innerRepeater" >
+						<layouts:GeometryRepeater id="innerRepeater" >
 							<layouts:geometry>
 								<geometry:Wedge  id="wedge" centerX="{wedgeLayout.width/2}" centerY="{wedgeLayout.width/2}" innerRadius="{(wedgeLayout.width/2)*innerRadi1}" outerRadius="{(wedgeLayout.width/2)*innerRadi2}" startAngle="360" arc="1"/>
 							</layouts:geometry>
@@ -144,7 +144,7 @@
 							
 							<axiis:referenceRepeater>
 								<!-- outerRepeater:  the reference geometry for the outer ring of wedges -->
-								<layouts:GeometryRepeater dataProvider="{outerWedgeLayout.dataItems}" id="outerRepeater">
+								<layouts:GeometryRepeater id="outerRepeater">
 									<layouts:geometry>
 										<geometry:Wedge  id="outerWedge" centerX="{wedgeLayout.width/2}" centerY="{wedgeLayout.width/2}" innerRadius="{(wedgeLayout.width/2)*outerRadi1}" outerRadius="{(wedgeLayout.width/2)*outerRadi2}" 
 											startAngle="{wedgeLayout.currentReference['startAngle']}" arc="{wedgeScale.valueToLayout(outerWedgeLayout.currentValue)-angleGap}"/>

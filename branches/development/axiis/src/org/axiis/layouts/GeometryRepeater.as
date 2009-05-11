@@ -42,14 +42,6 @@ package org.axiis.layouts
 		 */
 		public var modifiers:Array;
 		
-		public var dataProvider:Array;
-		
-		public function get currentDatum():Object
-		{
-			return _currentDatum;
-		}
-		private var _currentDatum:Object;
-		
 		/**
 		 * The number of iterations that the GeometryRepeater has processed.
 		 * When the GeometryRepeater is not running, this value is -1.
@@ -71,7 +63,8 @@ package org.axiis.layouts
 		}
 		private var _iterationLoopComplete:Boolean = true;
 		
-		// TODO Expand on this once we determine if we need dataProvider
+		private var numIterations:int = 0;
+		
 		/**
 		 * Begins the modifications process.
 		 *  
@@ -79,9 +72,13 @@ package org.axiis.layouts
 		 * @param postIterationCallback
 		 * @param completeCallback
 		 */
-		public function repeat(preIterationCallback:Function = null, postIterationCallback:Function=null, completeCallback:Function = null):void
+		public function repeat(numIterations:int, preIterationCallback:Function = null, postIterationCallback:Function=null, completeCallback:Function = null):void
 		{
-			_iterationLoopComplete=false;
+			this.numIterations = numIterations;
+			if(numIterations <= 0)
+				return;
+			
+			_iterationLoopComplete = false;
 			clearTimeout(timerID);
 			_currentIteration = 0;
 			repeatHelper(preIterationCallback,postIterationCallback,completeCallback);
@@ -92,20 +89,14 @@ package org.axiis.layouts
 		 */
 		protected function repeatHelper(preIterationCallback:Function = null, postIterationCallback:Function=null, completeCallback:Function = null):void
 		{
-			if(!dataProvider)
-				return;
-			
-			var len:int = dataProvider.length;
 			var app:Application = Application(Application.application);
 			var millisecondsPerFrame:Number = app.stage ? 1000 / app.stage.frameRate : 50;
 			var startTime:int = getTimer();
 			var totalTime:int = 0;
-			while(totalTime < millisecondsPerFrame && currentIteration < len)
+			while(totalTime < millisecondsPerFrame && currentIteration < numIterations)
 			{
 				if(preIterationCallback != null)
 					preIterationCallback.call(this);
-				
-				_currentDatum = dataProvider[currentIteration];
 				
 				if(geometry)
 				{
@@ -125,7 +116,7 @@ package org.axiis.layouts
 			}
 			
 			// We've finished looping before time ran out. Tear down and call completeCallback
-			if(currentIteration == len)
+			if(currentIteration == numIterations)
 			{					
 				_iterationLoopComplete = true;
 				for each (modifier in modifiers)

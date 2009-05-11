@@ -18,7 +18,7 @@
 	<mx:Number id="percentGap">0</mx:Number>
 	
 	<core:referenceRepeater>
-		<layouts:GeometryRepeater dataProvider="{dataItems}">
+		<layouts:GeometryRepeater>
 			<layouts:geometry>
 				<degrafa:RegularRectangle x="0" y="0" width="{(width / itemCount) - (width * percentGap/2)}" height="{height}" enableEvents="false"/>
 			</layouts:geometry>
