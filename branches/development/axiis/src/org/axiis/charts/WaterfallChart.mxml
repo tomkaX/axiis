@@ -6,8 +6,21 @@
 	
 	<mx:Script>
 		<![CDATA[
+			import com.degrafa.paint.SolidFill;
 			import mx.collections.ArrayCollection;
 			import com.degrafa.core.IGraphicsFill;
+			
+			[Bindable]
+			public var initialFill:IGraphicsFill = new SolidFill("blue");
+			
+			[Bindable]
+			public var plusFill:IGraphicsFill = new SolidFill("green");
+			
+			[Bindable]
+			public var minusFill:IGraphicsFill = new SolidFill("red");
+			
+			[Bindable]
+			public var finalFill:IGraphicsFill = new SolidFill("magenta");
 			
 			[Bindable]
 			public var labelField:String;
@@ -64,18 +77,11 @@
 					</degrafa:transform>
 				</degrafa:RegularRectangle>
 				<degrafa:RasterText fontSize="11" fontFamily="Verdana"
-					text="{waterfallLayout.currentLabel}"
+					text="{waterfallLayout.currentDatum[labelField]}"
 					x="{waterfallLayout.currentReference.x}"
 					y="{height}"/>
 			</layouts:drawingGeometries>
 		</layouts:HWaterfallLayout>
 	</layouts>
-	
-	<fills>
-		<degrafa:SolidFill id="initialFill" color="blue"/>
-		<degrafa:SolidFill id="plusFill" color="green"/>
-		<degrafa:SolidFill id="minusFill" color="red"/>
-		<degrafa:SolidFill id="finalFill" color="magenta"/>
-	</fills>
 	
 </DataCanvas>

@@ -19,28 +19,16 @@
 				clusterLayout.dataProvider = ds.data.object.nodes.node;
 			}
 			
-			private function fillChange(flag:Boolean):void
-			{
-				clusterLayout.scaleFill = flag;
-				clusterLayout.invalidate();
-				
-				columnLayout.scaleFill = flag;
-				columnLayout.invalidate();
-				
-				subColumnLayout.scaleFill = flag;
-				subColumnLayout.invalidate();
-			}
-			
 			public function colorFunction3(val:Object):Number {
-				return Number(val) | 0x000077;
+				return Number(val) | 0x0000ff;
 			}
 			
 			public function colorFunction2(val:Object):Number {
-				return Number(val) | 0x990099;
+				return 0x00ff00;
 			}
 			
 			public function colorFunction1(val:Object):Number {
-				return Number(val) | 0x444444;
+				return Number(val) | 0x0099ff;
 			}
 			
 		]]>
@@ -56,21 +44,24 @@
 		<axiis:layouts>
 			<axiis:HBoxLayout id="clusterLayout" name="A" width="{dataCanvas.width}" height="{dataCanvas.height}" x="0" y="0" scaleFill="true" dataField="value" percentGap=".05">
 				<axiis:drawingGeometries>
-					<geometry:Column stroke="{blackStroke}" fill="{fill1}" scale="{scale}" dataField="value" 
+					<degrafa:RegularRectangle
+						stroke="{blackStroke}" fill="{fill1}" 
 						height="{scale.valueToLayout(clusterLayout.currentValue)}" x="{clusterLayout.currentReference.x}" y="{clusterLayout.height-scale.valueToLayout(clusterLayout.currentValue)}"
 						width="{clusterLayout.currentReference.width}"/>
 				</axiis:drawingGeometries> 
 				<axiis:layouts>
 					<axiis:HBoxLayout id="columnLayout" width="{clusterLayout.currentReference.width}" height="{clusterLayout.currentReference.height}"  dataProvider="{clusterLayout.currentDatum.node}" percentGap="0" x="0" y="5" name=" B" dataField="value">
 						<axiis:drawingGeometries>
-							<geometry:Column stroke="{blackStroke}" fill="{fill2}" scale="{scale}" dataField="mytest" id="column"
+							<degrafa:RegularRectangle
+								stroke="{blackStroke}" fill="{fill2}" id="column"
 								height="{scale.valueToLayout(columnLayout.currentValue)}" x="{columnLayout.currentReference.x}" y="{clusterLayout.height-scale.valueToLayout(columnLayout.currentValue)}"
 								width="{columnLayout.currentReference.width}"/>
 						</axiis:drawingGeometries> 
 						<axiis:layouts>
 							<axiis:HBoxLayout id="subColumnLayout" width="{columnLayout.currentReference.width}" height="{columnLayout.currentReference.height}" dataProvider="{columnLayout.currentDatum.node}" y="0" x="0" percentGap="0" name="  C" dataField="value">
 								<axiis:drawingGeometries>
-									<geometry:Column id="subColumn" stroke="{blackStroke}" fill="{fill3}" scale="{scale}" x="{subColumnLayout.currentReference.x}" dataField="value"
+									<degrafa:RegularRectangle
+										id="subColumn" stroke="{blackStroke}" fill="{fill3}" x="{subColumnLayout.currentReference.x}"
 										height="{scale.valueToLayout(subColumnLayout.currentValue)}" y="{clusterLayout.height-scale.valueToLayout(subColumnLayout.currentValue)}"
  										width="{subColumnLayout.currentReference.width}"/>
 								</axiis:drawingGeometries>
@@ -115,7 +106,7 @@
 		</axiis:strokes>
 		
 		<axiis:fills>
-			<degrafa:LinearGradientFill id="fill1" angle="295"><!-- still have a bug where the gradient does not work when at angle=0 -->
+			<degrafa:LinearGradientFill id="fill1" angle="295">
 				<degrafa:GradientStop color="0x4477FF" />
 				<degrafa:GradientStop color="0x333388" id="stop1"/>
 			</degrafa:LinearGradientFill>
@@ -127,9 +118,6 @@
 				<degrafa:GradientStop color="0xFF4444" alpha=".9"   id="stop3"/>
 				<degrafa:GradientStop color="0x883333"/>
 			</degrafa:LinearGradientFill>
-			<degrafa:SolidFill color="0xFF" alpha=".9" id="rollOverFill0"/>
-			<degrafa:SolidFill color="0xFF00" alpha=".9" id="rollOverFill1"/>
-			<degrafa:SolidFill color="0xFF0000" alpha=".9" id="rollOverFill2"/>
 		</axiis:fills>
 		
 	</axiis:DataCanvas>
