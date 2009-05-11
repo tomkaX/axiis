@@ -3,7 +3,7 @@
 	xmlns:degrafa="http://www.degrafa.com/2007" name="outerlayout"
 	xmlns:layouts="org.axiis.layouts.*"
 	xmlns:scale="org.axiis.layouts.scale.*"
-	xmlns:states="org.axiis.states.*"  xmlns:core="org.axiis.core.*">
+	xmlns:states="org.axiis.states.*"  xmlns:core="org.axiis.core.*" xmlns:utils="org.axiis.layouts.utils.*">
 	
 	<!-- NOTE: Currently only tested for positive values -->
 	
@@ -33,16 +33,16 @@
 
 	
 	<core:referenceRepeater>
-		<layouts:GeometryRepeater>
-			<layouts:geometry>
+		<utils:GeometryRepeater>
+			<utils:geometry>
 				<degrafa:RegularRectangle width="{0}" height="{height}" id="refRect" enableEvents="false"
 					x="0" y="0"/> 
-			</layouts:geometry>
-			<layouts:modifiers>
-				<layouts:PropertyModifier id="widthModifier" property="width" modifier="{this.horizontalScale.valueToLayout(currentValue)}" modifierOperator="none"/>
-				<layouts:PropertyModifier id="xModifier" property="x" modifier="{(currentIndex == 0) ? 0 : this.horizontalScale.valueToLayout(dataItems[currentIndex-1][dataField])}" modifierOperator="add"/>
-			</layouts:modifiers>
-		</layouts:GeometryRepeater>	
+			</utils:geometry>
+			<utils:modifiers>
+				<utils:PropertyModifier id="widthModifier" property="width" modifier="{this.horizontalScale.valueToLayout(currentValue)}" modifierOperator="none"/>
+				<utils:PropertyModifier id="xModifier" property="x" modifier="{(currentIndex == 0) ? 0 : this.horizontalScale.valueToLayout(dataItems[currentIndex-1][dataField])}" modifierOperator="add"/>
+			</utils:modifiers>
+		</utils:GeometryRepeater>	
 	</core:referenceRepeater>
 	<core:drawingGeometries>
 			

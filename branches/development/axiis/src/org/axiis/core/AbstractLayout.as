@@ -11,7 +11,7 @@ package org.axiis.core
 	import mx.collections.ArrayCollection;
 	
 	import org.axiis.DataCanvas;
-	import org.axiis.layouts.GeometryRepeater;
+	import org.axiis.layouts.utils.GeometryRepeater;
 	
 	public class AbstractLayout  extends EventDispatcher implements ILayout
 	{

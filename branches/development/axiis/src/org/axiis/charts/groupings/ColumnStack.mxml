@@ -5,7 +5,7 @@
 	xmlns:scale="org.axiis.layouts.scale.*"
 	xmlns:states="org.axiis.states.*" itemPreDraw="onPreDraw();" preRender="onPreRender();"
 	xmlns:core="org.axiis.core.*"
-	xmlns:utils="org.axiis.utils.*">
+	xmlns:utils="org.axiis.utils.*" xmlns:utils1="org.axiis.layouts.utils.*">
 	
 	<!-- NOTE: Currently only tested for positive values -->
 	
@@ -45,16 +45,16 @@
 
 	
 	<core:referenceRepeater>
-		<layouts:GeometryRepeater>
-			<layouts:geometry>
+		<utils1:GeometryRepeater>
+			<utils1:geometry>
 				<degrafa:RegularRectangle width="{this.width}" height="0" id="refRect" 
 					x="0"/> 
-			</layouts:geometry>
-			<layouts:modifiers>
-				<layouts:PropertyModifier id="heightModifier" property="height" modifier="{this.verticalScale.valueToLayout(currentValue)}" modifierOperator="none"/>
-				<layouts:PropertyModifier id="yModifier" property="y" modifier="{yModifieryValue.value}" modifierOperator="subtract"/>
-			</layouts:modifiers>
-		</layouts:GeometryRepeater>	
+			</utils1:geometry>
+			<utils1:modifiers>
+				<utils1:PropertyModifier id="heightModifier" property="height" modifier="{this.verticalScale.valueToLayout(currentValue)}" modifierOperator="none"/>
+				<utils1:PropertyModifier id="yModifier" property="y" modifier="{yModifieryValue.value}" modifierOperator="subtract"/>
+			</utils1:modifiers>
+		</utils1:GeometryRepeater>
 	</core:referenceRepeater>
 	<core:drawingGeometries>
 			

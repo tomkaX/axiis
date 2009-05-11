@@ -1,4 +1,4 @@
-package org.axiis.layouts
+package org.axiis.layouts.utils
 {	
 	import flash.events.Event;
 	import flash.events.EventDispatcher;

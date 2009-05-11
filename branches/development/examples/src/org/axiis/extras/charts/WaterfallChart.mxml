@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DataCanvas xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:degrafa="http://www.degrafa.com/2007"
-	xmlns:layouts="org.axiis.layouts.*"
-	xmlns="org.axiis.*" xmlns:axiis="http://www.axiis.org/2009" xmlns:transform="com.degrafa.transform.*">
+	xmlns:layouts="org.axiis.extras.layouts.*"
+	xmlns="org.axiis.*" xmlns:transform="com.degrafa.transform.*">
 	
 	<mx:Script>
 		<![CDATA[

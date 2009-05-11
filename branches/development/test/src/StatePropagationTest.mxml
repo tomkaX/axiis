@@ -44,21 +44,21 @@
 			<axiis:layouts>
 				<axiis:HBoxLayout id="clusterLayout" name="A" width="{dataCanvas.width}" height="{dataCanvas.height}" x="0" y="0" scaleFill="true" dataField="value">
 					<axiis:drawingGeometries>
-						<geometry:Column id="column0" stroke="{blackStroke}" fill="{fill1}" scale="{scale}" dataField="value"
+						<degrafa:RegularRectangle id="column0" stroke="{blackStroke}" fill="{fill1}"
 							height="{scale.valueToLayout(clusterLayout.currentValue)}" x="{clusterLayout.currentReference.x}" y="{clusterLayout.height-scale.valueToLayout(clusterLayout.currentValue)}"
 							width="{clusterLayout.currentReference.width}"/>
 					</axiis:drawingGeometries> 
 					<axiis:layouts>
 						<axiis:HBoxLayout id="columnLayout" width="{clusterLayout.currentReference.width}" height="{clusterLayout.currentReference.height}"  dataProvider="{clusterLayout.currentDatum.node}" percentGap="0" x="0" y="5" name=" B" dataField="value">
 							<axiis:drawingGeometries>
-								<geometry:Column stroke="{blackStroke}" fill="{fill2}" scale="{scale}" dataField="mytest" id="column1"
+								<degrafa:RegularRectangle id="column1" stroke="{blackStroke}" fill="{fill2}"
 									height="{scale.valueToLayout(columnLayout.currentValue)}" x="{columnLayout.currentReference.x}" y="{clusterLayout.height-scale.valueToLayout(columnLayout.currentValue)}"
 									width="{columnLayout.currentReference.width}"/>
 							</axiis:drawingGeometries> 
 							<axiis:layouts>
 								<axiis:HBoxLayout id="subColumnLayout" width="{columnLayout.currentReference.width}" height="{columnLayout.currentReference.height}" dataProvider="{columnLayout.currentDatum.node}" y="0" x="0" percentGap="0" name="  C" dataField="value">
 									<axiis:drawingGeometries>
-										<geometry:Column id="column2" stroke="{blackStroke}" fill="{fill3}" scale="{scale}" x="{subColumnLayout.currentReference.x}" dataField="value"
+										<degrafa:RegularRectangle id="column2" stroke="{blackStroke}" fill="{fill3}" x="{subColumnLayout.currentReference.x}" 
 											height="{scale.valueToLayout(subColumnLayout.currentValue)}" y="{clusterLayout.height-scale.valueToLayout(subColumnLayout.currentValue)}"
 	 										width="{subColumnLayout.currentReference.width}"/>
 									</axiis:drawingGeometries>

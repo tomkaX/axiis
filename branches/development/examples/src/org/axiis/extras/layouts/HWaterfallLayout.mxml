@@ -8,9 +8,8 @@
 	
 	@see http://peltiertech.com/Excel/Charts/Waterfall.html
 -->
-<core:BaseLayout xmlns:mx="http://www.adobe.com/2006/mxml"
-	xmlns:degrafa="http://www.degrafa.com/2007"
-	xmlns:layouts="org.axiis.layouts.*" xmlns:scale="org.axiis.layouts.scale.*" xmlns:core="org.axiis.core.*">
+<axiis:AbsoluteLayout xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:degrafa="http://www.degrafa.com/2007" xmlns:axiis="http://www.axiis.org/2009">
 	
 	<mx:Script>
 		<![CDATA[
@@ -58,24 +57,24 @@
 	<!---
 		@private
 	-->
-	<scale:LinearScale id="linearScale" 
+	<axiis:LinearScale id="linearScale" 
 		dataProvider="{dataProvider}"
 		dataField="{dataField}"
 		minValue="0" 
 		minLayout="0"
 		maxLayout="{height}"/>
 	
-	<core:referenceRepeater> 
-		<layouts:GeometryRepeater>
-			<layouts:geometry>
+	<axiis:referenceRepeater> 
+		<axiis:GeometryRepeater>
+			<axiis:geometry>
 				<degrafa:RegularRectangle x="0" y="0" width="{width / itemCount - 5}" height="{height}"/>
-			</layouts:geometry>
-			<layouts:modifiers>
-				<layouts:PropertyModifier property="x" modifierOperator="add" modifier="{width / itemCount}"/>
-				<layouts:PropertyModifier property="y" modifierOperator="none" modifier="{computeY}"/>
-				<layouts:PropertyModifier property="height" modifierOperator="none" modifier="{computeHeight}"/>
-			</layouts:modifiers>
-		</layouts:GeometryRepeater>
-	</core:referenceRepeater>
+			</axiis:geometry>
+			<axiis:modifiers>
+				<axiis:PropertyModifier property="x" modifierOperator="add" modifier="{width / itemCount}"/>
+				<axiis:PropertyModifier property="y" modifierOperator="none" modifier="{computeY}"/>
+				<axiis:PropertyModifier property="height" modifierOperator="none" modifier="{computeHeight}"/>
+			</axiis:modifiers>
+		</axiis:GeometryRepeater>
+	</axiis:referenceRepeater>
 	
-</core:BaseLayout>
+</axiis:AbsoluteLayout>

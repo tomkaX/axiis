@@ -1,4 +1,4 @@
-package org.axiis.layouts
+package org.axiis.layouts.utils
 {
 	import com.degrafa.geometry.Geometry;
 	
@@ -34,8 +34,8 @@ package org.axiis.layouts
 		 */
 		public var geometry:Geometry;
 		
-		[Inspectable(category="General", arrayType="org.axiis.layouts.PropertyModifier")]
-		[ArrayElementType("org.axiis.layouts.PropertyModifier")]
+		[Inspectable(category="General", arrayType="org.axiis.layouts.utils.PropertyModifier")]
+		[ArrayElementType("org.axiis.layouts.utils.PropertyModifier")]
 		/**
 		 * An array of PropertyModifiers that should be applied with each
 		 * iteration of the GeometryRepeater.

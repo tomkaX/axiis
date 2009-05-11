@@ -19,11 +19,6 @@
 		<!-- labels -->
 		<component id="HBracket" class="org.axiis.charts.labels.HBracket"/>
 		<component id="VBracket" class="org.axiis.charts.labels.VBracket"/>
-		
-		<!-- charts -->
-		<component id="PlotChart" class="org.axiis.charts.PlotChart"/>
-		<component id="PolarColumnChart" class="org.axiis.charts.PolarColumnChart"/>
-		<component id="WaterfallChart" class="org.axiis.charts.WaterfallChart"/>
 
 		<!-- data -->
 		<component id="DataSet" class="org.axiis.data.DataSet"/>
@@ -37,18 +32,18 @@
 		<component id="LogScale" class="org.axiis.layouts.scale.LogScale"/>
 		<component id="RadiusScale" class="org.axiis.layouts.scale.RadiusScale"/>
 		
-			<!-- layouts -->
+		<!-- layouts -->
 		<component id="AbsoluteLayout" class="org.axiis.layouts.AbsoluteLayout"/>
 		<component id="HBoxLayout" class="org.axiis.layouts.HBoxLayout"/>
-		<component id="GeometryRepeater" class="org.axiis.layouts.GeometryRepeater"/>
-		<component id="HWaterfallLayout" class="org.axiis.layouts.HWaterfallLayout"/>
-		<component id="PropertyModifier" class="org.axiis.layouts.PropertyModifier"/>
 		<component id="RepeaterLayout" class="org.axiis.layouts.RepeaterLayout"/>
 		<component id="VBoxLayout" class="org.axiis.layouts.VBoxLayout"/>
+		
+		<!-- utils -->
+		<component id="GeometryRepeater" class="org.axiis.layouts.utils.GeometryRepeater"/>
+		<component id="PropertyModifier" class="org.axiis.layouts.utils.PropertyModifier"/>
 
 	
 	<!-- paint -->
-	<component id="LayoutPalette" class="org.axiis.paint.LayoutPalette"/>
 	<component id="LayoutAutoPalette" class="org.axiis.paint.LayoutAutoPalette"/>
 	
 	<!-- states -->

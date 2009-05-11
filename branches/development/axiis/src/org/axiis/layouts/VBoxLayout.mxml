@@ -8,7 +8,7 @@
 <core:BaseLayout xmlns:mx="http://www.adobe.com/2006/mxml" 
 	xmlns:degrafa="http://www.degrafa.com/2007"
 	xmlns:layouts="org.axiis.layouts.*"
-	xmlns:core="org.axiis.core.*">
+	xmlns:core="org.axiis.core.*" xmlns:utils="org.axiis.layouts.utils.*">
 
 	<!---
 		The amount of whitespace that should be left between RegularRectangles
@@ -17,14 +17,14 @@
 	<mx:Number id="percentGap">0</mx:Number>
 	
 	<core:referenceRepeater>
-		<layouts:GeometryRepeater>
-			<layouts:geometry>
+		<utils:GeometryRepeater>
+			<utils:geometry>
 				<degrafa:RegularRectangle x="0" y="0" height="{height / itemCount - (height*percentGap/2)}" width="{width}"/>
-			</layouts:geometry>
-			<layouts:modifiers>
-				<layouts:PropertyModifier property="y" modifier="{height/itemCount}" modifierOperator="add"/>
-			</layouts:modifiers>
-		</layouts:GeometryRepeater>
+			</utils:geometry>
+			<utils:modifiers>
+				<utils:PropertyModifier property="y" modifier="{height/itemCount}" modifierOperator="add"/>
+			</utils:modifiers>
+		</utils:GeometryRepeater>
 	</core:referenceRepeater>
 	
 </core:BaseLayout>
