@@ -81,10 +81,10 @@
 		</degrafa:geometry>
 	</degrafa:RegularRectangle>
 	
-	<degrafa:SolidStroke id="markerStroke" color="{0xDDDD00}"  weight="1" alpha="1" caps="none" pixelHinting="true"/>
+	<degrafa:SolidStroke id="markerStroke" color="{0x000000}"  weight="1" alpha=".6" caps="none" pixelHinting="true"/>
 	
 	<degrafa:RadialGradientFill id="plotFill">
-		<degrafa:GradientStop color="{pPalette.currentColor | 0x333333}" ratio="0" alpha=".5"/>
+		<degrafa:GradientStop color="{pPalette.currentColor | 0x111111}" ratio="0" alpha=".7"/>
 		<degrafa:GradientStop color="{pPalette.currentColor}" ratio=".8" alpha=".8"/>
 		<degrafa:GradientStop color="{pPalette.currentColor &amp; -0x333333}" alpha=".9"/>
 	</degrafa:RadialGradientFill>
@@ -98,8 +98,8 @@
 		<degrafa:GradientStop color="0x0000FF" alpha=".1"/>
 	</degrafa:LinearGradientStroke>
 	
-	<axiis:LayoutAutoPalette target="{plotGroup}" colorFrom="0xFA2233" colorTo="0x2233FA" id="pPalette"/>
-	<axiis:LayoutAutoPalette target="{verticalAxis}" colorFrom="0xFF0000" colorTo="0x0000FF" id="vPalette"/>
-	<axiis:LayoutAutoPalette target="{horizontalAxis}" colorFrom="0xFFFF00" colorTo="0xFF00FF" id="hPalette"/>
+	<axiis:LayoutAutoPalette layout="{plotGroup}" paletteColors="[0xFF0000,0xFFFF00,0x0000FF]" id="pPalette"/>
+	<axiis:LayoutAutoPalette layout="{verticalAxis}" colorFrom="0xFF0000" colorTo="0x0000FF" id="vPalette"/>
+	<axiis:LayoutAutoPalette layout="{horizontalAxis}" colorFrom="0xFFFF00" colorTo="0xFF00FF" id="hPalette"/>
 	
 </mx:Application>

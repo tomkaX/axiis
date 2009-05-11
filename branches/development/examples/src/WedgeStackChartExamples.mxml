@@ -210,8 +210,8 @@
 			</axiis:layouts>
 			
 			<axiis:palettes>
-				<paint:LayoutAutoPalette colorFrom="0xD20000" colorTo="0x0000BD" target="{wedgeLayout}" id="wedgePalette"/>
-				<paint:LayoutAutoPalette colorFrom="{wedgePalette.currentColor | 0x2B2B11}" colorTo="{wedgePalette.currentColor | 0x151511}" target="{outerWedgeLayout}" id="outerWedgePalette"/>
+				<paint:LayoutAutoPalette id="wedgePalette" colorFrom="0xD20000" colorTo="0x0000BD" layout="{wedgeLayout}" />
+				<paint:LayoutAutoPalette  id="outerWedgePalette" colorFrom="{wedgePalette.currentColor | 0x2B2B11}" colorTo="{wedgePalette.currentColor | 0x151511}" layout="{outerWedgeLayout}"/>
 			</axiis:palettes>
 			
 			<axiis:fills>
