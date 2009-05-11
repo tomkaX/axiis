@@ -3,14 +3,16 @@ package org.axiis.layouts
 	import org.axiis.core.BaseLayout;
 	import org.axiis.core.ILayout;
 
-	/*
-		This started out as an MXML Layout with a reference repeater that
-		positioned GraphicPoints absolutely, but I realized that that wasn't necessary.
-		Since AbsoluteLayout is a more intuitive name for what this layout
-		does, it might be worth keeping this around and using it instead of BaseLayout.
-	*/ 
+	/**
+	 * AbsoluteLayout is a layout which does not have reference geometries.
+	 * AbsoluteLayouts can be used when you want to produce visualizations that
+	 * has its drawingGeometries positioned without respect to an references.
+	 */
 	public class AbsoluteLayout extends BaseLayout implements ILayout
 	{
+		/**
+		 * Constructor.
+		 */
 		public function AbsoluteLayout()
 		{
 			super();

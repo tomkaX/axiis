@@ -1,5 +1,8 @@
 package org.axiis.core
 {
+	/**
+	 * @private
+	 */
 	public class PropertySetter
 	{
 		public function PropertySetter(target:Object = null,property:Object = null,value:Object = null)

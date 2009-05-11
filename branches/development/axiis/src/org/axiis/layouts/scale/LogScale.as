@@ -6,6 +6,9 @@ package org.axiis.layouts.scale
 	 */
 	public class LogScale extends ContinuousScale
 	{
+		/**
+		 * @private
+		 */
 		override public function valueToLayout(value:Object,invert:Boolean=false):Number
 		{
 			var logValue:Number = Math.log(Number(value)) / Math.LN10;
@@ -19,6 +22,9 @@ package org.axiis.layouts.scale
 			return percentage * (maxLayout - minLayout) + minLayout;
 		}
 		
+		/**
+		 * @private
+		 */
 		override public function layoutToValue(layout:Number):Object
 		{
 			var percentage:Number = getPercentageBetweenValues(Number(layout),Number(minLayout),Number(maxLayout))

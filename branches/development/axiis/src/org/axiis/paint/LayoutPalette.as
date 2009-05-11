@@ -7,6 +7,17 @@ package org.axiis.paint
 
 	import org.axiis.core.ILayout;
 
+	/**
+	 * LayoutPalette will generate an Array of colors based on a Layout. The
+	 * produced colors will be equally distributed between two given anchor
+	 * colors and will contain <code>x</code> values where <code>x</code> is
+	 * the number of objects in the Layout's <code>dataProvider</code>. As the
+	 * Layout renders and its <code>currentIndex</code> property is incremented,
+	 * the LayoutPalette's <code>currentColor</code> will be incremented as
+	 * well.  Binding on the <code>currentColor</code> allows you vary the color
+	 * of a fill or stroke used in the Layout's <code>drawingGeometries</code>
+	 * as the Layout renders.
+	 */
 	public class LayoutPalette extends EventDispatcher
 	{
 		/**
@@ -17,11 +28,19 @@ package org.axiis.paint
 			super();
 		}
 		
+		/**
+		 * The InterpolatedColorPalette use behind the scene to distribute the 
+		 * colors in the palette evenly.
+		 */
 		private var palette:InterpolatedColorPalette = new InterpolatedColorPalette();
 
 		public var autoInterpolate:Boolean = true;
 
 		[Bindable]
+		/**
+		 * The Layout this LayoutPalette should use to determine how many colors
+		 * to produce and to determine which color is the "current" one.
+		 */
 		public function get target():ILayout
 		{
 			return _target
@@ -37,6 +56,9 @@ package org.axiis.paint
 		}
 		private var _target:ILayout;
 
+		/**
+		 * The first color in the palette.
+		 */
 		public function set colorFrom(value:Number):void
 		{
 			if (!isNaN(value))
@@ -45,6 +67,9 @@ package org.axiis.paint
 		}
 		private var _colorFrom:Number = 0;
 
+		/**
+		 * The last color in the palette.
+		 */
 		public function set colorTo(value:Number):void
 		{
 			if (!isNaN(value))
@@ -54,6 +79,9 @@ package org.axiis.paint
 		private var _colorTo:Number = 0xFFFFFF;
 
 		[Bindable]
+		/**
+		 * The gradient of colors produced by this LayoutPalette.
+		 */
 		public function get colors():Array
 		{
 			return _colors;
@@ -65,11 +93,14 @@ package org.axiis.paint
 		private var _colors:Array = [];
 
 		[Bindable(event="currentColorChange")]
+		/**
+		 * The color at index target.currentIndex in the colors Array.
+		 */
 		public function get currentColor():Number
 		{
 			return _currentColor;
 		}
-		protected function set _currentColor(value:Number):void
+		private function set _currentColor(value:Number):void
 		{
 			if (value != _currentColor)
 			{
@@ -77,7 +108,7 @@ package org.axiis.paint
 				dispatchEvent(new Event("currentColorChange"));
 			}
 		}
-		protected function get _currentColor():Number
+		private function get _currentColor():Number
 		{
 			return __currentColor;
 		}

@@ -8,10 +8,6 @@
 		<component id="HAxis" class="org.axiis.charts.axis.HAxis"/>
 		<component id="VAxis" class="org.axiis.charts.axis.VAxis"/>
 		
-		<!-- geometry -->
-		<component id="Bar" class="org.axiis.charts.geometry.Bar"/>
-		<component id="Column" class="org.axiis.charts.geometry.Column"/>
-		
 		<!-- groupings -->
 		<component id="BarCluster" class="org.axiis.charts.groupings.BarCluster"/>
 		<component id="BarStack" class="org.axiis.charts.groupings.BarStack"/>
@@ -23,14 +19,12 @@
 		<!-- labels -->
 		<component id="HBracket" class="org.axiis.charts.labels.HBracket"/>
 		<component id="VBracket" class="org.axiis.charts.labels.VBracket"/>
-		<component id="BarChart" class="org.axiis.charts.BarChart"/>
-		<component id="ColumnChart" class="org.axiis.charts.ColumnChart"/>
 		<component id="PlotChart" class="org.axiis.charts.PlotChart"/>
 		<component id="PolarColumnChart" class="org.axiis.charts.PolarColumnChart"/>
 		<component id="WaterfallChart" class="org.axiis.charts.WaterfallChart"/>
 
 	<!-- data -->
-	<component id="SVGDashLine" class="org.axiis.data.DataSet"/>
+	<component id="DataSet" class="org.axiis.data.DataSet"/>
 
 	<!-- layouts -->
 		<!-- scales -->

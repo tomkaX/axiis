@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!---
+	HWaterfallLayout modifies its reference geometry (a RegularRectangle) into
+	the positions and dimensions to produces a waterfall chart.
+	
+	A waterfall chart shows increases and decreases in a value as it progress
+	from its initial to its final value.
+	
+	@see http://peltiertech.com/Excel/Charts/Waterfall.html
+-->
 <core:BaseLayout xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:degrafa="http://www.degrafa.com/2007"
 	xmlns:layouts="org.axiis.layouts.*" xmlns:scale="org.axiis.layouts.scale.*" xmlns:core="org.axiis.core.*">
@@ -40,8 +49,15 @@
 		]]>
 	</mx:Script>
 	
+	<!---
+		The property that of the items in the dataProvider that should be used
+		to determine the values shown in the waterfall chart. 
+	-->
 	<mx:String id="dataField"/>
 	
+	<!---
+		@private
+	-->
 	<scale:LinearScale id="linearScale" 
 		dataProvider="{dataProvider}"
 		dataField="{dataField}"

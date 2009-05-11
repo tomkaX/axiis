@@ -2,6 +2,9 @@ package org.axiis.layouts.scale
 {
 	public class DateTimeScale extends ContinuousScale implements IScale
 	{
+		/**
+		 * @private
+		 */
 		override public function valueToLayout(value:Object,invert:Boolean=false):Number
 		{
 			if(invalidated)
@@ -14,6 +17,9 @@ package org.axiis.layouts.scale
 			return percentage * (maxLayout - minLayout) + minLayout;
 		}
 		
+		/**
+		 * @private
+		 */
 		override public function layoutToValue(layout:Number):Object
 		{
 			if (this.invalidated)

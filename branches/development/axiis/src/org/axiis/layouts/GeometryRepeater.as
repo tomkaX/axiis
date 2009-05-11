@@ -9,19 +9,37 @@ package org.axiis.layouts
 	
 	import mx.core.Application;
 
+	/**
+	 * GeometryRepeater modifies geometries through the use of
+	 * PropertyModifiers.
+	 * 
+	 * When modifications take longer than a single frame, they are distributed
+	 * over multiple frames to prevent the application from appearing to have
+	 * frozen. 
+	 */
 	public class GeometryRepeater extends EventDispatcher
 	{
+		/**
+		 * Constructor.
+		 */
 		public function GeometryRepeater()
 		{
 			super();
 		}
 		
-		public var iterationLoopComplete:Boolean=true;  //Used by base layout to stop propogating propertychange events when everything gets returned to original state
+		private var timerID:int;
 		
+		/**
+		 * The Geometry that should be repeated.
+		 */
 		public var geometry:Geometry;
 		
 		[Inspectable(category="General", arrayType="org.axiis.layouts.PropertyModifier")]
 		[ArrayElementType("org.axiis.layouts.PropertyModifier")]
+		/**
+		 * An array of PropertyModifiers that should be applied with each
+		 * iteration of the GeometryRepeater.
+		 */
 		public var modifiers:Array;
 		
 		public var dataProvider:Array;
@@ -32,22 +50,46 @@ package org.axiis.layouts
 		}
 		private var _currentDatum:Object;
 		
+		/**
+		 * The number of iterations that the GeometryRepeater has processed.
+		 * When the GeometryRepeater is not running, this value is -1.
+		 */
 		public function get currentIteration():int
 		{
 			return _currentIteration;
 		}
-		private var _currentIteration:int;
+		private var _currentIteration:int = -1;
 		
-		private var timerID:int;
+		/**
+		 * A flag indicating that the GeometryRepeater has finished repeating
+		 * but the geometry's properties have not yet been restored to their
+		 * original values.
+		 */
+		public function get iterationLoopComplete():Boolean
+		{
+			return _iterationLoopComplete;
+		}
+		private var _iterationLoopComplete:Boolean = true;
 		
+		// TODO Expand on this once we determine if we need dataProvider
+		/**
+		 * Begins the modifications process.
+		 *  
+		 * @param preIterationCallback
+		 * @param postIterationCallback
+		 * @param completeCallback
+		 */
 		public function repeat(preIterationCallback:Function = null, postIterationCallback:Function=null, completeCallback:Function = null):void
 		{
-			iterationLoopComplete=false;
+			_iterationLoopComplete=false;
 			clearTimeout(timerID);
 			_currentIteration = 0;
 			repeatHelper(preIterationCallback,postIterationCallback,completeCallback);
 		}
 		
+		/**
+		 * @private
+		 */
 		protected function repeatHelper(preIterationCallback:Function = null, postIterationCallback:Function=null, completeCallback:Function = null):void
 		{
 			if(!dataProvider)
@@ -81,20 +123,17 @@ package org.axiis.layouts
 			
 				totalTime = getTimer() - startTime;
 			}
-		
 			
 			// We've finished looping before time ran out. Tear down and call completeCallback
 			if(currentIteration == len)
-			{
-					
-				iterationLoopComplete=true;
+			{					
+				_iterationLoopComplete = true;
 				for each (modifier in modifiers)
 				{
 					modifier.end();
 				}
 				_currentIteration = -1;
 				completeCallback.call(this); //Call back now, before we set all our properties back to the original values
-				
 			}
 			// The loop took too long and we had to break out. Give the player 10ms to render and, and try again
 			else

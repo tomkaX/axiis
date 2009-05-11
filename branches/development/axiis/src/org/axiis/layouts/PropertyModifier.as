@@ -5,12 +5,12 @@ package org.axiis.layouts
 
 	/**
 	* PropertyModifier is used to specify changes that should 
-	* occur on the geometry or subsequent objects being repeated.
-	**/
+	* occur on a Geometry or related objects as it is being repeated.
+	*/
 	public class PropertyModifier extends EventDispatcher
 	{
 		/**
-		* The PropertyModifier constructor.
+		* Constructor.
 		*/
 		public function PropertyModifier()
 		{
@@ -21,12 +21,42 @@ package org.axiis.layouts
 		
 		private var originalValue:Object;
 		
+		/**
+		 * The property that should be modified as this PropertyModifier is
+		 * applied. If you wanted to modify the x position of a Geometry, you
+		 * would set the property to "x", for example. 
+		 */
 		public var property:String;
 		
+		/**
+		 * The modification to apply to the property each time <code>apply</code>
+		 * is called. This property can be a Number, a Function, or an Array of
+		 * Numbers.
+		 * 
+		 * <ul>
+		 * <li><strong>Number</strong>: Each time modify is called, the
+		 * modifyOperator will be applied to the property with this value as an
+		 * argument. For example, if this modifier is 10, and the
+		 * modifierOperator is "add", the property will be incremented by 10
+		 * each time <code>apply</code> is called.</li>
+		 * <li><strong>Function</strong>: Calls this function each time
+		 * <code>apply</code> is called and sets the property to the return
+		 * value of the function. The function takes two arguments, the
+		 * current iteration as of the PropertyModifier and the current value
+		 * of the property.</li>
+		 * <li><strong>Array of Numbers</strong>: Uses each item from the
+		 * array in the same way that a numeric argument would be used. To
+		 * determine which item from the array to use, takes
+		 * <code>iteration % arr.length</code> where arr is the array.</li> 
+		 * </ul> 
+		 */
 		public var modifier:Object;
 		
 		/**
-		* The current iteration of an active modification.
+		* The current iteration of an active modification. This is the number of
+		* times <code>apply</code> has been called since a call to
+		* <code>beginModify</code>. If the PropertyModifier has not been started
+		* or has ended, the value of this property is -1.
 		*/
 	   	public function get iteration():Number
 	   	{
@@ -37,8 +67,29 @@ package org.axiis.layouts
 		[Inspectable(category="General", enumeration="add,subtract,multiply,divide,none")]
 		[Bindable(event="modifierOperatorChange")]
 		/**
-		 * How to apply the modifier for each iteration.
+		 * How to apply the modifier for each iteration. Accepted values are
+		 * "add", "subtract", "multiply", "divide", and "none". When
+		 * <code>modifierOperator</code> is one of the four arithmetic opertors
+		 * the respective operator from {+=, -=,
+		 * ~~=, /=} is applied to the property's
+		 * current value each time <code>apply</code> is called.
+		 * 
+		 * <p>
+		 * For example, if <code>modifierOperator</code> is "subtract",
+		 * <code>modifier</code> is 100, and the property is 1000,
+		 * the property will be changed to 900, 800,
+		 * and 700 over the course of 3 calls to <code>apply</code>. 
+		 * </p>
+		 * 
+		 * When <code>modifierOperator</code> is "none" the target property will
+		 * be assigned to the <code>modifier</code> each time <code>apply</code>
+		 * is called. This behavior is ideal when used in conjuction with a
+		 * function call used as a <code>modifier</code>.
 		 */
+		public function get modifierOperator():String
+		{
+			return _modifierOperator;
+		}
 		public function set modifierOperator(value:String):void
 		{
 			if(value != "add" &&
@@ -58,15 +109,14 @@ package org.axiis.layouts
 				dispatchEvent(new Event("modifierOperatorChange"));
 			}
 		}
-		public function get modifierOperator():String
-		{
-			return _modifierOperator;
-		}
 		private var _modifierOperator:String = "add";
 		
 		/**
-		* This tells the modifier that it will be doing iterations and 
-		* modifying the source object.
+		* Indicates that the PropertyModifier should operate on the
+		* <code>target</code>.
+		* 
+		* @param target The object that should have its property modified
+		* by this PropertyModifier.
 		*/
 		public function beginModify(target:Object):void
 		{
@@ -78,8 +128,8 @@ package org.axiis.layouts
 		}
 		
 		/**
-		* This ends the modification loop and we need to set 
-		* back our modified property to its original state.
+		* Ends the modification process and returns the target property to its
+		* original value. 
 		*/
 		public function end():void
 		{
@@ -90,8 +140,10 @@ package org.axiis.layouts
 		}
 		
 		/**
-		* This applies our numeric modifier or array of modifiers to 
-		* the property of our geometryObject.
+		* Applies the <code>modifier</code> to the <code>modifyOperator</code>
+		* and sets the target property to the result. Increments the iteration
+		* by 1 each time this method is called. See the documentation for
+		* <code>modifier</code> and <code>modifyOperator</code> for details.
 		*/
 		public function apply():void
 		{

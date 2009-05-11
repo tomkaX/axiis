@@ -1,17 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!---
+	The HBoxLayout is a layout with a referenceRepeater that produces
+	RegularRectangles for each item in its dataProvider. The RegularRectangles
+	are sized and spaced evenly across the width of the layout. This
+	behavior can be used to create column chart-like visualizations.
+-->
 <core:BaseLayout xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:degrafa="http://www.degrafa.com/2007"
 	xmlns:layouts="org.axiis.layouts.*"
 	xmlns:scale="org.axiis.layouts.scale.*"
 	xmlns:core="org.axiis.core.*">
 	
-		
+	<!---
+		The amount of whitespace that should be left between RegularRectangles
+		as a percentage of the width of the HBoxLayout
+	-->
 	<mx:Number id="percentGap">0</mx:Number>
 	
 	<core:referenceRepeater>
-		<layouts:GeometryRepeater id="myLayout" dataProvider="{dataItems}">
+		<layouts:GeometryRepeater dataProvider="{dataItems}">
 			<layouts:geometry>
-				<degrafa:RegularRectangle id="referenceGeometry" x="0" y="0" width="{(width / itemCount) - (width * percentGap/2)}" height="{height}" enableEvents="false"/>
+				<degrafa:RegularRectangle x="0" y="0" width="{(width / itemCount) - (width * percentGap/2)}" height="{height}" enableEvents="false"/>
 			</layouts:geometry>
 			<layouts:modifiers>
 				<layouts:PropertyModifier property="x" modifier="{width/itemCount}" modifierOperator="add"/>

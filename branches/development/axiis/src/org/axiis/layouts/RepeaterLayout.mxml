@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!---
+	RepeaterLayout fires preRender and itemPreDraw events but does not modify
+	its repeated Geometry, RegularRectangle spanning the width and height of
+	the Layout.
+-->
 <core:BaseLayout xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:degrafa="http://www.degrafa.com/2007"
 	xmlns:layouts="org.axiis.layouts.*"
 	xmlns:scale="org.axiis.layouts.scale.*"
 	xmlns:core="org.axiis.core.*">
 	
-	<!-- You can use this when you want a repeater to fire, but have no modifications -->
-	
 	<core:referenceRepeater>
 		<layouts:GeometryRepeater>
 			<layouts:geometry>
-				<degrafa:RegularRectangle id="referenceGeometry" x="0" y="0" width="{width}" height="{height}" enableEvents="false"/>
+				<degrafa:RegularRectangle x="0" y="0" width="{width}" height="{height}" enableEvents="false"/>
 			</layouts:geometry>
 		</layouts:GeometryRepeater>
 	</core:referenceRepeater>
