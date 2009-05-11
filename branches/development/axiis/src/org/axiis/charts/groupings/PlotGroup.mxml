@@ -1,19 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layouts:RepeaterLayout xmlns="*" xmlns:mx="http://www.adobe.com/2006/mxml"  xmlns:degrafa="http://www.degrafa.com/2007" xmlns:layouts="org.axiis.layouts.*" xmlns:scale="org.axiis.layouts.scale.*">
+<axiis:RepeaterLayout xmlns="*" xmlns:axiis="http://www.axiis.org/2009" xmlns:mx="http://www.adobe.com/2006/mxml"  xmlns:degrafa="http://www.degrafa.com/2007" 
+	 xmlns:geometry="com.degrafa.geometry.*" preRender="onPreRender()" >
 
-	<scale:LinearScale id="verticalScale"/>
-	<scale:LinearScale id="horizontalScale"/>
+	<mx:Script>
+		<![CDATA[
+			import com.degrafa.paint.SolidStroke;
+			import com.degrafa.core.IGraphicsStroke;
+			import com.degrafa.paint.SolidFill;
+			import com.degrafa.core.IGraphicsFill;
+			import com.degrafa.geometry.Geometry;
+			
+			[Bindable]
+			public var plotFill:IGraphicsFill=new SolidFill(0xFFFFFF,.7);
+			
+			[Bindable] 
+			public var plotStroke:IGraphicsStroke=new SolidStroke(0,0);
+			
+			[Bindable]
+			public var markerFill:IGraphicsFill=new SolidFill(0xFFFFFF,0);
+			
+			[Bindable]
+			public var markerStroke:IGraphicsStroke=new SolidStroke(0,.7);
+			 
+			[Bindable]
+			public var markerGeometry:Geometry;
+			
+			private function onPreRender():void {
+			
+				//if (marker.geometry.length==0) marker.geometry=[markerGeometry];
+				//marker.preDraw();
+				
+				trace("here");
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<axiis:LinearScale id="verticalScale"/>
+	<axiis:LinearScale id="horizontalScale"/>
+	<axiis:RadiusScale id="radiusScale" minLayout="{Number.NEGATIVE_INFINITY}"/>
 	
 	<mx:String id="horizontalField"/>
 	<mx:String id="verticalField"/>
+	<mx:String id="radiusField"/>
+
+	<degrafa:SolidStroke id="highlightStroke" color="0xDDDD00" weight="2"/>
 	
-	<layouts:drawingGeometries>
-		<degrafa:Circle radius="10" centerX="{horizontalScale.valueToLayout(currentDatum[horizontalField])}" centerY="{verticalScale.valueToLayout(currentDatum[verticalField],true)}">
-			<degrafa:fill>
-				<degrafa:SolidFill color="0xFF0000" alpha=".3"/>
-			</degrafa:fill>
-		</degrafa:Circle>
+	<axiis:drawingGeometries>
+		<degrafa:Circle id="plotCircle"
+				radius="{(radiusField !='' &amp;&amp; radiusScale.minLayout > Number.NEGATIVE_INFINITY) ? radiusScale.valueToLayout(currentDatum[radiusField]) : 6 }" 
+				centerX="{horizontalScale.valueToLayout(currentDatum[horizontalField])}" 
+				centerY="{verticalScale.valueToLayout(currentDatum[verticalField],true)}"
+				fill="{plotFill}" stroke="{plotStroke}" filters="{[new DropShadowFilter(5,45,0,.4,5,plotCircle.radius*.2)]}"
+				/>
+				
+		<degrafa:Circle id="highlightCircle"
+				radius="{(radiusField !='' &amp;&amp; radiusScale.minLayout > Number.NEGATIVE_INFINITY) ? radiusScale.valueToLayout(currentDatum[radiusField]) + 4 : 6 }" 
+				centerX="{horizontalScale.valueToLayout(currentDatum[horizontalField])}" 
+				centerY="{verticalScale.valueToLayout(currentDatum[verticalField],true)}"
+				stroke="{highlightStroke}" visible="false"
+			/>
 		
-	</layouts:drawingGeometries>
+		<degrafa:Ellipse id="highlightEllipse"
+			  x="{plotCircle.centerX-plotCircle.radius*(1.48/2)}" y="{plotCircle.centerY-plotCircle.radius*.9}"
+			  width="{plotCircle.radius*1.48}" height="{plotCircle.radius}">
+			<degrafa:fill>
+				<degrafa:LinearGradientFill angle="90">
+					<degrafa:GradientStop color="0xFFFFFF" alpha=".4" id="highlightStop1"/>
+					<degrafa:GradientStop color="0xFFFFFF" alpha="0"/>
+				</degrafa:LinearGradientFill>
+			</degrafa:fill>
+		</degrafa:Ellipse>
+		
+		<degrafa:RegularRectangle id="marker" 
+			width="{markerGeometry.width}" height="{markerGeometry.height}" 
+			x="{horizontalScale.valueToLayout(currentDatum[horizontalField])-markerGeometry.width/2}"
+			y="{verticalScale.valueToLayout(currentDatum[verticalField],true)-markerGeometry.height/2}"
+		    geometry="{[markerGeometry]}"/>
+		
+	</axiis:drawingGeometries>
 	
-</layouts:RepeaterLayout>
+	<axiis:states>
+		<axiis:State enterStateEvent="mouseOver" exitStateEvent="mouseOut"
+			targets="{[highlightStop1,highlightCircle]}" properties="{['alpha','visible']}" values="{[.5,true]}"/>
+	</axiis:states>
+
+	
+</axiis:RepeaterLayout>

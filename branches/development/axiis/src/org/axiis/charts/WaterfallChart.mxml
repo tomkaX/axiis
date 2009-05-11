@@ -7,7 +7,7 @@
 	<mx:Script>
 		<![CDATA[
 			import com.degrafa.paint.SolidFill;
-			import mx.collections.ArrayCollection;
+			import mx.collections.ArrayCollection; 
 			import com.degrafa.core.IGraphicsFill;
 			
 			[Bindable]

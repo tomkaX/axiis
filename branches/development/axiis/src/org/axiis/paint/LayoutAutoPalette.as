@@ -18,12 +18,12 @@ package org.axiis.paint
 	 * of a fill or stroke used in the Layout's <code>drawingGeometries</code>
 	 * as the Layout renders.
 	 */
-	public class LayoutPalette extends EventDispatcher
+	public class LayoutAutoPalette extends EventDispatcher
 	{
 		/**
 		 * Constructor.
 		 */
-		public function LayoutPalette()
+		public function LayoutAutoPalette()
 		{
 			super();
 		}

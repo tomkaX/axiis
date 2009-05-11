@@ -126,7 +126,7 @@ package org.axiis.core
 		
 		protected function handleStateTriggeringEvent(event:Event):void
 		{
-			if(event.target != this)
+			if(event.target != this || this.layout.rendering)
 				return;	
 			
 			activeStates = findStatesForEventType(event.type);

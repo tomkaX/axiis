@@ -5,14 +5,18 @@ package org.axiis.layouts.scale
 	/**
 	 * A scale that deals with linear data.
 	 */
+
+	 
 	public class LinearScale extends ContinuousScale implements IScale
 	{
+			 
+	 
 		public var zeroBased:Boolean=true;
-		
 		/**
 		 * TRUE: Scale will reverse valueToLayout calc based on min/max layout (helpful for vertical charts to accomodate top,left ==  0,0)
 		 * FALSE:  Scale will return normal valueToLayout
 		 */
+	
 		override public function valueToLayout(value:Object, invert:Boolean=false):Number
 		{
 			if(invalidated)
@@ -22,22 +26,24 @@ package org.axiis.layouts.scale
 		
 			per = Math.max(0,Math.min(1.0,per));
 			
-			if (invert)
-				per=1-per;
+		
 			
+			//trace("value to Layout " + value + " --> " + (percentage * (maxLayout - minLayout) + minLayout).toString());
+			
+			if  (invert)
+				per=1-per;
+
 			return (maxLayout-minLayout)*per + minLayout;
 		}
 		
-		// TODO THIS FUNCTION NEEDS TO ACCOUNT FOR ZERO BASED, IT DOES NOT RIGHT NOW
+
 		override public function layoutToValue(layout:Number):Object
 		{
 			if (this.invalidated)
 				validate();
 				
-			var percentage:Number = getPercentageBetweenValues(Number(layout),Number(minLayout),Number(maxLayout));
+			var percentage:Number = layout/(maxLayout-minLayout)
 			
-			
-			percentage = Math.max(0,Math.min(1.0,percentage));
 			return percentage * (Number(maxValue) - Number(minValue)) + Number(minValue);
 		}
 		

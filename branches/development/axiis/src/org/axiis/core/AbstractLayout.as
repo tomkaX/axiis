@@ -24,6 +24,12 @@ package org.axiis.core
 		[Bindable]
 		public var palettes:Array = [];
 		
+		protected var _isRendering:Boolean=false;
+		
+		public function isRendering():Boolean {
+			return _isRendering;
+		}
+		
 		[Bindable]
 		public function set visible(value:Boolean):void
 		{

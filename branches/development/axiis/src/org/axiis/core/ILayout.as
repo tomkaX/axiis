@@ -93,5 +93,7 @@ package org.axiis.core
 		function getSprite(owner:DataCanvas):Sprite;
 		
 		function render(sprite:AxiisSprite = null):void;
+		
+		function get rendering():Boolean;
 	}
 }

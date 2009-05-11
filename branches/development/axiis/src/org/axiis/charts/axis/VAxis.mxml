@@ -11,6 +11,7 @@
 	<mx:Script>
 		<![CDATA[
 			import org.axiis.layouts.scale.IScale;
+			import com.degrafa.core.IGraphicsStroke;
 			
 			private function onValueChanged():void {
 				if (this.height==0 || isNaN(this.height)) return;
@@ -66,6 +67,16 @@
 			[Bindable]
 			private var _labelInterval:Number;
 			
+						
+			[Bindable]
+			public var gridStroke:IGraphicsStroke;
+			
+			[Bindable]
+			public var maxValue:Number;
+			
+			[Bindable]
+			public var minValue:Number;
+			
 
 		]]>
 	</mx:Script>
@@ -77,7 +88,9 @@
 	<mx:Number id="minorTickLength">6</mx:Number>
 	<mx:Number id="gridFillColor">0xFFFFFF</mx:Number>
 	<mx:Number id="gridFillAlpha">.1</mx:Number>
-		
+	<mx:Boolean id="showGridArea">true</mx:Boolean>
+	<mx:Boolean id="showGridLine">true</mx:Boolean>
+			
 	<scale:AbstractScale id="verticalScale"/>
 	
 	<degrafa:SolidStroke id="tickStroke"/>
@@ -98,7 +111,7 @@
 	<core:referenceRepeater>
 		<layouts:GeometryRepeater id="repeater"> 
 			<layouts:geometry>
-				<degrafa:Line id="refLine" x="0" x1="{this.width}" height="{this.height}" y="0" y1="0" width="{this.width}"/>
+				<degrafa:Line id="refLine" x="0" x1="{this.width}" height="{this.height}" y="{0}" y1="0" width="{this.width}"/>
 			</layouts:geometry>
 			<layouts:modifiers>
 				<layouts:PropertyModifier property="y" modifier="{_gapStep}" modifierOperator="add"/>
@@ -108,8 +121,12 @@
 	<core:drawingGeometries>
 		<degrafa:RegularRectangle x="0"  y="{currentReference.y}" id="gridRect"
 			width="{width}" 
-			visible="{(showGrid.value)}" fill="{gridFill}">				  
-		</degrafa:RegularRectangle>
+			visible="{showGrid.value &amp;&amp; showGridArea}" fill="{gridFill}"/>				  
+		
+		<degrafa:Line  id="gridLine"  y="{currentReference.y}" y1="{currentReference.y}" x="0" x1="{width}"
+			visible="{showGrid.value &amp;&amp; showGridLine}"
+			stroke="{gridStroke}"/>
+			
 		<degrafa:Line id="minorTick" stroke="{tickStroke}"
 			x="0" x1="{minorTickLength}"  visible="{showMinorTick.value}"
 			y="{currentReference.y}" y1="{currentReference.y}"
@@ -118,9 +135,10 @@
 			x="0" x1="{majorTickLength}" visible="{showMajorTick.value}"
 			y="{currentReference.y}" y1="{currentReference.y}"
 			/>
+			<!--  //labelFunction(Number(verticalScale.layoutToValue(height-currentReference.y))) -->
 		<degrafa:RasterText id="label" align="right" autoSizeField="true"
 			fontFamily="fontFamily" fontSize="{fontSize}" fontWeight="{fontWeight}" textColor="{fontColor}"
-			text="{_labelFunction(Number(verticalScale.layoutToValue(verticalScale.maxLayout-currentReference.y)))}" visible="{showLabel.value}"/>
+			text="{_labelFunction(Number(verticalScale.layoutToValue(height-currentReference.y)))}" visible="{showLabel.value}"/>
 	</core:drawingGeometries>
 
 </core:BaseLayout>

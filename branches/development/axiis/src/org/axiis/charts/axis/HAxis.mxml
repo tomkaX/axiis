@@ -10,6 +10,7 @@
     
 	<mx:Script>
 		<![CDATA[
+			import com.degrafa.core.IGraphicsStroke;
 			import org.axiis.layouts.scale.IScale;
 			
 			private function onValueChanged():void {
@@ -66,6 +67,8 @@
 			[Bindable]
 			private var _labelInterval:Number;
 			
+			[Bindable]
+			public var gridStroke:IGraphicsStroke;
 
 		]]>
 	</mx:Script>
@@ -77,10 +80,13 @@
 	<mx:Number id="minorTickLength">6</mx:Number>
 	<mx:Number id="gridFillColor">0xFFFFFF</mx:Number>
 	<mx:Number id="gridFillAlpha">.1</mx:Number>
+	<mx:Boolean id="showGridArea">true</mx:Boolean>
+	<mx:Boolean id="showGridLine">true</mx:Boolean>
 		
 	<scale:AbstractScale id="horizontalScale"/>
 	
 	<degrafa:SolidStroke id="tickStroke"/>
+	
 	
 	<mx:String id="fontFamily">Arial</mx:String>
 	<mx:Number id="fontSize">12</mx:Number>
@@ -90,7 +96,7 @@
 	<utils:BooleanExpression id="showLabel" value="{ (showLabels &amp;&amp; (showMajorTick.value==true))}"/>
 	<utils:BooleanExpression id="showMinorTick" value="{ !(showMajorTick.value==true)}"/>
 	<utils:BooleanExpression id="showMajorTick" value="{(majorTickSpacing > 0 &amp;&amp; (this.currentIndex % _majorTickInterval) == 0)}"/>
-	<utils:BooleanExpression id="showGrid" value="{(((this.currentIndex+_majorTickInterval) % (_majorTickInterval*2))==0 &amp;&amp; currentIndex &lt; itemCount-1)}"/>
+	<utils:BooleanExpression id="showGrid" value="{(((this.currentIndex+_majorTickInterval*2) % (_majorTickInterval*2))==0 &amp;&amp; currentIndex &lt; itemCount)}"/>
 	<utils:NumericExpression id="repeaterCount" value="{Math.floor(this.width)}" valueChanged="onValueChanged();" />
 	
 	<degrafa:SolidFill id="gridFill" color="{gridFillColor}" alpha="{gridFillAlpha}"/>
@@ -108,16 +114,20 @@
 	<core:drawingGeometries>
 		<degrafa:RegularRectangle y="0"  x="{currentReference.x}" id="gridRect"
 			height="{height}" 
-			visible="{(showGrid.value)}" fill="{gridFill}">				  
-		</degrafa:RegularRectangle>
+			visible="{showGrid.value &amp;&amp; showGridArea}" fill="{gridFill}"/>				  
+
+		<degrafa:Line id="gridLine"  y="0" y1="{height}"  x="{currentReference.x+gridStroke.weight/2}" x1="{currentReference.x+gridStroke.weight/2}" 
+			visible="{showGrid.value &amp;&amp; showGridLine}"
+			stroke="{gridStroke}"/>				  
+
 		<degrafa:Line id="minorTick" stroke="{tickStroke}"
 			y="{height}" y1="{height-minorTickLength}"  visible="{showMinorTick.value}"
-			x="{currentReference.x}" x1="{currentReference.x}"
-			/>
+			x="{currentReference.x}" x1="{currentReference.x}"/>
+			
 		<degrafa:Line id="majorTick" stroke="{tickStroke}" 
 			y="{height}" y1="{height-majorTickLength}" visible="{showMajorTick.value}"
-			x="{currentReference.x}" x1="{currentReference.x}"
-			/>
+			x="{currentReference.x}" x1="{currentReference.x}"/>
+			
 		<degrafa:RasterText id="label" align="right" autoSizeField="true"
 			fontFamily="fontFamily" fontSize="{fontSize}" fontWeight="{fontWeight}" textColor="{fontColor}"
 			text="{_labelFunction(Number(horizontalScale.layoutToValue(horizontalScale.minLayout+currentReference.x)))}" visible="{showLabel.value}"/>

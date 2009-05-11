@@ -72,6 +72,10 @@ package org.axiis
 		
 		private var invalidatedLayouts:Array = [];
 		
+		private var _backgroundSprites:Array = [];
+		
+		private var _foregroundSprites:Array = [];
+		
 		private var _background:AxiisSprite;
 		
 		private var _foreground:AxiisSprite;
@@ -105,6 +109,24 @@ package org.axiis
 			addChild(_foreground);
 		}
 		
+		override protected function commitProperties():void {
+			if (backgroundGeometries && _backgroundSprites.length < backgroundGeometries.length) {
+				for (var i:int=_backgroundSprites.length-1; i<backgroundGeometries.length; i++) {
+					var s:AxiisSprite=new AxiisSprite();
+					_backgroundSprites.push(s);
+					_background.addChild(s);
+				}
+			}
+			
+			if (foregroundGeometries && _foregroundSprites.length < foregroundGeometries.length ) {
+				for (var i:int=_foregroundSprites.length-1; i<foregroundGeometries.length; i++) {
+					var s:AxiisSprite=new AxiisSprite();
+					_foregroundSprites.push(s);
+					_foreground.addChild(s);
+				}
+			}
+		}
+		
 		/**
 		 * TODO implement measure
 		 * 
@@ -133,14 +155,17 @@ package org.axiis
 			
 			_background.graphics.clear();
 			
+			var i:int=0;
 			for each (var bg:Object in backgroundGeometries) {
+				_backgroundSprites[i].graphics.clear();
 				if (bg is ILayout) {
-					ILayout(bg).render(_background)
+					ILayout(bg).render(_backgroundSprites[i])
 				}
 				else if (bg is IGeometryComposition) {
 					bg.preDraw();
-					bg.draw(_background.graphics,bg.bounds);
+					bg.draw(_backgroundSprites[i].graphics,bg.bounds);
 				}
+				i++;
 			}
 			
 			while(invalidatedLayouts.length > 0)
@@ -149,15 +174,18 @@ package org.axiis
 				layout.render();
 			}
 			
+			i=0;
 			_foreground.graphics.clear();
 			for each (var fg:Object in foregroundGeometries) {
+				_foregroundSprites[i].graphics.clear();
 				if (fg is ILayout) {
-					ILayout(fg).render(_foreground)
+					ILayout(fg).render(_foregroundSprites[i])
 				}
 				else if (fg is IGeometryComposition) {
 					fg.preDraw();
-					fg.draw(_foreground.graphics,fg.bounds);
+					fg.draw(_foregroundSprites[i].graphics,fg.bounds);
 				}
+				i++;
 			}
 			
 			
