@@ -41,20 +41,20 @@ package org.axiis.paint
 		 * The Layout this LayoutPalette should use to determine how many colors
 		 * to produce and to determine which color is the "current" one.
 		 */
-		public function get target():ILayout
+		public function get layout():ILayout
 		{
-			return _target
+			return _layout
 		}
-		private function set target(value:ILayout):void
+		private function set layout(value:ILayout):void
 		{
-			if (_target)
-				_target.removeEventListener("currentIndexChange", onIndexChanged);
-			_target = value;
-			if (_target)
-				_target.addEventListener("currentIndexChange", onIndexChanged);
+			if (_layout)
+				_layout.removeEventListener("currentIndexChange", onIndexChanged);
+			_layout = value;
+			if (_layout)
+				_layout.addEventListener("currentIndexChange", onIndexChanged);
 			generatePalette();			
 		}
-		private var _target:ILayout;
+		private var _layout:ILayout;
 
 		/**
 		 * The first color in the palette.
@@ -96,13 +96,15 @@ package org.axiis.paint
 		 * used to set multiple color stops for palette generation
 		 * will override colorTo/From
 		 */
-		public function paletteColors(value:Array):void {
-			palette.colors=value;
+		public function set paletteColors(value:Array):void {
+			_paletteColors=value;
+			generatePalette();
 		}
 
+		private var _paletteColors:Array;
 		[Bindable(event="currentColorChange")]
 		/**
-		 * The color at index target.currentIndex in the colors Array.
+		 * The color at index layout.currentIndex in the colors Array.
 		 */
 		public function get currentColor():Number
 		{
@@ -124,11 +126,15 @@ package org.axiis.paint
 
 		private function generatePalette():void
 		{
-			if (_target == null)
+			if (_layout == null)
 				return;
 
-			palette.colors = [_colorFrom, _colorTo];
-			palette.requestedSize = _target.itemCount;
+			if (_paletteColors) 
+				palette.colors=_paletteColors;
+			else
+				palette.colors = [_colorFrom, _colorTo];
+				
+			palette.requestedSize = _layout.itemCount;
 
 			if (autoInterpolate)
 			{
@@ -143,9 +149,9 @@ package org.axiis.paint
 
 		private function onIndexChanged(e:Event):void
 		{
-			if (!_colors || colors.length != _target.itemCount)
+			if (!_colors || colors.length != _layout.itemCount)
 				generatePalette();
-			_currentColor = _colors[_target.currentIndex];
+			_currentColor = _colors[_layout.currentIndex];
 		}
 	}
 }
