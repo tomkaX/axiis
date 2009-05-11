@@ -210,14 +210,15 @@
 			</axiis:layouts>
 			
 			<axiis:palettes>
-				<paint:LayoutPalette colorFrom="0xCC0000" colorTo="0x0000AA" target="{wedgeLayout}" id="wedgePalette"/>
-				<paint:LayoutPalette colorFrom="{wedgePalette.currentColor | 0x2B2B11}" colorTo="{wedgePalette.currentColor | 0x151511}" target="{outerWedgeLayout}" id="outerWedgePalette"/>
+				<paint:LayoutAutoPalette colorFrom="0xD20000" colorTo="0x0000BD" target="{wedgeLayout}" id="wedgePalette"/>
+				<paint:LayoutAutoPalette colorFrom="{wedgePalette.currentColor | 0x2B2B11}" colorTo="{wedgePalette.currentColor | 0x151511}" target="{outerWedgeLayout}" id="outerWedgePalette"/>
 			</axiis:palettes>
 			
 			<axiis:fills>
 				<degrafa:RadialGradientFill  id="wedgeFill" cx="{wedgeLayout.width/2}" cy="{wedgeLayout.width/2}" radius="{(wedgeLayout.width/2)*innerRadi2}">
 					<degrafa:GradientStop color="{wedgePalette.currentColor | 0x333333}" ratio=".6" />
-					<degrafa:GradientStop  color="{wedgePalette.currentColor}" id="wedgeFillStop1"/>
+					<degrafa:GradientStop  color="{wedgePalette.currentColor}" id="wedgeFillStop1" ratio=".92"/>
+					<degrafa:GradientStop  color="{wedgePalette.currentColor &amp; -0x352234}" ratio="1"/>
 				</degrafa:RadialGradientFill>
 				<degrafa:SolidFill color="{wedgePalette.currentColor}" alpha="1"/>
 				<degrafa:SolidFill color="{outerWedgePalette.currentColor}" id="outerWedgeFill" alpha="1"/>

@@ -94,9 +94,9 @@
 	</axiis:DataCanvas>
 	
 	<mx:Array id="palettes">
-		<paint:LayoutPalette id="outerPalette" target="{hLayout}" colorFrom="0x3333CC" colorTo="0xCC3333"/>
-		<paint:LayoutPalette id="clusterPalette" target="{myCluster}" colorFrom="{outerPalette.currentColor}" colorTo="{outerPalette.currentColor | 0x337f00}"/>
-		<paint:LayoutPalette id="stackPalette" target="{myCluster}" colorFrom="{outerPalette.currentColor}" colorTo="{outerPalette.currentColor | 0x337f00}"/>
+		<paint:LayoutAutoPalette id="outerPalette" target="{hLayout}" colorFrom="0x3333CC" colorTo="0xCC3333"/>
+		<paint:LayoutAutoPalette id="clusterPalette" target="{myCluster}" colorFrom="{outerPalette.currentColor}" colorTo="{outerPalette.currentColor | 0x337f00}"/>
+		<paint:LayoutAutoPalette id="stackPalette" target="{myCluster}" colorFrom="{outerPalette.currentColor}" colorTo="{outerPalette.currentColor | 0x337f00}"/>
 	</mx:Array>
 	<mx:Array id="fills">
 		<degrafa:LinearGradientFill id="clusterFill" angle="235">

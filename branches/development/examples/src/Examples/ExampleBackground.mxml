@@ -19,12 +19,12 @@
 				</degrafa:RadialGradientFill>
 			</degrafa:fill>
 		</degrafa:Ellipse>
-		<degrafa:Ellipse id="myEllipse2" horizontalCenter="0" width="{width*2.2}" height="{height*.48}" bottom="{-height*.1}" >
+		<degrafa:Ellipse id="myEllipse2" horizontalCenter="0" width="{width*2.2}" height="{height*.55}" bottom="{-height*.1}" >
 			<degrafa:fill>
 				<degrafa:RadialGradientFill>
 					<degrafa:GradientStop color="0xFFFFFF" alpha=".7"/>
-					<degrafa:GradientStop color="0xFFFFFF" alpha=".5" ratio=".4"/>
-					<degrafa:GradientStop color="0xFFFFFF" alpha=".05" ratio=".9"/>
+					<degrafa:GradientStop color="0xFFFFFF" alpha=".5" ratio=".5"/>
+					<degrafa:GradientStop color="0xFFFFFF" alpha=".05" ratio=".85"/>
 					<degrafa:GradientStop color="0xFFFFFF" alpha="0"/>
 				</degrafa:RadialGradientFill>
 			</degrafa:fill>

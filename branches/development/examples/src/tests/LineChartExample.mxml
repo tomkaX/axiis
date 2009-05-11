@@ -357,7 +357,7 @@
 			</axiis:HBoxLayout>
 		</axiis:layouts>	
 		<axiis:palettes>
-			<paint:LayoutPalette colorFrom="0xCC0000" colorTo="0x0000AA" target="{hLayout}" id="circlePalette"/>
+			<paint:LayoutAutoPalette colorFrom="0xCC0000" colorTo="0x0000AA" target="{hLayout}" id="circlePalette"/>
 		</axiis:palettes>
 		<axiis:fills>
 			<degrafa:SolidFill color="{circlePalette.currentColor}" alpha=".5" id="myFill"/>

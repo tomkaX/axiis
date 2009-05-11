@@ -3,11 +3,12 @@
 	xmlns:charts="org.axiis.charts.*" 
 	layout="absolute"  backgroundGradientColors="[0xDDDDDD,0xF5F5F5]"
 	creationComplete="start();" 
-	xmlns:axiis="http://www.axiis.org/2009" xmlns:series="org.axiis.charts.series.*" xmlns:groupings="org.axiis.charts.groupings.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:states="org.axiis.states.*" xmlns:paint="org.axiis.paint.*" xmlns:Examples="Examples.*" xmlns:axis="org.axiis.charts.axis.*" xmlns:labels="org.axiis.charts.labels.*" xmlns:core="org.axiis.core.*">
+	xmlns:axiis="http://www.axiis.org/2009" xmlns:series="org.axiis.charts.series.*" xmlns:groupings="org.axiis.charts.groupings.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:states="org.axiis.states.*" xmlns:paint="org.axiis.paint.*" xmlns:Examples="Examples.*" xmlns:axis="org.axiis.charts.axis.*" xmlns:labels="org.axiis.charts.labels.*" xmlns:geom="flash.geom.*" xmlns:geometry="com.degrafa.geometry.*">
 
 <mx:Style source="styles/Axiis_Examples.css"/>
 <mx:Script>
 		<![CDATA[
+			import com.degrafa.paint.SolidFill;
 			import org.axiis.data.DataSet; 
 			
 			private var ds:DataSet = new DataSet(); 
@@ -18,11 +19,10 @@
 				//Aggregate the detailed data items
 				ds.aggregateData(ds.data.object,"country",["total"]);
 				ds.aggregateData(ds.data.object,"country",["competitors"]);
-				//Aggegate the higher level items
-				//ds.aggregateData(ds.data.object,"country",["aggregates.medal_count_sum"]);
-				//vScale.maxValue=ds.data.object.aggregates['country_aggregates:medal_count_sum_max'];
+				ds.aggregateData(ds.data.object,"country",["events"]);
 				vScale.maxValue=ds.data.object.aggregates['country_total_max']; 
 				hScale.maxValue=ds.data.object.aggregates['country_competitors_max']; 
+				rScale.maxValue=ds.data.object.aggregates['country_events_max'];
 				dataProvider=ds.data.object.country;
 				dc.invalidateDisplayList();
 			}
@@ -30,7 +30,7 @@
 			
 		]]>
 </mx:Script> 
-<Examples:ExampleBackground width="{this.width}" height="{this.height}" title="Horizontal Chart" subTitle="Clusters and Stacks"/>
+<Examples:ExampleBackground width="{this.width}" height="{this.height}" title="Absolute Chart" subTitle="Radial Plot"/>
 
 <mx:String id="countryData" source="data/PlotData.xml"/>
 
@@ -45,32 +45,61 @@
 <mx:Number id="percentGap">.02</mx:Number>
 
 
-	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" minValue="0" maxLayout="{dc.height-50}" id="vScale"/>
-	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" minValue="0" maxLayout="{dc.width-50}" id="hScale"/>
+	<axiis:RadiusScale id="rScale" dataProvider="{dataProvider}" minLayout="3" maxLayout="50" minValue="0"/>
+	<axiis:LinearScale id="vScale" dataProvider="{dataProvider}"  minValue="0" minLayout="{rScale.maxLayout}" maxLayout="{plotGroup.height-rScale.maxLayout}"/>
+	<axiis:LinearScale id="hScale" dataProvider="{dataProvider}"  minValue="0" minLayout="{rScale.maxLayout}" maxLayout="{plotGroup.width-rScale.maxLayout}"/>
 	
 	
 	<axiis:DataCanvas top="100" bottom="120" width="{this.width*.8}" id="dc" verticalCenter="0" horizontalCenter="0" showDataTips="true">
 	
 		<!-- Background -->
 		<axiis:backgroundGeometries>
-			<core:BaseLayout width="{dc.width}" height="{plotLayout.height}">
-				<core:layouts>
-					<axis:VAxis verticalScale="{vScale}" tickStroke="{axisStroke}" width="{dc.width}" height="{plotLayout.height}" emitDataTips="false"
-					fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5"/>
-					<axis:HAxis horizontalScale="{hScale}" tickStroke="{axisStroke}" width="{plotLayout.width}" height="{dc.height}" emitDataTips="false"
-						 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5"/>
-				</core:layouts>
-			</core:BaseLayout>
+			<axis:VAxis  id="verticalAxis" verticalScale="{vScale}" tickStroke="{axisStroke}" width="{plotGroup.width+15}" height="{plotGroup.height}" emitDataTips="false"
+				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5"  gridFillColor="{vPalette.currentColor}" showGridArea="false" gridStroke="{vGridStroke}"/>
+			
+			<axis:HAxis id="horizontalAxis" horizontalScale="{hScale}" tickStroke="{axisStroke}" width="{plotGroup.width}" x="{plotGroup.x}" height="{dc.height}" emitDataTips="false"
+				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5" gridFillColor="{hPalette.currentColor}" showGridArea="false" gridStroke="{hGridStroke}"/>
 		</axiis:backgroundGeometries>
-	
+	 
 		<!-- Layouts -->
 		<axiis:layouts>
-			<axiis:PlotGroup verticalScale="{vScale}" horizontalScale="{hScale}" verticalField="total" horizontalField="competitors" dataProvider="{dataProvider}" id="plotLayout" height="{dc.height-50}" width="{dc.width-50}" x="50">
+			<axiis:PlotGroup id="plotGroup" dataProvider="{dataProvider}"
+				verticalScale="{vScale}" horizontalScale="{hScale}" radiusScale="{rScale}"
+				verticalField="total" horizontalField="competitors" radiusField="events"
+				plotFill="{plotFill}" markerGeometry="{marker}"
+				height="{dc.height-15}" width="{dc.width-15}" x="15">
 			</axiis:PlotGroup>
 		</axiis:layouts>
 	</axiis:DataCanvas>
 	 
 	<degrafa:SolidStroke color="0x222222" id="axisStroke" pixelHinting="true"/>
 	
+	<degrafa:RegularRectangle width="8" height="8" left="0" id="marker">
+		<degrafa:geometry>
+					<degrafa:Line height="100%" x="{marker.width/2}" x1="{marker.width/2}" stroke="{markerStroke}"/>
+					<degrafa:Line width="100%" y="{marker.height/2}" y1="{marker.height/2}" stroke="{markerStroke}"/>
+		</degrafa:geometry>
+	</degrafa:RegularRectangle>
+	
+	<degrafa:SolidStroke id="markerStroke" color="{0xDDDD00}"  weight="1" alpha="1" caps="none" pixelHinting="true"/>
+	
+	<degrafa:RadialGradientFill id="plotFill">
+		<degrafa:GradientStop color="{pPalette.currentColor | 0x333333}" ratio="0" alpha=".5"/>
+		<degrafa:GradientStop color="{pPalette.currentColor}" ratio=".8" alpha=".8"/>
+		<degrafa:GradientStop color="{pPalette.currentColor &amp; -0x333333}" alpha=".9"/>
+	</degrafa:RadialGradientFill>
+	
+	<degrafa:LinearGradientStroke id="hGridStroke" angle="90" weight="1" caps="none">
+		<degrafa:GradientStop color="0xFF0000" alpha=".3"/>
+		<degrafa:GradientStop color="0x0000FF" alpha=".3"/>
+	</degrafa:LinearGradientStroke>
+	<degrafa:LinearGradientStroke id="vGridStroke" angle="0" weight="1" caps="none">
+		<degrafa:GradientStop color="0xFF0000" alpha=".3"/>
+		<degrafa:GradientStop color="0x0000FF" alpha=".1"/>
+	</degrafa:LinearGradientStroke>
+	
+	<axiis:LayoutAutoPalette target="{plotGroup}" colorFrom="0xFA2233" colorTo="0x2233FA" id="pPalette"/>
+	<axiis:LayoutAutoPalette target="{verticalAxis}" colorFrom="0xFF0000" colorTo="0x0000FF" id="vPalette"/>
+	<axiis:LayoutAutoPalette target="{horizontalAxis}" colorFrom="0xFFFF00" colorTo="0xFF00FF" id="hPalette"/>
 	
 </mx:Application>
