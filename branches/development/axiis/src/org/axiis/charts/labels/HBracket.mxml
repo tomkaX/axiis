@@ -33,7 +33,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 	<mx:Script>
 		<![CDATA[
 			import com.degrafa.paint.SolidStroke;
-			import org.axiis.core.AxiisSprite;
 			
 			[Bindable]
 			/**

@@ -23,6 +23,11 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 -->
+<!---
+	ColumnCluster is an HBoxLayout which groups a series of vertical columns
+	bars together labels them. This class is intended to be used to produce
+	multi-series column charts.
+-->
 <layouts:HBoxLayout xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:degrafa="http://www.degrafa.com/2007" name="outerlayout"
 	xmlns:layouts="org.axiis.layouts.*"
@@ -38,61 +43,112 @@ OTHER DEALINGS IN THE SOFTWARE.
 			import com.degrafa.core.IGraphicsFill;
 
 			[Bindable]
+			/**
+			 * A function that is used to determine how each item in the
+			 * dataProvider should be labeled.
+			 * 
+			 * <p>
+			 * The function takes a single parameter, the Object to be plotted,
+			 * and should return the String that should be placed on the axis.
+			 * The default implementation assumes that each Object in the
+			 * dataProvider is numeric, rounds that number, and returns the
+			 * that value as a String.
+			 * </p> 
+			 */
 			public var labelFunction:Function;
 			
-			[Inspectable][Bindable]
+			[Inspectable]
+			[Bindable]
+			/**
+			 * The fill used to render each column.
+			 */
 			public var fill:com.degrafa.core.IGraphicsFill;
 			
-			[Inspectable][Bindable]
 			// We need to fully qualify this for asdoc
+			[Inspectable]
+			[Bindable]
+			/**
+			 * The stroke used to render each column.
+			 */
 			public var stroke:com.degrafa.core.IGraphicsStroke;
-			
-			
 		]]>
 	</mx:Script>
 	
+	<!--- @private -->
 	<mx:Number id="percentGap">.05</mx:Number>
+	
+	<!---
+		The scale used to determine the height of each column.
+	-->
 	<scale:LinearScale id="verticalScale"/>
-	<mx:Number id="fontSize">12</mx:Number>
-	<mx:Number id="fontColor">0</mx:Number>
+	
+	<!---
+		The name of the font used to render the tick mark labels.
+	-->
 	<mx:String id="fontFamily">Arial</mx:String>
+	
+	<!---
+		The size of the font used to render the tick mark labels.
+	-->
+	<mx:Number id="fontSize">12</mx:Number>
+	
+	<!---
+		The color of the tick mark labels.
+	-->
+	<mx:Number id="fontColor">0</mx:Number>
+	
+	<!---
+		The weight (normal or bold) of the tick mark labels.
+	-->
 	<mx:String id="fontWeight">normal</mx:String>
+	
+	<!---
+		Whether or not the primary labels are shown.
+	-->
+	
 	<mx:Boolean id="showLabel">true</mx:Boolean>
+	<!---
+		Whether or not the labels indicating the the value each bar represents
+		are shown.
+	-->
 	<mx:Boolean id="showValueLabel">true</mx:Boolean>
-		
+	
+	<!--- @private -->	
 	<utils:NumericExpression id="labelLayout" value="{column.y+column.height+label.width+5+(currentValue >0 ? 0:-column.height-label.width-10)}"/>
+	
+	<!--- @private -->
 	<utils:NumericExpression id="valueLabelLayout" value="{column.y-valueLabel.height-3 + (currentValue > 0 ? 0:column.height+valueLabel.height+3)}"/>
 
-	<degrafa:SolidFill color="0xFFFF00" alpha=".5" id="stateFill"/> 
+	
+	<!--<degrafa:SolidFill color="0xFFFF00" alpha=".5" id="stateFill"/>--> 
 	
 	<layouts:drawingGeometries>
 			
-		<!-- main column rectangle that gets repeated horizontally -->
+		<!--- @private -->
 		<degrafa:RegularRectangle id="column"
 				x="{currentReference.x}"
 				y="{((currentValue >= 0) ? currentReference.height-this.verticalScale.valueToLayout(currentValue) : currentReference.height-this.verticalScale.valueToLayout(0))}"
 				width="{Math.max(15,currentReference.width)}"
 				height="{(currentValue > 0 ? this.verticalScale.valueToLayout(currentValue)-this.verticalScale.valueToLayout(0) : this.verticalScale.valueToLayout(0)-this.verticalScale.valueToLayout(currentValue)) }"
 				fill="{fill}"
-				stroke="{stroke}"
-				>
+				stroke="{stroke}">
 		</degrafa:RegularRectangle>
 		
-		
-		<!-- smaller label for each column -->
+		<!--- @private -->
 		<degrafa:RasterText  htmlText="{currentLabel ? currentLabel:' '}"  textColor="{fontColor}" visible="{showLabel}" id="label"
 			x="{currentReference.x+(currentReference.width-label.height)/2}" height="20"  y="{labelLayout.value}"  width="100"
 			fontSize="{fontSize}"  align="{(currentValue &lt; 0) ? 'left' : 'right'}" fontFamily="{fontFamily}" fontWeight="{fontWeight}">
-		<degrafa:transform>
+			<degrafa:transform>
 				<degrafa:RotateTransform angle="-90" registrationPoint="topLeft"/>
 			</degrafa:transform>
-		</degrafa:RasterText>	
+		</degrafa:RasterText>
+		<!--- @private -->	
 		<degrafa:RasterText  htmlText="{(labelFunction != null) ? labelFunction.call(this,currentDatum) : (currentValue ? currentValue:' ')}"  textColor="0x444444" visible="{showLabel}" id="valueLabel"
 			x="{currentReference.x+(currentReference.width-valueLabel.textWidth)/2}" height="20"  y="{valueLabelLayout.value}" 
 			fontSize="{fontSize}"  align="left" fontFamily="{fontFamily}" fontWeight="normal"/>
 
 	</layouts:drawingGeometries>
-	<layouts:states>
+	<!--<layouts:states>
 		<states:State enterStateEvent="mouseOver" exitStateEvent="mouseOut"  targets="{[column]}"  properties="{['fill']}" values="{[stateFill]}"/>
-	</layouts:states>
+	</layouts:states>-->
 </layouts:HBoxLayout>
