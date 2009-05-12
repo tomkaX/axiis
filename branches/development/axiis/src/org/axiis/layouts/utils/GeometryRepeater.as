@@ -1,3 +1,28 @@
+///////////////////////////////////////////////////////////////////////////////
+//	Copyright (c) 2009 Team Axiis
+//
+//	Permission is hereby granted, free of charge, to any person
+//	obtaining a copy of this software and associated documentation
+//	files (the "Software"), to deal in the Software without
+//	restriction, including without limitation the rights to use,
+//	copy, modify, merge, publish, distribute, sublicense, and/or sell
+//	copies of the Software, and to permit persons to whom the
+//	Software is furnished to do so, subject to the following
+//	conditions:
+//
+//	The above copyright notice and this permission notice shall be
+//	included in all copies or substantial portions of the Software.
+//
+//	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+//	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+//	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+//	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+//	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+//	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+//	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+//	OTHER DEALINGS IN THE SOFTWARE.
+///////////////////////////////////////////////////////////////////////////////
+
 package org.axiis.layouts.utils
 {
 	import com.degrafa.geometry.Geometry;
@@ -15,7 +40,9 @@ package org.axiis.layouts.utils
 	 * 
 	 * When modifications take longer than a single frame, they are distributed
 	 * over multiple frames to prevent the application from appearing to have
-	 * frozen. 
+	 * frozen. Objects can register callback functions so they can be notified
+	 * when the GeometryRepeater begins or ends each iteration or ends its
+	 * final iteration.
 	 */
 	public class GeometryRepeater extends EventDispatcher
 	{
@@ -30,7 +57,7 @@ package org.axiis.layouts.utils
 		private var timerID:int;
 		
 		/**
-		 * The Geometry that should be repeated.
+		 * The geometry that should be repeated.
 		 */
 		public var geometry:Geometry;
 		
@@ -63,31 +90,36 @@ package org.axiis.layouts.utils
 		}
 		private var _iterationLoopComplete:Boolean = true;
 		
-		private var numIterations:int = 0;
-		
 		/**
 		 * Begins the modifications process.
-		 *  
-		 * @param preIterationCallback
-		 * @param postIterationCallback
-		 * @param completeCallback
+		 * 
+		 * @param numIternations The number of iterations that should be
+		 * executed by before the GeometryRepeater ends. 
+		 * @param preIterationCallback A function that will be called at the
+		 * beginning of every repeat iteration, before the PropertyModifiers are
+		 * applied.
+		 * @param postIterationCallback A function that will be called on each
+		 * iteration after the PropertyModifiers have been applied and the
+		 * currentIteration has been incremented.
+		 * @param completeCallback A function that will be called when
+		 * <code>numIterations</code> of this GeometryRepeater have been
+		 * executed.
 		 */
 		public function repeat(numIterations:int, preIterationCallback:Function = null, postIterationCallback:Function=null, completeCallback:Function = null):void
 		{
-			this.numIterations = numIterations;
 			if(numIterations <= 0)
 				return;
 			
 			_iterationLoopComplete = false;
 			clearTimeout(timerID);
 			_currentIteration = 0;
-			repeatHelper(preIterationCallback,postIterationCallback,completeCallback);
+			repeatHelper(numIterations,preIterationCallback,postIterationCallback,completeCallback);
 		}
 		
 		/**
 		 * @private
 		 */
-		protected function repeatHelper(preIterationCallback:Function = null, postIterationCallback:Function=null, completeCallback:Function = null):void
+		protected function repeatHelper(numIterations:int,preIterationCallback:Function = null, postIterationCallback:Function=null, completeCallback:Function = null):void
 		{
 			var app:Application = Application(Application.application);
 			var millisecondsPerFrame:Number = app.stage ? 1000 / app.stage.frameRate : 50;
@@ -129,7 +161,7 @@ package org.axiis.layouts.utils
 			// The loop took too long and we had to break out. Give the player 10ms to render and, and try again
 			else
 			{
-				timerID = setTimeout(repeatHelper,1,preIterationCallback,postIterationCallback,completeCallback);
+				timerID = setTimeout(repeatHelper,1,numIterations,preIterationCallback,postIterationCallback,completeCallback);
 			}
 		}
 	}

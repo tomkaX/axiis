@@ -1,4 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2009 Team Axiis
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+-->
+
+<!---
+	VAxis renders values from bottom to top between a minimum and maximum value,
+	and is intended to be rendered to the left or to the right of other layouts
+	to provide a point of reference for those visualizations.
+	
+	<p>
+	VAxis can optionally label each major tick mark or render gridlines
+	aligned to the axis itself.
+	</p>
+-->
 <core:BaseLayout xmlns="*" 
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
 	xmlns:layouts="org.axiis.layouts.*" 
@@ -40,15 +75,24 @@
 				label.y=currentReference.y-label.height/2;
 			}
 			
-			
-			public function set labelFunction(value:Function):void {
-				_labelFunction=value;
-			}
-			
+			/**
+			 * A function that is used to determine how each item in the
+			 * dataProvider should be labeled along the axis.
+			 * 
+			 * <p>
+			 * The function takes a single parameter, the Object to be plotted,
+			 * and should return the String that should be placed on the axis.
+			 * The default implementation assumes that each Object in the
+			 * dataProvider is numeric, rounds that number, and returns the
+			 * that value as a String.
+			 * </p> 
+			 */
 			public function get labelFunction():Function {
 				return _labelFunction;
 			}
-			
+			public function set labelFunction(value:Function):void {
+				_labelFunction=value;
+			}
 			private var _labelFunction:Function=internalLabelFunction;
 			
 			private function internalLabelFunction(value:Object):String {
@@ -66,52 +110,119 @@
 			
 			[Bindable]
 			private var _labelInterval:Number;
-			
-						
+					
 			[Bindable]
-			public var gridStroke:IGraphicsStroke;
-			
-			[Bindable]
-			public var maxValue:Number;
-			
-			[Bindable]
-			public var minValue:Number;
-			
-
+			/**
+			 * The stroke that should be used to render the grid lines
+			 * running across this axis.
+			 */
+			public var gridStroke:com.degrafa.core.IGraphicsStroke;
 		]]>
 	</mx:Script>
 	
+	<!-- TODO should HAxis and VAxis have a common super class that defines all this stuff? -->
+	<!---
+		Whether or not the labels on this axis are shown.
+	-->
 	<mx:Boolean id="showLabels">true</mx:Boolean>
+	
+	<!-- TODO should this be renamed to minorTickSpacing -->
+	<!---
+		The space between successive minor tick marks.
+	-->
 	<mx:Number id="tickGap">4</mx:Number>
+	
+	<!---
+		The space between successive major tick marks.
+	-->
 	<mx:Number id="majorTickSpacing">35</mx:Number>
+	
+	<!---
+		The length of each major tick mark in pixels.
+	-->
 	<mx:Number id="majorTickLength">12</mx:Number>
+	
+	<!---
+		The length of each minor tick mark in pixels.
+	-->
 	<mx:Number id="minorTickLength">6</mx:Number>
+	
+	<!-- TODO it is awkward that we're specifying color and alpha here while in
+		most other places we just specify a fill.
+	-->
+	<!---
+		The background color of the grid aligned to this axis.
+	-->
 	<mx:Number id="gridFillColor">0xFFFFFF</mx:Number>
+	
+	<!---
+		The alpha of the grid aligned to this axis.
+	-->
 	<mx:Number id="gridFillAlpha">.1</mx:Number>
+	
+	<!---
+		Whether or not grid cells are displayed.
+	-->
 	<mx:Boolean id="showGridArea">true</mx:Boolean>
+	
+	<!---
+		Whether or not lines are drawn between grid cells.
+	-->
 	<mx:Boolean id="showGridLine">true</mx:Boolean>
-			
+	
+	<!-- TODO This should be an IScale -->
+	<!---
+		The IScale that maps data values to layout coordinates for this axis.
+	-->
 	<scale:AbstractScale id="verticalScale"/>
 	
+	<!---
+		The stroke used to render each tick mark.
+	-->
 	<degrafa:SolidStroke id="tickStroke"/>
 	
+	<!---
+		The name of the font used to render the tick mark labels.
+	-->
 	<mx:String id="fontFamily">Arial</mx:String>
+	
+	<!---
+		The size of the font used to render the tick mark labels.
+	-->
 	<mx:Number id="fontSize">12</mx:Number>
+	
+	<!---
+		The color of the tick mark labels.
+	-->
 	<mx:Number id="fontColor">0</mx:Number>
+	
+	<!---
+		The weight (normal or bold) of the tick mark labels.
+	-->
 	<mx:String id="fontWeight">normal</mx:String>
 	
+	<!--- @private -->
 	<utils:BooleanExpression id="showLabel" value="{ (showLabels &amp;&amp; (showMajorTick.value==true))}"/>
+	
+	<!--- @private -->
 	<utils:BooleanExpression id="showMinorTick" value="{ !(showMajorTick.value==true)}"/>
+	
+	<!--- @private -->
 	<utils:BooleanExpression id="showMajorTick" value="{(majorTickSpacing > 0 &amp;&amp; (this.currentIndex % _majorTickInterval) == 0)}"/>
+	
+	<!--- @private -->
 	<utils:BooleanExpression id="showGrid" value="{((this.currentIndex % (_majorTickInterval*2))==0 &amp;&amp; currentIndex &lt; itemCount-1)}"/>
+	
+	<!--- @private -->
 	<utils:NumericExpression id="repeaterCount" value="{Math.floor(this.height)}" valueChanged="onValueChanged();" />
 	
+	<!--- @private -->
 	<degrafa:SolidFill id="gridFill" color="{gridFillColor}" alpha="{gridFillAlpha}"/>
 	
 	<core:referenceRepeater>
-		<utils1:GeometryRepeater id="repeater"> 
+		<utils1:GeometryRepeater> 
 			<utils1:geometry>
-				<degrafa:Line id="refLine" x="0" x1="{this.width}" height="{this.height}" y="{0}" y1="0" width="{this.width}"/>
+				<degrafa:Line x="0" x1="{this.width}" height="{this.height}" y="{0}" y1="0" width="{this.width}"/>
 			</utils1:geometry>
 			<utils1:modifiers>
 				<utils1:PropertyModifier property="y" modifier="{_gapStep}" modifierOperator="add"/>
@@ -123,19 +234,24 @@
 			width="{width}" 
 			visible="{showGrid.value &amp;&amp; showGridArea}" fill="{gridFill}"/>				  
 		
+		<!--- @private -->
 		<degrafa:Line  id="gridLine"  y="{currentReference.y}" y1="{currentReference.y}" x="0" x1="{width}"
 			visible="{showGrid.value &amp;&amp; showGridLine}"
 			stroke="{gridStroke}"/>
-			
+		
+		<!--- @private -->
 		<degrafa:Line id="minorTick" stroke="{tickStroke}"
 			x="0" x1="{minorTickLength}"  visible="{showMinorTick.value}"
 			y="{currentReference.y}" y1="{currentReference.y}"
 			/>
+		
+		<!--- @private -->
 		<degrafa:Line id="majorTick" stroke="{tickStroke}" 
 			x="0" x1="{majorTickLength}" visible="{showMajorTick.value}"
 			y="{currentReference.y}" y1="{currentReference.y}"
 			/>
-			<!--  //labelFunction(Number(verticalScale.layoutToValue(height-currentReference.y))) -->
+		
+		<!--- @private -->
 		<degrafa:RasterText id="label" align="right" autoSizeField="true"
 			fontFamily="fontFamily" fontSize="{fontSize}" fontWeight="{fontWeight}" textColor="{fontColor}"
 			text="{_labelFunction(Number(verticalScale.layoutToValue(height-currentReference.y)))}" visible="{showLabel.value}"/>

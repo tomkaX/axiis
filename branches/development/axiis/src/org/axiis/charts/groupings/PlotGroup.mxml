@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<axiis:RepeaterLayout xmlns="*" xmlns:axiis="http://www.axiis.org/2009" xmlns:mx="http://www.adobe.com/2006/mxml"  xmlns:degrafa="http://www.degrafa.com/2007" 
-	 xmlns:geometry="com.degrafa.geometry.*" preRender="onPreRender()" >
+<!--
+Copyright (c) 2009 Team Axiis
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+-->
+<layouts:RepeaterLayout xmlns="*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:degrafa="http://www.degrafa.com/2007" 
+	xmlns:geometry="com.degrafa.geometry.*" preRender="onPreRender()"
+	xmlns:layouts="org.axiis.layouts.*" xmlns:axiis="http://www.axiis.org/2009"
+	xmlns:scale="org.axiis.layouts.scale.*"
+	xmlns:states="org.axiis.states.*">
 
 	<mx:Script>
 		<![CDATA[
@@ -11,16 +38,16 @@
 			import com.degrafa.geometry.Geometry;
 			
 			[Bindable]
-			public var plotFill:IGraphicsFill=new SolidFill(0xFFFFFF,.7);
+			public var plotFill:com.degrafa.core.IGraphicsFill=new SolidFill(0xFFFFFF,.7);
 			
 			[Bindable] 
-			public var plotStroke:IGraphicsStroke=new SolidStroke(0,0);
+			public var plotStroke:com.degrafa.core.IGraphicsStroke=new SolidStroke(0,0);
 			
 			[Bindable]
-			public var markerFill:IGraphicsFill=new SolidFill(0xFFFFFF,0);
+			public var markerFill:com.degrafa.core.IGraphicsFill=new SolidFill(0xFFFFFF,0);
 			
 			[Bindable]
-			public var markerStroke:IGraphicsStroke=new SolidStroke(0,.7);
+			public var markerStroke:com.degrafa.core.IGraphicsStroke=new SolidStroke(0,.7);
 			 
 			[Bindable]
 			public var markerGeometry:Geometry;
@@ -36,9 +63,9 @@
 		]]>
 	</mx:Script>
 	
-	<axiis:LinearScale id="verticalScale"/>
-	<axiis:LinearScale id="horizontalScale"/>
-	<axiis:RadiusScale id="radiusScale" minLayout="{Number.NEGATIVE_INFINITY}"/>
+	<scale:LinearScale id="verticalScale"/>
+	<scale:LinearScale id="horizontalScale"/>
+	<scale:RadiusScale id="radiusScale" minLayout="{Number.NEGATIVE_INFINITY}"/>
 	
 	<mx:String id="horizontalField"/>
 	<mx:String id="verticalField"/>
@@ -46,7 +73,7 @@
 
 	<degrafa:SolidStroke id="highlightStroke" color="0xDDDD00" weight="2"/>
 	
-	<axiis:drawingGeometries>
+	<layouts:drawingGeometries>
 		<degrafa:Circle id="plotCircle"
 				radius="{(radiusField !='' &amp;&amp; radiusScale.minLayout > Number.NEGATIVE_INFINITY) ? radiusScale.valueToLayout(currentDatum[radiusField]) : 6 }" 
 				centerX="{horizontalScale.valueToLayout(currentDatum[horizontalField])}" 
@@ -78,12 +105,12 @@
 			y="{verticalScale.valueToLayout(currentDatum[verticalField],true)-markerGeometry.height/2}"
 		    geometry="{[markerGeometry]}"/>
 		
-	</axiis:drawingGeometries>
+	</layouts:drawingGeometries>
 	
-	<axiis:states>
-		<axiis:State enterStateEvent="mouseOver" exitStateEvent="mouseOut"
+	<layouts:states>
+		<states:State enterStateEvent="mouseOver" exitStateEvent="mouseOut"
 			targets="{[highlightStop1,highlightCircle]}" properties="{['alpha','visible']}" values="{[.5,true]}"/>
-	</axiis:states>
+	</layouts:states>
 
 	
-</axiis:RepeaterLayout>
+</layouts:RepeaterLayout>
