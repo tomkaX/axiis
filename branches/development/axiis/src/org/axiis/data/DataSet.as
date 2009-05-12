@@ -664,3 +664,9 @@ package org.axiis.data
 
 	}
 }
+
+import mx.collections.ArrayCollection;
+
+internal class Columns extends ArrayCollection
+{
+}
