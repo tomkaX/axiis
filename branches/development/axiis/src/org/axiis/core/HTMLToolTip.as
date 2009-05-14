@@ -28,18 +28,20 @@
  * info@flexcoders.nl
  * http://labs.flexcoders.nl
  */
- 
-/**
- * An extension of ToolTipBorder that allows ToolTips to use HTML.
- */
 package org.axiis.core
 {
 	import mx.controls.ToolTip;
 	import mx.core.UITextField;
 	import mx.skins.halo.ToolTipBorder;
 
+	/**
+	 * An extension of ToolTipBorder that allows ToolTips to use HTML.
+	 */
 	public class HTMLToolTip extends ToolTipBorder
 	{
+		/**
+		 * @private
+		 */
 		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
         {
             var toolTip:ToolTip = (this.parent as ToolTip);

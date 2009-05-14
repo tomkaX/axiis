@@ -23,6 +23,11 @@
 	 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 	 OTHER DEALINGS IN THE SOFTWARE.
 -->
+<!---
+	Line series group renders multiple lines for a series of data points. This
+	can be used to create visualizations that use curved surfaces such as
+	stream graphs and line charts.
+-->
 <layouts:RepeaterLayout xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:degrafa="http://www.degrafa.com/2007"
 	name="outerlayout"
@@ -54,14 +59,27 @@
 
 			[Inspectable]
 			[Bindable]
+			// TODO this needs to invaliate
+			/**
+			 * The stroke used to render the lines.
+			 */
 			public var stroke:com.degrafa.core.IGraphicsStroke;
 
 			[Inspectable]
 			[Bindable]
+			/**
+			 * The fill used to render the area beneath the lines if area rendering is enabled. 
+			 */
 			public var fill:com.degrafa.core.IGraphicsFill;
 
+			/**
+			 * A filter function that will be used to determine whether a given data point should be included in the rendering.
+			 */
 			public var plotFilterFunction:Function;
 
+			/**
+			 * @private
+			 */
 			public var _pivotSeries:Boolean = false;
 
 			private var _seriesCollection:Object;
@@ -551,26 +569,77 @@
 			private var _decorator:AreaLineDecorator = new AreaLineDecorator();
 
 			//private var _seriesCollection:Object;
+			/**
+			 * A flag indicating that lines should be rendered in the traditional line chart manner. 
+			 */
 			public static const MODE_BASELINE:int = 0;
+			/**
+			 * A flag indicating that lines should be rendered stacked on top of one another. 
+			 */
 			public static const MODE_STACK_ZERO:int = 1;
+			/**
+			 * A flag indicating that lines should be rendered using a flow layout. 
+			 */
 			public static const MODE_STACK_FLOW:int = 2;
 		]]>
 	</mx:Script>
 
+	<!---
+	The layout mode used to render the lines. One of {MODE_BASELINE,MODE_STACK_ZERO,MODE_STACK_FLOW}.
+	-->
 	<mx:int id="mode">0</mx:int>
+	<!---
+	Whether the area beneath the lines should be filled.
+	-->
 	<mx:Boolean id="showArea">false</mx:Boolean>
+	<!---
+	The name of the property on the objects in the dataProvider that contains the data to plot
+	-->
 	<mx:String id="plotCollection"/>
+	
+	<!---
+	The scale used to map values onto the vertical axis.
+	-->
 	<scale:LinearScale id="verticalScale"/>
+	
+	<!---
+	The tension used to render the curves in this chart. A value of 0 results in straight lines while
+	a value of 1 results in exaggerated Bezier curves.
+	-->
 	<mx:Number id="tension">.25</mx:Number>
+	
+	<!---
+	The radius in pixels of the markers shown at each data point.
+	-->
 	<mx:int id="markerSize">8</mx:int>
+	
+	<!---
+	The color at the center of the markers.
+	-->
 	<mx:Number id="markerColor">0xfa8514</mx:Number>
+	
+	<!---
+	Whether or not markers should be displayed at each data point
+	-->
 	<mx:Boolean id="showMarker">true</mx:Boolean>
+	
+	<!---
+	The property on the items in the dataProvider that contains the label field for each series.
+	-->
 	<mx:String id="seriesLabelField"></mx:String>
+	
+	<!---
+	The property on the items in the dataProvider that contains the label field for the entire plot.
+	-->
 	<mx:String id="plotLabelField"></mx:String>
 
+	<!--- @private -->
 	<utils:NumericExpression id="yPoint"/>
+	<!--- @private -->
 	<degrafa:SolidFill color="0xFFFF00" alpha=".7" id="rollOverFill"/>
+	
 	<layouts:layouts>
+		<!--- @private -->
 		<layouts:RepeaterLayout id="plotLayout"
 			width="{currentReference.width}"
 			height="{currentReference.height}"
@@ -595,6 +664,8 @@
 				</degrafa:RegularRectangle>
 			</layouts:drawingGeometries>
 		</layouts:RepeaterLayout>
+		
+		<!--- @private -->
 		<layouts:RepeaterLayout id="markerLayout"
 			width="{currentReference.width}"
 			height="{currentReference.height}"
@@ -605,7 +676,7 @@
 			inheritParentBounds="false"
 			itemPreDraw="onMarkerItemPreDraw();">
 			<layouts:drawingGeometries>
-
+				<!--- @private -->
 				<degrafa:Circle id="marker"
 					radius="{markerSize/2}"
 					centerY="{yPoint.value}"
@@ -618,6 +689,8 @@
 						<degrafa:SolidStroke color="0" pixelHinting="false" alpha=".6"/>
 					</degrafa:stroke>
 				</degrafa:Circle>
+				
+				<!--- @private -->
 				<degrafa:Circle id="innerMarker"
 					radius="{markerSize/2*.6}"
 					centerX="{marker.centerX}"

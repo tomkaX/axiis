@@ -33,15 +33,13 @@ package org.axiis.paint
 	import org.axiis.core.ILayout;
 
 	/**
-	 * LayoutPalette will generate an Array of colors based on a Layout. The
-	 * produced colors will be equally distributed between two given anchor
-	 * colors and will contain <code>x</code> values where <code>x</code> is
-	 * the number of objects in the Layout's <code>dataProvider</code>. As the
-	 * Layout renders and its <code>currentIndex</code> property is incremented,
-	 * the LayoutPalette's <code>currentColor</code> will be incremented as
-	 * well.  Binding on the <code>currentColor</code> allows you vary the color
-	 * of a fill or stroke used in the Layout's <code>drawingGeometries</code>
-	 * as the Layout renders.
+	 * LayoutPalette will generates an Array of colors for a Layout. By default,
+	 * LayoutPalette uses the Flex 3 Halo color scheme, but this can be
+	 * overridden using the colors property. As the currentIndex of the Layout
+	 * driving this palette changes, the currentColor property is updated to
+	 * the color at the currentIndex in the array.
+	 * If the layout needs more colors than the array contains,
+	 * the colors wraps around the array using the mod operator.
 	 */
 	public class LayoutPalette extends EventDispatcher
 	{

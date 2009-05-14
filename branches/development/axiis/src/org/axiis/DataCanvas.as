@@ -41,37 +41,81 @@ package org.axiis
 	import org.axiis.core.AxiisSprite;
 	import org.axiis.core.ILayout;
 	
-	
+	/**
+	 * DataCanvas manages the placement and the rendering of layouts.
+	 */
 	public class DataCanvas extends UIComponent
 	{
 		[Bindable]
+		/**
+		 * A placeholder for fills. Modifying this property has no
+		 * effect on the rendering of the DataCanvas.
+		 */
 		public var fills:Array = [];
 		
 		[Bindable]
+		/**
+		 * A placeholder for strokes. Modifying this property has no
+		 * effect on the rendering of the DataCanvas.
+		 */
 		public var strokes:Array = [];
 		
 		[Bindable]
+		/**
+		 * A placeholder for palettes. Modifying this property has no
+		 * effect on the rendering of the DataCanvas.
+		 */
 		public var palettes:Array = [];
 		
+		/**
+		 * Constructor.
+		 */
 		public function DataCanvas()
 		{
 			super();
 		}
 		
-		
+		//TODO Do we need this on the DataCanvas level
+		/**
+		 * @private
+		 */
 		public var labelFunction:Function;
 		
+		//TODO Do we need this on the DataCanvas level
+		/**
+		 * @private
+		 */
 		public var dataFunction:Function;
 		
+		/**
+		 * Whether or not data tips should be shown when rolling the mouse over
+		 * items in the DataCanvas's layouts
+		 */
 		public var showDataTips:Boolean = true;
 		
+		// TODO This is currently unused
+		/**
+		 * @private
+		 */
 		public var toolTipClass:IFactory;
 		
+		/**
+		 * @private
+		 */
 		public var hitRadius:Number = 1;
 		
 		private var toolTips:Array = [];
 		
+		// TODO This isn't doing anything.  We should cut it.
 		[Bindable(event="dataProviderChange")]
+		/**
+		 * A placeholder for data used by layouts managed by this DataCanvas.
+		 * Setting this value re-renders the layouts.
+		 */
+		public function get dataProvider():Object
+		{
+			return _dataProvider;
+		}
 		public function set dataProvider(value:Object):void
 		{
 			if(value != _dataProvider)
@@ -81,18 +125,23 @@ package org.axiis
 				dispatchEvent(new Event("dataProviderChange"));
 			}
 		}
-		public function get dataProvider():Object
-		{
-			return _dataProvider;
-		}
 		private var _dataProvider:Object;
-			
 		
-		//TODO: I think we might consider using ArrayCollections and some initCollection calls (look at how degrafa handles this)
+		/**
+		 * An Array of ILayouts that this DataCanvas should render. Layouts
+		 * appearing later in the array will render on top of earlier layouts.
+		 */
 		public var layouts:Array;
 		
+		/**
+		 * An array of geometries that should be rendered behind the layouts.
+		 */
 		public var backgroundGeometries:Array;
 		
+		/**
+		 * An array of geometries that should be rendered in front of the
+		 * layouts.
+		 */
 		public var foregroundGeometries:Array;
 		
 		private var invalidatedLayouts:Array = [];
@@ -105,6 +154,9 @@ package org.axiis
 		
 		private var _foreground:AxiisSprite;
 		
+		/**
+		 * @private
+		 */
 		override protected function createChildren():void
 		{
 			super.createChildren();
@@ -134,6 +186,9 @@ package org.axiis
 			addChild(_foreground);
 		}
 		
+		/**
+		 * @private
+		 */
 		override protected function commitProperties():void
 		{
 			super.commitProperties();
@@ -156,10 +211,9 @@ package org.axiis
 			}
 		}
 		
+		// TODO implement measure. We should use defaults of 0,0 until we can figure out how to measure things
 		/**
-		 * TODO implement measure
-		 * 
-		 * For now we can just set some defaults
+		 * @private
 		 */
 		override protected function measure():void
 		{
@@ -170,6 +224,9 @@ package org.axiis
 		
 		private var _invalidated:Boolean=false;
 		
+		/**
+		 * @private
+		 */
 		override public function invalidateDisplayList():void
 		{
 			if (!_invalidated)
@@ -178,6 +235,9 @@ package org.axiis
 			_invalidated = true;
 		} 
 		
+		/**
+		 * @private
+		 */
 		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
 		{
 			super.updateDisplayList(unscaledWidth,unscaledHeight);
@@ -226,6 +286,10 @@ package org.axiis
 			_invalidated = false;
 		}
 		
+		/**
+		 * Handler for when a layout's layoutInvalidated event has been caught.
+		 * Invalidates the display list so the layout can be re-rendered. 
+		 */
 		protected function handleLayoutInvalidate(event:Event):void
 		{
 			var layout:ILayout = event.target as ILayout;
@@ -236,6 +300,9 @@ package org.axiis
 			}
 		}
 		
+		/**
+		 * Invalidates all layouts that this DataCanvas managers. 
+		 */
 		protected function invalidateAllLayouts():void
 		{
 			for each(var layout:ILayout in layouts)
@@ -245,7 +312,10 @@ package org.axiis
 			super.invalidateDisplayList();
 		}
 		
-		/****   ITEM EVENTS ****/
+		// TODO This should be private
+		/**
+		 * @private
+		 */
 		public function onItemMouseOver(e:MouseEvent):void
 		{
 			var axiisSprite:AxiisSprite = e.target as AxiisSprite;
@@ -267,6 +337,9 @@ package org.axiis
 			}
 		}
 		
+		/**
+		 * @private
+		 */
 		public function onItemMouseOut(e:MouseEvent):void
 		{
 			var axiisSprite:AxiisSprite = e.target as AxiisSprite;
@@ -281,15 +354,27 @@ package org.axiis
 			}	
 		}
 		
+		/**
+		 * @private
+		 */
 		public function onItemMouseDown(e:MouseEvent):void {
 		}
 		
+		/**
+		 * @private
+		 */
 		public function onItemMouseUp(e:MouseEvent):void {
 		}
-
+		
+		/**
+		 * @private
+		 */
 		public function onItemMouseClick(e:MouseEvent):void {
 		}
 		
+		/**
+		 * @private
+		 */
 		public function onItemMouseDoubleClick(e:MouseEvent):void {
 		}
 		

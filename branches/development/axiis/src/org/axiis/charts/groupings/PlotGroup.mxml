@@ -138,6 +138,7 @@
 			height="{plotCircle.radius}">
 			<degrafa:fill>
 				<degrafa:LinearGradientFill angle="90">
+					<!--- @private -->
 					<degrafa:GradientStop color="0xFFFFFF" alpha=".4" id="highlightStop1"/>
 					<degrafa:GradientStop color="0xFFFFFF" alpha="0"/>
 				</degrafa:LinearGradientFill>

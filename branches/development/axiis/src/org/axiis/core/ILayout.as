@@ -63,11 +63,33 @@ package org.axiis.core
 		function get emitDataTips():Boolean;
 		function set emitDataTips(value:Boolean):void;
 		
-		// TODO doc this
+		/**
+		 * A method used to determine the text that appears in the data tip for
+		 * an item rendered by this layout.
+		 * 
+		 * <p>
+		 * This method takes one argument, the item to determine the label for,
+		 * and returns a String, the text to show in the data tip.
+		 * </p>
+		 */
 		function get dataTipLabelFunction():Function;
 		function set dataTipLabelFunction(value:Function):void;
 		
-		// TODO doc this
+		/**
+		 * A method that determines the desired position for a data tip.
+		 * 
+		 * <p>
+		 * This function takes two arguments: The AxiisSprite to display the
+		 * data tip for and data tip itself, which is an IToolTip. It should
+		 * return a Point that represents the ideal position for the data tip.
+		 * </p>
+		 * 
+		 * <p>
+		 * This function is called by DataCanvas when placing data tips. The
+		 * tip will be placed at the point specified by the function unless it
+		 * overlaps other data tips.
+		 * </p>
+		 */
 		function get dataTipPositionFunction():Function;
 		function set dataTipPositionFunction(value:Function):void;
 		
