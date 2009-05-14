@@ -67,7 +67,7 @@ package org.axiis.utils
 
 		[Bindable(event="valueChanged")]
 		/**
-		 * The Number to be stored. By using binding to set this property and
+		 * The stored Number. By using binding to set this property and
 		 * then binding other properties to it, you can reduce needless
 		 * computations.
 		 */

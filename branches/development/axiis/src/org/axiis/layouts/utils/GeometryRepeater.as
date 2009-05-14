@@ -93,6 +93,13 @@ package org.axiis.layouts.utils
 		/**
 		 * Begins the modifications process.
 		 * 
+		 * <p>
+		 * Repeatedly applies the PropertyModifiers the specified number of
+		 * times. Optionally, you can set up callbacks that this method will
+		 * call before the PropertyModifiers are applied, after they are
+		 * applied, and when the final iteration completes.
+		 * </p> 
+		 * 
 		 * @param numIternations The number of iterations that should be
 		 * executed by before the GeometryRepeater ends. 
 		 * @param preIterationCallback A function that will be called at the

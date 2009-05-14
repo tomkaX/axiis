@@ -25,10 +25,13 @@
 
 package org.axiis.layouts.scale
 {
+	/**
+	 * A scale that can be used to convert Dates to layout space.
+	 */
 	public class DateTimeScale extends ContinuousScale implements IScale
 	{
 		/**
-		 * @private
+		 * @inheritDoc IScale#valueToLayout
 		 */
 		override public function valueToLayout(value:Object,invert:Boolean=false):Number
 		{
@@ -43,7 +46,7 @@ package org.axiis.layouts.scale
 		}
 		
 		/**
-		 * @private
+		 * @inheritDoc IScale#layoutToValue
 		 */
 		override public function layoutToValue(layout:Number):Object
 		{

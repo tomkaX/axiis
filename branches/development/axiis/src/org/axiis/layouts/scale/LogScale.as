@@ -26,13 +26,13 @@
 package org.axiis.layouts.scale
 {
 	/**
-	 * A scale that deals with logarithmic data. Values from the dataProvider
-	 * are converted to layout-space using log base 10.
+	 * A scale that converts logarithmic data to layout space. Values from the
+	 * dataProvider are converted to layout-space using log base 10.
 	 */
 	public class LogScale extends ContinuousScale
 	{
 		/**
-		 * @private
+		 * @inheritDoc IScale#valueToLayout
 		 */
 		override public function valueToLayout(value:Object,invert:Boolean=false):Number
 		{
@@ -48,7 +48,7 @@ package org.axiis.layouts.scale
 		}
 		
 		/**
-		 * @private
+		 * @inheritDoc IScale#layoutToValue
 		 */
 		override public function layoutToValue(layout:Number):Object
 		{

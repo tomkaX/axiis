@@ -24,15 +24,18 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 -->
 <!---
-	ColumnCluster is an HBoxLayout which groups a series of vertical columns
-	bars together labels them. This class is intended to be used to produce
+	ColumnCluster groups a series of vertical columns horizontally
+	and labels them. This class is intended to be used to produce
 	multi-series column charts.
 -->
-<layouts:HBoxLayout xmlns:mx="http://www.adobe.com/2006/mxml"
+<groupings:GroupingBase xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:degrafa="http://www.degrafa.com/2007" name="outerlayout"
 	xmlns:layouts="org.axiis.layouts.*"
 	xmlns:scale="org.axiis.layouts.scale.*"
-	xmlns:states="org.axiis.states.*" xmlns:utils="org.axiis.utils.*">
+	xmlns:groupings="org.axiis.charts.groupings.*"
+	xmlns:utils="org.axiis.utils.*"
+	xmlns:utils1="org.axiis.layouts.utils.*"
+	xmlns:states="org.axiis.states.*">
 	
 	<!-- public variables -->
 	<mx:Script>
@@ -56,21 +59,26 @@ OTHER DEALINGS IN THE SOFTWARE.
 			 * </p> 
 			 */
 			public var labelFunction:Function;
-			
-			[Inspectable]
-			[Bindable]
+				
+			[Bindable(event="showValueLabelChange")]
 			/**
-			 * The fill used to render each column.
-			 */
-			public var fill:com.degrafa.core.IGraphicsFill;
-			
-			// We need to fully qualify this for asdoc
-			[Inspectable]
-			[Bindable]
-			/**
-			 * The stroke used to render each column.
-			 */
-			public var stroke:com.degrafa.core.IGraphicsStroke;
+			 * Whether or not the labels indicating the the value each bar
+			 * represents are shown.
+			 */ 
+			public function get showValueLabel():Boolean
+			{
+				return _showValueLabel;
+			}
+			public function set showValueLabel(value:Boolean):void
+			{
+				if(value != _showValueLabel)
+				{
+					_showValueLabel = value;
+					dispatchEvent(new Event("showValueLabelChange"));
+					invalidate();
+				}
+			}
+			private var _showValueLabel:Boolean = true;
 		]]>
 	</mx:Script>
 	
@@ -82,47 +90,24 @@ OTHER DEALINGS IN THE SOFTWARE.
 	-->
 	<scale:LinearScale id="verticalScale"/>
 	
-	<!---
-		The name of the font used to render the tick mark labels.
-	-->
-	<mx:String id="fontFamily">Arial</mx:String>
-	
-	<!---
-		The size of the font used to render the tick mark labels.
-	-->
-	<mx:Number id="fontSize">12</mx:Number>
-	
-	<!---
-		The color of the tick mark labels.
-	-->
-	<mx:Number id="fontColor">0</mx:Number>
-	
-	<!---
-		The weight (normal or bold) of the tick mark labels.
-	-->
-	<mx:String id="fontWeight">normal</mx:String>
-	
-	<!---
-		Whether or not the primary labels are shown.
-	-->
-	
-	<mx:Boolean id="showLabel">true</mx:Boolean>
-	<!---
-		Whether or not the labels indicating the the value each bar represents
-		are shown.
-	-->
-	<mx:Boolean id="showValueLabel">true</mx:Boolean>
-	
 	<!--- @private -->	
 	<utils:NumericExpression id="labelLayout" value="{column.y+column.height+label.width+5+(currentValue >0 ? 0:-column.height-label.width-10)}"/>
 	
 	<!--- @private -->
 	<utils:NumericExpression id="valueLabelLayout" value="{column.y-valueLabel.height-3 + (currentValue > 0 ? 0:column.height+valueLabel.height+3)}"/>
 
-	
-	<!--<degrafa:SolidFill color="0xFFFF00" alpha=".5" id="stateFill"/>--> 
-	
-	<layouts:drawingGeometries>
+	<groupings:referenceRepeater>
+		<utils1:GeometryRepeater>
+			<utils1:geometry>
+				<degrafa:RegularRectangle x="0" y="0" width="{(width / itemCount) - (width * percentGap/2)}" height="{height}" enableEvents="false"/>
+			</utils1:geometry>
+			<utils1:modifiers>
+				<utils1:PropertyModifier property="x" modifier="{width/itemCount}" modifierOperator="add"/>
+			</utils1:modifiers>
+		</utils1:GeometryRepeater>
+	</groupings:referenceRepeater>
+
+	<groupings:drawingGeometries>
 			
 		<!--- @private -->
 		<degrafa:RegularRectangle id="column"
@@ -147,8 +132,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 			x="{currentReference.x+(currentReference.width-valueLabel.textWidth)/2}" height="20"  y="{valueLabelLayout.value}" 
 			fontSize="{fontSize}"  align="left" fontFamily="{fontFamily}" fontWeight="normal"/>
 
-	</layouts:drawingGeometries>
+	</groupings:drawingGeometries>
 	<!--<layouts:states>
 		<states:State enterStateEvent="mouseOver" exitStateEvent="mouseOut"  targets="{[column]}"  properties="{['fill']}" values="{[stateFill]}"/>
 	</layouts:states>-->
-</layouts:HBoxLayout>
+</groupings:GroupingBase>

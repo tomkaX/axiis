@@ -27,6 +27,7 @@ package org.axiis.layouts.scale
 {
 	import mx.collections.ArrayCollection;
 	
+	[Bindable]
 	/**
 	 * IScale is an interface the defines the methods required to translate
 	 * between a range of values and screen (layout) coordinate space.
@@ -79,9 +80,13 @@ package org.axiis.layouts.scale
 		
 		/**
 		 * Converts a value to a position in layout space.
+		 * 
+		 * @param value The value to be converted into layout space.
+		 * @param invert Whether the minValue translates to minLayout (false) or to maxLayout (true). 
 		 */
 		function valueToLayout(value:Object,invert:Boolean=false):Number;
 		
+		// TODO Since we have invert for valueToLayout, we should have an invert argument for layoutToValue as well.
 		/**
 		 * Converts a layout position to a value that would arise in the
 		 * space defined by the implementing class. For example, LinearScale
@@ -89,6 +94,8 @@ package org.axiis.layouts.scale
 		 * maxValue, whether or not that Number is actually present within
 		 * the dataProvider. CategoricalScale, on the other hand, will only
 		 * convert layout positions to values found within the dataProvider.
+		 * 
+		 * @param The layout position to translate into a value.
 		 */
 		function layoutToValue(layout:Number):Object;
 		

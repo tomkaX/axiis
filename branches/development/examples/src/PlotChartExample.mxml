@@ -55,10 +55,19 @@
 		<!-- Background -->
 		<axiis:backgroundGeometries>
 			<axis:VAxis  id="verticalAxis" verticalScale="{vScale}" tickStroke="{axisStroke}" width="{plotGroup.width+15}" height="{plotGroup.height}" emitDataTips="false"
-				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5"  gridFillColor="{vPalette.currentColor}" showGridArea="false" gridStroke="{vGridStroke}"/>
+				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5" showGridArea="false" gridStroke="{vGridStroke}">
+				<axis:gridFill>					
+					<degrafa:SolidFill color="{hPalette.currentColor}"/>
+				</axis:gridFill>
+			</axis:VAxis>
 			
 			<axis:HAxis id="horizontalAxis" horizontalScale="{hScale}" tickStroke="{axisStroke}" width="{plotGroup.width}" x="{plotGroup.x}" height="{dc.height}" emitDataTips="false"
-				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5" gridFillColor="{hPalette.currentColor}" showGridArea="false" gridStroke="{hGridStroke}"/>
+				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5" showGridArea="false"
+				 gridStroke="{hGridStroke}">
+				<axis:gridFill>
+					<degrafa:SolidFill color="{hPalette.currentColor}"/>
+				</axis:gridFill>
+			</axis:HAxis>
 		</axiis:backgroundGeometries>
 	 
 		<!-- Layouts -->

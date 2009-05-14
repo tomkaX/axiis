@@ -22,11 +22,15 @@
 //	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 //	OTHER DEALINGS IN THE SOFTWARE.
 ///////////////////////////////////////////////////////////////////////////////
- 
- /**
+
+/*
  * Created by Maikel Sibbald
  * info@flexcoders.nl
  * http://labs.flexcoders.nl
+ */
+ 
+/**
+ * An extension of ToolTipBorder that allows ToolTips to use HTML.
  */
 package org.axiis.core
 {

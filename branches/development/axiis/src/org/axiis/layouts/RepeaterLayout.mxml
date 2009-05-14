@@ -26,7 +26,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 <!---
 	RepeaterLayout fires preRender and itemPreDraw events but does not modify
-	its repeated Geometry, RegularRectangle spanning the width and height of
+	its repeated Geometry, a RegularRectangle spanning the width and height of
 	the Layout.
 -->
 <core:BaseLayout xmlns:mx="http://www.adobe.com/2006/mxml"

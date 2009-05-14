@@ -27,22 +27,14 @@ package org.axiis.layouts.scale
 {
 	import flash.events.Event;
 	
+	// FIXME Let's cut this class and allow log scale to have an optional "base" property
 	/**
 	 * A scale that deals with LOG2 scale for circle radius.
 	 */
-
-	 
 	public class RadiusScale extends ContinuousScale implements IScale
 	{
-			 
-	 
-	 	
 		public var zeroBased:Boolean=true;
-		/**
-		 * TRUE: Scale will reverse valueToLayout calc based on min/max layout (helpful for vertical charts to accomodate top,left ==  0,0)
-		 * FALSE:  Scale will return normal valueToLayout
-		 */
-	 
+		
 		override public function valueToLayout(value:Object,invert:Boolean=false):Number
 		{
 			var logValue:Number = Math.log(Number(value)) / Math.LN2;
@@ -56,9 +48,6 @@ package org.axiis.layouts.scale
 			return percentage * (maxLayout - minLayout) + minLayout;
 		}
 		
-		/**
-		 * @private
-		 */
 		override public function layoutToValue(layout:Number):Object
 		{
 			var percentage:Number = getPercentageBetweenValues(Number(layout),Number(minLayout),Number(maxLayout))

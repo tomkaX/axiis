@@ -38,11 +38,36 @@ package org.axiis.core
 	import org.axiis.core.ILayout;
 	import org.axiis.core.PropertySetter;
 	
+	// TODO This event should be moved to AbstractLayout
+	/**
+	 * Dispatched when invalidate is called so the DataCanvas that owns this
+	 * layout can being the process of redrawing the layout.
+	 */
 	[Event(name="invalidateLayout", type="flash.events.Event")]
+	
+	/**
+	 * Dispatched at the beginning of the render method. This event allowing
+	 * listening objects the chance to perform any computations that will
+	 * affect the layout's render process.
+	 */
 	[Event(name="preRender", type="flash.events.Event")]
+	
+	/**
+	 * Dispatched before each individual child is rendered.
+	 */
 	[Event(name="itemPreDraw", type="flash.events.Event")]
+	
+	// TODO Is "AxiisLayout" a better name for BaseLayout 
+	/**
+	 * BaseLayout is a data driven layout engine that uses GeometryRepeaters
+	 * and PropertyModifiers to transform geometries before drawing them to
+	 * the screen.
+	 */
 	public class BaseLayout extends AbstractLayout
 	{
+		/**
+		 * Constructor.
+		 */
 		public function BaseLayout()
 		{
 			super();
@@ -58,9 +83,13 @@ package org.axiis.core
 
 		[Bindable(event="scaleFillChange")]
 		/**
-		 * Set to TRUE - this will use a common bounds to fill all layout items being drawn
-		 * Set to FALSE - each layout item will have its own fill bounds 
+		 * Whether or not the fills in this geometry should be scaled within the
+		 * bounds rectangle.
 		 */
+		public function get scaleFill():Boolean
+		{
+			return _scaleFill;
+		}
 		public function set scaleFill(value:Boolean):void
 		{
 			if(value != _scaleFill)
@@ -69,23 +98,18 @@ package org.axiis.core
 				this.invalidate();
 				dispatchEvent(new Event("scaleFillChange"));
 			}
-		}
-	
-		public function get scaleFill():Boolean
-		{
-			return _scaleFill;
-		}
+		}	
 		private var _scaleFill:Boolean;
 		
 		/**
-		 * Set to TRUE - drawing geometries will have their intial bounds set to 
-		 * that of the currentReference of the PARENT LAYOUT.  This directly positions child
-		 * drawing sprites on x/y according to currentReference x/y of parent layout.
-		 * 
-		 * Set to FALSE - sprite gets the x/y of the current Layout
+		 * Whether or not the drawingGeometries should should have their initial
+		 * bounds set to the currentReference of the parent layout.
 		 */
 		public var inheritParentBounds:Boolean = true;
 		
+		/**
+		 * @private
+		 */
 		override public function set visible(value:Boolean):void
 		{
 			super.visible = value;
@@ -93,6 +117,28 @@ package org.axiis.core
 				sprite.visible = visible;
 		}
 		
+		/** 
+		 * Draws this layout to the specified AxiisSprite, tracking all changes
+		 * made by data binding or the referenceRepeater. 
+		 * 
+		 * <p>
+		 * If no sprite is provided this layout will use the last AxiisSprite
+		 * it rendered to, if such an AxiisSprite exists. Otherwise this returns
+		 * immediately.
+		 * </p>
+		 * 
+		 * <p>
+		 * The render cycle occurs in several stages. By watching for these
+		 * events or by binding onto the currentReference, currentIndex, or the
+		 * currentDatum properties, you can inject your own logic into the
+		 * render cycle.  For example, if you bind a drawingGeometry's x
+		 * position to currentReference.x and use a GeometryRepeater that
+		 * adds 5 to the x property of the reference, the layout will render
+		 * one geometry for each item in the dataProvider at every 5 pixels. 
+		 * </p>
+		 * 
+		 * @param sprite The AxiisSprite this layout should render to.
+		 */
 		override public function render(newSprite:AxiisSprite = null):void 
 		{
 			if (!visible || !this.dataItems || itemCount==0) {
@@ -111,8 +157,7 @@ package org.axiis.core
 			if(newSprite)
 				this.sprite = newSprite;
 			_rendering = true;
-			
-				
+
 			if(!sprite || !_referenceGeometryRepeater)
 				return;			
 			
@@ -149,6 +194,14 @@ package org.axiis.core
 			}
 		}
 		
+		/**
+		 * The callback method called by the referenceRepeater before it applies
+		 * the PropertyModifiers on each iteration. This method updates the
+		 * currentIndex, currentDatum, currentValue, and currentLabel
+		 * properties.  It is recommended that subclasses override this method
+		 * to perform any custom data-driven computations that affect the
+		 * drawingGeometries.
+		 */
 		protected function preIteration():void
 		{
 			currentPropertySetters = clonePropertySetterArray(currentPropertySetters);
@@ -163,7 +216,15 @@ package org.axiis.core
 			if (labelField)
 				_currentLabel = getProperty(_currentDatum,labelField).toString();
 		}
-
+		
+		/**
+		 * The callback method called by the referenceRepeater after it applies
+		 * the PropertyModifiers on each iteration. This method updates the
+		 * currentReference property and creates or updates the AxiisSprite that
+		 * renders the currentDatum.  It is recommended that subclasses
+		 * override this method to perform any computations that affect the
+		 * drawingGeometries that are based on the drawingGeometries themselves.
+		 */
 		protected function postIteration():void
 		{ 
 			_currentReference = referenceRepeater.geometry;
@@ -192,6 +253,9 @@ package org.axiis.core
 			renderChildLayouts(currentChild);
 		}
 		
+		/**
+		 * Calls the render method on all child layouts. 
+		 */
 		protected function renderChildLayouts(child:AxiisSprite):void
 		{
 			var i:int=0;
@@ -210,6 +274,11 @@ package org.axiis.core
 			}
 		}
 		
+		/**
+		 * The callback method called by the referenceRepeater after it finishes
+		 * its final iteration. Stop tracking changes to the drawingGeometries
+		 * properties.
+		 */
 		protected function repeatComplete():void
 		{
 			sprite.visible = visible;
@@ -221,6 +290,10 @@ package org.axiis.core
 				updateSpritePropertySetters();
 		}
 		
+		/**
+		 * Removes the records of any property change events recorded thus far
+		 * for this layout and all nested layouts.
+		 */
 		protected function clearPropertySetterArrays():void
 		{
 			propertySettersArrays = [];
@@ -243,6 +316,9 @@ package org.axiis.core
 			return toReturn;
 		}
 		
+		/**
+		 * Passes the recorded property changes to the AxiisSprites.
+		 */
 		protected function updateSpritePropertySetters():void
 		{
 			for(var a:int = 0; a < childSprites.length; a++)
@@ -255,7 +331,7 @@ package org.axiis.core
 			}
 		}
 		
-		public function addModificationListeners():void
+		private function addModificationListeners():void
 		{
 			for each(var geometry:Geometry in drawingGeometries)
 			{
@@ -263,7 +339,7 @@ package org.axiis.core
 			}
 		}
 		
-		public function removeModificationListeners():void
+		private function removeModificationListeners():void
 		{
 			for each(var geometry:Geometry in drawingGeometries)
 			{
@@ -271,7 +347,7 @@ package org.axiis.core
 			}
 		}
 		
-		protected function handleGeometryPropertyChange(event:PropertyChangeEvent):void
+		private function handleGeometryPropertyChange(event:PropertyChangeEvent):void
 		{
 			if (currentIndex==itemCount-1 && this.referenceRepeater.iterationLoopComplete)
 				currentPropertySetters=this.propertySettersArrays[0]; //Grab the first one
@@ -299,13 +375,12 @@ package org.axiis.core
 			}
 			if(!found)
 			{
-				
 				var newPropertySetter:PropertySetter = new PropertySetter(event.source,event.property,event.newValue);
 				currentPropertySetters.push(newPropertySetter);
 			}
 		}
 		
-		protected function hasModificationForProperty(propertySetters:Array,target:Object,property:Object):Boolean
+		private function hasModificationForProperty(propertySetters:Array,target:Object,property:Object):Boolean
 		{
 			for each(var propertySetter:PropertySetter in propertySetters)
 			{

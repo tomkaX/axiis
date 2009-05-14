@@ -40,85 +40,204 @@ package org.axiis.core
 	 */
 	public interface ILayout extends IEventDispatcher
 	{
-		function set visible(value:Boolean):void;
-		function get visible():Boolean;
+		/**
+		 * Whether or not this layout is currently in a render cycle. Rendering
+		 * can take place over several frames. By watching this property you
+		 * can take an appropriate action handle artifacts for multiframe
+		 * rendering, such as hiding the layout entirely.
+		 */
+		function get rendering():Boolean;
 		
+		/**
+		 * Whether or not this layout is visible. Layouts that are not visible
+		 * will return from their render methods immediately after they are
+		 * called without making any changes to the display list.
+		 */
+		function get visible():Boolean;
+		function set visible(value:Boolean):void;
+		
+		/**
+		 * A flag that indicates to DataCanvas that it should listen for mouse
+		 * events that signal the need to create a data tip.
+		 */
 		function get emitDataTips():Boolean;
 		function set emitDataTips(value:Boolean):void;
 		
-		function get itemCount():int;
-
+		// TODO doc this
 		function get dataTipLabelFunction():Function;
 		function set dataTipLabelFunction(value:Function):void;
 		
+		// TODO doc this
 		function get dataTipPositionFunction():Function;
 		function set dataTipPositionFunction(value:Function):void;
 		
+		/**
+		 * The number of items in the dataProvider.
+		 */
+		function get itemCount():int;
+
+		// TOOD Determine if we really need to expose this property. Currently DataCanvas only uses it in one place.
+		/**
+		 * The AxiisSprites this layout has created to render each item in its dataProvider.
+		 */
 		function get childSprites():Array;
 		
-		function set parentLayout(value:ILayout):void;
+		// TODO It would be great if we could somehow get rid of the setter for this parentLayout.
+		/**
+		 * A reference to the layout that contains this layout.
+		 */
 		function get parentLayout():ILayout;
+		function set parentLayout(value:ILayout):void;
 		
-		function set bounds(value:Rectangle):void; 
+		// TODO I DON'T THINK WE ARE USING THIS PROPERTY ANYMORE!!!
+		/**
+		 * A rectangle representing the top left corner and dimensions of this
+		 * layout
+		 */
 		function get bounds():Rectangle;
+		function set bounds(value:Rectangle):void; 
 		
-		function set dataProvider(value:Object):void;
+		/**
+		 * An Array, ArrayCollection, or Object containing the data this layout
+		 * should render.
+		 * 
+		 * <p>
+		 * If this property is Array or ArrayCollection the layout should render
+		 * each item. If this property is an Object, it should use an array of
+		 * the object's properties as they are exposed in a for..each loop.
+		 * </p> 
+		 */
 		function get dataProvider():Object;
+		function set dataProvider(value:Object):void;
 		
-		function set dataField(value:String):void;
+		// TODO this doesn't feel like it is necessary on the interface level
+		/**
+		 * The property within each item in the dataProvider that contains the
+		 * field used to determine the value of the item.
+		 */
 		function get dataField():String;
+		function set dataField(value:String):void;
 		
-		function set labelField(value:String):void;
+		// TODO this doesn't feel like it is necessary on the interface level
+		/**
+		 * The property within each item in the dataProvider that contains the
+		 * field used to determine the label for the item. 
+		 */
 		function get labelField():String;
+		function set labelField(value:String):void;
 		
-		function set drawingGeometries(value:Array):void;
+		// TODO If we do plan on supporting FXG or UIComponents there is no reason this property needs to be at the interface level
+		/**
+		 * An array of geometries that should be drawn for each item in the data
+		 * provider. You can modify these items by using GeometryRepeaters
+		 * and PropertyModifiers.
+		 * 
+		 * @see GeometryRepeater
+		 * @see PropertyModifier
+		 */
 		function get drawingGeometries():Array;
+		function set drawingGeometries(value:Array):void;
 		
-		function set layouts(value:Array):void;
+		/**
+		 * The layouts that should be displayed within this layout. 
+		 */
 		function get layouts():Array;
+		function set layouts(value:Array):void;
 		
-		function set x(value:Number):void;
+		/**
+		 * The horizontal position of the top left corner of this layout within
+		 * its parent.
+		 */
 		function get x():Number;
+		function set x(value:Number):void;
 		
-		function set y(value:Number):void;
+		/**
+		 * The vertical position of the top left corner of this layout within
+		 * its parent.
+		 */
 		function get y():Number;
+		function set y(value:Number):void;
 		
-		function set width(value:Number):void;
+		// TODO It is possible to draw outside the bounds of the layout. Perhaps an optional clipping mask is in order
+		/**
+		 * The width of the layout.
+		 */
 		function get width():Number;
+		function set width(value:Number):void;
 		
-		function set height(value:Number):void;
+		/**
+		 * The height of the layout.
+		 */
 		function get height():Number;
+		function set height(value:Number):void;
 		
-		function set referenceRepeater(value:GeometryRepeater):void;
+		// TODO Determine if this needs to be in the interface
+		/**
+		 * A GeometryRepeater that will be applied to the drawingGeometries once
+		 * for each item in the dataProvider.
+		 */
 		function get referenceRepeater():GeometryRepeater;
+		function set referenceRepeater(value:GeometryRepeater):void;
 		
+		/**
+		 * The index of the item in the dataProvider that the layout is
+		 * currently rendering.
+		 */
 		function get currentIndex():int;
 		
+		/**
+		 * The item in the dataProvider that the layout is currently rendering.
+		 */
 		function get currentDatum():Object
 		
+		// TODO Determine if this needs to be in the interface
+		/**
+		 * The value of the item in the dataProvider that the layout is
+		 * currently rendering, as determined by taking currentDatum[dataField],
+		 * if a dataField is defined.
+		 */
 		function get currentValue():Object;
 		
+		// TODO Determine if this needs to be in the interface
+		/**
+		 * The label of the item in the dataProvider that the layout is
+		 * currently rendering, as determine by taking currentDatum[labelField],
+		 * if a labelField is defined.
+		 */
 		function get currentLabel():String;
 		
+		/**
+		 * The geometry that is being used to render the current data item as it
+		 * appears after the necessary iterations of the referenceRepeater have
+		 * been executed. 
+		 */
 		function get currentReference():Geometry;
 		
+		// TOOD This method and getSprite make calling render awkward (introduces the need for an optional parameter). Can DataCanvas create AxiisSprites to feed to the layouts the way it does with the foregrounds and backgrounds?
 		/**
 		 * Registers a DisplayObject as the owner of this ILayout.
 		 * Throws an error if the ILayout already has an owner.
 		 */
 		function registerOwner(dataCanvas:DataCanvas):void;
 		
+		// TODO this should return an AxiisSprite
 		/**
 		 * Returns the Sprite associated with this ILayout if owner is
 		 * in fact the owner of this ILayout.
-		 * 
-		 * This can be more secure if we look at the call stack to determine
-		 * ownership.
 		 */
 		function getSprite(owner:DataCanvas):Sprite;
 		
+		/**
+		 * Draws this layout to the specified AxiisSprite.
+		 * 
+		 * <p>
+		 * If no sprite is provided this layout will use the last AxiisSprite
+		 * it rendered to, if such an AxiisSprite exists. Otherwise this returns
+		 * immediately.
+		 * </p> 
+		 * 
+		 * @param sprite The AxiisSprite this layout should render to.
+		 */
 		function render(sprite:AxiisSprite = null):void;
-		
-		function get rendering():Boolean;
 	}
 }

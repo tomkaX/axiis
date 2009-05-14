@@ -12,60 +12,88 @@
 		<![CDATA[
 			import mx.charts.chartClasses.ChartBase;
 			import org.axiis.data.DataSet;
-			
+
 			private var ds:DataSet = new DataSet();
-			
+
 			private function start():void
 			{
 				ds.processXmlString(xml);
 				clusterLayout.dataProvider = ds.data.object.nodes.node;
-			}
-			
-			private function fillChange(flag:Boolean):void
-			{
-				clusterLayout.scaleFill = flag;
-				clusterLayout.invalidate();
-				
-				columnLayout.scaleFill = flag;
-				columnLayout.invalidate();
-				
-				subColumnLayout.scaleFill = flag;
-				subColumnLayout.invalidate();
+				clusterLayoutB.dataProvider = ds.data.object.nodes.node;
 			}
 		]]>
 	</mx:Script>
-	
+
 	<mx:XML id="xml" source="/data/hierarchicalData.xml"/>
 
-	<axiis:LinearScale id="scale" maxLayout="{dataCanvas.height}" minLayout="0" minValue="0" maxValue="100"/> 
+	<axiis:LinearScale id="scale"
+		maxLayout="{dataCanvas.height}"
+		minLayout="0"
+		minValue="0"
+		maxValue="100"/>
 
 	<mx:VBox width="100%" height="100%" horizontalAlign="center">
 		<axiis:DataCanvas id="dataCanvas" width="100%" height="100%">
 			<axiis:layouts>
-				<axiis:HBoxLayout id="clusterLayout" name="A" width="{dataCanvas.width}" height="{dataCanvas.height}" x="0" y="0" scaleFill="true" dataField="value">
+				<axiis:HBoxLayout id="clusterLayout"
+					name="A"
+					width="{dataCanvas.width/2}"
+					height="{dataCanvas.height}"
+					x="0"
+					y="0"
+					scaleFill="true"
+					dataField="value">
 					<axiis:drawingGeometries>
-						<degrafa:RegularRectangle id="column0" stroke="{blackStroke}" fill="{fill1}"
-							height="{scale.valueToLayout(clusterLayout.currentValue)}" x="{clusterLayout.currentReference.x}" y="{clusterLayout.height-scale.valueToLayout(clusterLayout.currentValue)}"
+						<degrafa:RegularRectangle id="column0"
+							stroke="{blackStroke}"
+							fill="{fill1}"
+							height="{scale.valueToLayout(clusterLayout.currentValue)}"
+							x="{clusterLayout.currentReference.x}"
+							y="{clusterLayout.height-scale.valueToLayout(clusterLayout.currentValue)}"
 							width="{clusterLayout.currentReference.width}"/>
-					</axiis:drawingGeometries> 
+					</axiis:drawingGeometries>
 					<axiis:layouts>
-						<axiis:HBoxLayout id="columnLayout" width="{clusterLayout.currentReference.width}" height="{clusterLayout.currentReference.height}"  dataProvider="{clusterLayout.currentDatum.node}" percentGap="0" x="0" y="5" name=" B" dataField="value">
+						<axiis:HBoxLayout id="columnLayout"
+							width="{clusterLayout.currentReference.width}"
+							height="{clusterLayout.currentReference.height}"
+							dataProvider="{clusterLayout.currentDatum.node}"
+							percentGap="0"
+							x="0"
+							y="5"
+							name=" B"
+							dataField="value">
 							<axiis:drawingGeometries>
-								<degrafa:RegularRectangle id="column1" stroke="{blackStroke}" fill="{fill2}"
-									height="{scale.valueToLayout(columnLayout.currentValue)}" x="{columnLayout.currentReference.x}" y="{clusterLayout.height-scale.valueToLayout(columnLayout.currentValue)}"
+								<degrafa:RegularRectangle id="column1"
+									stroke="{blackStroke}"
+									fill="{fill2}"
+									height="{scale.valueToLayout(columnLayout.currentValue)}"
+									x="{columnLayout.currentReference.x}"
+									y="{clusterLayout.height-scale.valueToLayout(columnLayout.currentValue)}"
 									width="{columnLayout.currentReference.width}"/>
-							</axiis:drawingGeometries> 
+							</axiis:drawingGeometries>
 							<axiis:layouts>
-								<axiis:HBoxLayout id="subColumnLayout" width="{columnLayout.currentReference.width}" height="{columnLayout.currentReference.height}" dataProvider="{columnLayout.currentDatum.node}" y="0" x="0" percentGap="0" name="  C" dataField="value">
+								<axiis:HBoxLayout id="subColumnLayout"
+									width="{columnLayout.currentReference.width}"
+									height="{columnLayout.currentReference.height}"
+									dataProvider="{columnLayout.currentDatum.node}"
+									y="0"
+									x="0"
+									percentGap="0"
+									name="  C"
+									dataField="value">
 									<axiis:drawingGeometries>
-										<degrafa:RegularRectangle id="column2" stroke="{blackStroke}" fill="{fill3}" x="{subColumnLayout.currentReference.x}" 
-											height="{scale.valueToLayout(subColumnLayout.currentValue)}" y="{clusterLayout.height-scale.valueToLayout(subColumnLayout.currentValue)}"
-	 										width="{subColumnLayout.currentReference.width}"/>
+										<degrafa:RegularRectangle id="column2"
+											stroke="{blackStroke}"
+											fill="{fill3}"
+											x="{subColumnLayout.currentReference.x}"
+											height="{scale.valueToLayout(subColumnLayout.currentValue)}"
+											y="{clusterLayout.height-scale.valueToLayout(subColumnLayout.currentValue)}"
+											width="{subColumnLayout.currentReference.width}"/>
 									</axiis:drawingGeometries>
-									
+
 								</axiis:HBoxLayout>
 							</axiis:layouts>
-							
+
 							<axiis:states>
 								<axiis:State enterStateEvent="mouseOver"
 									exitStateEvent="mouseOut"
@@ -77,19 +105,95 @@
 									propagateToSiblings="{siblingsCheckBox.selected}"
 									propagateToAncestorsSiblings="{parentSiblingsCheckBox.selected}"/>
 							</axiis:states>
-							
+
 						</axiis:HBoxLayout>
 					</axiis:layouts>
-					
+				</axiis:HBoxLayout>
+
+				<axiis:HBoxLayout id="clusterLayoutB"
+					name="A"
+					x="{dataCanvas.width/2 + 10}"
+					width="{dataCanvas.width/2 - 20}"
+					height="{dataCanvas.height}"
+					y="0"
+					scaleFill="true"
+					dataField="value">
+					<axiis:drawingGeometries>
+						<degrafa:RegularRectangle id="column0B"
+							stroke="{blackStroke}"
+							fill="{fill1}"
+							height="{scale.valueToLayout(clusterLayoutB.currentValue)}"
+							x="{clusterLayoutB.currentReference.x}"
+							y="{clusterLayoutB.height-scale.valueToLayout(clusterLayoutB.currentValue)}"
+							width="{clusterLayoutB.currentReference.width}"/>
+					</axiis:drawingGeometries>
+					<axiis:layouts>
+						<axiis:HBoxLayout id="columnLayoutB"
+							width="{clusterLayoutB.currentReference.width}"
+							height="{clusterLayoutB.currentReference.height}"
+							dataProvider="{clusterLayoutB.currentDatum.node}"
+							percentGap="0"
+							x="0"
+							y="5"
+							name=" B"
+							dataField="value">
+							<axiis:drawingGeometries>
+								<degrafa:RegularRectangle id="column1B"
+									stroke="{blackStroke}"
+									fill="{fill2}"
+									height="{scale.valueToLayout(columnLayoutB.currentValue)}"
+									x="{columnLayoutB.currentReference.x}"
+									y="{columnLayoutB.height-scale.valueToLayout(columnLayoutB.currentValue)}"
+									width="{columnLayoutB.currentReference.width}"/>
+							</axiis:drawingGeometries>
+							<axiis:layouts>
+								<axiis:HBoxLayout id="subColumnLayoutB"
+									width="{columnLayoutB.currentReference.width}"
+									height="{columnLayoutB.currentReference.height}"
+									dataProvider="{columnLayoutB.currentDatum.node}"
+									y="0"
+									x="0"
+									percentGap="0"
+									name="  C"
+									dataField="value">
+									<axiis:drawingGeometries>
+										<degrafa:RegularRectangle id="column2B"
+											stroke="{blackStroke}"
+											fill="{fill3}"
+											x="{subColumnLayoutB.currentReference.x}"
+											height="{scale.valueToLayout(subColumnLayoutB.currentValue)}"
+											y="{subColumnLayoutB.height-scale.valueToLayout(subColumnLayoutB.currentValue)}"
+											width="{subColumnLayoutB.currentReference.width}"/>
+									</axiis:drawingGeometries>
+
+								</axiis:HBoxLayout>
+							</axiis:layouts>
+
+							<axiis:states>
+								<axiis:State enterStateEvent="mouseOver"
+									exitStateEvent="mouseOut"
+									properties="{['fill','fill','fill']}"
+									values="{[rollOverFill1,rollOverFill1,rollOverFill1]}"
+									targets="{[column0B,column1B,column2B]}"
+									propagateToDescendents="{childrenCheckBox.selected}"
+									propagateToAncestors="{parentsCheckBox.selected}"
+									propagateToSiblings="{siblingsCheckBox.selected}"
+									propagateToAncestorsSiblings="{parentSiblingsCheckBox.selected}"/>
+							</axiis:states>
+
+						</axiis:HBoxLayout>
+					</axiis:layouts>
+
 				</axiis:HBoxLayout>
 			</axiis:layouts>
-			
+
 			<axiis:strokes>
 				<degrafa:SolidStroke id="blackStroke" color="0"/>
 			</axiis:strokes>
-			
+
 			<axiis:fills>
-				<degrafa:LinearGradientFill id="fill1" angle="295"><!-- still have a bug where the gradient does not work when at angle=0 -->
+				<degrafa:LinearGradientFill id="fill1" angle="295">
+					<!-- still have a bug where the gradient does not work when at angle=0 -->
 					<degrafa:GradientStop color="0x4477FF"/>
 					<degrafa:GradientStop color="0x333388"/>
 				</degrafa:LinearGradientFill>
@@ -101,15 +205,15 @@
 					<degrafa:GradientStop color="0xFF4444"/>
 					<degrafa:GradientStop color="0x883333"/>
 				</degrafa:LinearGradientFill>
-				<degrafa:SolidFill color="0xFF" alpha=".9" id="rollOverFill0"/>
-				<degrafa:SolidFill color="0xFF00" alpha=".9" id="rollOverFill1"/>
-				<degrafa:SolidFill color="0xFF0000" alpha=".9" id="rollOverFill2"/>
+				<degrafa:SolidFill id="rollOverFill0" color="0xFF" alpha=".9"/>
+				<degrafa:SolidFill id="rollOverFill1" color="0xFF00" alpha=".9"/>
+				<degrafa:SolidFill id="rollOverFill2" color="0xFF0000" alpha=".9"/>
 			</axiis:fills>
-			
+
 		</axiis:DataCanvas>
-		
+
 		<mx:Spacer height="4"/>
-		
+
 		<mx:HBox horizontalAlign="center">
 			<mx:CheckBox id="childrenCheckBox" label="Children"/>
 			<mx:CheckBox id="siblingsCheckBox" label="Siblings"/>
@@ -117,7 +221,7 @@
 			<mx:CheckBox id="parentsCheckBox" label="Parents"/>
 			<mx:CheckBox id="parentSiblingsCheckBox" label="Parent siblings"/>
 		</mx:HBox>
-		
+
 	</mx:VBox>
 
 </mx:Application>

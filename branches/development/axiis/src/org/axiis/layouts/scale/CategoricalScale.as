@@ -29,8 +29,8 @@ package org.axiis.layouts.scale
 	import flash.events.EventDispatcher;
 	
 	/**
-	 * A scale that deals with categorical data. The categories are assumed to be
-	 * sorted alphabetically.
+	 * A scale that converts categorical (String) data into layout space.
+	 * The categories are assumed to be sorted alphabetically.
 	 */
 	public class CategoricalScale extends AbstractScale implements IScale
 	{
@@ -40,7 +40,7 @@ package org.axiis.layouts.scale
 		private var uniqueValues:Array = [];
 		
 		/**
-		 * Update uniqueValues, computedMaxValue, and computedMinValue.
+		 * @inheritDoc IScale#validate
 		 */
 		override public function validate():void
 		{
@@ -56,6 +56,9 @@ package org.axiis.layouts.scale
 		/**
 		 * Converts a value to layout-space. If the value is not represented within
 		 * the dataProvider, NaN is returned.
+		 * 
+		 * @param value The value to be converted into layout space.
+		 * @param invert Whether the minValue translates to minLayout (false) or to maxLayout (true).
 		 */
 		override public function valueToLayout(value:Object,invert:Boolean=false):Number
 		{
@@ -75,6 +78,8 @@ package org.axiis.layouts.scale
 		 * Converts a layout position to a value from the dataProvider. The layout
 		 * position is clamped between minLayout and maxLayout before the
 		 * translation takes place.
+		 * 
+		 * @param The layout position to translate into a value.
 		 */
 		override public function layoutToValue(layout:Number):Object
 		{ 

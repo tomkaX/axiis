@@ -303,14 +303,16 @@ package org.axiis
 			addChild(s);
 			
 			var toReturn:Array = [];
-			var siblings:Array = axiisSprite.layout.childSprites;
+			toReturn.push(axiisSprite);
+			
+			/*var siblings:Array = axiisSprite.layout.childSprites;
 			for each(var sibling:AxiisSprite in siblings)
 			{
 				if(sibling.hitTestObject(s))
 				{
 					toReturn.push(sibling);
 				}
-			}
+			}*/
 			
 			removeChild(s);
 			

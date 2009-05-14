@@ -31,8 +31,7 @@ package org.axiis.layouts.scale
 	public class ContinuousScale extends AbstractScale
 	{
 		/**
-		 * Updates the computed minimum and maximum values if the user
-		 * has not already set them.  
+		 * @inheritDoc IScale#validate  
 		 */
 		override public function validate():void
 		{

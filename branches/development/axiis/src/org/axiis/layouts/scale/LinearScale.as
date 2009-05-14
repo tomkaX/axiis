@@ -28,20 +28,19 @@ package org.axiis.layouts.scale
 	import flash.events.Event;
 	
 	/**
-	 * A scale that deals with linear data.
+	 * A scale that deals with linear numeric data.
 	 */
-
-	 
 	public class LinearScale extends ContinuousScale implements IScale
 	{
-			 
-	 
-		public var zeroBased:Boolean=true;
+		// TODO Let's move this to ContinuousScale since that deals with numerical data
 		/**
-		 * TRUE: Scale will reverse valueToLayout calc based on min/max layout (helpful for vertical charts to accomodate top,left ==  0,0)
-		 * FALSE:  Scale will return normal valueToLayout
+		 * Whether the scale should use zero as it's baseline (true) or allow for negative values.
 		 */
-	
+		public var zeroBased:Boolean = true;
+		
+		/**
+		 * @inheritDoc IScale#valueToLayout
+		 */
 		override public function valueToLayout(value:Object, invert:Boolean=false):Number
 		{
 			if(invalidated)
@@ -61,7 +60,9 @@ package org.axiis.layouts.scale
 			return (maxLayout-minLayout)*per + minLayout;
 		}
 		
-
+		/**
+		 * @inheritDoc IScale#layoutToValue
+		 */
 		override public function layoutToValue(layout:Number):Object
 		{
 			if (this.invalidated)
@@ -72,7 +73,7 @@ package org.axiis.layouts.scale
 			return percentage * (Number(maxValue) - Number(minValue)) + Number(minValue);
 		}
 		
-		// This comes up a lot... maybe it should be in a util class
+		// TODO This comes up a lot... maybe it should be in a util class
 		private function getPercentageBetweenValues(value:Number,min:Number,max:Number):Number
 		{
 			var per:Number=Math.abs(value)/(max-min);

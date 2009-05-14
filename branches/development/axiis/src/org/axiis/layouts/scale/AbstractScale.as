@@ -29,24 +29,33 @@ package org.axiis.layouts.scale
 	import flash.events.EventDispatcher;
 	
 	/**
-	 * An abstract base class that scales can extend.
-	 * 
-	 * Provides stubs for methods defined in IScale.
-	 * 
-	 * Provides the getter/setter functions necessary for allowing a user to
-	 * override computed minimum and maximums as follows:
-	 *  
-	 * A user can set the minValue using the public setter "minValue".
-	 * The protected setter "computedMinValue" allows a subclass to set the
-	 * value that it determines for the minimum. The "minValue" getter
+	 * An abstract base class that scales can extend. It provides stubs for
+	 * methods defined in IScale, and sets up the necessary getters and setters
+	 * to allow a user to overide minimums and maximums values. A user can set
+	 * the minValue using the public setter "minValue". The protected setter
+	 * "computedMinValue" allows a subclass to set the value that it determines
+	 * for the minimum based only on the data. The "minValue" getter
 	 * will return the user specified value if it exists. Otherwise it returns
 	 * the computed value. The analogous procedure is used for maxValue.
 	 */
 	public class AbstractScale extends EventDispatcher
 	{
+		/**
+		 * Indicates that the scale should recalculate it's minimum and maximum
+		 * values and layouts the next time either layoutToValue or valueToLayout
+		 * is called. 
+		 */
 		protected var invalidated:Boolean = false;
 		
-		[Bindable(event="dataProviderChange")]
+		// TODO we need to watch for changes to the dataProvider and call invalidate 
+		[Bindable(event="dataProviderChange")]		
+		/**
+		 * @copy IScale#dataProvider
+		 */
+		public function get dataProvider():Object
+		{
+			return _dataProvider;
+		}
 		public function set dataProvider(value:Object):void
 		{
 			if(value != _dataProvider)
@@ -56,13 +65,16 @@ package org.axiis.layouts.scale
 				dispatchEvent(new Event("dataProviderChange"));
 			}
 		}
-		public function get dataProvider():Object
-		{
-			return _dataProvider;
-		}
 		private var _dataProvider:Object;
 		
 		[Bindable(event="dataFieldChange")]
+		/**
+		 * @copy IScale#dataField
+		 */
+		public function get dataField():String
+		{
+			return _dataField;
+		}
 		public function set dataField(value:String):void
 		{
 			if(value != _dataField)
@@ -72,10 +84,6 @@ package org.axiis.layouts.scale
 				dispatchEvent(new Event("dataFieldChange"));
 			}
 		}
-		public function get dataField():String
-		{
-			return _dataField;
-		}
 		private var _dataField:String;
 		
 		//---------------------------------------------------------------------
@@ -83,6 +91,13 @@ package org.axiis.layouts.scale
 		//---------------------------------------------------------------------
 		
 		[Bindable(event="minValueChange")]
+		/**
+		 * @copy IScale#minValue
+		 */
+		public function get minValue():Object
+		{
+			return userMinValue == null ? computedMinValue : userMinValue;
+		}
 		public function set minValue(value:Object):void
 		{
 			if(value != userMinValue)
@@ -91,11 +106,14 @@ package org.axiis.layouts.scale
 				dispatchEvent(new Event("minValueChange"));
 			}
 		}
-		public function get minValue():Object
-		{
-			return userMinValue == null ? computedMinValue : userMinValue;
-		}
 		
+		/**
+		 * The minimum value in the dataProvider.
+		 */
+		protected function get computedMinValue():Object
+		{
+			return _computedMinValue;
+		}
 		protected function set computedMinValue(value:Object):void
 		{
 			if(value != _computedMinValue)
@@ -104,11 +122,12 @@ package org.axiis.layouts.scale
 				dispatchEvent(new Event("minValueChange"));
 			}
 		}
-		protected function get computedMinValue():Object
-		{
-			return _computedMinValue;
-		}
 		private var _computedMinValue:Object;
+		
+		// TODO This should not be initialized
+		/**
+		 * The minimum value as specified by the user.
+		 */
 		protected var userMinValue:Object=0;
 		
 		//---------------------------------------------------------------------
@@ -116,6 +135,13 @@ package org.axiis.layouts.scale
 		//---------------------------------------------------------------------
 		
 		[Bindable(event="maxValueChange")]
+		/**
+		 * @copy IScale#maxValue
+		 */
+		public function get maxValue():Object
+		{
+			return userMaxValue == null ? computedMaxValue : userMaxValue;
+		}
 		public function set maxValue(value:Object):void
 		{
 			if(value != userMaxValue)
@@ -124,9 +150,13 @@ package org.axiis.layouts.scale
 				dispatchEvent(new Event("maxValueChange"));
 			}
 		}
-		public function get maxValue():Object
+		
+		/**
+		 * The maximum value in the dataProvider.
+		 */
+		protected function get computedMaxValue():Object
 		{
-			return userMaxValue == null ? computedMaxValue : userMaxValue;
+			return _computedMaxValue;
 		}
 		protected function set computedMaxValue(value:Object):void
 		{
@@ -136,16 +166,23 @@ package org.axiis.layouts.scale
 				dispatchEvent(new Event("maxValueChange"));
 			}
 		}
-		protected function get computedMaxValue():Object
-		{
-			return _computedMaxValue;
-		}
 		private var _computedMaxValue:Object;
+		
+		/**
+		 * The maximum value as specified by the user.
+		 */
 		protected var userMaxValue:Object;
 		
 		//---------------------------------------------------------------------
 		
 		[Bindable(event="minLayoutChange")]
+		/**
+		 * @copy IScale#minLayout
+		 */
+		public function get minLayout():Number
+		{
+			return _minLayout;
+		}
 		public function set minLayout(value:Number):void
 		{
 			if(value != _minLayout)
@@ -154,13 +191,16 @@ package org.axiis.layouts.scale
 				dispatchEvent(new Event("minLayoutChange"));
 			}
 		}
-		public function get minLayout():Number
-		{
-			return _minLayout;
-		}
 		private var _minLayout:Number;
 		
 		[Bindable(event="maxLayoutChange")]
+		/**
+		 * @copy IScale#maxLayout
+		 */
+		public function get maxLayout():Number
+		{
+			return _maxLayout;
+		}
 		public function set maxLayout(value:Number):void
 		{
 			if(value != _maxLayout)
@@ -169,27 +209,31 @@ package org.axiis.layouts.scale
 				dispatchEvent(new Event("maxLayoutChange"));
 			}
 		}
-		public function get maxLayout():Number
-		{
-			return _maxLayout;
-		}
 		private var _maxLayout:Number;
 		
+		/**
+		 * Marks this IScale as needing its minValue and maxValue recomputed.
+		 */
 		public function invalidate():void
 		{
 			invalidated = true;
 		}
 		
+		/**
+		 * Initiates the computation of minValue and maxValue.
+		 */
 		public function validate():void
 		{
 			invalidated = false;
 		}
 		
+		// FIXME since the subclass is expected to implement this, let's cut it from AbstractScale. That way we won't be tempted to use AbstractScale where we mean IScale
 		public function valueToLayout(value:Object,invert:Boolean=false):Number
 		{
 			return NaN;
 		}
 		
+		// FIXME since the subclass is expected to implement this, let's cut it from AbstractScale. That way we won't be tempted to use AbstractScale where we mean IScale
 		public function layoutToValue(layout:Number):Object
 		{
 			return null;
