@@ -34,9 +34,11 @@
 		
 		<!-- layouts -->
 		<component id="AbsoluteLayout" class="org.axiis.layouts.AbsoluteLayout"/>
+		<component id="BaseLayout" class="org.axiis.core.BaseLayout"/>
 		<component id="HBoxLayout" class="org.axiis.layouts.HBoxLayout"/>
 		<component id="RepeaterLayout" class="org.axiis.layouts.RepeaterLayout"/>
 		<component id="VBoxLayout" class="org.axiis.layouts.VBoxLayout"/>
+
 		
 		<!-- utils -->
 		<component id="GeometryRepeater" class="org.axiis.layouts.utils.GeometryRepeater"/>

@@ -40,8 +40,9 @@
 	
 
 	<!-- public variables -->
-	<mx:Script>
+	<mx:Script> 
 		<![CDATA[
+
 			[Bindable]
 			/**
 			 * A function that is used to determine how each item in the
