@@ -179,7 +179,7 @@
 												</degrafa:transform>
 											</degrafa:RasterText>
 										</degrafa:geometry>
-										<degrafa:transform>
+										<degrafa:transform> 
 											<degrafa:RotateTransform angle="{outerWedgeLayout.currentReference['startAngle'] + outerWedgeLayout.currentReference['arc']/2+((transposeLabel(outerWedgeLayout.currentReference)==true) ? 3:-3)}" 
 													registrationPoint="topLeft"/>
 										</degrafa:transform>

@@ -30,7 +30,7 @@
 			
 		]]>
 </mx:Script> 
-<Examples:ExampleBackground width="{this.width}" height="{this.height}" title="Absolute Chart" subTitle="Radial Plot"/>
+<Examples:ExampleBackground width="{this.width}" height="{this.height}" title="Absolute Chart" subTitle="Bubble Plot"/>
 
 <mx:String id="countryData" source="data/PlotData.xml"/>
 
@@ -45,7 +45,7 @@
 <mx:Number id="percentGap">.02</mx:Number>
 
 
-	<axiis:RadiusScale id="rScale" dataProvider="{dataProvider}" minLayout="3" maxLayout="50" minValue="0"/>
+	<axiis:RadiusScale id="rScale" dataProvider="{dataProvider}" minLayout="3" maxLayout="{Math.min(plotGroup.height, plotGroup.width)*.1}" minValue="0"/>
 	<axiis:LinearScale id="vScale" dataProvider="{dataProvider}"  minValue="0" minLayout="{rScale.maxLayout}" maxLayout="{plotGroup.height-rScale.maxLayout}"/>
 	<axiis:LinearScale id="hScale" dataProvider="{dataProvider}"  minValue="0" minLayout="{rScale.maxLayout}" maxLayout="{plotGroup.width-rScale.maxLayout}"/>
 	
@@ -55,14 +55,14 @@
 		<!-- Background -->
 		<axiis:backgroundGeometries>
 			<axis:VAxis  id="verticalAxis" verticalScale="{vScale}" tickStroke="{axisStroke}" width="{plotGroup.width+15}" height="{plotGroup.height}" emitDataTips="false"
-				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5" showGridArea="false" gridStroke="{vGridStroke}">
+				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5" showGridArea="false" showGridLine="true" gridStroke="{vGridStroke}">
 				<axis:gridFill>					
 					<degrafa:SolidFill color="{hPalette.currentColor}"/>
 				</axis:gridFill>
 			</axis:VAxis>
 			
 			<axis:HAxis id="horizontalAxis" horizontalScale="{hScale}" tickStroke="{axisStroke}" width="{plotGroup.width}" x="{plotGroup.x}" height="{dc.height}" emitDataTips="false"
-				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5" showGridArea="false"
+				 fontFamily="Myriad Pro" fontColor="0" fontSize="14" tickGap="5" showGridArea="false" showGridLine="true"
 				 gridStroke="{hGridStroke}">
 				<axis:gridFill>
 					<degrafa:SolidFill color="{hPalette.currentColor}"/>
@@ -90,7 +90,7 @@
 		</degrafa:geometry>
 	</degrafa:RegularRectangle>
 	
-	<degrafa:SolidStroke id="markerStroke" color="{0x000000}"  weight="1" alpha=".6" caps="none" pixelHinting="true"/>
+	<degrafa:SolidStroke id="markerStroke" color="{0xFFFFFF}"  weight="1" alpha=".6" caps="none" pixelHinting="true"/>
 	
 	<degrafa:RadialGradientFill id="plotFill">
 		<degrafa:GradientStop color="{pPalette.currentColor | 0x111111}" ratio="0" alpha=".7"/>
@@ -107,7 +107,7 @@
 		<degrafa:GradientStop color="0x0000FF" alpha=".1"/>
 	</degrafa:LinearGradientStroke>
 	
-	<axiis:LayoutAutoPalette layout="{plotGroup}" paletteColors="[0xFF0000,0xFFFF00,0x0000FF]" id="pPalette"/>
+	<axiis:LayoutAutoPalette layout="{plotGroup}" paletteColors="[0xFA0022,0xc8a104,0x2200FF]" id="pPalette"/>
 	<axiis:LayoutAutoPalette layout="{verticalAxis}" colorFrom="0xFF0000" colorTo="0x0000FF" id="vPalette"/>
 	<axiis:LayoutAutoPalette layout="{horizontalAxis}" colorFrom="0xFFFF00" colorTo="0xFF00FF" id="hPalette"/>
 	
