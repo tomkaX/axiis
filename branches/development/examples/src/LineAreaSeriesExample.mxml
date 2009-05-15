@@ -39,7 +39,6 @@
 			
 			private function filterRows(obj:Object):Boolean {
 				//Trim our rows
-				
 				if (obj.columns[0].value=="Baseline") 
 					return false;
 				else 
