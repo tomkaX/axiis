@@ -274,7 +274,7 @@ package org.axiis.charts.axis
 				invalidate();
 			}
 		}
-		private var _showGridArea:Boolean;
+		private var _showGridArea:Boolean=true;
 	
 		[Bindable(event="showGridLineChange")]
 		/**
@@ -293,7 +293,7 @@ package org.axiis.charts.axis
 				invalidate();
 			}
 		}
-		private var _showGridLine:Boolean;
+		private var _showGridLine:Boolean=false;
 	
 		[Bindable(event="fontFamilyChange")]
 		/**
