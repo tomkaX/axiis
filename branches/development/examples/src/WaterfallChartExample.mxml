@@ -2,23 +2,26 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:axiis="http://www.axiis.org/2009"
 	layout="absolute"
-	applicationComplete="start()" xmlns:Examples="Examples.*" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:charts="org.axiis.extras.charts.*">
-	
+	applicationComplete="start()"
+	xmlns:Examples="Examples.*"
+	xmlns:degrafa="http://www.degrafa.com/2007"
+	xmlns:charts="org.axiis.extras.charts.*">
+
 	<mx:Script>
 		<![CDATA[
 			import org.axiis.data.DataSet;
-			
+
 			private function start():void
-			{			
+			{
 				var ds:DataSet = new DataSet();
 				ds.processXmlString(xmlData);
-				
+
 				waterfallChart.dataProvider = ds.data.object.months.month;
 				waterfallChart.invalidateDisplayList();
 			}
 		]]>
 	</mx:Script>
-	
+
 	<mx:XML id="xmlData">
 		<months>
 			<month name="Jan" count="100"/>
@@ -35,16 +38,21 @@
 			<month name="Dec" count="200"/>
 		</months>
 	</mx:XML>
-	
+
 	<mx:Style source="styles/Axiis_Examples.css"/>
-	
+
 	<Examples:ExampleBackground width="100%" height="100%" title="Waterfall Chart" subTitle="Custom Visualization"/>
-	
-	<charts:WaterfallChart id="waterfallChart" width="90%" top="130" bottom="100" horizontalCenter="0"
-		labelField="name" dataField="count">
+
+	<charts:WaterfallChart id="waterfallChart"
+		width="90%"
+		top="130"
+		bottom="100"
+		horizontalCenter="0"
+		labelField="name"
+		dataField="count">
 		<charts:initialFill>
 			<degrafa:LinearGradientFill angle="180">
-				<degrafa:GradientStop color="0x4477FF" />
+				<degrafa:GradientStop color="0x4477FF"/>
 				<degrafa:GradientStop color="0x333388"/>
 			</degrafa:LinearGradientFill>
 		</charts:initialFill>
@@ -67,5 +75,5 @@
 			</degrafa:LinearGradientFill>
 		</charts:finalFill>
 	</charts:WaterfallChart>
-	
+
 </mx:Application>
