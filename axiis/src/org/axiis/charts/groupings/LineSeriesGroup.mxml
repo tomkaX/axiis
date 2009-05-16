@@ -1,0 +1,710 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	 Copyright (c) 2009 Team Axiis
+
+	 Permission is hereby granted, free of charge, to any person
+	 obtaining a copy of this software and associated documentation
+	 files (the "Software"), to deal in the Software without
+	 restriction, including without limitation the rights to use,
+	 copy, modify, merge, publish, distribute, sublicense, and/or sell
+	 copies of the Software, and to permit persons to whom the
+	 Software is furnished to do so, subject to the following
+	 conditions:
+
+	 The above copyright notice and this permission notice shall be
+	 included in all copies or substantial portions of the Software.
+
+	 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	 EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+	 OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	 NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+	 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+	 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+	 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+	 OTHER DEALINGS IN THE SOFTWARE.
+-->
+<!---
+	Line series group renders multiple lines for a series of data points. This
+	can be used to create visualizations that use curved surfaces such as
+	stream graphs and line charts.
+-->
+<layouts:RepeaterLayout xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:degrafa="http://www.degrafa.com/2007"
+	name="outerlayout"
+	xmlns:core="org.axiis.core.*"
+	xmlns:layouts="org.axiis.layouts.*"
+	xmlns:scale="org.axiis.layouts.scale.*"
+	xmlns:states="org.axiis.states.*"
+	xmlns:geom="flash.geom.*"
+	xmlns:utils="org.axiis.utils.*"
+	preRender="onPreRender();">
+
+	<!-- public variables -->
+	<mx:Script>
+		<![CDATA[
+			import com.degrafa.paint.LinearGradientFill;
+			import org.axiis.core.AxiisSprite;
+			import flash.utils.getTimer;
+			import mx.collections.ArrayCollection;
+			import com.degrafa.paint.SolidFill;
+			import com.degrafa.decorators.axiis.AreaLineDecorator;
+			import com.degrafa.geometry.segment.QuadraticBezierTo;
+			import com.degrafa.geometry.segment.ClosePath;
+			import com.degrafa.geometry.segment.LineTo;
+			import com.degrafa.geometry.segment.MoveTo;
+			import com.degrafa.GraphicPoint;
+			import com.degrafa.core.IGraphicsStroke;
+			import com.degrafa.core.IGraphicsFill;
+			import org.axiis.utils.GraphicUtils;
+
+			[Inspectable]
+			[Bindable]
+			// TODO this needs to invaliate
+			/**
+			 * The stroke used to render the lines.
+			 */
+			public var stroke:com.degrafa.core.IGraphicsStroke;
+
+			[Inspectable]
+			[Bindable]
+			/**
+			 * The fill used to render the area beneath the lines if area rendering is enabled. 
+			 */
+			public var fill:com.degrafa.core.IGraphicsFill;
+
+			/**
+			 * A filter function that will be used to determine whether a given data point should be included in the rendering.
+			 */
+			public var plotFilterFunction:Function;
+
+			/**
+			 * @private
+			 */
+			public var _pivotSeries:Boolean = false;
+
+			private var _seriesCollection:Object;
+			private var _plotCollection:Object;
+
+			private var _prevCurvePath:Array;
+			private var _maxY:Array;
+			private var _minY:Array;
+
+			private var t:Number;
+
+			/**
+			 * @private
+			 */
+			override public function render(sprite:AxiisSprite = null):void
+			{
+				t = flash.utils.getTimer();
+				super.render(sprite);
+			}
+
+			/**
+			 * @private
+			 */
+			override protected function repeatComplete():void
+			{
+				trace("LineSeriesGroup.render elapsed=" + (flash.utils.getTimer() - t) + "ms");
+			}
+
+			/**
+			 * @private
+			 */
+			override public function invalidateDataProvider():void
+			{
+				super.invalidateDataProvider();
+
+				var firstItem:Object = (_dataProvider is Array) ? _dataProvider[0] : _dataProvider.getItemAt(0);
+
+				var tempItems:Array = new Array();
+
+				for (var i:int = 0; i < firstItem[plotCollection].length; i++)
+				{
+					var obj:Object = (firstItem[plotCollection] is Array) ? firstItem[plotCollection][i] : firstItem[plotCollection].getItemAt(i);
+					if (plotFilterFunction != null)
+					{
+						if (plotFilterFunction.call(this, obj))
+							tempItems.push(obj);
+					}
+					else
+					{
+						tempItems.push(obj);
+					}
+				}
+
+				_seriesCollection = _dataItems;
+
+				_dataItems = tempItems;
+
+				_itemCount = _dataItems.length;
+
+				//This will set the repeat cycle for the inner layouts
+				plotLayout.dataProvider = _seriesCollection;
+				markerLayout.dataProvider = _seriesCollection;
+
+
+				_plotCollection = firstItem;
+			}
+
+			private function onPreRender():void
+			{
+				labelField = (!_pivotSeries) ? plotLabelField : seriesLabelField;
+			}
+
+			private function onPlotPreRender():void
+			{
+				if (currentIndex == 0)
+				{ //We only do this on the first pass
+					calculateCurves();
+
+					if (!showArea)
+					{
+						myPath.fill = new SolidFill(0, 0);
+					}
+					else
+					{
+						myPath.fill = fill;
+					}
+				}
+
+
+			}
+
+			//Gets our current curves and rounds at borders between repeater sprites
+			private function getSegments(seriesIndex:int, paths:Array):Array
+			{
+
+				var segments:Array = new Array();
+				if (currentIndex == 0)
+				{
+					segments = paths[seriesIndex].slice(currentIndex, currentIndex + 2);
+					segments.splice(0, 0, new MoveTo(segments[0].x, segments[0].y));
+					//Clip end point
+					segments[segments.length - 1].x = Math.round(_repeatWidth / 2);
+
+				}
+				else if (currentIndex < itemCount - 1)
+				{
+					segments = paths[seriesIndex].slice(currentIndex * 2 - 1, currentIndex * 2 + 2);
+					//Clip Start point
+					segments[0].x = Math.round(_repeatWidth / 2) + Math.round(_repeatWidth * (currentIndex - 1));
+					segments.splice(0, 1, new MoveTo(segments[0].x, segments[0].y));
+					//Clip End Point
+					if (currentIndex < itemCount - 2)
+						segments[segments.length - 1].x = Math.round(_repeatWidth / 2) + Math.round(_repeatWidth * (currentIndex));
+
+				}
+				else if (currentIndex == itemCount - 1)
+				{
+					segments = paths[seriesIndex].slice(currentIndex * 2 - 1, currentIndex * 2);
+					segments.splice(0, 1, new MoveTo(segments[0].x, segments[0].y));
+				}
+
+				return segments;
+			}
+
+			/**
+			 * We are going to take slices out of our _curvePathsTop, one slice (2 curves) for each horizontal repeater item
+			 * If we have an area we then close the path with another slice out of the _curvePathsBottom
+			 */
+			private function onPlotItemPreDraw():void
+			{
+
+				var h:Number;
+				var y:Number;
+				var seriesIndex:int = plotLayout.currentIndex;
+
+				/**
+				 * Need to set our fill bounds for each series
+				 */
+				if (mode == LineSeriesGroup.MODE_BASELINE)
+				{
+					_decorator.fillBounds = new Rectangle(0, int(_minY[seriesIndex]), width, height - int(_minY[seriesIndex]));
+				}
+				else if (mode == LineSeriesGroup.MODE_STACK_ZERO)
+				{
+					if (seriesIndex == 0)
+					{
+						h = height - _minY[seriesIndex];
+						y = _minY[seriesIndex];
+					}
+					else
+					{
+						h = _maxY[seriesIndex - 1] - _minY[seriesIndex];
+						y = _minY[seriesIndex];
+					}
+					_decorator.fillBounds = new Rectangle(0, y, width, h);
+				}
+
+				else if (mode == LineSeriesGroup.MODE_STACK_FLOW)
+				{
+					if (seriesIndex == 0)
+					{
+						h = (_maxY[seriesIndex] - _minY[seriesIndex]) * 2;
+						y = _minY[seriesIndex];
+					}
+					else if (seriesIndex % 2 == 1)
+					{
+						h = _maxY[seriesIndex - 1] - _minY[seriesIndex];
+						y = _minY[seriesIndex];
+					}
+					else
+					{
+						h = (_maxY[seriesIndex] - _minY[seriesIndex]) * -1;
+						y = _maxY[seriesIndex];
+					}
+
+					_decorator.fillBounds = new Rectangle(0, y, width, h);
+				}
+				trace("decorator y=" + _decorator.fillBounds.y + " height=" + _decorator.fillBounds.height);
+
+				myPath.stroke = stroke;
+
+				var t:Number = flash.utils.getTimer();
+
+
+				_currentSegments = getSegments(seriesIndex, _curvePathsTop);
+
+				if (this.showArea)
+				{
+
+					_prevCurvePath = getSegments(seriesIndex, _curvePathsBottom);
+
+					//Connect to our previous curves	
+					_currentSegments.push(new LineTo(_prevCurvePath[_prevCurvePath.length - 1].x, _prevCurvePath[_prevCurvePath.length - 1].y));
+
+					//Add our previous curve
+					for (var i:int = _prevCurvePath.length - 1; i > 0; i--)
+					{
+						//We need to reverse our curve direction use the same control points, but choose the x,y of prior locatioan 
+						if (_prevCurvePath[i] is QuadraticBezierTo)
+						{
+							var qb:QuadraticBezierTo = _prevCurvePath[i];
+							_currentSegments.push(new QuadraticBezierTo(qb.cx, qb.cy, _prevCurvePath[i - 1].x, _prevCurvePath[i - 1].y));
+						}
+					}
+					_currentSegments.push(new ClosePath());
+
+				}
+				myPath.segments = _currentSegments;
+
+
+				//trace("onPlotItemPreDraw elapsed time=" + (flash.utils.getTimer()-t) + "ms");
+			}
+
+
+			private function onMarkerItemPreDraw():void
+			{
+				marker.centerX = _repeatWidth * currentIndex - 1;
+				marker.visible = this.showMarker;
+				innerMarker.visible = this.showMarker;
+
+				if (!this.showMarker)
+					return;
+
+				if (mode == LineSeriesGroup.MODE_STACK_FLOW && markerLayout.currentIndex == 0)
+				{
+					yPoint.value = verticalScale.valueToLayout(0, true);
+					trace("yPoint Value=" + yPoint.value);
+				}
+				else if (mode == LineSeriesGroup.MODE_STACK_FLOW && (markerLayout.currentIndex == 1 || markerLayout.currentIndex == 3))
+				{ //Resolves the fact that the first series is bisected
+					marker.visible = false;
+					innerMarker.visible = false;
+				}
+				else if (mode == LineSeriesGroup.MODE_STACK_FLOW && markerLayout.currentIndex == 2)
+				{
+					yPoint.value = seriesPoints[markerLayout.itemCount][currentIndex + 1].y;
+						//marker.centerX+=10;
+				}
+				else
+				{
+
+					yPoint.value = seriesPoints[markerLayout.currentIndex][currentIndex + 1].y;
+				}
+
+
+			}
+
+			/**
+			 * This routine pre-calculates all the curves for a series
+			 * While we could calculate on each iteration, it would degrade performance because each curve is depdendent on the previous and next point along its path
+			 * Thus we cache all the curve segments up front, and then just takes slices off them to render
+			 * Curves are stored in multi-dimensional array
+			 *
+			 * segmentGroups[currentIndex][parentLayout.currentIndex]  where currentIndex==the current "series", and parentLayout.currentIndex==the plot point along the curve
+			 */
+			private function calculateCurves():void
+			{
+				_minY = new Array();
+				_maxY = new Array();
+				var t:Number = flash.utils.getTimer();
+				if (!plotCollection)
+					return;
+				//var segmentWidth:Number=width/itemCount;
+
+				_curvePathsTop = new Array();
+
+				//Two dimension array used to store each series fields, one row at a time  Array[hField,vField]
+				seriesPoints = new Array();
+				_repeatWidth = (width) / (itemCount - 1);
+
+				var y:int = 0;
+				var stackedValues:Object = new Object(); //Represents positive values for STACK layouts
+				var stackedValues2:Object = new Object();
+
+				//This stores all the plotCollection for one series
+				var ta:Array = new Array();
+				var flowTa:Array;
+
+				var xo:Number = 0;
+
+
+				for each (var series:Object in _seriesCollection)
+				{ //loop through all series to build our plot locations (to be used to generate curves)
+
+					//Gather the data values for our plots
+					var seriesPlots:Array = new Array();
+					for (var n:int = 0; n < series[plotCollection].length; n++)
+					{
+						var vObj:Object;
+						if (series[plotCollection] is ArrayCollection)
+							vObj = series[plotCollection].getItemAt(n);
+						else
+							vObj = series[plotCollection][n];
+						if (plotFilterFunction != null)
+						{
+							if (!plotFilterFunction.call(this, vObj))
+								continue;
+						}
+
+						seriesPlots.push(vObj);
+					}
+
+					//Create temp array to store points
+					ta = new Array();
+					xo = 0;
+
+
+
+					for (var i:int = 0; i < seriesPlots.length; i++)
+					{ //each series field
+						var stackedValue:Number = 0;
+						var obj:Object = seriesPlots[i];
+						if (ta.length == 0)
+						{ //adds a new node if it is the first time
+							ta.push(new GraphicPoint(-1, verticalScale.valueToLayout(seriesPlots[0][dataField], true))); //The first marker
+						}
+
+						var gp:GraphicPoint = new GraphicPoint;
+						gp.x = xo;
+
+
+						if (mode == LineSeriesGroup.MODE_STACK_ZERO)
+						{ //looping through to make stacked values
+
+							if (!stackedValues[i])
+								stackedValues[i] = 0;
+							stackedValues[i] += obj[dataField];
+							stackedValue = stackedValues[i];
+
+							gp.y = verticalScale.valueToLayout(stackedValue, true);
+						}
+						else if (mode == LineSeriesGroup.MODE_STACK_FLOW)
+						{
+							//First item gets split across the zero line
+							//Then we alternate positions
+							if (y == 0)
+							{
+								if (!flowTa)
+									flowTa = new Array();
+								//For now make two gp's that are bisected at zero
+								var gp2:GraphicPoint = new GraphicPoint;
+								gp2.x = gp.x;
+								if (!stackedValues2[i])
+									stackedValues2[i] = 0;
+								stackedValues2[i] -= obj[dataField] / 2;
+								gp2.y = verticalScale.valueToLayout(stackedValues2[i], true);
+								if (flowTa.length == 0)
+									flowTa.push(new GraphicPoint(-1, gp2.y)); //First point in series
+								flowTa.push(gp2);
+								if (!stackedValues[i])
+									stackedValues[i] = 0;
+								stackedValues[i] += obj[dataField] / 2;
+								gp.y = verticalScale.valueToLayout(stackedValues[i], true);
+
+							}
+							else if (y % 2 == 1)
+							{
+								if (!stackedValues[i])
+									stackedValues[i] = 0;
+								stackedValues[i] += obj[dataField];
+								stackedValue = stackedValues[i];
+								gp.y = verticalScale.valueToLayout(stackedValue, true);
+							}
+							else
+							{
+								if (!stackedValues2[i])
+									stackedValues2[i] = 0;
+								stackedValues2[i] -= obj[dataField];
+								stackedValue = stackedValues2[i];
+								gp.y = verticalScale.valueToLayout(stackedValue, true);
+							}
+						}
+						else
+						{
+							gp.y = verticalScale.valueToLayout(obj[dataField], true);
+						}
+
+						ta.push(gp);
+						if (y > _minY.length - 1)
+							_minY.push(height);
+						if (y > _maxY.length - 1)
+							_maxY.push(0);
+						_minY[y] = Math.min(_minY[y], gp.y);
+						_maxY[y] = Math.max(_maxY[y], gp.y);
+						xo += _repeatWidth;
+					}
+					//We have a STACK_FLOW and are at first series we add a series for the bisection
+					if (mode == LineSeriesGroup.MODE_STACK_FLOW && y == 0)
+					{
+						seriesPoints.push(flowTa);
+					}
+					seriesPoints.push(ta);
+
+					y++;
+				}
+
+				//Turn the series plotCollection, into curveTo commands
+
+				for each (var ar:Array in seriesPoints)
+				{
+					_curvePathsTop.push(GraphicUtils.buildSegmentsFromCurvePoints(ar, tension));
+				}
+
+				//Create a set of paths we can connect as bottom curves
+				if (this.showArea)
+				{
+					_curvePathsBottom = new Array();
+
+					i = 0;
+					for (obj in _curvePathsTop)
+					{
+						if (mode == LineSeriesGroup.MODE_STACK_FLOW)
+						{ //Our series alternate with the first one being split into two, then going positive/negative
+							if (i == 1)
+							{
+								_curvePathsBottom.push(_curvePathsTop[0]);
+							}
+							else if (i == 3)
+							{
+								_curvePathsBottom.push(_curvePathsTop[0]);
+							}
+							else if (i > 0)
+							{ //We should be a positive value here, so our "bottom" was the last positive value
+								_curvePathsBottom.push(_curvePathsTop[i - 2]);
+							}
+
+
+						}
+						else
+						{ //When we have a baseline axis we will create a straight line for the bottom by adding a new path and ignoring the last one
+							if (i == 0 || mode == LineSeriesGroup.MODE_BASELINE)
+							{
+								//First bottom curve is a straigh line;
+								var path:Array = new Array();
+								for (n = 0; n < _curvePathsTop[0].length; n++)
+								{
+									var q:QuadraticBezierTo = new QuadraticBezierTo(_curvePathsTop[0][n].cx, verticalScale.valueToLayout(0, true), _curvePathsTop[0][n].x, verticalScale.valueToLayout(0, true));
+									path.push(q);
+								}
+								_curvePathsBottom.push(path);
+							}
+							else
+							{
+								_curvePathsBottom.push(_curvePathsTop[i - 1]);
+							}
+
+						}
+
+						i++;
+					}
+
+					if (mode == LineSeriesGroup.MODE_STACK_FLOW)
+					{ //Remove the first one as it was the result of splitting the first series by bisecting the zero line
+						_curvePathsTop.splice(0, 1);
+					}
+
+
+				}
+				//Now we have our continuous path we need to break them up into segments
+
+
+				trace("computeCurves elapsed time=" + (flash.utils.getTimer() - t) + "ms");
+			}
+
+			//Stores all the data points (accounts for stacking and alternate layouts
+			private var seriesPoints:Array;
+
+			//Used to help calculate common fill bounds for myPath
+			private var _maxHeight:Number;
+
+			//Our repeat width depends on the hPadding 
+			[Bindable]
+			private var _repeatWidth:Number;
+
+			//Stores all the precomputed curve segments
+			private var _curvePathsTop:Array;
+
+			//Stores all the precomputed curve segments
+			private var _curvePathsBottom:Array;
+
+			//The segments used to render the series by myPath
+			[Bindable]
+			private var _currentSegments:Array;
+
+			//Used to remove strokes off the sides and bottom of the path
+			[Bindable]
+			private var _decorator:AreaLineDecorator = new AreaLineDecorator();
+
+			//private var _seriesCollection:Object;
+			/**
+			 * A flag indicating that lines should be rendered in the traditional line chart manner. 
+			 */
+			public static const MODE_BASELINE:int = 0;
+			/**
+			 * A flag indicating that lines should be rendered stacked on top of one another. 
+			 */
+			public static const MODE_STACK_ZERO:int = 1;
+			/**
+			 * A flag indicating that lines should be rendered using a flow layout. 
+			 */
+			public static const MODE_STACK_FLOW:int = 2;
+		]]>
+	</mx:Script>
+
+	<!---
+	The layout mode used to render the lines. One of {MODE_BASELINE,MODE_STACK_ZERO,MODE_STACK_FLOW}.
+	-->
+	<mx:int id="mode">0</mx:int>
+	<!---
+	Whether the area beneath the lines should be filled.
+	-->
+	<mx:Boolean id="showArea">false</mx:Boolean>
+	<!---
+	The name of the property on the objects in the dataProvider that contains the data to plot
+	-->
+	<mx:String id="plotCollection"/>
+	
+	<!---
+	The scale used to map values onto the vertical axis.
+	-->
+	<scale:LinearScale id="verticalScale"/>
+	
+	<!---
+	The tension used to render the curves in this chart. A value of 0 results in straight lines while
+	a value of 1 results in exaggerated Bezier curves.
+	-->
+	<mx:Number id="tension">.25</mx:Number>
+	
+	<!---
+	The radius in pixels of the markers shown at each data point.
+	-->
+	<mx:int id="markerSize">8</mx:int>
+	
+	<!---
+	The color at the center of the markers.
+	-->
+	<mx:Number id="markerColor">0xfa8514</mx:Number>
+	
+	<!---
+	Whether or not markers should be displayed at each data point
+	-->
+	<mx:Boolean id="showMarker">true</mx:Boolean>
+	
+	<!---
+	The property on the items in the dataProvider that contains the label field for each series.
+	-->
+	<mx:String id="seriesLabelField"></mx:String>
+	
+	<!---
+	The property on the items in the dataProvider that contains the label field for the entire plot.
+	-->
+	<mx:String id="plotLabelField"></mx:String>
+
+	<!--- @private -->
+	<utils:NumericExpression id="yPoint"/>
+	<!--- @private -->
+	<degrafa:SolidFill color="0xFFFF00" alpha=".7" id="rollOverFill"/>
+	
+	<layouts:layouts>
+		<!--- @private -->
+		<layouts:RepeaterLayout id="plotLayout"
+			width="{currentReference.width}"
+			height="{currentReference.height}"
+			name="plotLayout"
+			preRender="onPlotPreRender();"
+			scaleFill="true"
+			x="0"
+			y="0"
+			inheritParentBounds="false"
+			itemPreDraw="onPlotItemPreDraw();">
+			<layouts:drawingGeometries>
+				<degrafa:RegularRectangle width="{width}" height="{height}" x="0" y="0">
+					<degrafa:Path id="myPath"
+						scaleOnLayout="false"
+						decorators="{[_decorator]}"
+						enableEvents="false"
+						visible="{(_currentSegments.length>1)}"
+						stroke="{stroke}"
+						fill="{fill}"
+						segments="{_currentSegments}">
+					</degrafa:Path>
+				</degrafa:RegularRectangle>
+			</layouts:drawingGeometries>
+		</layouts:RepeaterLayout>
+		
+		<!--- @private -->
+		<layouts:RepeaterLayout id="markerLayout"
+			width="{currentReference.width}"
+			height="{currentReference.height}"
+			name="markerLayout"
+			scaleFill="true"
+			x="0"
+			y="0"
+			inheritParentBounds="false"
+			itemPreDraw="onMarkerItemPreDraw();">
+			<layouts:drawingGeometries>
+				<!--- @private -->
+				<degrafa:Circle id="marker"
+					radius="{markerSize/2}"
+					centerY="{yPoint.value}"
+					visible="{showMarker}"
+					enableEvents="false">
+					<degrafa:fill>
+						<degrafa:SolidFill color="0xFFFFFF" alpha=".8"/>
+					</degrafa:fill>
+					<degrafa:stroke>
+						<degrafa:SolidStroke color="0" pixelHinting="false" alpha=".6"/>
+					</degrafa:stroke>
+				</degrafa:Circle>
+				
+				<!--- @private -->
+				<degrafa:Circle id="innerMarker"
+					radius="{markerSize/2*.6}"
+					centerX="{marker.centerX}"
+					centerY="{marker.centerY}"
+					visible="{showMarker}"
+					enableEvents="false">
+					<degrafa:fill>
+						<degrafa:SolidFill color="{markerColor}" alpha="1"/>
+					</degrafa:fill>
+				</degrafa:Circle>
+
+			</layouts:drawingGeometries>
+
+		</layouts:RepeaterLayout>
+	</layouts:layouts>
+
+</layouts:RepeaterLayout>
