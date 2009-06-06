@@ -226,17 +226,5 @@ package org.axiis.layouts.scale
 		{
 			invalidated = false;
 		}
-		
-		// FIXME since the subclass is expected to implement this, let's cut it from AbstractScale. That way we won't be tempted to use AbstractScale where we mean IScale
-		public function valueToLayout(value:Object,invert:Boolean=false):Number
-		{
-			return NaN;
-		}
-		
-		// FIXME since the subclass is expected to implement this, let's cut it from AbstractScale. That way we won't be tempted to use AbstractScale where we mean IScale
-		public function layoutToValue(layout:Number):Object
-		{
-			return null;
-		}
 	}
 }

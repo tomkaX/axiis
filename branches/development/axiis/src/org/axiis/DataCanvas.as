@@ -211,17 +211,6 @@ package org.axiis
 			}
 		}
 		
-		// TODO implement measure. We should use defaults of 0,0 until we can figure out how to measure things
-		/**
-		 * @private
-		 */
-		override protected function measure():void
-		{
-			super.measure();
-			measuredWidth = 400;
-			measuredHeight = 400;
-		}
-		
 		private var _invalidated:Boolean=false;
 		
 		/**

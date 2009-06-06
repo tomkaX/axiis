@@ -111,14 +111,6 @@ package org.axiis.core
 		function get parentLayout():ILayout;
 		function set parentLayout(value:ILayout):void;
 		
-		// TODO I DON'T THINK WE ARE USING THIS PROPERTY ANYMORE!!!
-		/**
-		 * A rectangle representing the top left corner and dimensions of this
-		 * layout
-		 */
-		function get bounds():Rectangle;
-		function set bounds(value:Rectangle):void; 
-		
 		/**
 		 * An Array, ArrayCollection, or Object containing the data this layout
 		 * should render.

@@ -85,7 +85,7 @@
 	<!---
 		The scale used to convert data values to radii.
 	-->
-	<scale:RadiusScale id="radiusScale" minLayout="{Number.NEGATIVE_INFINITY}"/>
+	<scale:LogScale id="radiusScale" base="2" minLayout="{Number.NEGATIVE_INFINITY}"/>
 
 	<!---
 		The name of the property on the items in the dataProvider that contains

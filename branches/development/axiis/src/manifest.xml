@@ -30,7 +30,6 @@
 		<component id="DateTimeScale" class="org.axiis.layouts.scale.DateTimeScale"/>
 		<component id="LinearScale" class="org.axiis.layouts.scale.LinearScale"/>
 		<component id="LogScale" class="org.axiis.layouts.scale.LogScale"/>
-		<component id="RadiusScale" class="org.axiis.layouts.scale.RadiusScale"/>
 		
 		<!-- layouts -->
 		<component id="AbsoluteLayout" class="org.axiis.layouts.AbsoluteLayout"/>

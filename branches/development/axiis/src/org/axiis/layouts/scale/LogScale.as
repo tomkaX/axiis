@@ -25,22 +25,49 @@
 
 package org.axiis.layouts.scale
 {
+	import flash.events.Event;
+
 	/**
 	 * A scale that converts logarithmic data to layout space. Values from the
 	 * dataProvider are converted to layout-space using log base 10.
 	 */
-	public class LogScale extends ContinuousScale
+	public class LogScale extends ContinuousScale implements IScale
 	{
+		public function LogScale()
+		{
+			super();
+			base = 10;
+		}
+		
+		private var logOfBase:Number;
+		
+		[Bindable(event="baseChange")]
+		public function get base():Number
+		{
+			return _base;
+		}
+		public function set base(value:Number):void
+		{
+			if(value != _base)
+			{
+				_base = value;
+				logOfBase = Math.log(_base);
+				invalidate();
+				dispatchEvent(new Event("baseChange"));
+			}
+		}
+		private var _base:Number;
+		
 		/**
 		 * @inheritDoc IScale#valueToLayout
 		 */
-		override public function valueToLayout(value:Object,invert:Boolean=false):Number
+		public function valueToLayout(value:Object,invert:Boolean=false):Number
 		{
-			var logValue:Number = Math.log(Number(value)) / Math.LN10;
+			var logValue:Number = Math.log(Number(value)) / logOfBase;
 			
 			// These two values should be stored at the class level to prevent redundant computation
-			var logMinValue:Number = Math.log(Number(minLayout)) / Math.LN10;
-			var logMaxValue:Number = Math.log(Number(maxValue)) / Math.LN10;
+			var logMinValue:Number = Math.log(Number(minLayout)) / logOfBase;
+			var logMaxValue:Number = Math.log(Number(maxValue)) / logOfBase;
 			
 			var percentage:Number = getPercentageBetweenValues(logValue,logMinValue,logMaxValue)
 			percentage = Math.max(0,Math.min(1,percentage));
@@ -50,7 +77,7 @@ package org.axiis.layouts.scale
 		/**
 		 * @inheritDoc IScale#layoutToValue
 		 */
-		override public function layoutToValue(layout:Number):Object
+		public function layoutToValue(layout:Number):Object
 		{
 			var percentage:Number = getPercentageBetweenValues(Number(layout),Number(minLayout),Number(maxLayout))
 			percentage = Math.max(0,Math.min(1,percentage));

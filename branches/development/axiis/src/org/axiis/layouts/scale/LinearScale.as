@@ -41,7 +41,7 @@ package org.axiis.layouts.scale
 		/**
 		 * @inheritDoc IScale#valueToLayout
 		 */
-		override public function valueToLayout(value:Object, invert:Boolean=false):Number
+		public function valueToLayout(value:Object, invert:Boolean=false):Number
 		{
 			if(invalidated)
 				validate();
@@ -63,7 +63,7 @@ package org.axiis.layouts.scale
 		/**
 		 * @inheritDoc IScale#layoutToValue
 		 */
-		override public function layoutToValue(layout:Number):Object
+		public function layoutToValue(layout:Number):Object
 		{
 			if (this.invalidated)
 				validate();
