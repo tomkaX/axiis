@@ -129,9 +129,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 			</degrafa:transform>
 		</degrafa:RasterText>
 		<!--- @private -->	
-		<degrafa:RasterText  htmlText="{(labelFunction != null) ? labelFunction.call(this,currentDatum) : (currentValue ? currentValue:' ')}"  textColor="0x444444" visible="{showLabel}" id="valueLabel"
+		<degrafa:RasterText  htmlText="{(labelFunction != null) ? labelFunction.call(this,currentDatum) : (currentValue ? currentValue:' ')}"  textColor="{dataFontColor}" visible="{showDataLabel}" id="valueLabel"
 			x="{currentReference.x+(currentReference.width-valueLabel.textWidth)/2}" height="20"  y="{valueLabelLayout.value}" 
-			fontSize="{fontSize}"  align="left" fontFamily="{fontFamily}" fontWeight="normal"/>
+			fontSize="{dataFontSize}"  align="left" fontFamily="{dataFontFamily}" fontWeight="{dataFontWeight}"/>
 
 	</groupings:drawingGeometries>
 	<!--<layouts:states>

@@ -57,19 +57,19 @@ package org.axiis.paint
 		 * The Layout this LayoutPalette should use to determine how many colors
 		 * to produce and to determine which color is the "current" one.
 		 */
-		public function get target():ILayout
+		public function get layout():ILayout
 		{
-			return _target
+			return _layout
 		}
-		private function set target(value:ILayout):void
+		private function set layout(value:ILayout):void
 		{
-			if (_target)
-				_target.removeEventListener("currentIndexChange", onIndexChanged);
-			_target = value;
-			if (_target)
-				_target.addEventListener("currentIndexChange", onIndexChanged);		
+			if (_layout)
+				_layout.removeEventListener("currentIndexChange", onIndexChanged);
+			_layout = value;
+			if (_layout)
+				_layout.addEventListener("currentIndexChange", onIndexChanged);		
 		}
-		private var _target:ILayout;
+		private var _layout:ILayout;
 
 		[Bindable]
 		/**
@@ -117,7 +117,7 @@ package org.axiis.paint
 
 		[Bindable(event="currentColorChange")]
 		/**
-		 * The color at index target.currentIndex in the colors Array.
+		 * The color at index layout.currentIndex in the colors Array.
 		 */
 		public function get currentColor():Number
 		{
@@ -141,7 +141,7 @@ package org.axiis.paint
 		private function onIndexChanged(e:Event):void
 		{
 			
-			_currentColor = _colors[_target.currentIndex % (_colors.length-1)];
+			_currentColor = _colors[_layout.currentIndex % (_colors.length)];
 		}
 	}
 }

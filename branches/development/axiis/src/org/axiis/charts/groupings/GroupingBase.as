@@ -146,6 +146,86 @@ package org.axiis.charts.groupings
 		}
 		private var _fontWeight:String = "normal";
 		
+		
+		[Bindable(event="dataFontFamilyChange")]
+		/**
+		 * The name of the dataFont used to render the labels.
+		 */
+		public function get dataFontFamily():String
+		{
+			return _dataFontFamily;
+		}
+		public function set dataFontFamily(value:String):void
+		{
+			if(value != _dataFontFamily)
+			{
+				_dataFontFamily = value;
+				dispatchEvent(new Event("dataFontFamilyChange"));
+				invalidate();
+			}
+		}
+		private var _dataFontFamily:String = "Arial";
+	
+		[Bindable(event="dataFontSizeChange")]
+		/**
+		 * The size of the dataFont used to render the labels.
+		 */
+		public function get dataFontSize():Number
+		{
+			return _dataFontSize;
+		}
+		public function set dataFontSize(value:Number):void
+		{
+			if(value != _dataFontSize)
+			{
+				_dataFontSize = value;
+				dispatchEvent(new Event("dataFontSizeChange"));
+				invalidate();
+			}
+		}
+		private var _dataFontSize:Number = 12;
+	
+		[Bindable(event="dataFontColorChange")]
+		/**
+		 * The color of the labels.
+		 */
+		public function get dataFontColor():Number
+		{
+			return _dataFontColor;
+		}
+		public function set dataFontColor(value:Number):void
+		{
+			if(value != _dataFontColor)
+			{
+				_dataFontColor = value;
+				dispatchEvent(new Event("dataFontColorChange"));
+				invalidate();
+			}
+		}
+		private var _dataFontColor:Number = 0;
+	
+		[Bindable(event="dataFontWeightChange")]
+		/**
+		 * The weight ("normal" or "bold") of the labels.
+		 */
+		public function get dataFontWeight():String
+		{
+			return _dataFontWeight;
+		}
+		public function set dataFontWeight(value:String):void
+		{
+			if(value != "normal" && value != "bold")
+				return;
+				
+			if(value != _dataFontWeight)
+			{
+				_dataFontWeight = value;
+				dispatchEvent(new Event("dataFontWeightChange"));
+				invalidate();
+			}
+		}
+		private var _dataFontWeight:String = "normal";
+		
 		[Bindable(event="showLabelChange")]
 		/**
 		 * Whether or not labels are shown for each drawingGeometry.
@@ -165,9 +245,31 @@ package org.axiis.charts.groupings
 		}
 		private var _showLabel:Boolean = true;
 		
+		
+		[Bindable(event="showDataLabelChange")]
+		/**
+		 * Whether or not labels are shown for each drawingGeometry.
+		 */
+		public function get showDataLabel():Boolean
+		{
+			return _showDataLabel;
+		}
+		public function set showDataLabel(value:Boolean):void
+		{
+			if(value != _showDataLabel)
+			{
+				_showDataLabel = value;
+				dispatchEvent(new Event("showDataLabelChange"));
+				invalidate();
+			}
+		}
+		private var _showDataLabel:Boolean = true;
+		
 		private function handlePropertyChange(event:Event):void
 		{
 			invalidate();
 		}
+		
+		
 	}
 }
