@@ -115,18 +115,18 @@
 	
 		<!--- @private -->
 		<degrafa:Circle id="plotCircle"
-			radius="{(radiusField !='' &amp;&amp; radiusScale.minLayout > Number.NEGATIVE_INFINITY) ? radiusScale.valueToLayout(currentDatum[radiusField]) : 6 }"
-			centerX="{horizontalScale.valueToLayout(currentDatum[horizontalField])}"
-			centerY="{verticalScale.valueToLayout(currentDatum[verticalField],true)}"
+			radius="{(radiusField !='' &amp;&amp; radiusScale.minLayout > Number.NEGATIVE_INFINITY) ? Number(radiusScale.valueToLayout(currentDatum[radiusField])) : 6 }"
+			centerX="{Number(horizontalScale.valueToLayout(currentDatum[horizontalField]))}"
+			centerY="{Number(verticalScale.valueToLayout(currentDatum[verticalField],true))}"
 			fill="{plotFill}"
 			stroke="{plotStroke}"
 			filters="{[new DropShadowFilter(5,45,0,.4,5,plotCircle.radius*.2)]}"/>
 		
 		<!--- @private -->
 		<degrafa:Circle id="highlightCircle"
-			radius="{(radiusField !='' &amp;&amp; radiusScale.minLayout > Number.NEGATIVE_INFINITY) ? radiusScale.valueToLayout(currentDatum[radiusField]) + 4 : 6 }"
-			centerX="{horizontalScale.valueToLayout(currentDatum[horizontalField])}"
-			centerY="{verticalScale.valueToLayout(currentDatum[verticalField],true)}"
+			radius="{(radiusField !='' &amp;&amp; radiusScale.minLayout > Number.NEGATIVE_INFINITY) ? Number(radiusScale.valueToLayout(currentDatum[radiusField])) + 4 : 6 }"
+			centerX="{Number(horizontalScale.valueToLayout(currentDatum[horizontalField]))}"
+			centerY="{Number(verticalScale.valueToLayout(currentDatum[verticalField],true))}"
 			stroke="{highlightStroke}"
 			visible="false"/>
 
@@ -149,8 +149,8 @@
 		<degrafa:RegularRectangle id="marker"
 			width="{markerGeometry.width}"
 			height="{markerGeometry.height}"
-			x="{horizontalScale.valueToLayout(currentDatum[horizontalField])-markerGeometry.width/2}"
-			y="{verticalScale.valueToLayout(currentDatum[verticalField],true)-markerGeometry.height/2}"
+			x="{Number(horizontalScale.valueToLayout(currentDatum[horizontalField]))-markerGeometry.width/2}"
+			y="{Number(verticalScale.valueToLayout(currentDatum[verticalField],true))-markerGeometry.height/2}"
 			geometry="{[markerGeometry]}"/>
 
 	</layouts:drawingGeometries>

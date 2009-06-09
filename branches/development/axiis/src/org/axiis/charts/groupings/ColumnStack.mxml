@@ -50,7 +50,7 @@
 			{
 				//We need this because of a binding collision on the height - need to investigate to see why this is happening.
 				if (dataItems && dataItems.length > 0)
-					refRect.y = this.height - verticalScale.valueToLayout(dataItems[0][dataField]);
+					refRect.y = this.height - Number(verticalScale.valueToLayout(dataItems[0][dataField]));
 			}
 		]]>
 	</mx:Script>
@@ -61,7 +61,7 @@
 	<scale:LinearScale id="verticalScale"/>
 	
 	<!--- @private -->
-	<utils:NumericExpression id="yModifieryValue" value="{verticalScale.valueToLayout(currentValue)}"/>
+	<utils:NumericExpression id="yModifieryValue" value="{Number(verticalScale.valueToLayout(currentValue))}"/>
 
 	<groupings:referenceRepeater>
 		<utils1:GeometryRepeater>

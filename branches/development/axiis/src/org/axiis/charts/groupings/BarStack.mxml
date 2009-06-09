@@ -57,9 +57,9 @@
 			</utils:geometry>
 			<utils:modifiers>
 				<!--- @private -->
-				<utils:PropertyModifier id="widthModifier" property="width" modifier="{this.horizontalScale.valueToLayout(currentValue)}" modifierOperator="none"/>
+				<utils:PropertyModifier id="widthModifier" property="width" modifier="{Number(this.horizontalScale.valueToLayout(currentValue))}" modifierOperator="none"/>
 				<!--- @private -->
-				<utils:PropertyModifier id="xModifier" property="x" modifier="{(currentIndex == 0) ? 0 : this.horizontalScale.valueToLayout(dataItems[currentIndex-1][dataField])}" modifierOperator="add"/>
+				<utils:PropertyModifier id="xModifier" property="x" modifier="{(currentIndex == 0) ? 0 : Number(this.horizontalScale.valueToLayout(dataItems[currentIndex-1][dataField]))}" modifierOperator="add"/>
 			</utils:modifiers>
 		</utils:GeometryRepeater>
 	</groupings:referenceRepeater>

@@ -33,7 +33,7 @@ package org.axiis.layouts.scale
 		/**
 		 * @inheritDoc IScale#valueToLayout
 		 */
-		public function valueToLayout(value:Object,invert:Boolean=false):Number
+		public function valueToLayout(value:Object,invert:Boolean=false):Object
 		{
 			if(invalidated)
 				validate();
@@ -48,8 +48,11 @@ package org.axiis.layouts.scale
 		/**
 		 * @inheritDoc IScale#layoutToValue
 		 */
-		public function layoutToValue(layout:Number):Object
+		public function layoutToValue(layout:Object):Object
 		{
+			if(!(layout is Number))
+				throw new Error("layout parameter must be a Number");
+
 			if (this.invalidated)
 				validate();
 			

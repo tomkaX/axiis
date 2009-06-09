@@ -61,7 +61,7 @@ package org.axiis.layouts.scale
 		/**
 		 * @inheritDoc IScale#valueToLayout
 		 */
-		public function valueToLayout(value:Object,invert:Boolean=false):Number
+		public function valueToLayout(value:Object,invert:Boolean=false):Object
 		{
 			var logValue:Number = Math.log(Number(value)) / logOfBase;
 			
@@ -77,8 +77,11 @@ package org.axiis.layouts.scale
 		/**
 		 * @inheritDoc IScale#layoutToValue
 		 */
-		public function layoutToValue(layout:Number):Object
+		public function layoutToValue(layout:Object):Object
 		{
+			if(!(layout is Number))
+				throw new Error("layout parameter must be a Number");
+
 			var percentage:Number = getPercentageBetweenValues(Number(layout),Number(minLayout),Number(maxLayout))
 			percentage = Math.max(0,Math.min(1,percentage));
 			percentage = Math.pow(percentage,10); 

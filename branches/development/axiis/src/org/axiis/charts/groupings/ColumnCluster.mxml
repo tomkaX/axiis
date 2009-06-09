@@ -112,9 +112,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 		<!--- @private -->
 		<degrafa:RegularRectangle id="column"
 				x="{currentReference.x}"
-				y="{((currentValue >= 0) ? currentReference.height-this.verticalScale.valueToLayout(currentValue) : currentReference.height-this.verticalScale.valueToLayout(0))}"
+				y="{((currentValue >= 0) ? currentReference.height-Number(this.verticalScale.valueToLayout(currentValue)) : currentReference.height-Number(this.verticalScale.valueToLayout(0)))}"
 				width="{Math.max(15,currentReference.width)}"
-				height="{(currentValue > 0 ? this.verticalScale.valueToLayout(currentValue)-this.verticalScale.valueToLayout(0) : this.verticalScale.valueToLayout(0)-this.verticalScale.valueToLayout(currentValue)) }"
+				height="{(currentValue > 0 ? Number(this.verticalScale.valueToLayout(currentValue))-Number(this.verticalScale.valueToLayout(0)) : Number(this.verticalScale.valueToLayout(0))-Number(this.verticalScale.valueToLayout(currentValue))) }"
 				fill="{fill}"
 				stroke="{stroke}">
 		</degrafa:RegularRectangle>

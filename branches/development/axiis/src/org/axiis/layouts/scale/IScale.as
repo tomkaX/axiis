@@ -84,7 +84,7 @@ package org.axiis.layouts.scale
 		 * @param value The value to be converted into layout space.
 		 * @param invert Whether the minValue translates to minLayout (false) or to maxLayout (true). 
 		 */
-		function valueToLayout(value:Object,invert:Boolean=false):Number;
+		function valueToLayout(value:Object,invert:Boolean=false):Object;
 		
 		// TODO Since we have invert for valueToLayout, we should have an invert argument for layoutToValue as well.
 		/**
@@ -97,7 +97,7 @@ package org.axiis.layouts.scale
 		 * 
 		 * @param The layout position to translate into a value.
 		 */
-		function layoutToValue(layout:Number):Object;
+		function layoutToValue(layout:Object):Object;
 		
 		/**
 		 * Initiates the computation of minValue and maxValue.

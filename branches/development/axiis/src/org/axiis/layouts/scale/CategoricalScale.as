@@ -60,7 +60,7 @@ package org.axiis.layouts.scale
 		 * @param value The value to be converted into layout space.
 		 * @param invert Whether the minValue translates to minLayout (false) or to maxLayout (true).
 		 */
-		public function valueToLayout(value:Object,invert:Boolean=false):Number
+		public function valueToLayout(value:Object,invert:Boolean=false):Object
 		{
 			if(invalidated)
 				validate();
@@ -81,13 +81,16 @@ package org.axiis.layouts.scale
 		 * 
 		 * @param The layout position to translate into a value.
 		 */
-		public function layoutToValue(layout:Number):Object
+		public function layoutToValue(layout:Object):Object
 		{ 
+			if(!(layout is Number))
+				throw new Error("layout parameter must be a Number");
+				
 			if (invalidated)
 				validate();
 				
 			var layoutDelta:Number = maxLayout - minLayout;
-			var layoutPercentage:Number = (layout - layoutDelta) / (layoutDelta);
+			var layoutPercentage:Number = (Number(layout) - layoutDelta) / (layoutDelta);
 			var index:Number = Math.round(layoutPercentage * uniqueValues.length) - 1;
 			index = Math.max(0,Math.min(uniqueValues.length - 1,index));
 			return uniqueValues[index];

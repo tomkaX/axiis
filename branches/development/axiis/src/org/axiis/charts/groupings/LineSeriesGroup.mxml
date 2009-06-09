@@ -305,7 +305,7 @@
 
 				if (mode == LineSeriesGroup.MODE_STACK_FLOW && markerLayout.currentIndex == 0)
 				{
-					yPoint.value = verticalScale.valueToLayout(0, true);
+					yPoint.value = Number(verticalScale.valueToLayout(0, true));
 					trace("yPoint Value=" + yPoint.value);
 				}
 				else if (mode == LineSeriesGroup.MODE_STACK_FLOW && (markerLayout.currentIndex == 1 || markerLayout.currentIndex == 3))
@@ -394,7 +394,7 @@
 						var obj:Object = seriesPlots[i];
 						if (ta.length == 0)
 						{ //adds a new node if it is the first time
-							ta.push(new GraphicPoint(-1, verticalScale.valueToLayout(seriesPlots[0][dataField], true))); //The first marker
+							ta.push(new GraphicPoint(-1, Number(verticalScale.valueToLayout(seriesPlots[0][dataField], true)))); //The first marker
 						}
 
 						var gp:GraphicPoint = new GraphicPoint;
@@ -409,7 +409,7 @@
 							stackedValues[i] += obj[dataField];
 							stackedValue = stackedValues[i];
 
-							gp.y = verticalScale.valueToLayout(stackedValue, true);
+							gp.y = Number(verticalScale.valueToLayout(stackedValue, true));
 						}
 						else if (mode == LineSeriesGroup.MODE_STACK_FLOW)
 						{
@@ -425,14 +425,14 @@
 								if (!stackedValues2[i])
 									stackedValues2[i] = 0;
 								stackedValues2[i] -= obj[dataField] / 2;
-								gp2.y = verticalScale.valueToLayout(stackedValues2[i], true);
+								gp2.y = Number(verticalScale.valueToLayout(stackedValues2[i], true));
 								if (flowTa.length == 0)
 									flowTa.push(new GraphicPoint(-1, gp2.y)); //First point in series
 								flowTa.push(gp2);
 								if (!stackedValues[i])
 									stackedValues[i] = 0;
 								stackedValues[i] += obj[dataField] / 2;
-								gp.y = verticalScale.valueToLayout(stackedValues[i], true);
+								gp.y = Number(verticalScale.valueToLayout(stackedValues[i], true));
 
 							}
 							else if (y % 2 == 1)
@@ -441,7 +441,7 @@
 									stackedValues[i] = 0;
 								stackedValues[i] += obj[dataField];
 								stackedValue = stackedValues[i];
-								gp.y = verticalScale.valueToLayout(stackedValue, true);
+								gp.y = Number(verticalScale.valueToLayout(stackedValue, true));
 							}
 							else
 							{
@@ -449,12 +449,12 @@
 									stackedValues2[i] = 0;
 								stackedValues2[i] -= obj[dataField];
 								stackedValue = stackedValues2[i];
-								gp.y = verticalScale.valueToLayout(stackedValue, true);
+								gp.y = Number(verticalScale.valueToLayout(stackedValue, true));
 							}
 						}
 						else
 						{
-							gp.y = verticalScale.valueToLayout(obj[dataField], true);
+							gp.y = Number(verticalScale.valueToLayout(obj[dataField], true));
 						}
 
 						ta.push(gp);
@@ -516,7 +516,7 @@
 								var path:Array = new Array();
 								for (n = 0; n < _curvePathsTop[0].length; n++)
 								{
-									var q:QuadraticBezierTo = new QuadraticBezierTo(_curvePathsTop[0][n].cx, verticalScale.valueToLayout(0, true), _curvePathsTop[0][n].x, verticalScale.valueToLayout(0, true));
+									var q:QuadraticBezierTo = new QuadraticBezierTo(_curvePathsTop[0][n].cx, Number(verticalScale.valueToLayout(0, true)), _curvePathsTop[0][n].x, Number(verticalScale.valueToLayout(0, true)));
 									path.push(q);
 								}
 								_curvePathsBottom.push(path);

@@ -111,7 +111,7 @@
 		<degrafa:RegularRectangle id="bar"
 			x="{(currentValue >= 0) ? this.horizontalScale.valueToLayout(0) : this.horizontalScale.valueToLayout(currentValue)}"
 			y="{currentReference.y}"
-			width="{(currentValue > 0 ? this.horizontalScale.valueToLayout(currentValue)-this.horizontalScale.valueToLayout(0) : this.horizontalScale.valueToLayout(0)-this.horizontalScale.valueToLayout(currentValue)) }"
+			width="{(currentValue > 0 ? Number(this.horizontalScale.valueToLayout(currentValue))-Number(this.horizontalScale.valueToLayout(0)) : Number(this.horizontalScale.valueToLayout(0))-Number(this.horizontalScale.valueToLayout(currentValue))) }"
 			height="{Math.max(15,currentReference.height)}"
 			fill="{fill}"
 			stroke="{stroke}">
