@@ -53,7 +53,8 @@
 	<mx:Number id="percentGap">.02</mx:Number>
 
 
-	<axiis:RadiusScale id="rScale"
+	<axiis:LogScale id="rScale"
+		base="2"
 		dataProvider="{dataProvider}"
 		minLayout="3"
 		maxLayout="{Math.min(plotGroup.height, plotGroup.width)*.1}"
