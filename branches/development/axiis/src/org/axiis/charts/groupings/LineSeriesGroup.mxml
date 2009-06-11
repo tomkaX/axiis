@@ -257,7 +257,6 @@
 
 					_decorator.fillBounds = new Rectangle(0, y, width, h);
 				}
-				trace("decorator y=" + _decorator.fillBounds.y + " height=" + _decorator.fillBounds.height);
 
 				myPath.stroke = stroke;
 
@@ -306,7 +305,6 @@
 				if (mode == LineSeriesGroup.MODE_STACK_FLOW && markerLayout.currentIndex == 0)
 				{
 					yPoint.value = Number(verticalScale.valueToLayout(0, true));
-					trace("yPoint Value=" + yPoint.value);
 				}
 				else if (mode == LineSeriesGroup.MODE_STACK_FLOW && (markerLayout.currentIndex == 1 || markerLayout.currentIndex == 3))
 				{ //Resolves the fact that the first series is bisected
@@ -538,10 +536,6 @@
 
 
 				}
-				//Now we have our continuous path we need to break them up into segments
-
-
-				trace("computeCurves elapsed time=" + (flash.utils.getTimer() - t) + "ms");
 			}
 
 			//Stores all the data points (accounts for stacking and alternate layouts

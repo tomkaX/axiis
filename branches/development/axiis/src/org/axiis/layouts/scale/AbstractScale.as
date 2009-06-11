@@ -94,11 +94,11 @@ package org.axiis.layouts.scale
 		/**
 		 * @copy IScale#minValue
 		 */
-		public function get minValue():Object
+		public function get minValue():*
 		{
 			return userMinValue == null ? computedMinValue : userMinValue;
 		}
-		public function set minValue(value:Object):void
+		public function set minValue(value:*):void
 		{
 			if(value != userMinValue)
 			{
@@ -138,11 +138,11 @@ package org.axiis.layouts.scale
 		/**
 		 * @copy IScale#maxValue
 		 */
-		public function get maxValue():Object
+		public function get maxValue():*
 		{
 			return userMaxValue == null ? computedMaxValue : userMaxValue;
 		}
-		public function set maxValue(value:Object):void
+		public function set maxValue(value:*):void
 		{
 			if(value != userMaxValue)
 			{

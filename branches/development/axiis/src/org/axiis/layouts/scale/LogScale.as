@@ -61,7 +61,7 @@ package org.axiis.layouts.scale
 		/**
 		 * @inheritDoc IScale#valueToLayout
 		 */
-		public function valueToLayout(value:Object,invert:Boolean=false):Object
+		public function valueToLayout(value:Object,invert:Boolean=false):*
 		{
 			var logValue:Number = Math.log(Number(value)) / logOfBase;
 			

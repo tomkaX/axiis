@@ -28,7 +28,7 @@ package  com.degrafa.decorators.axiis {
 			_currentFill=CommandStack.currentFill;
 			if (fillBounds) {
 				_currentFill.begin(CommandStack.currentContext,fillBounds);
-				trace("Decorator fill.y=" + fillBounds.y + " fill.height=" + fillBounds.height);	
+				//trace("Decorator fill.y=" + fillBounds.y + " fill.height=" + fillBounds.height);	
 			}
 			if (CommandStack.currentStroke) {
 					_currentStrokeArgs = CommandStack.currentStroke.lastArgs;

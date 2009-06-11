@@ -55,16 +55,16 @@ package org.axiis.layouts.scale
 		 * not set, the implementer should compute an appropriate minimum
 		 * by analyzing the contents of the dataProvider.
 		 */
-		function get minValue():Object;
-		function set minValue(value:Object):void;
+		function get minValue():*;
+		function set minValue(value:*):void;
 		
 		/**
 		 * The maximum value allowed in this scale. If this property is
 		 * not set, the implementer should compute an appropriate maximum
 		 * by analyzing the contents of the dataProvider.
 		 */
-		function get maxValue():Object;
-		function set maxValue(value:Object):void;
+		function get maxValue():*;
+		function set maxValue(value:*):void;
 		
 		/**
 		 * The minimum layout position.
@@ -84,7 +84,7 @@ package org.axiis.layouts.scale
 		 * @param value The value to be converted into layout space.
 		 * @param invert Whether the minValue translates to minLayout (false) or to maxLayout (true). 
 		 */
-		function valueToLayout(value:Object,invert:Boolean=false):Object;
+		function valueToLayout(value:Object,invert:Boolean=false):*;
 		
 		// TODO Since we have invert for valueToLayout, we should have an invert argument for layoutToValue as well.
 		/**

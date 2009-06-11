@@ -60,7 +60,7 @@ package org.axiis.layouts.scale
 		 * @param value The value to be converted into layout space.
 		 * @param invert Whether the minValue translates to minLayout (false) or to maxLayout (true).
 		 */
-		public function valueToLayout(value:Object,invert:Boolean=false):Object
+		public function valueToLayout(value:Object,invert:Boolean=false):*
 		{
 			if(invalidated)
 				validate();
