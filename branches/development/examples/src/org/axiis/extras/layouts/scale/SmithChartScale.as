@@ -39,22 +39,28 @@ package org.axiis.extras.layouts.scale
 		 */
 		public var z0:Complex = new Complex(1,0);
 		
-		/**
-		 * The chart radius is the radius of the inner circle containing all the arcs.
-		 */
-		public function get chartRadius():Number
-		{
-			return maxLayout * 0.45871559633; //take into account for outer scale circles
-		}
+		[Bindable]
+		public var center:Number = 500;
 		
-		/**
-		 * The center point (both x and y) of the smith chart.  Used to calculate arc offsets
-		 * in the SmithChartAxis.
-		 */
-		public function get center():Number
-		{
-			return maxLayout * 0.5;
-		}
+		[Bindable]
+		public var chartRadius:Number = 200;
+		
+//		/**
+//		 * The chart radius is the radius of the inner circle containing all the arcs.
+//		 */
+//		public function get chartRadius():Number
+//		{
+//			return maxLayout * 0.45871559633; //take into account for outer scale circles
+//		}
+//		
+//		/**
+//		 * The center point (both x and y) of the smith chart.  Used to calculate arc offsets
+//		 * in the SmithChartAxis.
+//		 */
+//		public function get center():Number
+//		{
+//			return maxLayout * 0.5;
+//		}
 		
 		/**
 		 * For a given value (complex number), return the x,y value between minLayout (0) and maxLayout (the width/height of the chart)

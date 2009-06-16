@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	 Copyright (c) 2009 Team Axiis
+
+	 Permission is hereby granted, free of charge, to any person
+	 obtaining a copy of this software and associated documentation
+	 files (the "Software"), to deal in the Software without
+	 restriction, including without limitation the rights to use,
+	 copy, modify, merge, publish, distribute, sublicense, and/or sell
+	 copies of the Software, and to permit persons to whom the
+	 Software is furnished to do so, subject to the following
+	 conditions:
+
+	 The above copyright notice and this permission notice shall be
+	 included in all copies or substantial portions of the Software.
+
+	 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	 EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+	 OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	 NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+	 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+	 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+	 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+	 OTHER DEALINGS IN THE SOFTWARE.
+-->
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:axiis="http://www.axiis.org/2009"
+	xmlns:degrafa="http://www.degrafa.com/2007"
+	xmlns:scale="org.axiis.extras.layouts.scale.*"	
+	xmlns:charts="org.axiis.charts.*"
+	xmlns:geometry="com.degrafa.geometry.*"
+	xmlns:Examples="Examples.*"
+	backgroundGradientColors="[0xDDDDDD,0xF5F5F5]"
+	layout="absolute"
+	viewSourceURL="srcview/index.html" xmlns:axis="org.axiis.extras.charts.axis.*">
+
+	<mx:Script>
+		<![CDATA[
+			import com.vizsage.as3mathlib.math.alg.Complex;
+			import mx.collections.ArrayCollection;
+			
+			[Bindable]
+			private var impedanceData:ArrayCollection = new ArrayCollection(
+			[ [
+				new Complex(53.72, 12.175),
+				new Complex(53.21, 11.203),
+				new Complex(52.76, 10.255),
+				new Complex(52.34, 9.332), 
+				new Complex(51.97, 8.432), 
+				new Complex(51.65, 7.555), 
+				new Complex(51.32, 6.674), 
+				new Complex(51.04, 5.817), 
+				new Complex(50.81, 4.986), 
+				new Complex(50.61, 4.183), 
+				new Complex(50.45, 3.411), 
+				new Complex(50.30, 2.646), 
+				new Complex(50.18, 1.919), 
+				new Complex(50.10, 1.235), 
+				new Complex(50.04, 0.595), 
+				new Complex(50.00, 0.001), 
+				new Complex(49.95, 0.569), 
+				new Complex(49.91, 1.094), 
+				new Complex(49.86, 1.577), 
+				new Complex(49.80, 2.024), 
+				new Complex(49.73, 2.441), 
+				new Complex(49.62, 2.851), 
+				new Complex(49.51, 3.241), 
+				new Complex(49.38, 3.617), 
+				new Complex(49.24, 3.982), 
+				new Complex(49.08, 4.338), 
+				new Complex(48.91, 4.698), 
+				new Complex(48.73, 5.049), 
+				new Complex(48.54, 5.391), 
+				new Complex(48.35, 5.720), 
+				new Complex(48.15, 6.036), 
+				new Complex(47.93, 6.347), 
+				new Complex(47.69, 6.639), 
+				new Complex(47.44, 6.906), 
+				new Complex(47.17, 7.146), 
+				new Complex(46.87, 7.353)
+			  ],
+			  [
+				new Complex(63.15, 4.194),
+				new Complex(62.11, 3.460),
+				new Complex(61.07, 2.815),
+				new Complex(60.06, 2.255),
+				new Complex(59.06, 1.773),
+				new Complex(58.09, 1.365),
+				new Complex(57.11, 0.988),
+				new Complex(56.16, 0.682),
+				new Complex(55.25, 0.442),
+				new Complex(54.37, 0.262),
+				new Complex(53.54, 0.136),
+				new Complex(52.73, 0.035),
+				new Complex(51.96, 0.019),
+				new Complex(51.25, 0.037),
+				new Complex(50.60, 0.027),
+				new Complex(50.00, 0.000),
+				new Complex(49.43, 0.022),
+				new Complex(48.91, 0.045),
+				new Complex(48.44, 0.062),
+				new Complex(48.00, 0.067),
+				new Complex(47.60, 0.058),
+				new Complex(47.20, 0.022),
+				new Complex(46.81, 0.027),
+				new Complex(46.44, 0.090),
+				new Complex(46.08, 0.162),
+				new Complex(45.73, 0.244),
+				new Complex(45.37, 0.342),
+				new Complex(45.01, 0.445),
+				new Complex(44.67, 0.552),
+				new Complex(44.34, 0.665),
+				new Complex(44.01, 0.784),
+				new Complex(43.69, 0.921),
+				new Complex(43.38, 1.070),
+				new Complex(43.09, 1.236),
+				new Complex(42.82, 1.426),
+				new Complex(42.56, 1.650)
+			  ]	]
+			);
+		]]>
+	</mx:Script>
+	
+	<mx:Style source="styles/Axiis_Examples.css"/>
+	
+	<!-- Common calculations used by geometries -->
+	<axiis:NumericExpression id="boundsRadius" value="{Math.min(this.height,this.width)*.7}"/>
+	
+	<!-- Background template -->
+	<Examples:ExampleBackground width="{this.width}" height="{this.height}" title="Smith Chart Graph" subTitle="Custom Visualization"/>
+	
+	<!-- normalize all input data from 50 + j0 to 1 + j0 for display on the chart -->
+	<scale:SmithChartScale id="sc_scale" z0="{new Complex(50,0)}" maxLayout="{boundsRadius.value}"/>
+	
+	<!-- Data Canvas that holds our geometries -->
+	<axiis:DataCanvas id="dc"
+		width="{boundsRadius.value}"
+		height="{boundsRadius.value}"
+		
+		verticalCenter="0"
+		horizontalCenter="0"
+		showDataTips="false">
+	
+		<axiis:backgroundGeometries>
+			<axis:SmithChartAxis id="sc_axis" scale="{sc_scale}" width="{dc.width}" height="{dc.height}"/>
+		</axiis:backgroundGeometries>
+
+<!--		<axiis:layouts>
+			<axiis:AbsoluteLayout id="smithChartLayout" 
+				dataProvider="{impedanceData}"
+				width="{dc.width}"
+				height="{dc.width}">
+			</axiis:AbsoluteLayout>
+		</axiis:layouts>
+-->		
+	</axiis:DataCanvas>
+	
+</mx:Application>
