@@ -841,7 +841,7 @@ public class MLPoint  {
      * @return  (void)
     **/
     public function setDepth():void {
-    	clip.swapDepths(-1*z);
+    	clip.parent.setChildIndex(clip, -1*z);
     }
 
       // 38. lineD1 -------------------------------------

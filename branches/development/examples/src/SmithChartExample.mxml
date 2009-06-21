@@ -125,7 +125,7 @@
 	<mx:Style source="styles/Axiis_Examples.css"/>
 	
 	<!-- Common calculations used by geometries -->
-	<axiis:NumericExpression id="boundsRadius" value="{Math.min(this.height,this.width)*.7}"/>
+	<axiis:NumericExpression id="boundsRadius" value="{Math.min(this.height,this.width)}"/>
 	
 	<!-- Background template -->
 	<Examples:ExampleBackground width="{this.width}" height="{this.height}" title="Smith Chart Graph" subTitle="Custom Visualization"/>

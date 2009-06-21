@@ -39,28 +39,34 @@ package org.axiis.extras.layouts.scale
 		 */
 		public var z0:Complex = new Complex(1,0);
 		
+		/**
+		 * The chart radius is the radius of the inner circle containing all the arcs.
+		 */
+		private var _chartRadius:Number;
 		[Bindable]
-		public var center:Number = 500;
+		public function set chartRadius(value:Number):void
+		{
+			_chartRadius = value;
+		}
+		public function get chartRadius():Number
+		{
+			return _chartRadius;
+		}
 		
+		/**
+		 * The center point (both x and y) of the smith chart.  Used to calculate arc offsets
+		 * in the SmithChartAxis.
+		 */
+		private var _center:Number;
 		[Bindable]
-		public var chartRadius:Number = 200;
-		
-//		/**
-//		 * The chart radius is the radius of the inner circle containing all the arcs.
-//		 */
-//		public function get chartRadius():Number
-//		{
-//			return maxLayout * 0.45871559633; //take into account for outer scale circles
-//		}
-//		
-//		/**
-//		 * The center point (both x and y) of the smith chart.  Used to calculate arc offsets
-//		 * in the SmithChartAxis.
-//		 */
-//		public function get center():Number
-//		{
-//			return maxLayout * 0.5;
-//		}
+		public function set center(value:Number):void
+		{
+			_center = value;
+		}
+		public function get center():Number
+		{
+			return _center;
+		}
 		
 		/**
 		 * For a given value (complex number), return the x,y value between minLayout (0) and maxLayout (the width/height of the chart)
@@ -96,6 +102,13 @@ package org.axiis.extras.layouts.scale
 			var imped:Complex = Complex.mult(new Complex(-1,0), Complex.div(Complex.adds(rc, Complex.One), Complex.subt(rc, Complex.One)));
 			
 			return imped;
+		}
+		
+		public override function set maxLayout(value:Number):void
+		{
+			super.maxLayout = value;
+			chartRadius = maxLayout * 0.45871559633; //take into account for outer scale circles
+			center = maxLayout * 0.5;
 		}
 	}
 }
