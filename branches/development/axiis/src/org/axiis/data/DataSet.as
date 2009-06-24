@@ -330,14 +330,14 @@ package org.axiis.data
 						obj=ArrayCollection(collection).getItemAt(i);
 						aggregate(obj,collections.slice(1,collections.length),properties);
 					}
-					totalAggregates(object, collection, properties, collections[1]);
+					totalAggregates(object, collection, properties, collections[collections.length-1]);
 				}	
 				else if (collection is Array) {
 					for (i=0;i<(collection as Array).length;i++) {
 						obj=collection[i];
 						aggregate(obj,collections.slice(1,collections.length),properties);
 					}
-					totalAggregates(object, collection, properties, collections[1]);
+					totalAggregates(object, collection, properties, collections[collections.length-1]);
 				}
 			} 
 			else {   //We are at the deepest collection
@@ -386,6 +386,7 @@ package org.axiis.data
 			
 			for (var i:int=0;i<collection.length-1;i++) {
 				var obj:Object=(collection is Array) ? collection[i]:collection.getItemAt(i);
+				if (!obj.aggregates) { var agg:Object=new Object(); obj.aggregates=agg;} 
 				rollUpAggregates(aggregates, obj.aggregates,properties,collectionName);
 			}
 			for (var y:int=0;y<properties.length;y++) {

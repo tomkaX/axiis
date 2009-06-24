@@ -29,9 +29,12 @@ package org.axiis.core
 	
 	import flash.display.DisplayObject;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
 	
 	import mx.core.FlexSprite;
+	import mx.core.UIComponent;
+	import mx.events.ToolTipEvent;
 	
 	import org.axiis.states.State;
 
@@ -46,7 +49,8 @@ package org.axiis.core
 		 */
 		public function AxiisSprite()
 		{
-			super();
+			super(); var t:MouseEvent
+			this.addEventListener(MouseEvent.MOUSE_OVER,onMouseOver);
 		}
 		
 		private var eventListeners:Array = [];
@@ -375,6 +379,12 @@ package org.axiis.core
 			}
 			states = null;
 			revertingModifications = null;
+		}
+		
+		private function onMouseOver(e:Event):void {
+			var t:UIComponent
+			var tte:ToolTipEvent=new ToolTipEvent(ToolTipEvent.TOOL_TIP_SHOW);
+			this.dispatchEvent(tte);
 		}
 	}
 }
