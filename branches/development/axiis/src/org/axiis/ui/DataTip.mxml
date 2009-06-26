@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Surface xmlns="com.degrafa.*" xmlns:mx="http://www.adobe.com/2006/mxml" implements="mx.core.IToolTip" xmlns:geometry="com.degrafa.geometry.*" xmlns:degrafa="http://www.degrafa.com/2007">
+<mx:Script>
+	<![CDATA[
+		
+		
+		/**
+		 *  A Rectangle that specifies the size and position
+		 *  of the base drawing surface for this tooltip.
+		 */
+		override public function get screen():Rectangle {
+			return new Rectangle(this.x,this.y,this.width,this.height);
+		}
+	
+		//----------------------------------
+		//  text
+		//----------------------------------
+	
+		[Bindable]
+		private var _text:String;
+		/**
+		 *  The text that appears in the tooltip.
+		 */
+		public function get text():String {
+			return _text;
+		}
+		
+		/**
+		 *  @private
+		 */
+		public function set text(value:String):void {
+			_text=value;
+		}
+		
+		private var _calloutX:Number;
+		
+		public function set calloutX(value:Number):void {
+			_calloutX=value;
+		}
+		
+		public function get calloutX():Number {
+			return _calloutX;
+		}
+		
+		private var _calloutY:Number;
+		
+		public function set calloutY(value:Number):void {
+			_calloutY=value;
+		}
+		
+		public function get calloutY():Number {
+			return _calloutY;
+		}
+		
+		public var calloutWidthRatio:Number=.15;
+		
+		[Bindable]
+		protected var w:Number;
+		
+		[Bindable]
+		protected var h:Number;
+		
+		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void {
+			w=unscaledWidth;
+			h=unscaledHeight;
+			this.graphics.clear();
+			super.updateDisplayList(unscaledWidth,unscaledHeight);
+			ballon.draw(this.graphics,new Rectangle(0,0,w,h));
+		}
+	]]>
+</mx:Script>
+ <GeometryGroup width="{w}" height="{h}" id="myGroup">
+	 <geometry:CalloutBallon id="ballon"
+		width="{w}"
+		height="{h}"
+	 	topLeftRadius="8" topRightRadius="8" bottomLeftRadius="8" bottomRightRadius="8"
+	 	calloutX="{_calloutX}" calloutY="{h-_calloutY}"  calloutWidthRatio="{calloutWidthRatio}"
+		>
+		<geometry:fill> 
+			<degrafa:LinearGradientFill angle="90">
+				<degrafa:GradientStop color="0xEEEEEE"/>
+				<degrafa:GradientStop color="0xAAAAAA"/>
+			</degrafa:LinearGradientFill>
+		</geometry:fill>
+		<geometry:stroke><degrafa:SolidStroke color="0x999999"/></geometry:stroke>
+	</geometry:CalloutBallon>
+</GeometryGroup>
+</Surface>
