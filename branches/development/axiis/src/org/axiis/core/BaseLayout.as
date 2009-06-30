@@ -183,6 +183,7 @@ package org.axiis.core
 					_currentDatum = null;
 					_currentValue = null;
 					_currentLabel = null;
+					_currentReference = null;
 					_currentIndex = -1;
 					
 					if(parentLayout == null)
@@ -349,8 +350,16 @@ package org.axiis.core
 		
 		private function handleGeometryPropertyChange(event:PropertyChangeEvent):void
 		{
+			// For states to work in the ColumnStack, the conditional below needs to be in place,
+			// and currentReference needs to be nulled out in render. This breaks the WedgeStack though...
+			
+			var showOutput:Boolean = false;
 			if (currentIndex==itemCount-1 && this.referenceRepeater.iterationLoopComplete)
+			{
 				currentPropertySetters=this.propertySettersArrays[0]; //Grab the first one
+				//if(hasModificationForProperty(currentPropertySetters,event.source,event.property))
+				//	return;
+			}
 			
 			if(!hasModificationForProperty(originalPropertySetters,event.source,event.property))
 			{
@@ -367,10 +376,12 @@ package org.axiis.core
 			var found:Boolean = false;
 			for each(var propertySetter:PropertySetter in currentPropertySetters)
 			{
-				if(propertySetter.target == event.source && propertySetter.property == event.property)
+				if(propertySetter.target == event.source
+					&& propertySetter.property == event.property)
 				{
 					propertySetter.value = event.newValue;
 					found = true;
+					break;
 				}
 			}
 			if(!found)

@@ -108,23 +108,21 @@
 	</groupings:drawingGeometries>
 
 	<!-- FIXME THIS HINTS THAT STATES MIGHT BE BROKEN -->
-	<!--
 	<groupings:fills>
 		<degrafa:SolidFill id="rollOverFill" color="0xDDDD00" alpha=".6"/>
 	</groupings:fills>
 
 	<groupings:strokes>
-		<degrafa:SolidStroke id="rollOverStroke" weight="1" color="white"/>
+		<degrafa:SolidStroke id="rollOverStroke" weight="1" color="black"/>
 	</groupings:strokes>
 	
 	<groupings:states>
 		<states:State id="rollOverState"
 			enterStateEvent="mouseOver"
 			exitStateEvent="mouseOut"
-			targets="['myCol','myCol']"
-			properties="['fill,'stroke']"
-			values="[rollOverFill,rollOverStroke]"/>
+			targets="{[myCol,myCol]}"
+			properties="{['fill','stroke']}"
+			values="{[rollOverFill,rollOverStroke]}"/>
 	</groupings:states>
-	-->
 
 </groupings:GroupingBase>
