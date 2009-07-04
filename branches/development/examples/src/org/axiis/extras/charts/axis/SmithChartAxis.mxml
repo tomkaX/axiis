@@ -8,6 +8,7 @@
 	      
 	<mx:Script>
 		<![CDATA[
+			import mx.collections.ArrayCollection;
 			import com.degrafa.core.IGraphicsFill;
 			import mx.graphics.IFill;
 			import com.degrafa.paint.SolidStroke;
@@ -131,7 +132,8 @@
 			//ep1 - end point of the arcs going upward and downward in smith chart coordinates
 			//stroke0 - the stroke to use when drawing this arc
 			//note: all radii are scaled for a chart radius of 1000
-			private var arcData:Array = [
+			[Bindable]
+			private var arcData:ArrayCollection = new ArrayCollection( [
 				{z0:50,  r:19.60784313725486, sp0: new Complex(40,50), r1:20, sp1: new Complex(0,50), ep1: new Complex(Number.MAX_VALUE-1,0), stroke0:majorStroke},
 				{z0:40,  r:24.39024390243906, sp0: new Complex(40,50), r1:25, sp1: new Complex(0,40), ep1: new Complex(50,40), stroke0:minorStroke},
 				{z0:30,  r:32.25806451612908, sp0: new Complex(30,50), r1:33.333333333333336, sp1: new Complex(0,30), ep1: new Complex(50,30), stroke0:minorStroke},
@@ -214,7 +216,8 @@
 				{z0:0.04,r:961.5384615384614, sp0: new Complex(.04,.5), r1:25000, sp1: new Complex(0,.04), ep1: new Complex(.5,.04), stroke0:minorStroke},
 				{z0:0.03,r:970.8737864077669, sp0: new Complex(.03,.2), r1:33333.333333333336, sp1: new Complex(0,.03), ep1: new Complex(.2,.03), stroke0:minorStroke},
 				{z0:0.02,r:980.3921568627451, sp0: new Complex(.02,.5), r1:50000, sp1: new Complex(0,.02), ep1: new Complex(.5,.02), stroke0:minorStroke},
-				{z0:0.01,r:990.09900990099, sp0: new Complex(.01,.2), r1:100000, sp1: new Complex(0,.01), ep1: new Complex(.2,.01), stroke0:minorStroke},];
+				{z0:0.01,r:990.09900990099, sp0: new Complex(.01,.2), r1:100000, sp1: new Complex(0,.01), ep1: new Complex(.2,.01), stroke0:minorStroke},]
+				);
 
 			private function resistanceArcHandler(repeatCount:int, arc:EllipticalArc):void
 			{
@@ -297,12 +300,37 @@
 		</degrafa:RadialGradientFill>
 	</axis:fills>
 	
+	<axis:referenceRepeater>
+		<axiis:GeometryRepeater id="resistanceArcRepeater">
+			<axiis:geometry>
+				<degrafa:EllipticalArc/>
+			</axiis:geometry>
+			<axiis:modifiers>
+				<axiis:PropertyModifier property="x" modifier="{(scale.center+scale.chartRadius) - 2 * (arcData.getItemAt(resistanceArcRepeater.currentIteration).r*scale.chartRadius/1000)}" modifierOperator="none"/>
+				<axiis:PropertyModifier property="y" modifier="{scale.center - (arcData.getItemAt(resistanceArcRepeater.currentIteration).r*scale.chartRadius/1000)}" modifierOperator="none"/>
+				<axiis:PropertyModifier property="width" modifier="{2 * (arcData.getItemAt(resistanceArcRepeater.currentIteration).r*scale.chartRadius/1000)}" modifierOperator="none"/>
+				<axiis:PropertyModifier property="height" modifier="{2 * (arcData.getItemAt(resistanceArcRepeater.currentIteration).r*scale.chartRadius/1000)}" modifierOperator="none"/>
+				<axiis:PropertyModifier property="startAngle" modifier="0" modifierOperator="none"/>
+				<axiis:PropertyModifier property="arc" modifier="360" modifierOperator="none"/>
+				<axiis:PropertyModifier property="stroke" modifier="{arcData.getItemAt(resistanceArcRepeater.currentIteration).stroke0}" modifierOperator="none"/>
+			</axiis:modifiers>
+		</axiis:GeometryRepeater>
+	</axis:referenceRepeater>
+	
 	<axis:drawingGeometries>
+		<degrafa:EllipticalArc x="{currentReference['x']}"
+							   y="{currentReference['y']}"
+							   width="{currentReference['width']}"
+							   height="{currentReference['height']}"
+							   startAngle="{currentReference['startAngle']}"
+							   arc="{currentReference['arc']}"
+							   stroke="{currentReference['stroke']}"/>
+							   
 		<!-- background gradient -->
-		<degrafa:Circle centerX="{scale.center}" centerY="{scale.center}" radius="{scale.chartRadius}" fill="{chartBackgroundFill}"/>
-
+<!--		<degrafa:Circle centerX="{scale.center}" centerY="{scale.center}" radius="{scale.chartRadius}" fill="{chartBackgroundFill}"/>
+-->
 		<!-- outer circles -->
-		<degrafa:CircleRepeater centerX="{scale.center}"
+<!--		<degrafa:CircleRepeater centerX="{scale.center}"
 								  centerY="{scale.center}"
 								  count="3"
 								  offsetRadius="{scale.chartRadius / 27.25}"
@@ -319,28 +347,28 @@
 								x="{scale.center - scale.chartRadius}"
 								x1="{scale.center + scale.chartRadius}"
 								y="{scale.center}"/>
-
+-->
 		<!-- draw resistance component arcs -->
-		<degrafa:GeometryRepeater count="83">
+<!--		<degrafa:GeometryRepeater count="83">
 			<degrafa:modifiers>
 				<local:SmithArcModifier modifier="{resistanceArcHandler}"/>
 			</degrafa:modifiers>
 			<degrafa:EllipticalArc/>
 		</degrafa:GeometryRepeater>
-		<!-- draw inductive reactance arcs -->
-		<degrafa:GeometryRepeater count="83">
+-->		<!-- draw inductive reactance arcs -->
+<!--		<degrafa:GeometryRepeater count="83">
 			<degrafa:modifiers>
 				<local:SmithArcModifier modifier="{inductiveReactanceArcHandler}"/>
 			</degrafa:modifiers>
 			<degrafa:EllipticalArc/>
 		</degrafa:GeometryRepeater>
-		<!-- draw capacitive reactance arcs -->
-		<degrafa:GeometryRepeater count="83">
+-->		<!-- draw capacitive reactance arcs -->
+<!--		<degrafa:GeometryRepeater count="83">
 			<degrafa:modifiers>
 				<local:SmithArcModifier modifier="{capacitiveReactanceArcHandler}"/>
 			</degrafa:modifiers>
 			<degrafa:EllipticalArc/>
-		</degrafa:GeometryRepeater>
+		</degrafa:GeometryRepeater> -->
 	</axis:drawingGeometries>
-	
+
 </axis:AxisBase>
