@@ -326,28 +326,6 @@
 							   arc="{currentReference['arc']}"
 							   stroke="{currentReference['stroke']}"/>
 							   
-		<!-- background gradient -->
-<!--		<degrafa:Circle centerX="{scale.center}" centerY="{scale.center}" radius="{scale.chartRadius}" fill="{chartBackgroundFill}"/>
--->
-		<!-- outer circles -->
-<!--		<degrafa:CircleRepeater centerX="{scale.center}"
-								  centerY="{scale.center}"
-								  count="3"
-								  offsetRadius="{scale.chartRadius / 27.25}"
-								  radius="{scale.chartRadius}"
-								  stroke="{majorStroke}"/>
-		<degrafa:CircleRepeater centerX="{scale.center}"
-								  centerY="{scale.center}"
-								  count="2"
-								  offsetRadius="{scale.chartRadius / 27.25}"
-								  radius="{scale.chartRadius * 1.02}"
-								  stroke="{minorStroke}"/>
-								  
-		<degrafa:HorizontalLine stroke="{majorStroke}"
-								x="{scale.center - scale.chartRadius}"
-								x1="{scale.center + scale.chartRadius}"
-								y="{scale.center}"/>
--->
 		<!-- draw resistance component arcs -->
 <!--		<degrafa:GeometryRepeater count="83">
 			<degrafa:modifiers>

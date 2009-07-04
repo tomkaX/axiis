@@ -37,6 +37,7 @@
 
 	<mx:Script>
 		<![CDATA[
+			import com.degrafa.paint.SolidStroke;
 			import com.vizsage.as3mathlib.math.alg.Complex;
 			import mx.collections.ArrayCollection;
 			
@@ -119,6 +120,12 @@
 				new Complex(42.56, 1.650)
 			  ]	]
 			);
+			
+			[Bindable]
+			public var majorStroke:SolidStroke = new SolidStroke("#555555", .75, 1);
+			[Bindable]
+			private var minorStroke:SolidStroke = new SolidStroke("#999999", .75, 1);
+			
 		]]>
 	</mx:Script>
 	
@@ -143,6 +150,36 @@
 		showDataTips="false">
 	
 		<axiis:backgroundGeometries>
+			<degrafa:RadialGradientFill id="gradientFill" angle="0" focalPointRatio="1">
+				<degrafa:GradientStop alpha=".25" color="#ff0000" ratio="0"/>
+				<degrafa:GradientStop alpha=".25" color="#ffff00" ratio=".25"/>
+				<degrafa:GradientStop alpha=".25" color="#00ff00" ratio=".5"/>
+				<degrafa:GradientStop alpha=".25" color="#00ffff" ratio=".85"/>
+				<degrafa:GradientStop alpha=".25" color="#0000ff" ratio="1"/>
+			</degrafa:RadialGradientFill>
+
+			<!-- background gradient -->
+			<degrafa:Circle centerX="{sc_scale.center}" centerY="{sc_scale.center}" radius="{sc_scale.chartRadius}" fill="{gradientFill}"/>
+	
+			<!-- outer circles -->
+			<degrafa:CircleRepeater centerX="{sc_scale.center}"
+									  centerY="{sc_scale.center}"
+									  count="3"
+									  offsetRadius="{sc_scale.chartRadius / 27.25}"
+									  radius="{sc_scale.chartRadius}"
+									  stroke="{majorStroke}"/>
+			<degrafa:CircleRepeater centerX="{sc_scale.center}"
+									  centerY="{sc_scale.center}"
+									  count="2"
+									  offsetRadius="{sc_scale.chartRadius / 27.25}"
+									  radius="{sc_scale.chartRadius * 1.02}"
+									  stroke="{minorStroke}"/>
+									  
+			<degrafa:HorizontalLine stroke="{majorStroke}"
+									x="{sc_scale.center - sc_scale.chartRadius}"
+									x1="{sc_scale.center + sc_scale.chartRadius}"
+									y="{sc_scale.center}"/>
+		
 			<axis:SmithChartAxis id="sc_axis" scale="{sc_scale}" width="{dc.width}" height="{dc.height}"/>
 		</axiis:backgroundGeometries>
 
