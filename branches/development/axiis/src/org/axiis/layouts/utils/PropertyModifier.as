@@ -181,8 +181,10 @@ package org.axiis.layouts.utils
 						temp = modifier[iteration % modifier.length];
 					else if (modifier is Function)
 						temp = modifier(iteration,target[property]);
-					else
+					else if (modifier is Number)
 						temp = Number(modifier);
+					else
+						temp = Object(modifier);
 					target[property] = temp;
 				}
 				else if(_iteration > 0)
