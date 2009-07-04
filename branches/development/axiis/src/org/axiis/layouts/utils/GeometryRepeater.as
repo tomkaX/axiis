@@ -73,9 +73,14 @@ package org.axiis.layouts.utils
 		 * The number of iterations that the GeometryRepeater has processed.
 		 * When the GeometryRepeater is not running, this value is -1.
 		 */
+		[Bindable]
 		public function get currentIteration():int
 		{
 			return _currentIteration;
+		}
+		private function set currentIteration(value:int):void
+		{
+			_currentIteration = value;
 		}
 		private var _currentIteration:int = -1;
 		
@@ -119,7 +124,7 @@ package org.axiis.layouts.utils
 			
 			_iterationLoopComplete = false;
 			clearTimeout(timerID);
-			_currentIteration = 0;
+			currentIteration = 0;
 			repeatHelper(numIterations,preIterationCallback,postIterationCallback,completeCallback);
 		}
 		
@@ -146,7 +151,7 @@ package org.axiis.layouts.utils
 						modifier.apply();
 					}
 				}
-				_currentIteration++;
+				currentIteration++;
 				
 				if (postIterationCallback != null)
 					postIterationCallback.call(this);
