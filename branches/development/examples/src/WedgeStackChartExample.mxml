@@ -32,7 +32,7 @@
 	xmlns:Examples="Examples.*"
 	backgroundGradientColors="[0xDDDDDD,0xF5F5F5]"
 	layout="absolute"
-	creationComplete="start();" viewSourceURL="srcview/index.html">
+	creationComplete="start();" viewSourceURL="srcview/index.html" xmlns:debug="org.axiis.debug.*">
  
 	<mx:Script>
 		<![CDATA[
@@ -130,8 +130,8 @@
 	<axiis:DataCanvas id="dc"
 		width="{boundsRadius.value}"
 		height="{boundsRadius.value}"
-		verticalCenter="0"
 		horizontalCenter="0"
+		verticalCenter="0"
 		showDataTips="false">
 		<axiis:layouts>
 			<!-- wedgeLayout:  This renders the inner ring of wedges -->
@@ -195,7 +195,7 @@
 									<degrafa:SolidFill color="0xFFFFFF"/>
 								</degrafa:fill>
 								<degrafa:transform>
-									<degrafa:RotateTransform registrationPoint="topRight" angle="{(transposeLabel(wedgeLayout.currentReference)==true) ? 180:0}"/>
+									<degrafa:RotateTransform registrationPoint="topRight" angle="{(transposeLabel(wedgeLayout.currentReference)) ? 180:0}"/>
 								</degrafa:transform>
 							</degrafa:RasterText>
 						</degrafa:geometry>
@@ -261,14 +261,14 @@
 										right="0"
 										width="{outerRadius.value}"
 										align="right"
-										textColor="{outerWedgePalette.currentColor}">
+										textColor="0">
 										<degrafa:transform>
-											<degrafa:RotateTransform registrationPoint="topRight" angle="{(transposeLabel(outerWedgeLayout.currentReference)==true) ? 180:0}"/>
+											<degrafa:RotateTransform registrationPoint="topRight" angle="{(transposeLabel(outerWedgeLayout.currentReference) ? 180:0) + 1}"/>
 										</degrafa:transform>
 									</degrafa:RasterText>
 								</degrafa:geometry>
 								<degrafa:transform>
-									<degrafa:RotateTransform angle="{outerWedgeLayout.currentReference['startAngle'] + outerWedgeLayout.currentReference['arc']/2+((transposeLabel(outerWedgeLayout.currentReference)==true) ? 3:-3)}" registrationPoint="topLeft"/>
+									<degrafa:RotateTransform angle="{outerWedgeLayout.currentReference['startAngle'] + outerWedgeLayout.currentReference['arc']/2+((transposeLabel(outerWedgeLayout.currentReference)) ? 3:-3)}" registrationPoint="topLeft"/>
 								</degrafa:transform>
 							</degrafa:RegularRectangle>
 
