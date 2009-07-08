@@ -26,17 +26,13 @@
 package org.axiis.core
 {
 	import com.degrafa.geometry.Geometry;
+	import com.degrafa.transform.RotateTransform;
 	
 	import flash.events.Event;
 	import flash.geom.Rectangle;
 	import flash.utils.getTimer;
 	
 	import mx.events.PropertyChangeEvent;
-	
-	import org.axiis.core.AbstractLayout;
-	import org.axiis.core.AxiisSprite;
-	import org.axiis.core.ILayout;
-	import org.axiis.core.PropertySetter;
 	
 	// TODO This event should be moved to AbstractLayout
 	/**
@@ -350,26 +346,23 @@ package org.axiis.core
 		
 		private function handleGeometryPropertyChange(event:PropertyChangeEvent):void
 		{
-			// For states to work in the ColumnStack, the conditional below needs to be in place,
-			// and currentReference needs to be nulled out in render. This breaks the WedgeStack though...
-			
-			var showOutput:Boolean = false;
 			if (currentIndex==itemCount-1 && this.referenceRepeater.iterationLoopComplete)
 			{
-				currentPropertySetters=this.propertySettersArrays[0]; //Grab the first one
-				//if(hasModificationForProperty(currentPropertySetters,event.source,event.property))
-				//	return;
+				currentPropertySetters = propertySettersArrays[0]; //Grab the first one
+				if(hasModificationForProperty(currentPropertySetters,event.source,event.property))
+				{
+					//trace("returning")
+					return;
+				}
 			}
 			
 			if(!hasModificationForProperty(originalPropertySetters,event.source,event.property))
 			{
 				var oldPropertySetter:PropertySetter = new PropertySetter(event.source,event.property,event.oldValue);
 				originalPropertySetters.push(oldPropertySetter);
-				var i:int = 0;
 				for each(var arr:Array in propertySettersArrays)
 				{
 					arr.push(oldPropertySetter.clone());
-					i++
 				}
 			}
 			
@@ -379,6 +372,8 @@ package org.axiis.core
 				if(propertySetter.target == event.source
 					&& propertySetter.property == event.property)
 				{
+					//if(currentIndex == 2)
+					//	trace(currentIndex,"OLD",event.property,event.newValue)
 					propertySetter.value = event.newValue;
 					found = true;
 					break;
@@ -386,6 +381,8 @@ package org.axiis.core
 			}
 			if(!found)
 			{
+				//if(currentIndex == 2)
+				//	trace(currentIndex,"OLD",event.property,event.newValue)
 				var newPropertySetter:PropertySetter = new PropertySetter(event.source,event.property,event.newValue);
 				currentPropertySetters.push(newPropertySetter);
 			}

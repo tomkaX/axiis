@@ -332,8 +332,10 @@ package org.axiis.core
 		 */
 		public function render():void
 		{
+			//trace(this)
 			for each(var modification:PropertySetter in revertingModifications)
 			{
+				//trace(modification.property,modification.value)
 				modification.apply();
 			}
 			

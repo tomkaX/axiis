@@ -490,7 +490,7 @@ package org.axiis
 		        var sm:ISystemManager = context ?
 		                                          context.systemManager as ISystemManager:
 		                                          ApplicationGlobals.application.systemManager as ISystemManager;
-		       	sm.topLevelSystemManager.addChildToSandboxRoot("toolTipChildren", toolTip as DisplayObject);
+		       	//sm.topLevelSystemManager.addChildToSandboxRoot("toolTipChildren", toolTip as DisplayObject);
 		
 		        if (errorTipBorderStyle)
 		        {
@@ -529,7 +529,7 @@ package org.axiis
 		    private function destroyToolTip(toolTip:IToolTip):void
 		    {
 		        var sm:ISystemManager = toolTip.systemManager as ISystemManager;
-		       	sm.topLevelSystemManager.removeChildFromSandboxRoot("toolTipChildren", DisplayObject(toolTip));
+		       	//sm.topLevelSystemManager.removeChildFromSandboxRoot("toolTipChildren", DisplayObject(toolTip));
 		
 		        // hide effect?
 		    }

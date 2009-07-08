@@ -636,7 +636,7 @@ package org.axiis.core
 				dispatchEvent(new Event("layoutsChange"));
 			}
 		}
-		private var _layouts:Array;
+		private var _layouts:Array = [];
 		
 		//I hate to put yet another function in here, but I think we want a default data tip function
 		private function dataTipFunction(data:Object):String

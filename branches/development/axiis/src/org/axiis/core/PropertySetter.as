@@ -53,5 +53,10 @@ package org.axiis.core
 		{
 			return new PropertySetter(target,property,value);
 		}
+		
+		public function toString():String
+		{
+			return target + '["'+property+'"] = ' + value;
+		}
 	}
 }
