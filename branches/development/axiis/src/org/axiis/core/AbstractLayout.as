@@ -29,14 +29,16 @@ package org.axiis.core
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.getTimer;
 	
 	import mx.collections.ArrayCollection;
+	import mx.core.IFactory;
 	
 	import org.axiis.DataCanvas;
 	import org.axiis.layouts.utils.GeometryRepeater;
-	
+
 	// TODO To keep this as abstract as possible, we could make this not officially implement the interface
 	/**
 	 * AbstractLayout is an base class that provides basic implementations or
@@ -248,6 +250,7 @@ package org.axiis.core
 				_dataProvider = value;
 				
 				invalidateDataProvider();
+				invalidate();
 				
 				dispatchEvent(new Event("dataProviderChange"));
 				
@@ -407,7 +410,7 @@ package org.axiis.core
 		 */
 		public function get currentLabel():String
 		{
-			if (owner.labelFunction !=null && labelField)
+			if (owner && owner.labelFunction != null && labelField)
 				return owner.labelFunction.call(this,_currentDatum[labelField],_currentDatum);
 			else
 				return _currentLabel;
@@ -807,6 +810,43 @@ package org.axiis.core
 			return __rendering;
 		}
 		private var __rendering:Boolean = false;
+		
+		[Bindable(event="dataTipAnchorPointChange")]
+		/**
+		 * TODO Document dataTipAnchorPoint
+		 */
+		public function get dataTipAnchorPoint():Point
+		{
+			return _dataTipAnchorPoint;
+		}
+		public function set dataTipAnchorPoint(value:Point):void
+		{
+			if(value != _dataTipAnchorPoint)
+			{
+				_dataTipAnchorPoint = value;
+				invalidate();
+				dispatchEvent(new Event("dataTipAnchorPointChange"));
+			}
+		}
+		private var _dataTipAnchorPoint:Point;
+
+		[Bindable(event="dataTipContentClassChange")]
+		/**
+		 * TODO Document dataTipContentClass
+		 */
+		public function get dataTipContentClass():IFactory
+		{
+			return _dataTipContentClass;
+		}
+		public function set dataTipContentClass(value:IFactory):void
+		{
+			if(value != _dataTipContentClass)
+			{
+				_dataTipContentClass = value;
+				dispatchEvent(new Event("dataTipContentClassChange"));
+			}
+		}
+		private var _dataTipContentClass:IFactory;
 
 	}
 }

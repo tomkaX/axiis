@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<degrafa:GeometryGroup xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:degrafa="http://www.degrafa.com/2007" xmlns:geometry="com.degrafa.geometry.*">
+	<mx:Script>
+		<![CDATA[
+			public var calloutWidthRatio:Number;
+			
+			public var calloutX:Number = 0;
+			
+			public var calloutY:Number = 0;
+		]]>
+	</mx:Script>
+	<geometry:CalloutBalloon id="ballon"
+		width="{width}"
+		height="{height}"
+	 	topLeftRadius="8" topRightRadius="8" bottomLeftRadius="8" bottomRightRadius="8"
+	 	calloutX="{calloutX}" calloutY="{height-calloutY}"  calloutWidthRatio="{calloutWidthRatio}">
+		<geometry:fill> 
+			<degrafa:LinearGradientFill angle="90">
+				<degrafa:GradientStop color="0xEEEEEE"/>
+				<degrafa:GradientStop color="0xAAAAAA"/>
+			</degrafa:LinearGradientFill>
+		</geometry:fill>
+		<geometry:stroke>
+			<degrafa:SolidStroke color="0x999999"/>
+		</geometry:stroke>
+	</geometry:CalloutBalloon>	
+</degrafa:GeometryGroup>

@@ -29,7 +29,9 @@ package org.axiis.core
 	
 	import flash.display.Sprite;
 	import flash.events.IEventDispatcher;
-	import flash.geom.Rectangle;
+	import flash.geom.Point;
+	
+	import mx.core.IFactory;
 	
 	import org.axiis.DataCanvas;
 	import org.axiis.layouts.utils.GeometryRepeater;
@@ -204,7 +206,6 @@ package org.axiis.core
 		 */
 		function get currentDatum():Object
 		
-		// TODO Determine if this needs to be in the interface
 		/**
 		 * The value of the item in the dataProvider that the layout is
 		 * currently rendering, as determined by taking currentDatum[dataField],
@@ -212,7 +213,6 @@ package org.axiis.core
 		 */
 		function get currentValue():Object;
 		
-		// TODO Determine if this needs to be in the interface
 		/**
 		 * The label of the item in the dataProvider that the layout is
 		 * currently rendering, as determine by taking currentDatum[labelField],
@@ -253,5 +253,10 @@ package org.axiis.core
 		 * @param sprite The AxiisSprite this layout should render to.
 		 */
 		function render(sprite:AxiisSprite = null):void;
+		
+		function set dataTipAnchorPoint(value:Point):void;
+		function get dataTipAnchorPoint():Point;
+		function set dataTipContentClass(value:IFactory):void;
+		function get dataTipContentClass():IFactory
 	}
 }

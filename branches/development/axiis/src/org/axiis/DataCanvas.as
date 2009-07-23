@@ -43,7 +43,10 @@ package org.axiis
 	
 	import org.axiis.core.AxiisSprite;
 	import org.axiis.core.ILayout;
+	import org.axiis.managers.AnchoredDataTipManager;
+	import org.axiis.managers.FreeDataTipManager;
 	import org.axiis.ui.DataTip;
+	import org.axiis.ui.DataTip2;
 	
 	/**
 	 * DataCanvas manages the placement and the rendering of layouts.
@@ -315,7 +318,32 @@ package org.axiis
 			if(!axiisSprite)
 				return;
 			
-			if(axiisSprite.layout)
+			//var dataTip:DataTip = new DataTip();
+			var dataTip:DataTip2 = new DataTip2();
+			//dataTip.calloutX = -10;
+			//dataTip.calloutY = -10;
+			//dataTip.calloutWidthRatio = .3;
+			dataTip.data = axiisSprite.data;
+			dataTip.label = axiisSprite.label;
+			dataTip.value = axiisSprite.value;
+			dataTip.index = axiisSprite.index;
+			dataTip.contentFactory = axiisSprite.dataTipContentClass;
+			
+			if(axiisSprite.dataTipAnchorPoint)
+			{
+				var anchorPoint:Point = axiisSprite.localToGlobal(axiisSprite.dataTipAnchorPoint);
+				anchorPoint = globalToLocal(anchorPoint);
+				
+				var anchoredDataTipManager:AnchoredDataTipManager = new AnchoredDataTipManager();
+				anchoredDataTipManager.createDataTip(dataTip,this,axiisSprite);
+			}
+			else
+			{
+				var freeDataTipManager:FreeDataTipManager = new FreeDataTipManager();
+				freeDataTipManager.createDataTip(dataTip,this,axiisSprite);
+			}
+			
+			/*if(axiisSprite.layout)
 			{
 				if(showDataTips && axiisSprite.layout.dataTipLabelFunction != null)
 				{
@@ -327,7 +355,7 @@ package org.axiis
 					if(doToolTipsOverlap())
 						repositionToolTips();
 				}
-			}
+			}*/
 		}
 		
 		/**
@@ -342,7 +370,6 @@ package org.axiis
 			while(toolTips.length > 0)
 			{
 				var tt:IToolTip = IToolTip(toolTips.pop());
-				//ToolTipManager.destroyToolTip(tt);
 				destroyToolTip(tt);
 				tt = null;
 			}	

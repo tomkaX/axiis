@@ -47,16 +47,9 @@ package org.axiis.layouts.scale
 				validate();
 				
 			var per:Number= getPercentageBetweenValues(Number(value),Number(minValue),Number(maxValue));
-		
 			per = Math.max(0,Math.min(1.0,per));
-			
-		
-			
-			//trace("value to Layout " + value + " --> " + (percentage * (maxLayout - minLayout) + minLayout).toString());
-			
-			if  (invert)
+			if(invert)
 				per=1-per;
-
 			return (maxLayout-minLayout)*per + minLayout;
 		}
 		

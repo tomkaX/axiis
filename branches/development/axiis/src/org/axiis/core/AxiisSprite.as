@@ -30,9 +30,11 @@ package org.axiis.core
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
 	import mx.core.FlexSprite;
+	import mx.core.IFactory;
 	import mx.core.UIComponent;
 	import mx.events.ToolTipEvent;
 	
@@ -49,13 +51,29 @@ package org.axiis.core
 		 */
 		public function AxiisSprite()
 		{
-			super(); var t:MouseEvent
-			this.addEventListener(MouseEvent.MOUSE_OVER,onMouseOver);
+			super();
+			addEventListener(MouseEvent.MOUSE_OVER,onMouseOver);
 		}
 		
 		private var eventListeners:Array = [];
 
 		private var activeStates:Array = [];
+		
+		/**
+		 * TODO Document dataTipAnchorPoint
+		 */
+		public var dataTipAnchorPoint:Point;
+		
+		/**
+		 * TODO Document dataTipContentClass
+		 */
+		public var dataTipContentClass:IFactory;
+		
+		public var label:String;
+		
+		public var value:Object;
+		
+		public var index:int;
 		
 		/**
 		 * The data that this AxiisSprite's geometries represent.

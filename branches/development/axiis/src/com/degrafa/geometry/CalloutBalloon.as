@@ -3,7 +3,7 @@ package com.degrafa.geometry
 	import com.degrafa.geometry.command.CommandStackItem;
 	
 	[Bindable]
-	public class CalloutBallon extends RoundedRectangleComplex
+	public class CalloutBalloon extends RoundedRectangleComplex
 	{
 		private var _calloutY:Number;
 		/**
@@ -54,7 +54,7 @@ package com.degrafa.geometry
 		}	
 		
 		
-		public function CalloutBallon()
+		public function CalloutBalloon()
 		{
 		}
 		
@@ -111,26 +111,26 @@ package com.degrafa.geometry
 			
 			if (calloutAngle<=bottomRightAngle && calloutAngle>=topRightAngle) {
 			
-				trace("RIGHT SIDE");
+				//trace("RIGHT SIDE");
 				line=this.rightLine;
 				w=height-topRightRadius-bottomRightRadius;
 				angleRatio=(bottomRightAngle-calloutAngle)/(bottomRightAngle-topRightAngle);
 				
 			}
 			else if (calloutAngle<=topRightAngle && calloutAngle>=topLeftAngle) {
-				trace("TOP SIDE");
+				//trace("TOP SIDE");
 				line=this.topLine;
 				w=width-topRightRadius-topLeftRadius;
 				angleRatio=(topRightAngle-calloutAngle)/(topRightAngle-topLeftAngle);
 			}
 			else if (calloutAngle<=topLeftAngle && calloutAngle >=bottomLeftAngle) {
-				trace("LEFT SIDE");
+				//trace("LEFT SIDE");
 				line=this.leftLine;
 				w=height-this.topLeftRadius-this.bottomRightRadius;
 				angleRatio=(topLeftAngle-calloutAngle)/(topLeftAngle-bottomLeftAngle);
 			}
 			else  {
-				trace("BOTTOM SIDE");
+				//trace("BOTTOM SIDE");
 				line=this.bottomLine;
 				w=width-this.bottomLeftRadius-this.bottomRightRadius;
 				var ca:Number= (calloutAngle>=bottomRightAngle) ? calloutAngle-bottomRightAngle: (360-bottomRightAngle) + calloutAngle;
@@ -138,7 +138,7 @@ package com.degrafa.geometry
 
 			}
 			
-			trace("topLeftAngle=" + topLeftAngle + " topRightAngle=" + topRightAngle + " bottomRightAngle=" + bottomRightAngle + " bottomLeftAngle=" + bottomLeftAngle + " calloutAngle=" + calloutAngle + " angleRatio=" + angleRatio);
+			//trace("topLeftAngle=" + topLeftAngle + " topRightAngle=" + topRightAngle + " bottomRightAngle=" + bottomRightAngle + " bottomLeftAngle=" + bottomLeftAngle + " calloutAngle=" + calloutAngle + " angleRatio=" + angleRatio);
 			
 			var i:int=0;
 			var previousItem:CommandStackItem;

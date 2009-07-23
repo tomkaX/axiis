@@ -26,12 +26,12 @@
 package org.axiis.core
 {
 	import com.degrafa.geometry.Geometry;
-	import com.degrafa.transform.RotateTransform;
 	
 	import flash.events.Event;
 	import flash.geom.Rectangle;
 	import flash.utils.getTimer;
 	
+	import mx.core.IFactory;
 	import mx.events.PropertyChangeEvent;
 	
 	// TODO This event should be moved to AbstractLayout
@@ -102,6 +102,12 @@ package org.axiis.core
 		 * bounds set to the currentReference of the parent layout.
 		 */
 		public var inheritParentBounds:Boolean = true;
+		
+		override public function set dataTipContentClass(value:IFactory) : void
+		{
+			super.dataTipContentClass = value;
+			invalidate();
+		}
 		
 		/**
 		 * @private
@@ -208,7 +214,7 @@ package org.axiis.core
 			if (dataField)
 				_currentValue = getProperty(_currentDatum,dataField);
 			else
-				_currentValue=_currentDatum;
+				_currentValue= _currentDatum;
 				
 			if (labelField)
 				_currentLabel = getProperty(_currentDatum,labelField).toString();
@@ -235,6 +241,9 @@ package org.axiis.core
 			}
 			var currentChild:AxiisSprite = AxiisSprite(sprite.drawingSprites[currentIndex]);
 			currentChild.data = currentDatum;
+			currentChild.label = currentLabel;
+			currentChild.value = currentValue;
+			currentChild.index = currentIndex;
 			
 			dispatchEvent(new Event("itemPreDraw"));
 			
@@ -245,6 +254,8 @@ package org.axiis.core
 			currentChild.geometries = drawingGeometries;
 			currentChild.states = states;
 			currentChild.revertingModifications = [];
+			currentChild.dataTipAnchorPoint = dataTipAnchorPoint == null ? null : dataTipAnchorPoint.clone();
+			currentChild.dataTipContentClass = dataTipContentClass;
 			currentChild.render();
 			
 			renderChildLayouts(currentChild);
