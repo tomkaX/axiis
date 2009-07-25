@@ -33,7 +33,9 @@
 	xmlns:Examples="Examples.*"
 	backgroundGradientColors="[0xDDDDDD,0xF5F5F5]"
 	layout="absolute"
-	viewSourceURL="srcview/index.html" xmlns:axis="org.axiis.extras.charts.axis.*">
+	viewSourceURL="srcview/index.html"
+	xmlns:axis="org.axiis.extras.charts.axis.*"
+	xmlns:chartextra="org.axiis.extras.charts.*">
 
 	<mx:Script>
 		<![CDATA[
@@ -44,92 +46,44 @@
 			[Bindable]
 			private var impedanceData:ArrayCollection = new ArrayCollection(
 			[ [
-				new Complex(53.72, 12.175),
-				new Complex(53.21, 11.203),
-				new Complex(52.76, 10.255),
-				new Complex(52.34, 9.332), 
-				new Complex(51.97, 8.432), 
-				new Complex(51.65, 7.555), 
-				new Complex(51.32, 6.674), 
-				new Complex(51.04, 5.817), 
-				new Complex(50.81, 4.986), 
-				new Complex(50.61, 4.183), 
-				new Complex(50.45, 3.411), 
-				new Complex(50.30, 2.646), 
-				new Complex(50.18, 1.919), 
-				new Complex(50.10, 1.235), 
-				new Complex(50.04, 0.595), 
-				new Complex(50.00, 0.001), 
-				new Complex(49.95, 0.569), 
-				new Complex(49.91, 1.094), 
-				new Complex(49.86, 1.577), 
-				new Complex(49.80, 2.024), 
-				new Complex(49.73, 2.441), 
-				new Complex(49.62, 2.851), 
-				new Complex(49.51, 3.241), 
-				new Complex(49.38, 3.617), 
-				new Complex(49.24, 3.982), 
-				new Complex(49.08, 4.338), 
-				new Complex(48.91, 4.698), 
-				new Complex(48.73, 5.049), 
-				new Complex(48.54, 5.391), 
-				new Complex(48.35, 5.720), 
-				new Complex(48.15, 6.036), 
-				new Complex(47.93, 6.347), 
-				new Complex(47.69, 6.639), 
-				new Complex(47.44, 6.906), 
-				new Complex(47.17, 7.146), 
-				new Complex(46.87, 7.353)
+				new Complex(44.38, 29.454),
+				new Complex(55.19, 19.534),
+				new Complex(50.00, -0.001),
+				new Complex(47.57, 2.307),
+				new Complex(78.16, -22.233)
 			  ],
 			  [
-				new Complex(63.15, 4.194),
-				new Complex(62.11, 3.460),
-				new Complex(61.07, 2.815),
-				new Complex(60.06, 2.255),
-				new Complex(59.06, 1.773),
-				new Complex(58.09, 1.365),
-				new Complex(57.11, 0.988),
-				new Complex(56.16, 0.682),
-				new Complex(55.25, 0.442),
-				new Complex(54.37, 0.262),
-				new Complex(53.54, 0.136),
-				new Complex(52.73, 0.035),
-				new Complex(51.96, 0.019),
-				new Complex(51.25, 0.037),
-				new Complex(50.60, 0.027),
-				new Complex(50.00, 0.000),
-				new Complex(49.43, 0.022),
-				new Complex(48.91, 0.045),
-				new Complex(48.44, 0.062),
-				new Complex(48.00, 0.067),
-				new Complex(47.60, 0.058),
-				new Complex(47.20, 0.022),
-				new Complex(46.81, 0.027),
-				new Complex(46.44, 0.090),
-				new Complex(46.08, 0.162),
-				new Complex(45.73, 0.244),
-				new Complex(45.37, 0.342),
-				new Complex(45.01, 0.445),
-				new Complex(44.67, 0.552),
-				new Complex(44.34, 0.665),
-				new Complex(44.01, 0.784),
-				new Complex(43.69, 0.921),
-				new Complex(43.38, 1.070),
-				new Complex(43.09, 1.236),
-				new Complex(42.82, 1.426),
-				new Complex(42.56, 1.650)
+				new Complex(27.06, 4.694),
+				new Complex(35.66, 7.627),
+				new Complex(50.00, -0.001),
+				new Complex(47.36, -2.050),
+				new Complex(59.96, 29.805)
 			  ]	]
 			);
-			
-			[Bindable]
-			public var majorStroke:SolidStroke = new SolidStroke("#555555", .75, 1);
-			[Bindable]
-			private var minorStroke:SolidStroke = new SolidStroke("#999999", .75, 1);
 			
 		]]>
 	</mx:Script>
 	
 	<mx:Style source="styles/Axiis_Examples.css"/>
+	
+	<mx:ArrayCollection id="dataFills">
+		<mx:Array>
+			<degrafa:LinearGradientFill angle="90">
+	            <degrafa:GradientStop ratio="0" alpha=".85" color="#000099"/>
+	            <degrafa:GradientStop ratio="1" alpha=".85" color="#9999ff"/>
+			</degrafa:LinearGradientFill>
+			<degrafa:LinearGradientFill angle="90">
+	            <degrafa:GradientStop ratio="0" alpha=".85" color="#990000"/>
+	            <degrafa:GradientStop ratio="1" alpha=".85" color="#ff9999"/>
+			</degrafa:LinearGradientFill>
+		</mx:Array>
+	</mx:ArrayCollection>
+	<mx:ArrayCollection id="lineColors">
+		<mx:Array>
+			<mx:String>#000099</mx:String>
+			<mx:String>#990000</mx:String>
+		</mx:Array>
+	</mx:ArrayCollection>
 	
 	<!-- Common calculations used by geometries -->
 	<axiis:NumericExpression id="boundsRadius" value="{Math.min(this.height,this.width)}"/>
@@ -141,58 +95,15 @@
 	<scale:SmithChartScale id="sc_scale" z0="{new Complex(50,0)}" maxLayout="{boundsRadius.value}"/>
 	
 	<!-- Data Canvas that holds our geometries -->
-	<axiis:DataCanvas id="dc"
+	<chartextra:SmithChart id="sc" 
 		width="{boundsRadius.value}"
 		height="{boundsRadius.value}"
+		sc_scale="{sc_scale}"
+		impedanceData="{impedanceData}"
+		dataFills="{dataFills}"
+		lineColors="{lineColors}"
 		
 		verticalCenter="0"
 		horizontalCenter="0"
-		showDataTips="false">
-	
-		<axiis:backgroundGeometries>
-			<degrafa:RadialGradientFill id="gradientFill" angle="0" focalPointRatio="1">
-				<degrafa:GradientStop alpha=".25" color="#ff0000" ratio="0"/>
-				<degrafa:GradientStop alpha=".25" color="#ffff00" ratio=".25"/>
-				<degrafa:GradientStop alpha=".25" color="#00ff00" ratio=".5"/>
-				<degrafa:GradientStop alpha=".25" color="#00ffff" ratio=".85"/>
-				<degrafa:GradientStop alpha=".25" color="#0000ff" ratio="1"/>
-			</degrafa:RadialGradientFill>
-
-			<!-- background gradient -->
-			<degrafa:Circle centerX="{sc_scale.center}" centerY="{sc_scale.center}" radius="{sc_scale.chartRadius}" fill="{gradientFill}"/>
-	
-			<!-- outer circles -->
-			<degrafa:CircleRepeater centerX="{sc_scale.center}"
-									  centerY="{sc_scale.center}"
-									  count="3"
-									  offsetRadius="{sc_scale.chartRadius / 27.25}"
-									  radius="{sc_scale.chartRadius}"
-									  stroke="{majorStroke}"/>
-			<degrafa:CircleRepeater centerX="{sc_scale.center}"
-									  centerY="{sc_scale.center}"
-									  count="2"
-									  offsetRadius="{sc_scale.chartRadius / 27.25}"
-									  radius="{sc_scale.chartRadius * 1.02}"
-									  stroke="{minorStroke}"/>
-									  
-			<degrafa:HorizontalLine stroke="{majorStroke}"
-									x="{sc_scale.center - sc_scale.chartRadius}"
-									x1="{sc_scale.center + sc_scale.chartRadius}"
-									y="{sc_scale.center}"/>
-		
-			<axis:SmithChartResistanceAxis id="sc_res_axis" scale="{sc_scale}" width="{dc.width}" height="{dc.height}"/>
-			<axis:SmithChartIndReactanceAxis id="sc_ind_rea_axis" scale="{sc_scale}" width="{dc.width}" height="{dc.height}"/>
-			<axis:SmithChartCapReactanceAxis id="sc_cap_rea_axis" scale="{sc_scale}" width="{dc.width}" height="{dc.height}"/>
-		</axiis:backgroundGeometries>
-
-<!--		<axiis:layouts>
-			<axiis:AbsoluteLayout id="smithChartLayout" 
-				dataProvider="{impedanceData}"
-				width="{dc.width}"
-				height="{dc.width}">
-			</axiis:AbsoluteLayout>
-		</axiis:layouts>
--->		
-	</axiis:DataCanvas>
-	
+		showDataTips="false"/>
 </mx:Application>

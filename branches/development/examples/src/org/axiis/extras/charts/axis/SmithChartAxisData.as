@@ -33,7 +33,7 @@ package org.axiis.extras.charts.axis
 	public class SmithChartAxisData
 	{
 		public static var majorStroke:SolidStroke = new SolidStroke("#555555", .75, 1);
-		public static var minorStroke:SolidStroke = new SolidStroke("#999999", .75, 1);
+		public static var minorStroke:SolidStroke = new SolidStroke("#777777", .75, 1);
 
 		//z0  - resistance
 		//r   - arc radius for circles radiating out leftward
