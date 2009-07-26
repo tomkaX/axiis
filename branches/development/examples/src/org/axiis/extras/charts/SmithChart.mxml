@@ -26,7 +26,8 @@
 <DataCanvas xmlns="org.axiis.*" 
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
 	xmlns:degrafa="http://www.degrafa.com/2007"
-	xmlns:axis="org.axiis.extras.charts.axis.*" xmlns:axiis="http://www.axiis.org/2009">
+	xmlns:axis="org.axiis.extras.charts.axis.*"
+	xmlns:axiis="http://www.axiis.org/2009">
 	
 	<mx:Script>
 		<![CDATA[
@@ -122,7 +123,7 @@
 			//returns the stroke for a given line
 			private function lineStrokeModifier(iterationCount:int, value:SolidStroke):SolidStroke
 			{
-				value.color = lineColors[impedanceLayout.currentIndex];
+				value.color = lineColors[impedanceLineLayout.currentIndex];
 				return value;
 			}
 			
@@ -167,8 +168,9 @@
 
 	<layouts>
 		<!-- impedanceLayout iterates on each complete set of impedances -->
-		<axiis:AbsoluteLayout id="impedanceLayout"
+		<axiis:AbsoluteLayout id="impedanceLineLayout"
 			dataProvider="{impedanceData}"
+			emitDataTips="false"
 			width="{this.width}"
 			height="{this.height}">
 			
@@ -176,7 +178,7 @@
 				
 				<!-- smithChartLineLayout iterates on each impedance data point and draws connecting lines -->
 				<axiis:AbsoluteLayout id="smithChartLineLayout"
-					dataProvider="{impedanceLayout.currentDatum}"
+					dataProvider="{impedanceLineLayout.currentDatum}"
 					inheritParentBounds="false"
 					width="{this.width}"
 					height="{this.width}">
@@ -207,7 +209,17 @@
 									  stroke="{Line(smithChartLineLayout.currentReference).stroke}"/>
 					</axiis:drawingGeometries>
 				</axiis:AbsoluteLayout>
-							
+			</axiis:layouts>
+		</axiis:AbsoluteLayout>
+				
+		<!-- impedanceLayout iterates on each complete set of impedances -->
+		<axiis:AbsoluteLayout id="impedanceLayout"
+			dataProvider="{impedanceData}"
+			emitDataTips="true"
+			width="{this.width}"
+			height="{this.height}">
+			
+			<axiis:layouts>
 				<!-- smithChartLayout iterates on each impedance data point -->
 				<axiis:AbsoluteLayout id="smithChartLayout"
 					dataProvider="{impedanceLayout.currentDatum}"
