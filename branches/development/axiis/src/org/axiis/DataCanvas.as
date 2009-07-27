@@ -324,7 +324,10 @@ package org.axiis
 			//dataTip.calloutY = -10;
 			//dataTip.calloutWidthRatio = .3;
 			dataTip.data = axiisSprite.data;
-			dataTip.label = axiisSprite.label;
+			if(axiisSprite.layout.dataTipLabelFunction != null)
+				dataTip.label = axiisSprite.layout.dataTipLabelFunction(axiisSprite.data);
+			else
+				dataTip.label = axiisSprite.label;
 			dataTip.value = axiisSprite.value;
 			dataTip.index = axiisSprite.index;
 			dataTip.contentFactory = axiisSprite.dataTipContentClass;
