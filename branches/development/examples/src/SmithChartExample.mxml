@@ -46,18 +46,18 @@
 			[Bindable]
 			private var impedanceData:ArrayCollection = new ArrayCollection(
 			[ [
-				new Complex(44.38, 29.454),
-				new Complex(55.19, 19.534),
-				new Complex(50.00, -0.001),
-				new Complex(47.57, 2.307),
-				new Complex(78.16, -22.233)
+				{imped: new Complex(44.38, 29.454), freq: 0.98},
+				{imped: new Complex(55.19, 19.534), freq: 0.99},
+				{imped: new Complex(50.00, -0.001), freq: 1.0},
+				{imped: new Complex(47.57, 2.307), freq: 1.01},
+				{imped: new Complex(78.16, -22.233), freq: 1.02}
 			  ],
 			  [
-				new Complex(27.06, 4.694),
-				new Complex(35.66, 7.627),
-				new Complex(50.00, -0.001),
-				new Complex(47.36, -2.050),
-				new Complex(59.96, 29.805)
+				{imped: new Complex(27.06, 4.694), freq: 0.98},
+				{imped: new Complex(35.66, 7.627), freq: 0.99},
+				{imped: new Complex(50.00, -0.001), freq: 1.0},
+				{imped: new Complex(47.36, -2.050), freq: 1.01},
+				{imped: new Complex(59.96, 29.805), freq: 1.02}
 			  ]	]
 			);
 			
@@ -99,11 +99,9 @@
 		width="{boundsRadius.value}"
 		height="{boundsRadius.value}"
 		sc_scale="{sc_scale}"
-		impedanceData="{impedanceData}"
+		dataProvider="{impedanceData}"
 		dataFills="{dataFills}"
 		lineColors="{lineColors}"
-		
 		verticalCenter="0"
-		horizontalCenter="0"
-		showDataTips="false"/>
+		horizontalCenter="0"/>
 </mx:Application>
