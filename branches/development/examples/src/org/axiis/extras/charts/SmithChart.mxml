@@ -266,7 +266,7 @@
 							centerY="{Circle(smithChartLayout.currentReference).centerY}"
 							radius="{this.width * 0.005}"
 							fill="{Circle(smithChartLayout.currentReference).fill}"/>
-				        <degrafa:Ellipse width="{0.0075 * this.width}" height="{this.width * 0.005}" x="{Circle(smithChartLayout.currentReference).centerX - 0.00375 * this.width}" y="{Circle(smithChartLayout.currentReference).centerY - 0.004375 * this.width}">
+				        <degrafa:Ellipse width="{0.0075 * this.width}" height="{this.width * 0.005}" x="{Circle(smithChartLayout.currentReference).centerX - 0.00375 * this.width/this.scaleX}" y="{Circle(smithChartLayout.currentReference).centerY - 0.004375 * this.width/this.scaleY}">
 				        	<degrafa:fill>
 								<degrafa:LinearGradientFill angle="90" >
 									<degrafa:GradientStop ratio="0" alpha="0.5" color="#FFFFFF"/>
