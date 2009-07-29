@@ -89,7 +89,7 @@
 		palettes="{palettes}">
 
 		<!-- Background -->
-		<!--<axiis:backgroundGeometries>
+		<axiis:backgroundGeometries>
 			<axis:VAxis verticalScale="{vScale}"
 				tickStroke="{axisStroke}"
 				width="{dc.width}"
@@ -99,7 +99,7 @@
 				fontColor="0"
 				fontSize="14"
 				tickGap="5"/>
-		</axiis:backgroundGeometries>-->
+		</axiis:backgroundGeometries>
 
 		<!-- Layouts -->
 		<axiis:layouts>
@@ -115,7 +115,7 @@
 				<axiis:layouts>
 
 					<!-- Cluster Group -->
-					<!--<groupings:ColumnCluster id="myCluster"
+					<groupings:ColumnCluster id="myCluster"
 						width="{hLayout.currentReference.width*.83}"
 						height="{hLayout.currentReference.height}"
 						y="0"
@@ -128,11 +128,13 @@
 						stroke="{colStroke}"
 						verticalScale="{vScale}"
 						fontFamily="Myriad Pro"
-						fontColor="{outerPalette.currentColor}"/>-->
+						fontColor="{outerPalette.currentColor}"/>
 
 					<!-- Stack Group (same data) -->
 					<groupings:ColumnStack id="myStack"
-						width="{hLayout.currentReference.width}"
+						x="{hLayout.currentReference.width*.85}"
+						y="0"
+						width="{hLayout.currentReference.width*.15}"
 						height="{hLayout.currentReference.height}"
 						dataProvider="{hLayout.currentValue}"
 						dataField="{childDataField}"
@@ -146,7 +148,7 @@
 				</axiis:layouts>
 
 				<!-- Bottom Bracket -->
-				<!--<axiis:drawingGeometries>
+				<axiis:drawingGeometries>
 					<labels:HBracket width="{hLayout.currentReference.width}"
 						height="60"
 						fontFamily="Myriad Pro"
@@ -156,7 +158,7 @@
 						x="{hLayout.currentReference.x}"
 						labelValue="{hLayout.currentLabel}"
 						markerStroke="{myStroke}"/>
-				</axiis:drawingGeometries>-->
+				</axiis:drawingGeometries>
 
 			</axiis:HBoxLayout>
 		</axiis:layouts>
@@ -164,11 +166,18 @@
 
 	<mx:Array id="palettes">
 		<paint:LayoutAutoPalette id="outerPalette" layout="{hLayout}" colorFrom="0xCC3333" colorTo="0x3333CC"/>
-		<paint:LayoutAutoPalette id="clusterPalette" layout="{myStack}" colorFrom="{outerPalette.currentColor}" colorTo="{outerPalette.currentColor | 0x337f00}"/>
+		<paint:LayoutAutoPalette id="clusterPalette" layout="{myCluster}" colorFrom="{outerPalette.currentColor}" colorTo="{outerPalette.currentColor | 0x337f00}"/>
 		<paint:LayoutAutoPalette id="stackPalette" layout="{myStack}" colorFrom="{outerPalette.currentColor}" colorTo="{outerPalette.currentColor | 0x337f00}"/>
 	</mx:Array>
 	<mx:Array id="fills">
-		<degrafa:SolidFill id="stackFill" color="{clusterPalette.currentColor}"/>
+		<degrafa:LinearGradientFill id="clusterFill" angle="45">
+			<degrafa:GradientStop color="{clusterPalette.currentColor}"/>
+			<degrafa:GradientStop color="{clusterPalette.currentColor | 0x333333}" alpha=".85"/>
+		</degrafa:LinearGradientFill>
+		<degrafa:LinearGradientFill id="stackFill" angle="90">
+			<degrafa:GradientStop color="{stackPalette.currentColor}"/>
+			<degrafa:GradientStop color="{stackPalette.currentColor | 0x333333}" alpha=".7"/>
+		</degrafa:LinearGradientFill>
 	</mx:Array>
 	<mx:Array id="strokes">
 		<degrafa:LinearGradientStroke id="colStroke" pixelHinting="true" angle="45">
