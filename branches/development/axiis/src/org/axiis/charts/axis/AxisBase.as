@@ -160,7 +160,7 @@ package org.axiis.charts.axis
 				invalidate();
 			}
 		}
-		private var _tickStroke:SolidStroke;
+		private var _tickStroke:SolidStroke = new SolidStroke();
 		
 		[Bindable(event="showLabelsChange")]
 		/**
