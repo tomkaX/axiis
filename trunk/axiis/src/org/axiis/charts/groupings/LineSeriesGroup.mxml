@@ -42,6 +42,7 @@
 	<!-- public variables -->
 	<mx:Script>
 		<![CDATA[
+			import org.axiis.layouts.scale.IScale;
 			import com.degrafa.paint.LinearGradientFill;
 			import org.axiis.core.AxiisSprite;
 			import flash.utils.getTimer;
@@ -90,6 +91,9 @@
 			private var _minY:Array;
 
 			private var t:Number;
+			
+			private var _xDataField:String;
+			private var _horizontalScale:IScale;
 
 			/**
 			 * @private
@@ -98,6 +102,37 @@
 			{
 				t = flash.utils.getTimer();
 				super.render(sprite);
+			}
+			
+			/**
+		 	 * The property within each item in the dataProvider that contains the
+		 	 * field used to determine the value of the item on the horizontal axis.
+		 	 */
+			public function get xDataField():String
+			{
+				return _xDataField;
+			}
+			public function set xDataField(value:String):void
+			{
+				if(value != _xDataField)
+				{
+					_xDataField = value;
+				}
+			}
+			
+			/**
+			 * The scale used to map values onto the horizontal axis.
+			 */
+			public function get horizontalScale():IScale
+			{
+				return _horizontalScale;
+			}
+			public function set horizontalScale(value:IScale):void
+			{
+				if(value != _horizontalScale)
+				{
+					_horizontalScale = value;
+				}
 			}
 
 			/**
@@ -181,19 +216,21 @@
 					segments = paths[seriesIndex].slice(currentIndex, currentIndex + 2);
 					segments.splice(0, 0, new MoveTo(segments[0].x, segments[0].y));
 					//Clip end point
-					segments[segments.length - 1].x = Math.round(_repeatWidth / 2);
+					segments[segments.length - 1].x = Math.round((seriesPoints[seriesIndex][currentIndex+2].x - seriesPoints[seriesIndex][currentIndex+1].x)/2)
+						 + seriesPoints[seriesIndex][currentIndex+1].x;
 
 				}
 				else if (currentIndex < itemCount - 1)
 				{
 					segments = paths[seriesIndex].slice(currentIndex * 2 - 1, currentIndex * 2 + 2);
 					//Clip Start point
-					segments[0].x = Math.round(_repeatWidth / 2) + Math.round(_repeatWidth * (currentIndex - 1));
+					segments[0].x = Math.round((seriesPoints[seriesIndex][currentIndex+1].x - seriesPoints[seriesIndex][currentIndex].x)/2) 
+						+ Math.round(seriesPoints[seriesIndex][currentIndex].x);
 					segments.splice(0, 1, new MoveTo(segments[0].x, segments[0].y));
 					//Clip End Point
 					if (currentIndex < itemCount - 2)
-						segments[segments.length - 1].x = Math.round(_repeatWidth / 2) + Math.round(_repeatWidth * (currentIndex));
-
+						segments[segments.length - 1].x = Math.round((seriesPoints[seriesIndex][currentIndex+1].x - seriesPoints[seriesIndex][currentIndex].x)/2) 
+							+ Math.round(seriesPoints[seriesIndex][currentIndex+1].x);
 				}
 				else if (currentIndex == itemCount - 1)
 				{
@@ -296,7 +333,7 @@
 
 			private function onMarkerItemPreDraw():void
 			{
-				marker.centerX = _repeatWidth * currentIndex - 1;
+				marker.centerX = seriesPoints[markerLayout.currentIndex][currentIndex + 1].x;
 				marker.visible = this.showMarker;
 				innerMarker.visible = this.showMarker;
 
@@ -395,6 +432,14 @@
 						if (ta.length == 0)
 						{ //adds a new node if it is the first time
 							ta.push(new GraphicPoint(-1, verticalScale.valueToLayout(seriesPlots[0][dataField], true))); //The first marker
+						}
+						
+						/* Chesk if xDataField and horizontalScale are set, and if they are, the x value for the current point
+						is determined by the horizontalScale. If not, the default method is used (xo += repeatedWidth)
+						*/
+						if(xDataField && horizontalScale)
+						{
+							xo = horizontalScale.valueToLayout(seriesPlots[i][xDataField], false) + 10;
 						}
 
 						var gp:GraphicPoint = new GraphicPoint;
