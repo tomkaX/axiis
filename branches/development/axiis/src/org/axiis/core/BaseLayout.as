@@ -152,13 +152,13 @@ package org.axiis.core
 			
 			t=flash.utils.getTimer();
 			
-			trimChildSprites();
-			
 			dispatchEvent(new Event("preRender"));
 			
 			if(newSprite)
 				this.sprite = newSprite;
 			_rendering = true;
+			
+			trimChildSprites();
 
 			if(!sprite || !_referenceGeometryRepeater)
 				return;			
