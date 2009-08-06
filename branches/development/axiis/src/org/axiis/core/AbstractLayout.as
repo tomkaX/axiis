@@ -460,16 +460,17 @@ package org.axiis.core
 			return __currentReference;
 		}
 		private var __currentReference:Geometry;
-
+		
+		
 		[Bindable(event="dataFieldChange")]
 		/**
 		 * @copy ILayout#dataField
 		 */
-		public function get dataField():String
+		public function get dataField():Object
 		{
 			return _dataField;
 		}
-		public function set dataField(value:String):void
+		public function set dataField(value:Object):void
 		{
 			if(value != _dataField)
 			{
@@ -481,7 +482,7 @@ package org.axiis.core
 		/**
 		 * @private
 		 */
-		protected var _dataField:String;
+		protected var _dataField:Object;
 		
 		[Bindable(event="labelFieldChange")]
 		/**

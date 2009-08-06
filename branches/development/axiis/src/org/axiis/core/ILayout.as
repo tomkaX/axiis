@@ -130,9 +130,11 @@ package org.axiis.core
 		/**
 		 * The property within each item in the dataProvider that contains the
 		 * field used to determine the value of the item.
+		 * 
+		 * This can also be a Function call that dynamically returns the value for each iteration
 		 */
-		function get dataField():String;
-		function set dataField(value:String):void;
+		function get dataField():Object;
+		function set dataField(value:Object):void;
 		
 		// TODO this doesn't feel like it is necessary on the interface level
 		/**

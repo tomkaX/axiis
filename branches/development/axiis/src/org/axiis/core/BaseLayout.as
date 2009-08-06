@@ -211,14 +211,13 @@ package org.axiis.core
 			
 			_currentIndex = referenceRepeater.currentIteration;
 			_currentDatum = dataItems[_currentIndex];
-			if (dataField)
-				_currentValue = getProperty(_currentDatum,dataField);
-			else
-				_currentValue= _currentDatum;
+			
+			_currentValue=getProperty(_currentDatum,dataField);
 				
-			if (labelField)
-				_currentLabel = getProperty(_currentDatum,labelField).toString();
+			_currentLabel = getProperty(_currentDatum,labelField).toString();
 		}
+		
+
 		
 		/**
 		 * The callback method called by the referenceRepeater after it applies
@@ -259,6 +258,8 @@ package org.axiis.core
 			currentChild.render();
 			
 			renderChildLayouts(currentChild);
+			
+			//trace("data value " + this.currentLabel + " = " + this.currentValue);
 		}
 		
 		/**
@@ -429,16 +430,43 @@ package org.axiis.core
 			}
 		}
 		
-		private function getProperty(obj:Object, propertyName:String):Object
+		public function getProperty(obj:Object, propertyName:Object):Object
 		{
 			if(obj == null)
 				return null;
 				
-			var chain:Array=propertyName.split(".");
-			if (chain.length < 2)
-				return obj[chain[0]];
+			if (propertyName) {
+				if (propertyName is Function) {
+					return propertyName.call(this,obj);
+				}
+			}	
 			else
-				return getProperty(obj[chain[0]],chain.slice(1,chain.length).join("."));
+				return obj;
+				
+			var chain:Array=propertyName.split(".");
+			if (chain.length == 1) {
+				if (chain[0].indexOf("[")<0)  //If we have an array return the array element
+					return obj[chain[0]];
+					else {
+						var element:Object= obj[chain[0].substr(0, chain[0].indexOf("["))];
+						return element[chain[0].substr(chain[0].indexOf("[")+1,chain[0].indexOf("]")-chain[0].indexOf("[")-1)];
+					}
+			}
+				
+			else {
+				if (chain[0].indexOf("[")<0)  //If we have an array return the array element
+					return getProperty(obj[chain[0]],chain.slice(1,chain.length).join("."));
+				else
+				{
+						var element:Object= obj[chain[0].substr(0, chain[0].indexOf("["))];
+						var index:String= (chain[0].substr(chain[0].indexOf("[")+1,chain[0].indexOf("]")-chain[0].indexOf("[")-1));
+						trace("index=" + index);
+						return getProperty(element[index],chain.slice(1,chain.length).join("."));
+					}
+					
+			}
+				
 		}
+	
 	}
 }
