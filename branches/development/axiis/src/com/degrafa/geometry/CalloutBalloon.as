@@ -1,6 +1,7 @@
 package com.degrafa.geometry
 {
 	import com.degrafa.geometry.command.CommandStackItem;
+	import com.degrafa.geometry.RoundedRectangleComplex;
 	
 	[Bindable]
 	public class CalloutBalloon extends RoundedRectangleComplex

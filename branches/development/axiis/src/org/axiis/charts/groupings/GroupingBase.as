@@ -86,10 +86,10 @@ package org.axiis.charts.groupings
 		}
 		private var _fontFamily:String = "Arial";
 	
-		[Bindable(event="fontSizeChange")]
+		[Bindable(event="fontSizeChange")] 
 		/**
 		 * The size of the font used to render the labels.
-		 */
+		 */ 
 		public function get fontSize():Number
 		{
 			return _fontSize;

@@ -17,9 +17,9 @@
 		<geometry:fill> 
 			<degrafa:LinearGradientFill angle="90">
 				<degrafa:GradientStop color="0xEEEEEE"/>
-				<degrafa:GradientStop color="0xAAAAAA"/>
+				<degrafa:GradientStop color="0xAAAAAA"/> 
 			</degrafa:LinearGradientFill>
-		</geometry:fill>
+		</geometry:fill> 
 		<geometry:stroke>
 			<degrafa:SolidStroke color="0x999999"/>
 		</geometry:stroke>

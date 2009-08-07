@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	 Copyright (c) 2009 Team Axiis
+
+	 Permission is hereby granted, free of charge, to any person
+	 obtaining a copy of this software and associated documentation
+	 files (the "Software"), to deal in the Software without
+	 restriction, including without limitation the rights to use,
+	 copy, modify, merge, publish, distribute, sublicense, and/or sell
+	 copies of the Software, and to permit persons to whom the
+	 Software is furnished to do so, subject to the following
+	 conditions:
+
+	 The above copyright notice and this permission notice shall be
+	 included in all copies or substantial portions of the Software.
+
+	 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	 EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+	 OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	 NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+	 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+	 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+	 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+	 OTHER DEALINGS IN THE SOFTWARE.
+-->
+<!---
+	ColumStack groups a series of vertical columns vertically
+	and labels them. This class is intended to be used to produce
+	multi-series column charts.
+-->
+<groupings:GroupingBase xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:degrafa="http://www.degrafa.com/2007"
+	name="outerlayout"
+	xmlns:layouts="org.axiis.layouts.*"
+	xmlns:scale="org.axiis.layouts.scale.*"
+	xmlns:states="org.axiis.states.*"
+	xmlns:core="org.axiis.core.*"
+	xmlns:utils="org.axiis.utils.*"
+	xmlns:layoutUtils="org.axiis.layouts.utils.*"
+	preRender="onPreRender()" xmlns:groupings="org.axiis.charts.groupings.*" xmlns:geometry="com.degrafa.geometry.*">
+
+	<!-- NOTE: Currently only tested for positive values -->
+
+	<mx:Script>
+		<![CDATA[
+			import com.degrafa.core.IGraphicsStroke;
+			import com.degrafa.core.IGraphicsFill;
+
+
+			[Bindable]
+			private var maxValue:Number;
+			
+			private function onPreRender():void {
+				
+				maxValue=0;
+				
+				for (var i:int=0; i < dataItems.length; i++) {
+					maxValue+=getProperty(dataItems[i],dataField);
+				}
+
+				
+				//trace(fontSize + " start angle is " + wedge.startAngle);
+			}
+		]]>
+	</mx:Script>
+	
+	<!-- Preference Settings -->
+	<mx:Number id="angleGap">.7</mx:Number>
+	<mx:Number id="innerRadiusRatio">.4</mx:Number>
+	<mx:Number id="outerRadiusRatio">1</mx:Number>
+	<mx:Number id="labelRadiusRatio">.97</mx:Number>
+	<mx:Number id="maxArc">360</mx:Number>
+	<mx:Number id="startAngle">0</mx:Number>
+	<mx:Boolean id="alignTextOuter">false</mx:Boolean>
+
+	<!-- Common calculations used by geometries -->
+	<utils:NumericExpression id="outerRadius" value="{(width/2)*outerRadiusRatio}"/>
+	<utils:NumericExpression id="center" value="{boundsRadius.value/2}"/>
+	<utils:NumericExpression id="boundsRadius" value="{Math.min(this.height,this.width)}"/>
+	<utils:NumericExpression id="arc" value="{Number(currentValue)/maxValue*(maxArc-angleGap*itemCount)}"/>
+	<utils:BooleanExpression id="transposeLabel" value="{!((wedge.startAngle + wedge.arc * .5) &gt; 90 &amp;&amp; (wedge.startAngle + wedge.arc *.5) &lt; 270)}" />
+
+	
+	<groupings:referenceRepeater>
+		<!-- innerRepeater: the reference repeater wedge for the inner ring of wedges -->
+		<layoutUtils:GeometryRepeater id="innerRepeater">
+			<layoutUtils:geometry> 
+				<geometry:Wedge id="wedge"  
+					centerX="{width/2}"
+					centerY="{width/2}"
+					innerRadius="{(width/2)*innerRadiusRatio}" 
+					outerRadius="{(width/2)*outerRadiusRatio}"
+					startAngle="{startAngle}"
+					arc="0"/>
+			</layoutUtils:geometry>
+			<layoutUtils:modifiers>
+				<layoutUtils:PropertyModifier property="startAngle" modifier="{wedge.arc+angleGap}" modifierOperator="add"/>
+				<layoutUtils:PropertyModifier property="arc" modifier="{arc.value}" modifierOperator="none"/>
+			</layoutUtils:modifiers>
+		</layoutUtils:GeometryRepeater> 
+	</groupings:referenceRepeater>
+	<groupings:drawingGeometries>
+		<!-- wedgeRenderer: the drawing geometry for the inner ring of wedges -->
+		<geometry:Wedge x="0"
+			y="0"
+			id="wedgeRenderer"
+			innerRadius="{wedge.innerRadius}"
+			outerRadius="{wedge.outerRadius}"
+			startAngle="{wedge.startAngle}"
+			arc="{wedge.arc}"
+			centerX="{wedge.centerX}"
+			centerY="{wedge.centerY}"
+			fill="{fill}"
+			stroke="{stroke}"/>
+			
+		<degrafa:RasterText id="innerLabel"
+			x="{center.value}"
+			y="{center.value-10}"
+			fontFamily="{fontFamily}"
+			fontSize="{fontSize}"
+			text="{currentLabel}"
+			autoSizeField="true"
+			autoSize="left"
+			textColor="{fontColor}"
+			>
+			<degrafa:transform>
+				<degrafa:TransformGroup>
+					<degrafa:TranslateTransform 
+							x="{wedge.outerRadius * labelRadiusRatio + ((alignTextOuter) ? innerLabel.textWidth:0) + ((transposeLabel.value) ? -innerLabel.textWidth-wedge.outerRadius*.02:0)) * Math.cos((wedge.startAngle + wedge.arc / 2) * Math.PI / 180}"
+							y="{wedge.outerRadius * labelRadiusRatio + ((alignTextOuter) ? innerLabel.textWidth:0) + ((transposeLabel.value) ? -innerLabel.textWidth-wedge.outerRadius*.02:0)) * Math.sin((wedge.startAngle + wedge.arc / 2) * Math.PI / 180}"
+							/>
+					<degrafa:RotateTransform id="innerTextRotate" registrationPoint="centerLeft" angle="{wedge.startAngle + wedge.arc / 2 + ((transposeLabel.value) ? 0:180)}"/>
+				</degrafa:TransformGroup>
+			</degrafa:transform>
+		</degrafa:RasterText>
+	</groupings:drawingGeometries>
+</groupings:GroupingBase>

@@ -645,14 +645,18 @@ package org.axiis.core
 		//I hate to put yet another function in here, but I think we want a default data tip function
 		private function dataTipFunction(data:Object):String
 		{
-			if(dataField && labelField && data[dataField] != null && data[labelField] != null)
+			if(dataField && labelField)
 			{
-				return "<b>" + data[labelField] + "</b><br/>" + data[dataField];
+				return "<b>" + getProperty(data,labelField) + "</b><br/>" + getProperty(data,dataField);
 			}
 			return "";
 		}
 		
-		// TODO This should be cut. DataSet should manage the data. 
+		// TODO This should be cut. DataSet should manage the data.
+		
+		// I disagree, from a developer workflow this is very convienent - your filters are almost unique to visulization and
+		// even though this deviates from OO best practices I think it is a good approach if we always assume we will be processing
+		// an array or collection -  tg 8/7/09 
 		/**
 		 * This provides a way to further refine a layouts dataProvider by
 		 * providing access to a custom filter data filter function. This allows
@@ -848,6 +852,44 @@ package org.axiis.core
 			}
 		}
 		private var _dataTipContentClass:IFactory;
+		
+		public function getProperty(obj:Object, propertyName:Object):Object
+		{
+			if(obj == null)
+				return null;
+				
+			if (propertyName) {
+				if (propertyName is Function) {
+					return propertyName.call(this,obj);
+				}
+			}	
+			else
+				return obj;
+				
+			var chain:Array=propertyName.split(".");
+			if (chain.length == 1) {
+				if (chain[0].indexOf("[")<0)  //If we have an array return the array element
+					return obj[chain[0]];
+					else {
+						var element:Object= obj[chain[0].substr(0, chain[0].indexOf("["))];
+						return element[chain[0].substr(chain[0].indexOf("[")+1,chain[0].indexOf("]")-chain[0].indexOf("[")-1)];
+					}
+			}
+				
+			else {
+				if (chain[0].indexOf("[")<0)  //If we have an array return the array element
+					return getProperty(obj[chain[0]],chain.slice(1,chain.length).join("."));
+				else
+				{
+						var element:Object= obj[chain[0].substr(0, chain[0].indexOf("["))];
+						var index:String= (chain[0].substr(chain[0].indexOf("[")+1,chain[0].indexOf("]")-chain[0].indexOf("[")-1));
+						trace("index=" + index);
+						return getProperty(element[index],chain.slice(1,chain.length).join("."));
+					}
+					
+			}
+				
+		}
 
 	}
 }

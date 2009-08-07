@@ -53,7 +53,7 @@ package org.axiis.utils
 	 * &lt;mx:Label value="{ne0.expression}" /&gt;
 	 * &lt;mx:Label value="{ne0.expression}" /&gt;
 	 * </code>
-	 * </pre>
+	 * </pre> 
 	 */
 	public class NumericExpression extends EventDispatcher
 	{

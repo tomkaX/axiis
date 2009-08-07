@@ -287,6 +287,22 @@ package org.axiis.data
 		}
 		
 		/**
+		 * IN DEVELOPMENT - MOVING OVER TO MORE STRONGLY TYPED UNIVERSAL STRUCTURE - DataGroup
+		 */
+		public function groupTable(groupings:Array, flattenLastGroup:Boolean=true):void {
+				var t:Number=flash.utils.getTimer();
+		
+			if (!data["table"]) return; //No table to process)
+			
+			if (!groupings || groupings.length<1) throw new Error("You must declare groupings to shape data DataSet.processCsvAsShapedData");
+			
+			if (!_data) _data=new Object();
+			_data.grouped=createDataGroup(data["table"].rows,groupings,flattenLastGroup);
+			
+			trace("DataSet.processCsvShapedData " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
+		}
+		
+		/**
 		 * Perform simple aggregations against the "data" property by dynamically adding properties to the parent object.
 		 * Collections are traversed hierarchally (if you target a nested collection) and aggregations roll up the hierarchy.
 		 * Aggregations are added as a dynamic object to the owner of the collection.
@@ -623,6 +639,80 @@ package org.axiis.data
 			
 			return tempPayload;
 		}
+		
+		/**
+		 * tableData:Object - expects the result from a processCsvData operation
+		 */
+		private function createDataGroup(collection:ArrayCollection, groupings:Array, flattenLastGroup:Boolean):DataGroup {
+			
+				var tempData:DataGroup = new DataGroup();
+			
+				
+				//Start with outer grouping and find unique values
+				
+				var colIndex:String=groupings[0].split(",")[0];
+				var groupName:String=StringUtil.trim(groupings[0].split(",")[1]);
+				var srt:Sort=new Sort();
+				srt.fields=[new SortField(colIndex,true)];
+				srt.compareFunction=internalCompare;
+				collection.sort=srt;
+				collection.refresh();
+				
+				var groupedData:DataGroup=new DataGroup;
+				
+				tempData.groupedData=groupedData;
+				tempData.sourceData=collection;
+				
+				//Go through collection and each time we hit a new unique value create a new group object
+				var currValue:String=collection.getItemAt(0).columns[int(colIndex)].value;
+				var nextValue:String;
+				var tempCollection:DataGroup=new DataGroup();
+				
+				
+				for (var y:int=0;y<collection.length;y++) {
+					
+					if (y!=collection.length-1)
+						nextValue=collection.getItemAt(y+1).columns[int(colIndex)].value;  //look ahead to see if we are at the end of a group.
+					else {
+						nextValue=null;  //We are at the end force the end of group
+					}
+					
+					currValue=collection.getItemAt(y).columns[int(colIndex)].value;
+					tempCollection.addItem(collection.getItemAt(y));
+						
+					if (currValue!=nextValue) {
+							
+						var newObject:DataGroup=new DataGroup;
+						newObject.name=currValue;
+
+						if (groupings.length > 1) { //we need to go one level deeper recursively
+	
+							newObject=createDataGroup(tempCollection,groupings.slice(1,groupings.length),flattenLastGroup);
+							newObject.name=currValue;
+							tempCollection.sourceData=collection; //Add all items that meet group criteria at this level
+						}
+						else {
+
+							if (flattenLastGroup && tempCollection.length==1)  //We can only flatten if we have unique values
+								newObject.sourceData=tempCollection.getItemAt(0).columns;
+							else if (flattenLastGroup)
+								trace("WARNING: DataSet.createShapeObject - non-unique values for shape criteria, can not flatten rows into single column property");
+							
+							newObject.groupedData=tempCollection;
+							tempCollection.sourceData=collection;
+						}
+					
+						groupedData.addItem(newObject);
+						tempCollection=new DataGroup();
+						
+					}
+
+				}
+
+			return tempData;
+			
+		}
+		
 		
 		/**
 		 * tableData:Object - expects the result from a processCsvData operation

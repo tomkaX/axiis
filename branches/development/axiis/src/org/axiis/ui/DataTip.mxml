@@ -115,10 +115,10 @@
 		]]>
 	</mx:Script>
 	<GeometryGroup width="{w}" height="{h}">
-		 <geometry:CalloutBalloon id="ballon"
+		 <geometry:CalloutBalloon id="ballon" 
 			width="{w}"
 			height="{h}"
-		 	topLeftRadius="8" topRightRadius="8" bottomLeftRadius="8" bottomRightRadius="8"
+		 	topLeftRadius="6" topRightRadius="6" bottomLeftRadius="6" bottomRightRadius="6"
 		 	calloutX="{calloutX}" calloutY="{h-calloutY}"  calloutWidthRatio="{calloutWidthRatio}">
 			<geometry:fill> 
 				<degrafa:LinearGradientFill angle="90">

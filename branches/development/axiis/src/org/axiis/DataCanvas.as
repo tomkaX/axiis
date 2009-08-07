@@ -33,7 +33,6 @@ package org.axiis
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	
-	import mx.charts.chartClasses.ChartBase;
 	import mx.core.ApplicationGlobals;
 	import mx.core.IFactory;
 	import mx.core.IToolTip;
@@ -441,7 +440,7 @@ package org.axiis
 					tt.x = position.x;
 					tt.y = position.y;
 				}
-				toolTips.push(tt);  var t:ChartBase
+				toolTips.push(tt); 
 			}
 		}
 		

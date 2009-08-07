@@ -15,6 +15,7 @@
 		<component id="ColumnStack" class="org.axiis.charts.groupings.ColumnStack"/>
 		<component id="LineSeriesGroup" class="org.axiis.charts.groupings.LineSeriesGroup"/>
 		<component id="PlotGroup" class="org.axiis.charts.groupings.PlotGroup"/>
+		<component id="WedgeStackGroup" class="org.axiis.charts.groupings.WedgeStackGroup"/>
 		
 		<!-- labels -->
 		<component id="HBracket" class="org.axiis.charts.labels.HBracket"/>
