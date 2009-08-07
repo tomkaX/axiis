@@ -82,7 +82,7 @@
 		width="{this.width*.8}"
 		id="dc"
 		verticalCenter="0"
-		horizontalCenter="0"
+		horizontalCenter="0" 
 		showDataTips="true"
 		strokes="{strokes}"
 		fills="{fills}"
