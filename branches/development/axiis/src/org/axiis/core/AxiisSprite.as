@@ -293,6 +293,8 @@ package org.axiis.core
 		 */
 		protected function setActiveStatesForChildren(states:Array):void
 		{	
+			if (states.length==0) return;
+			
 			for(var a:int = 0; a < numChildren; a++)
 			{
 				var currChild:DisplayObject = getChildAt(a);
@@ -313,7 +315,7 @@ package org.axiis.core
 		 */
 		protected function setActiveStatesForSiblings(statesForSiblings:Array):void
 		{
-			if(!parent)
+			if(!parent || statesForSiblings.length==0)
 				return;
 			
 			for(var a:int = 0; a < parent.numChildren; a++)
@@ -335,6 +337,8 @@ package org.axiis.core
 		 */
 		protected function setActiveStatesForParents(statesForAncestors:Array,statesForAncestorSiblings:Array):void
 		{
+			if (statesForAncestorSiblings.length==0) return;
+			
 			if(parent is AxiisSprite)
 			{
 				AxiisSprite(parent).activeStates = statesForAncestors;
