@@ -354,7 +354,7 @@ package org.axiis.core
 		 */
 		public function render():void
 		{
-			//trace(this)
+			trace("AxiisSprite.render() " + this)
 			for each(var modification:PropertySetter in revertingModifications)
 			{
 				//trace(modification.property,modification.value)
