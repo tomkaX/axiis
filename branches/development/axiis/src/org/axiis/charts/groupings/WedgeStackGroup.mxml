@@ -113,7 +113,7 @@
 			fill="{fill}"
 			stroke="{stroke}"/>
 			
-		<degrafa:RasterText id="innerLabel"
+		<degrafa:RasterText id="label"
 			x="{center.value}"
 			y="{center.value-10}"
 			fontFamily="{fontFamily}"
@@ -126,8 +126,8 @@
 			<degrafa:transform>
 				<degrafa:TransformGroup>
 					<degrafa:TranslateTransform 
-							x="{wedge.outerRadius * labelRadiusRatio + ((alignTextOuter) ? innerLabel.textWidth:0) + ((transposeLabel.value) ? -innerLabel.textWidth-wedge.outerRadius*.02:0)) * Math.cos((wedge.startAngle + wedge.arc / 2) * Math.PI / 180}"
-							y="{wedge.outerRadius * labelRadiusRatio + ((alignTextOuter) ? innerLabel.textWidth:0) + ((transposeLabel.value) ? -innerLabel.textWidth-wedge.outerRadius*.02:0)) * Math.sin((wedge.startAngle + wedge.arc / 2) * Math.PI / 180}"
+							x="{wedge.outerRadius * labelRadiusRatio + ((alignTextOuter) ? label.textWidth:0) + ((transposeLabel.value) ? -label.textWidth-wedge.outerRadius*.02:0)) * Math.cos((wedge.startAngle + wedge.arc / 2) * Math.PI / 180}"
+							y="{wedge.outerRadius * labelRadiusRatio + ((alignTextOuter) ? label.textWidth:0) + ((transposeLabel.value) ? -label.textWidth-wedge.outerRadius*.02:0)) * Math.sin((wedge.startAngle + wedge.arc / 2) * Math.PI / 180}"
 							/>
 					<degrafa:RotateTransform id="innerTextRotate" registrationPoint="centerLeft" angle="{wedge.startAngle + wedge.arc / 2 + ((transposeLabel.value) ? 0:180)}"/>
 				</degrafa:TransformGroup>
