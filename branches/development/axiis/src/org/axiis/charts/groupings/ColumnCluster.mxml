@@ -134,7 +134,11 @@ OTHER DEALINGS IN THE SOFTWARE.
 			fontSize="{dataFontSize}"  align="left" fontFamily="{dataFontFamily}" fontWeight="{dataFontWeight}"/>
 
 	</groupings:drawingGeometries>
-	<!--<layouts:states>
-		<states:State enterStateEvent="mouseOver" exitStateEvent="mouseOut"  targets="{[column,label]}"  properties="{['fill','textColor']}" values="{[stateFill,0xFFFFFF]}" />
-	</layouts:states>-->
+	<groupings:fills>
+		<degrafa:SolidFill id="rollOverFill" color="0xDDDD00" alpha=".6"/>
+	</groupings:fills>
+	
+	<groupings:states>
+		<states:State enterStateEvent="mouseOver" exitStateEvent="mouseOut"  targets="{[column,label]}"  properties="{['fill','textColor']}" values="{[rollOverFill,0xFFFFFF]}" />
+	</groupings:states>
 </groupings:GroupingBase>
