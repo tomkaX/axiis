@@ -267,7 +267,8 @@ package org.axiis.charts.groupings
 		
 		private function handlePropertyChange(event:Event):void
 		{
-			invalidate();
+			//if (!this.rendering)
+			//	invalidate();
 		}
 		
 		
