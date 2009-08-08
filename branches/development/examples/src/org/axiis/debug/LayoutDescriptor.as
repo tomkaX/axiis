@@ -6,7 +6,6 @@ package org.axiis.debug
 	
 	import org.axiis.core.AxiisSprite;
 	import org.axiis.core.ILayout;
-	import org.axiis.core.PropertySetter;
 	
 	public class LayoutDescriptor implements ITreeDataDescriptor
 	{
@@ -22,8 +21,8 @@ package org.axiis.debug
 				var childSprites:ArrayCollection = new ArrayCollection(ILayout(node).childSprites);
 				var layouts:ArrayCollection = new ArrayCollection(ILayout(node).layouts);
 				var r:ArrayCollection = new ArrayCollection();
-				r.addAll(layouts);
-				r.addAll(childSprites);
+				addAll(layouts,r);
+				addAll(childSprites,r)
 				return r;
 			}
 			if(node is AxiisSprite)
@@ -32,9 +31,9 @@ package org.axiis.debug
 				var drawingChildren:ArrayCollection = new ArrayCollection(AxiisSprite(node).drawingSprites);
 				var revertingModifications:ArrayCollection = new ArrayCollection(AxiisSprite(node).revertingModifications);
 				var r:ArrayCollection = new ArrayCollection();
-				r.addAll(layoutChildren);
-				r.addAll(drawingChildren);
-				r.addAll(revertingModifications);
+				addAll(layoutChildren,r);
+				addAll(drawingChildren,r);
+				addAll(revertingModifications,r);
 				return r; 
 			}
 			return null;
@@ -80,6 +79,12 @@ package org.axiis.debug
 		public function removeChildAt(parent:Object, child:Object, index:int, model:Object=null):Boolean
 		{
 			return false;
+		}
+		
+		private function addAll(source:ArrayCollection,target:ArrayCollection) {
+			for each (var item in source) {
+				target.addItem(item);
+			}
 		}
 	}
 }
