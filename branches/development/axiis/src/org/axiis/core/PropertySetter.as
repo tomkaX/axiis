@@ -41,7 +41,19 @@ package org.axiis.core
 		
 		public var property:Object;
 		
-		public var value:Object;
+		
+		[Bindable(event="valueChange")]
+		public function get value():Object
+		{
+			return _value;
+		}
+		public function set value(value:Object):void
+		{
+			//trace(property,value)
+			_value = value;
+		}
+		private var _value:Object;
+
 		
 		public function apply():void
 		{

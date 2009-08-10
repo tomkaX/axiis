@@ -111,14 +111,12 @@
 	<!-- Background template -->
 	<Examples:ExampleBackground width="{this.width}" height="{this.height}" title="Wedge Stack Graph" subTitle="Custom Visualization"/>
 
-	<debug:LayoutDebugger layout="{this.innerWedgeGroup}" width="700"/>
-
 	<!-- Data Canvas that holds our geometries -->
 	<axiis:DataCanvas id="dc"
 		width="{boundsRadius.value}"
 		height="{boundsRadius.value}"
 		horizontalCenter="0"
-		verticalCenter="0" 
+		verticalCenter="0"
 		showDataTips="false">
 		<axiis:layouts>
 			<!-- innerWedgeGroup:  This renders the inner ring of wedges -->
@@ -160,10 +158,13 @@
  						<!-- State for outer wedge to change color and make it move out further -->
 						<axiis:states>
 							<axiis:State enterStateEvent="mouseOver" 
-								exitStateEvent="mouseOut" propagateToAncestorsSiblings="false" propagateToAncestors="true" propagateToDescendents="false"
-								properties="{['color','outerRadius','textColor']}"
-								values="{[colorFunction,outerRadius.value*1.2,0xFFFFFF]}" 
-								targets="{[outerWedgeFill,outerWedgeGroup.wedge,outerWedgeGroup.label]}"/>
+								exitStateEvent="mouseOut"
+								propagateToAncestorsSiblings="false"
+								propagateToAncestors="true"
+								propagateToDescendents="false"
+								targets="{[outerWedgeFill,outerWedgeGroup.wedge,outerWedgeGroup.label,innerWedgeGroup.label]}"
+								properties="{['color','outerRadius','textColor','textColor']}"
+								values="{[colorFunction,outerRadius.value*1.2,0xFFFFFF,0]}" />
 						</axiis:states>
 
 					</axiis:WedgeStackGroup>
@@ -173,10 +174,13 @@
 				<axiis:states>
 					
 				<axiis:State enterStateEvent="mouseOver"
-						exitStateEvent="mouseOut" propagateToAncestorsSiblings="false" propagateToAncestors="false" propagateToDescendents="false"
-						properties="{['color']}"
-						values="{[colorFunction]}"
-						targets="{[innerWedgeFillStop1]}"/>	
+						exitStateEvent="mouseOut"
+						propagateToAncestorsSiblings="false"
+						propagateToAncestors="false"
+						propagateToDescendents="true"
+						targets="{[innerWedgeFillStop1,outerWedgeGroup.label]}"	
+						properties="{['color','textColor']}"
+						values="{[colorFunction,0]}"/>
 						
 				</axiis:states>
 

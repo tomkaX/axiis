@@ -332,7 +332,7 @@ package org.axiis.core
 		 */
 		protected function set _currentIndex(value:int):void
 		{
-			if(value != __currentIndex)
+			//if(value != __currentIndex)
 			{
 				__currentIndex = value;
 				dispatchEvent(new Event("currentIndexChange"));
@@ -360,7 +360,7 @@ package org.axiis.core
 		 */
 		protected function set _currentDatum(value:Object):void
 		{
-			if(value != __currentDatum)
+			//if(value != __currentDatum)
 			{
 				__currentDatum = value;
 				dispatchEvent(new Event("currentDatumChange"));
@@ -388,7 +388,7 @@ package org.axiis.core
 		 */
 		protected function set _currentValue(value:Object):void
 		{
-			if(value != __currentValue)
+			//if(value != __currentValue)
 			{
 				__currentValue = value;
 				dispatchEvent(new Event("currentValueChange"));
@@ -420,7 +420,7 @@ package org.axiis.core
 		 */
 		protected function set _currentLabel(value:String):void
 		{
-			if(value != __currentLabel)
+			//if(value != __currentLabel)
 			{
 				__currentLabel = value;
 				dispatchEvent(new Event("currentLabelChange"));

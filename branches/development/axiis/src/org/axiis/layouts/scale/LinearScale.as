@@ -43,6 +43,9 @@ package org.axiis.layouts.scale
 		 */
 		public function valueToLayout(value:Object, invert:Boolean=false):*
 		{
+			//if(value == null)
+//				trace("is null " + Number(value))
+			
 			if(invalidated)
 				validate();
 				

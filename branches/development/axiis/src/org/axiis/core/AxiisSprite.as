@@ -28,10 +28,12 @@ package org.axiis.core
 	import com.degrafa.geometry.Geometry;
 	
 	import flash.display.DisplayObject;
+	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.utils.*;
 	
 	import mx.core.FlexSprite;
 	import mx.core.IFactory;
@@ -40,12 +42,13 @@ package org.axiis.core
 	
 	import org.axiis.states.State;
 
-	// TODO We should have two class of AxiisSprites: LayoutSprites and DrawingSprites
 	/**
 	 * AxiisSprites render individual drawingGeometries from layouts.
 	 */
 	public class AxiisSprite extends FlexSprite
 	{
+		private static const DEFAULT_STATE:State = new State();
+		
 		/**
 		 * Constructor.
 		 */
@@ -56,17 +59,16 @@ package org.axiis.core
 		}
 		
 		private var eventListeners:Array = [];
-
-		private var activeStates:Array = [];
 		
 		/**
-		 * TODO Document dataTipAnchorPoint
+		 * A hash which maps states to the sprites that reflect the rendered states.
 		 */
+		protected var stateToSpriteHash:Dictionary = new Dictionary();
+		
+		// TODO Document dataTipAnchorPoint
 		public var dataTipAnchorPoint:Point;
 		
-		/**
-		 * TODO Document dataTipContentClass
-		 */
+		// TODO Document dataTipContentClass
 		public var dataTipContentClass:IFactory;
 		
 		public var label:String;
@@ -90,18 +92,6 @@ package org.axiis.core
 		 * of the geometries this AxiisSprite renders.
 		 */
 		public var bounds:Rectangle;
-		
-		/**
-		 * An array of geometries to render.
-		 */
-		public var geometries:Array = [];
-		
-		/**
-		 * The PropertySetters that need to be applied in order to reset the 
-		 * geometries back to the states they were in when the parenting layout
-		 * last ran its render function.
-		 */
-		public var revertingModifications:Array = [];
 		
 		/**
 		 * Whether or not the fills in this geometry should be scaled within the
@@ -223,15 +213,36 @@ package org.axiis.core
 			return child;
 		}
 		
-		// TODO Since BaseLayout interacts with the revertingModifications array directly, we don't really need this method.
 		/**
-		 * Empties the revertingModifications array.
+		 * Draws the specified geometries to a child of the AxiisSprite. The
+		 * child is stored in a Dictionary keyed on the state passed in.
+		 * 
+		 * @ param geometries The geometries to store
+		 * @ param state The state these geometries represent
 		 */
-		public function clearModifications():void
+		public function storeGeometries(geometries:Array,state:State = null):void
 		{
-			revertingModifications = [];
+			if(state == null)
+				state = AxiisSprite.DEFAULT_STATE;
+			var stateSprite:Sprite;
+			if(stateToSpriteHash[state] == null)
+			{
+				stateSprite = new Sprite();
+				stateToSpriteHash[state] = stateSprite;
+				addChild(stateSprite);
+			}
+			stateSprite = stateToSpriteHash[state]
+			stateSprite.graphics.clear();
+			for each(var geometry:Geometry in geometries)
+			{
+				geometry.preDraw();
+				var drawingBounds:Rectangle = scaleFill
+					? new Rectangle(bounds.x+geometry.x, bounds.y+geometry.y,bounds.width,bounds.height)
+					: geometry.commandStack.bounds;
+				geometry.draw(stateSprite.graphics,drawingBounds);
+			}
 		}
-	
+
 		/**
 		 * Handler for any event from the states enterStateEvent.
 		 * This begins the state change process and propagates
@@ -239,146 +250,106 @@ package org.axiis.core
 		 */
 		protected function handleStateTriggeringEvent(event:Event):void
 		{
-			if(event.target != this || this.layout.rendering)
+			if(event.target.parent != this || layout.rendering)
 				return;	
 			
-			activeStates = findStatesForEventType(event.type);
+			var state:State = findStatesForEventType(event.type);
+			var stateForChildren:State = state.propagateToDescendents ? state : DEFAULT_STATE;
+			var stateForSiblings:State = state.propagateToSiblings ? state : DEFAULT_STATE;
+			var stateForParents:State = state.propagateToAncestors ? state : DEFAULT_STATE;
+			var statesForParentSiblings:State = state.propagateToAncestorsSiblings ? state : DEFAULT_STATE;
 			
-			var statesForChildren:Array = [];
-			var statesForSiblings:Array = [];
-			//var statesForSiblingChildren:Array = [];
-			var statesForParents:Array = [];
-			var statesForParentSiblings:Array = [];
-			for each(var state:State in activeStates)
-			{
-				if(state.propagateToDescendents)
-					statesForChildren.push(state);
-				if(state.propagateToSiblings)
-					statesForSiblings.push(state);
-				//if(state.propagateToSiblingChildren)
-				//	statesForSiblingChildren.push(state);
-				if(state.propagateToAncestors)
-					statesForParents.push(state);
-				if(state.propagateToAncestorsSiblings)
-					statesForParentSiblings.push(state);
-			}
-			
-			setActiveStatesForParents(statesForParents,statesForParentSiblings);
-			//setActiveStatesForSiblings(statesForSiblings,statesForSiblingChildren);
-			setActiveStatesForSiblings(statesForSiblings);
-			setActiveStatesForChildren(statesForChildren);
-			render();
+			activateStateForParents(stateForParents,statesForParentSiblings);			
+			activateStateForSiblings(stateForSiblings);
+			activateStateForChildren(stateForChildren);
+			render(state);
 		}
 		
 		/**
-		 * Returns an array of states that have eventType as their enterStateEvent.
+		 * Returns a state from the states array with the eventType as its enterStateEvent.
+		 * If more than one state has the same event type, the one with at lowest index
+		 * in the array is returned. If no state is found, the DEFAULT_STATE is returned.
 		 * 
-		 * @param eventType The event type to search for
+		 * @param eventType The event type to search for.
 		 */
-		protected function findStatesForEventType(eventType:String):Array
+		protected function findStatesForEventType(eventType:String):State
 		{
-			var toReturn:Array = [];
 			for each(var state:State in states)
 			{
 				if(state.enterStateEvent == eventType)
-					toReturn.push(state);
+					return state;
 			}
-			return toReturn;
+			return DEFAULT_STATE;
 		}
 		
 		/**
-		 * Makes all descendents enter the states specfied.
+		 * Makes all descendents enter the state specfied.
 		 * 
-		 * @param states The array of states that the descendents should enter.
+		 * @param state The state that the descendents should enter.
 		 */
-		protected function setActiveStatesForChildren(states:Array):void
+		protected function activateStateForChildren(state:State):void
 		{	
-			if (states.length==0) return;
-			
 			for(var a:int = 0; a < numChildren; a++)
 			{
 				var currChild:DisplayObject = getChildAt(a);
 				if(currChild is AxiisSprite)
 				{
-					AxiisSprite(currChild).activeStates = states;
-					AxiisSprite(currChild).setActiveStatesForChildren(states);
-					AxiisSprite(currChild).render();
+					AxiisSprite(currChild).activateStateForChildren(state);
+					AxiisSprite(currChild).render(state);
 				}
 			}
 		}
 		
 		/**
-		 * Makes all siblings (AxiisSprites with the same parent) enter the
-		 * states specfied.
+		 * Makes all siblings (AxiisSprites with the same parent) enter the state specfied.
 		 * 
-		 * @param states The array of states that the siblings should enter.
+		 * @param state The state that the siblings should enter.
 		 */
-		protected function setActiveStatesForSiblings(statesForSiblings:Array):void
+		protected function activateStateForSiblings(state:State):void
 		{
-			if(!parent || statesForSiblings.length==0)
-				return;
-			
 			for(var a:int = 0; a < parent.numChildren; a++)
 			{
 				var currChild:DisplayObject = parent.getChildAt(a);
 				if(currChild != this && currChild is AxiisSprite)
 				{
-					AxiisSprite(currChild).activeStates = statesForSiblings;
-					//AxiisSprite(currChild).setActiveStatesForChildren(statesForSiblingChildren);
-					AxiisSprite(currChild).render();
+					AxiisSprite(currChild).render(state);
 				}
 			}
 		}
 		
 		/**
-		 * Makes all ancestores enter the states specfied.
+		 * Makes all ancestores and their siblings enter the state specfied.
 		 * 
-		 * @param states The array of states that the ancestors should enter.
+		 * @param stateForAncestors The state that the ancestors should enter.
+		 * @param stateForAncestorSiblings The state that the siblings of the ancestors should enter.
 		 */
-		protected function setActiveStatesForParents(statesForAncestors:Array,statesForAncestorSiblings:Array):void
+		protected function activateStateForParents(stateForAncestors:State,stateForAncestorSiblings:State):void
 		{
-			if (statesForAncestorSiblings.length==0) return;
-			
 			if(parent is AxiisSprite)
 			{
-				AxiisSprite(parent).activeStates = statesForAncestors;
-				//AxiisSprite(parent).setActiveStatesForSiblings(statesForAncestorSiblings,[])
-				AxiisSprite(parent).setActiveStatesForSiblings(statesForAncestorSiblings)
-				AxiisSprite(parent).setActiveStatesForParents(statesForAncestors,statesForAncestorSiblings);
-				AxiisSprite(parent).render();
+				AxiisSprite(parent).activateStateForSiblings(stateForAncestorSiblings)
+				AxiisSprite(parent).activateStateForParents(stateForAncestors,stateForAncestorSiblings);
+				AxiisSprite(parent).render(stateForAncestors);
 			}
 		}
 		
 		/**
-		 * Draws the geometries to the AxiisSprites graphics context.
+		 * Displays the child sprite for the state parameter and hides all others.
+		 * If no state is provided, the default state is used instead.
+		 * 
+		 * @param state The state this AxiisSprite should show.
 		 */
-		public function render():void
+		public function render(state:State = null):void
 		{
-			trace("AxiisSprite.render() " + this)
-			for each(var modification:PropertySetter in revertingModifications)
-			{
-				//trace(modification.property,modification.value)
-				modification.apply();
-			}
-			
-			for each(var activeState:State in activeStates)
-			{
-				activeState.apply();
-			}
-			
-			graphics.clear();
-			for each(var geometry:Geometry in geometries)
-			{
-				geometry.preDraw();
-				var drawingBounds:Rectangle = scaleFill
-						? new Rectangle(bounds.x+geometry.x, bounds.y+geometry.y,bounds.width,bounds.height)
-						: geometry.commandStack.bounds;
-				geometry.draw(graphics,drawingBounds);
-			}
-			
-			for each(activeState in activeStates)
-			{
-				activeState.remove();
+			if(state == null)
+				state = AxiisSprite.DEFAULT_STATE;
+			var childToDisplay:Sprite = stateToSpriteHash[state];
+			for each(var stateChild:Sprite in stateToSpriteHash)
+			{				
+				if(stateChild == childToDisplay)
+					stateChild.visible = true;
+				else
+					stateChild.visible = false;
 			}
 		}
 		
@@ -388,21 +359,20 @@ package org.axiis.core
 		public function dispose():void
 		{
 			graphics.clear();
-			
 			while (numChildren > 0)
 			{
-				var s:AxiisSprite= getChildAt(0) as AxiisSprite;
-				s.dispose();
+				var s:Sprite = Sprite(getChildAt(0));
+				if(s is AxiisSprite)
+					AxiisSprite(s).dispose();
 				s.graphics.clear();
 				removeChild(s);
 			}
-			
 			for each (var obj:Object in eventListeners)
 			{
 				super.removeEventListener(obj.type, obj.listener,obj.useCapture);
 			}
 			states = null;
-			revertingModifications = null;
+			stateToSpriteHash = null;
 		}
 		
 		private function onMouseOver(e:Event):void {

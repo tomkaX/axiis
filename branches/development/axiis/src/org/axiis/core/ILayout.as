@@ -260,5 +260,7 @@ package org.axiis.core
 		function get dataTipAnchorPoint():Point;
 		function set dataTipContentClass(value:IFactory):void;
 		function get dataTipContentClass():IFactory
+		
+		function get states():Array;
 	}
 }

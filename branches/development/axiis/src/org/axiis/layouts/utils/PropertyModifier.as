@@ -25,8 +25,8 @@
 
 package org.axiis.layouts.utils
 {	
-	import flash.events.Event;
-	import flash.events.EventDispatcher;
+	import com.degrafa.geometry.RegularRectangle;
+	import flash.events.*;
 
 	/**
 	* PropertyModifier is used to specify changes that should 

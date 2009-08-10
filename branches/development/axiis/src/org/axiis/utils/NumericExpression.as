@@ -77,7 +77,7 @@ package org.axiis.utils
 		}
 		public function set value(num:Number):void
 		{
-			if (_value != num)
+			//if (_value != num)
 			{
 				_value = num;
 				dispatchEvent(new Event("valueChanged"));

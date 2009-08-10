@@ -145,7 +145,8 @@ package org.axiis.layouts.utils
 				if(geometry)
 				{
 					for each (var modifier:PropertyModifier in modifiers)
-					{ 
+					{
+						//trace(modifier.property,modifier) 
 						if(currentIteration == 0)
 							modifier.beginModify(geometry);
 						modifier.apply();

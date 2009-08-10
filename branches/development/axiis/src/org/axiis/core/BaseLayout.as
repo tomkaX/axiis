@@ -25,14 +25,14 @@
 
 package org.axiis.core
 {
-	import com.degrafa.geometry.Geometry;
-	
-	import flash.events.Event;
-	import flash.geom.Rectangle;
-	import flash.utils.getTimer;
+	import flash.events.*;
+	import flash.geom.*;
+	import flash.utils.*;
 	
 	import mx.core.IFactory;
-	import mx.events.PropertyChangeEvent;
+	
+	import org.axiis.states.State;
+	
 	
 	// TODO This event should be moved to AbstractLayout
 	/**
@@ -68,14 +68,8 @@ package org.axiis.core
 		{
 			super();
 		}
-		
-		private var t:Number;
-		
-		private var propertySettersArrays:Array = [];
-		
-		private var currentPropertySetters:Array = [];
-		
-		private var originalPropertySetters:Array = [];
+
+		private var allStates:Array = [];
 
 		[Bindable(event="scaleFillChange")]
 		/**
@@ -143,14 +137,15 @@ package org.axiis.core
 		 */
 		override public function render(newSprite:AxiisSprite = null):void 
 		{
-			if (!visible || !this.dataItems || itemCount==0) {
-				if (newSprite) newSprite.visible=false;
+			if (!visible || !this.dataItems || itemCount==0)
+			{
+				if (newSprite)
+					newSprite.visible = false;
 				return;
 			}
 			
-			if (newSprite) newSprite.visible=true;
-			
-			t=flash.utils.getTimer();
+			if (newSprite)
+				newSprite.visible=true;
 			
 			dispatchEvent(new Event("preRender"));
 			
@@ -179,22 +174,45 @@ package org.axiis.core
 			
 			if (_dataItems)
 			{
+				var topLayout:ILayout = findTopLayout();
+				allStates = findAllStatesInLayoutTree(topLayout);
+				
 				_itemCount = _dataItems.length;
-				if(_itemCount > 0 )
+				if(_itemCount > 0)
 				{
 					_currentDatum = null;
 					_currentValue = null;
-					_currentLabel = null;
-					_currentReference = null;
+					_currentLabel = null
 					_currentIndex = -1;
-					
-					if(parentLayout == null)
-						clearPropertySetterArrays();
-					addModificationListeners();
 					
 					_referenceGeometryRepeater.repeat(itemCount, preIteration, postIteration, repeatComplete);
 				}
 			}
+		}
+		
+		protected function findTopLayout():ILayout
+		{
+			var topLayout:ILayout = this;
+			while(topLayout.parentLayout != null)
+			{
+				topLayout = topLayout.parentLayout;
+			}
+			return topLayout;
+		}
+		
+		protected function findAllStatesInLayoutTree(layout:ILayout):Array
+		{
+			var toReturn:Array = [];
+			for each(var state:State in layout.states)
+			{
+				toReturn.push(state);
+			}
+			for each(var childLayout:ILayout in layout.layouts)
+			{
+				var childLayoutStates:Array = findAllStatesInLayoutTree(childLayout);
+				toReturn = toReturn.concat(childLayoutStates);
+			}
+			return toReturn;
 		}
 		
 		/**
@@ -207,18 +225,12 @@ package org.axiis.core
 		 */
 		protected function preIteration():void
 		{
-			currentPropertySetters = clonePropertySetterArray(currentPropertySetters);
-			
 			_currentIndex = referenceRepeater.currentIteration;
-			_currentDatum = dataItems[_currentIndex];
-			
+			_currentDatum = dataItems[_currentIndex];			
 			_currentValue=getProperty(_currentDatum,dataField);
-				
 			_currentLabel = getProperty(_currentDatum,labelField).toString();
 		}
-		
 
-		
 		/**
 		 * The callback method called by the referenceRepeater after it applies
 		 * the PropertyModifiers on each iteration. This method updates the
@@ -228,7 +240,7 @@ package org.axiis.core
 		 * drawingGeometries that are based on the drawingGeometries themselves.
 		 */
 		protected function postIteration():void
-		{ 
+		{
 			_currentReference = referenceRepeater.geometry;
 			
 			// Add a new Sprite if there isn't one available on the display list.
@@ -246,20 +258,22 @@ package org.axiis.core
 			
 			dispatchEvent(new Event("itemPreDraw"));
 			
-			propertySettersArrays.push(currentPropertySetters);
-			
 			currentChild.bounds = bounds;
 			currentChild.scaleFill = scaleFill;
-			currentChild.geometries = drawingGeometries;
-			currentChild.states = states;
-			currentChild.revertingModifications = [];
 			currentChild.dataTipAnchorPoint = dataTipAnchorPoint == null ? null : dataTipAnchorPoint.clone();
 			currentChild.dataTipContentClass = dataTipContentClass;
+			
+			currentChild.storeGeometries(drawingGeometries);
+			for each(var state:State in allStates)
+			{
+				state.apply();
+				currentChild.storeGeometries(drawingGeometries,state);
+				state.remove();
+			}
+			currentChild.states = states;
 			currentChild.render();
 			
 			renderChildLayouts(currentChild);
-			
-			//trace("data value " + this.currentLabel + " = " + this.currentValue);
 		}
 		
 		/**
@@ -292,122 +306,6 @@ package org.axiis.core
 		{
 			sprite.visible = visible;
 			_rendering = false;
-			
-			removeModificationListeners();
-			
-			if(parentLayout == null)
-				updateSpritePropertySetters();
-		}
-		
-		/**
-		 * Removes the records of any property change events recorded thus far
-		 * for this layout and all nested layouts.
-		 */
-		protected function clearPropertySetterArrays():void
-		{
-			propertySettersArrays = [];
-			currentPropertySetters = [];
-			originalPropertySetters = [];
-			
-			for each(var layout:BaseLayout in layouts)
-			{
-				layout.clearPropertySetterArrays();
-			}
-		}
-		
-		private function clonePropertySetterArray(arr:Array):Array
-		{
-			var toReturn:Array = [];
-			for each(var propertySetter:PropertySetter in arr)
-			{
-				toReturn.push(propertySetter.clone());
-			}
-			return toReturn;
-		}
-		
-		/**
-		 * Passes the recorded property changes to the AxiisSprites.
-		 */
-		protected function updateSpritePropertySetters():void
-		{
-			for(var a:int = 0; a < childSprites.length; a++)
-			{
-				AxiisSprite(childSprites[a]).revertingModifications = propertySettersArrays[a];
-			}
-			for each(var layout:BaseLayout in layouts)
-			{
-				layout.updateSpritePropertySetters();
-			}
-		}
-		
-		private function addModificationListeners():void
-		{
-			for each(var geometry:Geometry in drawingGeometries)
-			{
-				geometry.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,handleGeometryPropertyChange);
-			}
-		}
-		
-		private function removeModificationListeners():void
-		{
-			for each(var geometry:Geometry in drawingGeometries)
-			{
-				geometry.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,handleGeometryPropertyChange);
-			}
-		}
-		
-		private function handleGeometryPropertyChange(event:PropertyChangeEvent):void
-		{
-			if (currentIndex==itemCount-1 && this.referenceRepeater.iterationLoopComplete)
-			{
-				currentPropertySetters = propertySettersArrays[0]; //Grab the first one
-				if(hasModificationForProperty(currentPropertySetters,event.source,event.property))
-				{
-					//trace("returning")
-					return;
-				}
-			}
-			
-			if(!hasModificationForProperty(originalPropertySetters,event.source,event.property))
-			{
-				var oldPropertySetter:PropertySetter = new PropertySetter(event.source,event.property,event.oldValue);
-				originalPropertySetters.push(oldPropertySetter);
-				for each(var arr:Array in propertySettersArrays)
-				{
-					arr.push(oldPropertySetter.clone());
-				}
-			}
-			
-			var found:Boolean = false;
-			for each(var propertySetter:PropertySetter in currentPropertySetters)
-			{
-				if(propertySetter.target == event.source
-					&& propertySetter.property == event.property)
-				{
-					//if(currentIndex == 2)
-					//	trace(currentIndex,"OLD",event.property,event.newValue)
-					propertySetter.value = event.newValue;
-					found = true;
-					break;
-				}
-			}
-			if(!found)
-			{
-				//if(currentIndex == 2)
-				//	trace(currentIndex,"OLD",event.property,event.newValue)
-				var newPropertySetter:PropertySetter = new PropertySetter(event.source,event.property,event.newValue);
-				currentPropertySetters.push(newPropertySetter);
-			}
-		}
-		
-		private function hasModificationForProperty(propertySetters:Array,target:Object,property:Object):Boolean
-		{
-			for each(var propertySetter:PropertySetter in propertySetters)
-			{
-				if(propertySetter.target == target && propertySetter.property == property)
-					return true;
-			}
-			return false;
 		}
 		
 		private function createChildSprite(layout:ILayout):AxiisSprite
@@ -429,6 +327,5 @@ package org.axiis.core
 				s.dispose();
 			}
 		}
-		
 	}
 }

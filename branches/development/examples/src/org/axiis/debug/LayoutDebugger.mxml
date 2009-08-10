@@ -28,10 +28,11 @@
 			<debug:LayoutDescriptor/>
 		</mx:dataDescriptor>
 	</mx:Tree>
+	<!--
 	<mx:DataGrid dataProvider="{(tree.selectedItem as AxiisSprite).revertingModifications}" width="100%" height="100%" id="dg">
 		<mx:columns>
 			<mx:DataGridColumn dataField="target" />
-			<mx:DataGridColumn dataField="target.id" />
+			<mx:DataGridColumn dataField="target" />
 			<mx:DataGridColumn dataField="property" />
 			<mx:DataGridColumn dataField="value" />
 			<mx:DataGridColumn headerText="current" >
@@ -43,4 +44,5 @@
 			</mx:DataGridColumn>
 		</mx:columns>
 	</mx:DataGrid>
+	-->
 </mx:HDividedBox>
