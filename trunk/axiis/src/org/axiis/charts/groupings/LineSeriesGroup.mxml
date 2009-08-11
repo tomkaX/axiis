@@ -229,7 +229,7 @@
 					segments.splice(0, 1, new MoveTo(segments[0].x, segments[0].y));
 					//Clip End Point
 					if (currentIndex < itemCount - 2)
-						segments[segments.length - 1].x = Math.round((seriesPoints[seriesIndex][currentIndex+1].x - seriesPoints[seriesIndex][currentIndex].x)/2) 
+						segments[segments.length - 1].x = Math.round((seriesPoints[seriesIndex][currentIndex+2].x - seriesPoints[seriesIndex][currentIndex+1].x)/2)
 							+ Math.round(seriesPoints[seriesIndex][currentIndex+1].x);
 				}
 				else if (currentIndex == itemCount - 1)
