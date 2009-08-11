@@ -313,8 +313,15 @@ package org.axiis
 		 */
 		public function onItemMouseOver(e:MouseEvent):void
 		{
-			var axiisSprite:AxiisSprite = e.target as AxiisSprite;
-			if(!axiisSprite)
+			var targetObject:DisplayObject = e.target as DisplayObject;
+			while(!(targetObject is AxiisSprite))
+			{
+				targetObject = targetObject.parent;
+				if(targetObject == this)
+					return;
+			}
+			var axiisSprite:AxiisSprite = AxiisSprite(targetObject);
+			if(axiisSprite.layout == null)
 				return;
 			
 			//var dataTip:DataTip = new DataTip();

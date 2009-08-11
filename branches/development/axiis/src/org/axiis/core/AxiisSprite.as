@@ -55,7 +55,7 @@ package org.axiis.core
 		public function AxiisSprite()
 		{
 			super();
-			addEventListener(MouseEvent.MOUSE_OVER,onMouseOver);
+			//addEventListener(MouseEvent.MOUSE_OVER,onMouseOver);
 		}
 		
 		private var eventListeners:Array = [];
@@ -375,10 +375,9 @@ package org.axiis.core
 			stateToSpriteHash = null;
 		}
 		
-		private function onMouseOver(e:Event):void {
-			var t:UIComponent
+		/*private function onMouseOver(e:Event):void {
 			var tte:ToolTipEvent=new ToolTipEvent(ToolTipEvent.TOOL_TIP_SHOW);
 			this.dispatchEvent(tte);
-		}
+		}*/
 	}
 }
