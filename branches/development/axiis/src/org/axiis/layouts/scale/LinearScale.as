@@ -25,7 +25,7 @@
 
 package org.axiis.layouts.scale
 {
-	import flash.events.Event;
+	
 	
 	/**
 	 * A scale that deals with linear numeric data.
@@ -53,7 +53,8 @@ package org.axiis.layouts.scale
 			per = Math.max(0,Math.min(1.0,per));
 			if(invert)
 				per=1-per;
-			return (maxLayout-minLayout)*per + minLayout;
+			var toReturn:* = (maxLayout-minLayout)*per + minLayout;
+			return toReturn;
 		}
 		
 		/**

@@ -172,7 +172,7 @@ package org.axiis.layouts.utils
 		*/
 		public function apply():void
 		{
-			if (modifier)
+			if (modifier != null)
 			{
 				if(_modifierOperator == "none")
 				{
