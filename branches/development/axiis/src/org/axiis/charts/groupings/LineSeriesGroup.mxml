@@ -556,7 +556,7 @@
 
 			//The segments used to render the series by myPath
 			[Bindable]
-			private var _currentSegments:Array;
+			private var _currentSegments:Array = [];
 
 			//Used to remove strokes off the sides and bottom of the path
 			[Bindable]
