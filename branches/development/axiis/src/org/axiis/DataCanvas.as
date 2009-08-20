@@ -44,6 +44,7 @@ package org.axiis
 	import org.axiis.core.ILayout;
 	import org.axiis.managers.AnchoredDataTipManager;
 	import org.axiis.managers.FreeDataTipManager;
+	import org.axiis.managers.IDataTipManager;
 	import org.axiis.ui.DataTip;
 	import org.axiis.ui.DataTip2;
 	
@@ -179,11 +180,7 @@ package org.axiis
 				layout.addEventListener("layoutInvalidate",handleLayoutInvalidate);
 				if (layout.emitDataTips)
 					sprite.addEventListener(MouseEvent.MOUSE_OVER,onItemMouseOver);
-				sprite.addEventListener(MouseEvent.CLICK,onItemMouseClick);
-				sprite.addEventListener(MouseEvent.DOUBLE_CLICK,onItemMouseDoubleClick);
-				sprite.addEventListener(MouseEvent.MOUSE_OUT,onItemMouseOut);
-				sprite.addEventListener(MouseEvent.MOUSE_DOWN,onItemMouseDown);
-				sprite.addEventListener(MouseEvent.MOUSE_UP,onItemMouseUp);
+
 			
 				invalidatedLayouts.push(layout);
 			}
@@ -236,6 +233,7 @@ package org.axiis
 		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
 		{
 			super.updateDisplayList(unscaledWidth,unscaledHeight);
+	
 			
 			_background.graphics.clear();
 			
@@ -338,6 +336,11 @@ package org.axiis
 			dataTip.index = axiisSprite.index;
 			dataTip.contentFactory = axiisSprite.dataTipContentClass;
 			
+			var dataTipManager:IDataTipManager=axiisSprite.layout.dataTipManager;
+			
+			dataTipManager.createDataTip(dataTip,this,axiisSprite);
+			
+			/*
 			if(axiisSprite.dataTipAnchorPoint)
 			{
 				var anchorPoint:Point = axiisSprite.localToGlobal(axiisSprite.dataTipAnchorPoint);
@@ -351,7 +354,7 @@ package org.axiis
 				var freeDataTipManager:FreeDataTipManager = new FreeDataTipManager();
 				freeDataTipManager.createDataTip(dataTip,this,axiisSprite);
 			}
-			
+			8?
 			/*if(axiisSprite.layout)
 			{
 				if(showDataTips && axiisSprite.layout.dataTipLabelFunction != null)
@@ -376,37 +379,9 @@ package org.axiis
 			if(!axiisSprite)
 				return;
 			
-			while(toolTips.length > 0)
-			{
-				var tt:IToolTip = IToolTip(toolTips.pop());
-				destroyToolTip(tt);
-				tt = null;
-			}	
+			destroyAllToolTips();
 		}
 		
-		/**
-		 * @private
-		 */
-		public function onItemMouseDown(e:MouseEvent):void {
-		}
-		
-		/**
-		 * @private
-		 */
-		public function onItemMouseUp(e:MouseEvent):void {
-		}
-		
-		/**
-		 * @private
-		 */
-		public function onItemMouseClick(e:MouseEvent):void {
-		}
-		
-		/**
-		 * @private
-		 */
-		public function onItemMouseDoubleClick(e:MouseEvent):void {
-		}
 		
 		private function getHitSiblings(axiisSprite:AxiisSprite):Array
 		{
@@ -548,6 +523,15 @@ package org.axiis
 		
 		        return toolTip as IToolTip;
 		    }
+		    
+		    private function destroyAllToolTips():void {
+				while(toolTips.length > 0)
+				{
+					var tt:IToolTip = IToolTip(toolTips.pop());
+					destroyToolTip(tt);
+					tt = null;
+				}	
+			}
 		
 		    /**
 		     *  Destroys a specified ToolTip that was created by the <code>createToolTip()</code> method.

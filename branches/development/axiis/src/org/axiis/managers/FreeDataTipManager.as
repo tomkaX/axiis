@@ -11,7 +11,7 @@ package org.axiis.managers
 	
 	import org.axiis.core.AxiisSprite;
 
-	public class FreeDataTipManager
+	public class FreeDataTipManager implements IDataTipManager
 	{
 		public function FreeDataTipManager()
 		{

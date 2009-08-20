@@ -5,13 +5,13 @@ package org.axiis.managers
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	
-	import mx.core.UIComponent;
 	import mx.core.ApplicationGlobals;
+	import mx.core.UIComponent;
 	import mx.managers.ISystemManager;
 	
 	import org.axiis.core.AxiisSprite;
 
-	public class AnchoredDataTipManager
+	public class AnchoredDataTipManager implements IDataTipManager
 	{
 		public function AnchoredDataTipManager()
 		{
@@ -25,7 +25,7 @@ package org.axiis.managers
 		
 		private var dataTips:Array = [];
 		
-		public function createDataTip(dataTip:UIComponent,context:Sprite,axiisSprite:AxiisSprite):void
+		public function createDataTip(dataTip:UIComponent,context:UIComponent,axiisSprite:AxiisSprite):void
 		{
 			var anchorPoint:Point = calculateDataTipPosition(axiisSprite,context);
 			dataTip.x = anchorPoint.x;

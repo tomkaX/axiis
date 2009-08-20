@@ -336,7 +336,8 @@ package org.axiis.core
 		}
 		
 		private function sprite_onClick(e:Event):void {
-			this.dispatchEvent(new ItemClickEvent(AxiisSprite(e.currentTarget)));
+				e.stopPropagation();
+				this.dispatchEvent(new ItemClickEvent(AxiisSprite(e.currentTarget)));
 		}
 	}
 }

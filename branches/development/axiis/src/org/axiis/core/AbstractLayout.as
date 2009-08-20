@@ -38,6 +38,8 @@ package org.axiis.core
 	
 	import org.axiis.DataCanvas;
 	import org.axiis.layouts.utils.GeometryRepeater;
+	import org.axiis.managers.FreeDataTipManager;
+	import org.axiis.managers.IDataTipManager;
 
 	// TODO To keep this as abstract as possible, we could make this not officially implement the interface
 	/**
@@ -54,6 +56,16 @@ package org.axiis.core
 		{
 			super();
 		}
+		
+		public function set dataTipManager(value:IDataTipManager):void {
+			_dataTipManager=value;
+		}
+
+		public function get dataTipManager():IDataTipManager {
+			return _dataTipManager;
+		}		
+		
+		private var _dataTipManager:IDataTipManager=new FreeDataTipManager();
 		
 		[Bindable]
 		/**
@@ -275,6 +287,7 @@ package org.axiis.core
 		 */
 		public function invalidateDataProvider():void
 		{
+			
 			_dataItems=new Array();
 			if (dataProvider is ArrayCollection) {
 				for (var i:int=0;i<dataProvider.source.length;i++) {
@@ -313,6 +326,8 @@ package org.axiis.core
 					}
 				}
 			}
+			
+			
 			_itemCount=_dataItems.length;
 		
 		}
@@ -787,6 +802,7 @@ package org.axiis.core
 		public function invalidate():void
 		{
 			dispatchEvent(new Event("layoutInvalidate"));
+			
 		} 
 		
 		[Bindable(event="renderingChange")]

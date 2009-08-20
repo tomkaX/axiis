@@ -15,7 +15,7 @@ package org.axiis.events
 		public function ItemClickEvent(item:AxiisSprite):void
 		{
 			
-			super("itemClick");
+			super("itemClick",false,true);
 			_item=item;
 		}
 

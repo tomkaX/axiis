@@ -35,6 +35,7 @@ package org.axiis.core
 	
 	import org.axiis.DataCanvas;
 	import org.axiis.layouts.utils.GeometryRepeater;
+	import org.axiis.managers.IDataTipManager;
 	
 	[Bindable]
 	/**
@@ -260,6 +261,9 @@ package org.axiis.core
 		function get dataTipAnchorPoint():Point;
 		function set dataTipContentClass(value:IFactory):void;
 		function get dataTipContentClass():IFactory
+		
+		function set dataTipManager(value:IDataTipManager):void;
+		function get dataTipManager():IDataTipManager;
 		
 		function get states():Array;
 	}
