@@ -32,7 +32,7 @@ package org.axiis.layouts.utils
 	import flash.utils.getTimer;
 	import flash.utils.setTimeout;
 	
-	import mx.core.Application;
+	import mx.managers.SystemManager;
 
 	/**
 	 * GeometryRepeater modifies geometries through the use of
@@ -133,7 +133,9 @@ package org.axiis.layouts.utils
 		 */
 		protected function repeatHelper(numIterations:int,preIterationCallback:Function = null, postIterationCallback:Function=null, completeCallback:Function = null):void
 		{
-			var app:Application = Application(Application.application);
+			
+			
+			var app:Object = SystemManager.getSWFRoot(this)
 			var millisecondsPerFrame:Number = app.stage ? 1000 / app.stage.frameRate : 50;
 			var startTime:int = getTimer();
 			var totalTime:int = 0;

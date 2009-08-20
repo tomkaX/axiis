@@ -37,8 +37,6 @@ package org.axiis.core
 	
 	import mx.core.FlexSprite;
 	import mx.core.IFactory;
-	import mx.core.UIComponent;
-	import mx.events.ToolTipEvent;
 	
 	import org.axiis.states.State;
 
@@ -210,7 +208,7 @@ package org.axiis.core
 			}
 			if (child)
 				super.removeChild(child);
-			return child;
+			return child; 
 		}
 		
 		/**
@@ -325,6 +323,7 @@ package org.axiis.core
 		 */
 		protected function activateStateForParents(stateForAncestors:State,stateForAncestorSiblings:State):void
 		{
+ 
 			if(parent is AxiisSprite)
 			{
 				AxiisSprite(parent).activateStateForSiblings(stateForAncestorSiblings)
@@ -375,6 +374,7 @@ package org.axiis.core
 			stateToSpriteHash = null;
 		}
 		
+	
 		/*private function onMouseOver(e:Event):void {
 			var tte:ToolTipEvent=new ToolTipEvent(ToolTipEvent.TOOL_TIP_SHOW);
 			this.dispatchEvent(tte);

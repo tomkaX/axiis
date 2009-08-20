@@ -11,6 +11,7 @@ package org.axiis.data
 		public var name:String;
 		public var sourceData:Object;
 		public var groupedData:DataGroup;
+		public var sums:Object=new Object(); 
 
 
 	}

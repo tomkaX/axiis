@@ -31,6 +31,7 @@ package org.axiis.core
 	
 	import mx.core.IFactory;
 	
+	import org.axiis.events.ItemClickEvent;
 	import org.axiis.states.State;
 	
 	
@@ -52,6 +53,11 @@ package org.axiis.core
 	 * Dispatched before each individual child is rendered.
 	 */
 	[Event(name="itemPreDraw", type="flash.events.Event")]
+	
+	/**
+	 * Dispatched when an AxiisSprite is clicked.
+	 */
+	[Event(name="itemClick", type="flash.events.Event")]
 	
 	// TODO Is "AxiisLayout" a better name for BaseLayout 
 	/**
@@ -313,6 +319,7 @@ package org.axiis.core
 			var newChildSprite:AxiisSprite = new AxiisSprite();
 			newChildSprite.doubleClickEnabled=true;
 			newChildSprite.layout = layout;
+			newChildSprite.addEventListener("click",sprite_onClick);
 			return newChildSprite;
 		}
 
@@ -326,6 +333,10 @@ package org.axiis.core
 				var s:AxiisSprite = AxiisSprite(sprite.removeChild(sprite.drawingSprites[sprite.drawingSprites.length-1]));
 				s.dispose();
 			}
+		}
+		
+		private function sprite_onClick(e:Event):void {
+			this.dispatchEvent(new ItemClickEvent(AxiisSprite(e.currentTarget)));
 		}
 	}
 }

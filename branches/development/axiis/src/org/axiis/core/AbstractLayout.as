@@ -314,6 +314,7 @@ package org.axiis.core
 				}
 			}
 			_itemCount=_dataItems.length;
+		
 		}
 		//---------------------------------------------------------------------
 		// "Current" properties

@@ -171,7 +171,7 @@ package org.axiis.data
 			
 			_data["table"]=createTableFromCsv(payload,addSummaryFields);
 			
-			trace("DataSet.processCsvShapedData " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
+			trace("DataSet.processCsvAsTable " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
 		}
 		
 		/**
@@ -289,6 +289,22 @@ package org.axiis.data
 		/**
 		 * IN DEVELOPMENT - MOVING OVER TO MORE STRONGLY TYPED UNIVERSAL STRUCTURE - DataGroup
 		 */
+		public function aggregateTable(groupings:Array, summaryCols:Array=null):void {
+				var t:Number=flash.utils.getTimer();
+		
+			if (!data["table"]) return; //No table to process)
+			
+			if (!groupings || groupings.length<1) throw new Error("You must declare groupings to shape data DataSet.processCsvAsShapedData");
+			
+			if (!_data) _data=new Object();
+			_data.shaped=groupTableRows(data["table"].rows, groupings, summaryCols);
+			
+			trace("DataSet.processCsvShapedData " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
+		}
+		
+		/**
+		 * IN DEVELOPMENT - MOVING OVER TO MORE STRONGLY TYPED UNIVERSAL STRUCTURE - DataGroup
+		 */
 		public function groupTable(groupings:Array, flattenLastGroup:Boolean=true):void {
 				var t:Number=flash.utils.getTimer();
 		
@@ -299,7 +315,7 @@ package org.axiis.data
 			if (!_data) _data=new Object();
 			_data.grouped=createDataGroup(data["table"].rows,groupings,flattenLastGroup);
 			
-			trace("DataSet.processCsvShapedData " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
+			trace("DataSet.groupTable " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
 		}
 		
 		/**
@@ -713,11 +729,82 @@ package org.axiis.data
 			
 		}
 		
+		/**
+		 * IN DEV
+		 */
+		 
+		private function groupTableRows(collection:ArrayCollection, groupings:Array, summaryCols:Array):DataGroup {
+			
+				var tempData:DataGroup=new DataGroup();
+			
+				
+				//Start with outer grouping and find unique values
+				
+				var colIndex:String=groupings[0].split(",")[0];
+				var groupName:String=StringUtil.trim(groupings[0].split(",")[1]);
+				var srt:Sort=new Sort();
+				srt.fields=[new SortField(colIndex,true)];
+				srt.compareFunction=internalCompare;
+				collection.sort=srt;
+				collection.refresh();
+				
+				tempData.groupedData=new DataGroup();
+				tempData.name=groupName;
+				
+				//Go through collection and each time we hit a new unique value create a new group object
+				var currValue:String=collection.getItemAt(0).columns[int(colIndex)].value;
+				var nextValue:String;
+				var tempCollection:DataGroup=new DataGroup();
+				
+				
+				
+				for (var y:int=0;y<collection.length;y++) {
+					
+					//Create summaries
+					for (var n:int=0;n<summaryCols.length;n++) {
+						if ( ! tempData.sums[collection.getItemAt(y).columns[summaryCols[n]].name]) tempData.sums[collection.getItemAt(y).columns[summaryCols[n]].name]=0;
+						tempData.sums[collection.getItemAt(y).columns[summaryCols[n]].name]+=collection.getItemAt(y).columns[summaryCols[n]].value;
+					}
+					
+					if (y!=collection.length-1)
+						nextValue=collection.getItemAt(y+1).columns[int(colIndex)].value;  //look ahead to see if we are at the end of a group.
+					else {
+						nextValue=null;  //We are at the end force the end of group
+					}
+					
+					currValue=collection.getItemAt(y).columns[int(colIndex)].value;
+					tempCollection.addItem(collection.getItemAt(y));
+						
+					if (currValue!=nextValue) {
+							
+						var newObject:DataGroup=new DataGroup();
+						newObject.name=currValue;
+
+						if (groupings.length > 1) { //we need to go one level deeper recursively
+							newObject=groupTableRows(tempCollection,groupings.slice(1,groupings.length),summaryCols);
+							newObject.name=currValue;
+							//Create summaries
+							for (var n:int=0;n<summaryCols.length;n++) {
+								if ( ! tempCollection.sums[collection.getItemAt(y).columns[summaryCols[n]].name]) tempCollection.sums[collection.getItemAt(y).columns[summaryCols[n]].name]=0;
+								tempCollection.sums[collection.getItemAt(y).columns[summaryCols[n]].name]+=newObject.sums[collection.getItemAt(y).columns[summaryCols[n]].name];
+							}
+						}
+						
+						tempData.groupedData.addItem(newObject);
+						tempCollection=new DataGroup();
+					}
+
+				}
+
+			return tempData;
+			
+		}
+		
 		
 		/**
 		 * tableData:Object - expects the result from a processCsvData operation
 		 */
-		private function createShapedObject(collection:ArrayCollection, groupings:Array, flattenLastGroup:Boolean):Object {
+		private function createShapedObject(collection:ArrayCollection, groupings:Array, flattenLastGroup:Boolean, summaryCols:Array=null):Object {
 			
 				var tempData:Object=new Object;
 			
