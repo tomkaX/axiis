@@ -39,7 +39,10 @@ package org.axiis.managers
 			dataTip.x = point.x;
 			dataTip.y = point.y;
 			
-			systemManager.topLevelSystemManager.addChildToSandboxRoot("toolTipChildren", dataTip);
+			if(context)
+				context.systemManager.addChildToSandboxRoot("toolTipChildren", dataTip);
+			else
+				systemManager.topLevelSystemManager.addChildToSandboxRoot("toolTipChildren", dataTip);
 			
 			axiisSprite.addEventListener(MouseEvent.MOUSE_MOVE,handleMouseMove);
 			axiisSprite.addEventListener(MouseEvent.MOUSE_OUT,handleMouseOut);
@@ -73,7 +76,7 @@ package org.axiis.managers
 		{
 			if(context != null && dataTip != null && axiisSprite != null)
 			{
-				systemManager.topLevelSystemManager.removeChildFromSandboxRoot("toolTipChildren", dataTip);
+				UIComponent(context).systemManager.removeChildFromSandboxRoot("toolTipChildren", dataTip);
 				axiisSprite.removeEventListener(MouseEvent.MOUSE_MOVE,handleMouseMove);
 				axiisSprite.removeEventListener(MouseEvent.MOUSE_OUT,handleMouseOut);
 				context = null;
