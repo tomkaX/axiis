@@ -49,31 +49,33 @@
 			//returns the startAngle value for a given iteration
 			private function resistanceStartAngleModifier(iterationCount:int, value:Number):Number
 			{
-				if(iterationCount == 0)
-					return 0;
-					
-				var v1:MLVector = new MLVector(1,0);
-				var z0:Number = dataProvider[iterationCount].z0;
-				var startPoint:Complex = dataProvider[iterationCount].sp0;
+				return dataProvider[iterationCount].resarc0;
 				
-				//find the center of this circle
-				var center:MLPoint = new MLPoint(scale.center + z0/(z0+1) * scale.chartRadius, scale.center);
-				
-				//figure out location angle of start point
-				var rc:Complex = Complex.div(Complex.subt(startPoint, Complex.One), Complex.adds(startPoint, Complex.One));
-				
-				var startPnt:MLPoint = new MLPoint(scale.center + rc._real * scale.chartRadius, scale.center - rc._imag * scale.chartRadius);
-				
-				var v2:MLVector = MLVector.OO.fromPointVals(center.x, startPnt.x, center.y, startPnt.y);
-				v2.normalize();
-				
-				value = Math.acos(v1.dotProduct(v2)) * 180.0 / Math.PI;
-				
-				//save off the arc length so the next modifier can pick it up
-				//it's just simpler to calculate it here
-				dataProvider[iterationCount].arc0 = 360 -  2*value;
-				
-				return value;
+//				if(iterationCount == 0)
+//					return 0;
+//					
+//				var v1:MLVector = new MLVector(1,0);
+//				var z0:Number = dataProvider[iterationCount].z0;
+//				var startPoint:Complex = dataProvider[iterationCount].sp0;
+//				
+//				//find the center of this circle
+//				var center:MLPoint = new MLPoint(scale.center + z0/(z0+1) * scale.chartRadius, scale.center);
+//				
+//				//figure out location angle of start point
+//				var rc:Complex = Complex.div(Complex.subt(startPoint, Complex.One), Complex.adds(startPoint, Complex.One));
+//				
+//				var startPnt:MLPoint = new MLPoint(scale.center + rc._real * scale.chartRadius, scale.center - rc._imag * scale.chartRadius);
+//				
+//				var v2:MLVector = MLVector.OO.fromPointVals(center.x, startPnt.x, center.y, startPnt.y);
+//				v2.normalize();
+//				
+//				value = Math.acos(v1.dotProduct(v2)) * 180.0 / Math.PI;
+//				
+//				//save off the arc length so the next modifier can pick it up
+//				//it's just simpler to calculate it here
+//				dataProvider[iterationCount].arc0 = 360 -  2*value;
+//				trace(", resarc0: "+value+", resarc1: "+ dataProvider[iterationCount].arc0);
+//				return value;
 			}
 			
 			/**
@@ -81,10 +83,10 @@
 			 */
 			private function resistanceArcModifier(iterationCount:int, value:Number):Number
 			{
-				if(iterationCount == 0)
-					return 360;
+//				if(iterationCount == 0)
+//					return 360;
 					
-				return dataProvider[iterationCount].arc0;
+				return dataProvider[iterationCount].resarc1;
 			}
 			
 			/**

@@ -49,51 +49,54 @@
 			//returns the startAngle value for a given iteration
 			private function reactanceStartAngleModifier(iterationCount:int, value:Number):Number
 			{
-				var v1:MLVector = new MLVector(1,0);
-				var z0:Number = dataProvider[iterationCount].z0;
-				var startPoint:Complex = new Complex(dataProvider[iterationCount].ep1._real, -dataProvider[iterationCount].ep1._imag);
-				var endPoint:Complex = new Complex(dataProvider[iterationCount].sp1._real, -dataProvider[iterationCount].sp1._imag);
+				return dataProvider[iterationCount].caparc0;
 				
-				//find the center of this circle
-				var center:MLPoint = null;
-				var rc:Complex = null;
-				var startPnt:MLPoint = null;
-				var endPnt:MLPoint = null;
-				
-				//we're doing a capacitive reactance arc
-				center = new MLPoint((scale.center+scale.chartRadius), scale.center + 1/z0 * scale.chartRadius);
-				
-				//figure out location angle of start point
-				rc = Complex.div(Complex.subt(startPoint, Complex.One), Complex.adds(startPoint, Complex.One));
-
-				startPnt = new MLPoint(scale.center + rc._real * scale.chartRadius, scale.center - rc._imag * scale.chartRadius);
-				
-				var v2:MLVector = MLVector.OO.fromPointVals(center.x, startPnt.x, center.y, startPnt.y);
-				v2.normalize();
-				
-				if(z0 < 1 && startPoint._imag >= 0)
-					value = 360 - Math.acos(v1.dotProduct(v2)) * 180.0 / Math.PI;
-				else
-					value = Math.acos(v1.dotProduct(v2)) * 180.0 / Math.PI;
-				
-				//next do end angle
-				rc = Complex.div(Complex.subt(endPoint, Complex.One), Complex.adds(endPoint, Complex.One));
-				
-				endPnt = new MLPoint(scale.center + rc._real * scale.chartRadius, scale.center - rc._imag * scale.chartRadius);
-				
-				v2 = MLVector.OO.fromPointVals(center.x, endPnt.x, center.y, endPnt.y);
-				v2.normalize();
-				
-				var endAngle:Number = 0;
-				
-				if(z0 < 1  && endPoint._imag <= 0)
-					endAngle = Math.acos(v1.dotProduct(v2)) * 180.0 / Math.PI;
-				else
-					endAngle = 360 - Math.acos(v1.dotProduct(v2)) * 180.0 / Math.PI;
-				
-				dataProvider[iterationCount].arc2 = endAngle - value;
-				
-				return value;
+//				var v1:MLVector = new MLVector(1,0);
+//				var z0:Number = dataProvider[iterationCount].z0;
+//				var startPoint:Complex = new Complex(dataProvider[iterationCount].ep1._real, -dataProvider[iterationCount].ep1._imag);
+//				var endPoint:Complex = new Complex(dataProvider[iterationCount].sp1._real, -dataProvider[iterationCount].sp1._imag);
+//				
+//				//find the center of this circle
+//				var center:MLPoint = null;
+//				var rc:Complex = null;
+//				var startPnt:MLPoint = null;
+//				var endPnt:MLPoint = null;
+//				
+//				//we're doing a capacitive reactance arc
+//				center = new MLPoint((scale.center+scale.chartRadius), scale.center + 1/z0 * scale.chartRadius);
+//				
+//				//figure out location angle of start point
+//				rc = Complex.div(Complex.subt(startPoint, Complex.One), Complex.adds(startPoint, Complex.One));
+//
+//				startPnt = new MLPoint(scale.center + rc._real * scale.chartRadius, scale.center - rc._imag * scale.chartRadius);
+//				
+//				var v2:MLVector = MLVector.OO.fromPointVals(center.x, startPnt.x, center.y, startPnt.y);
+//				v2.normalize();
+//				
+//				if(z0 < 1 && startPoint._imag >= 0)
+//					value = 360 - Math.acos(v1.dotProduct(v2)) * 180.0 / Math.PI;
+//				else
+//					value = Math.acos(v1.dotProduct(v2)) * 180.0 / Math.PI;
+//				
+//				//next do end angle
+//				rc = Complex.div(Complex.subt(endPoint, Complex.One), Complex.adds(endPoint, Complex.One));
+//				
+//				endPnt = new MLPoint(scale.center + rc._real * scale.chartRadius, scale.center - rc._imag * scale.chartRadius);
+//				
+//				v2 = MLVector.OO.fromPointVals(center.x, endPnt.x, center.y, endPnt.y);
+//				v2.normalize();
+//				
+//				var endAngle:Number = 0;
+//				
+//				if(z0 < 1  && endPoint._imag <= 0)
+//					endAngle = Math.acos(v1.dotProduct(v2)) * 180.0 / Math.PI;
+//				else
+//					endAngle = 360 - Math.acos(v1.dotProduct(v2)) * 180.0 / Math.PI;
+//				
+//				dataProvider[iterationCount].arc2 = endAngle - value;
+//				
+//				trace(", caparc0: "+value+", caparc1: "+ dataProvider[iterationCount].arc2);
+//				return value;
 			}
 			
 			/**
@@ -101,7 +104,7 @@
 			 */
 			private function reactanceArcModifier(iterationCount:int, value:Number):Number
 			{
-				return dataProvider[iterationCount].arc2;
+				return dataProvider[iterationCount].caparc1;
 			}
 			
 			/**
