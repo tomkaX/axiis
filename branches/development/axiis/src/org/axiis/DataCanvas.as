@@ -31,21 +31,14 @@ package org.axiis
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.geom.Point;
 	
-	import mx.core.ApplicationGlobals;
 	import mx.core.IFactory;
-	import mx.core.IToolTip;
-	import mx.core.IUIComponent;
 	import mx.core.UIComponent;
-	import mx.managers.ISystemManager;
 	
 	import org.axiis.core.AxiisSprite;
 	import org.axiis.core.ILayout;
-	import org.axiis.managers.AnchoredDataTipManager;
-	import org.axiis.managers.FreeDataTipManager;
+	import org.axiis.events.LayoutItemEvent;
 	import org.axiis.managers.IDataTipManager;
-	import org.axiis.ui.DataTip;
 	import org.axiis.ui.DataTip2;
 	
 	/**
@@ -109,7 +102,7 @@ package org.axiis
 		/**
 		 * @private
 		 */
-		public var hitRadius:Number = 1;
+		public var hitRadius:Number = 0;
 		
 		private var toolTips:Array = [];
 		
@@ -178,8 +171,7 @@ package org.axiis
 				addChild(sprite);
 				
 				layout.addEventListener("layoutInvalidate",handleLayoutInvalidate);
-				if (layout.emitDataTips)
-					sprite.addEventListener(MouseEvent.MOUSE_OVER,onItemMouseOver);
+				layout.addEventListener("itemDataTip",onItemDataTip);
 
 			
 				invalidatedLayouts.push(layout);
@@ -309,65 +301,51 @@ package org.axiis
 		/**
 		 * @private
 		 */
-		public function onItemMouseOver(e:MouseEvent):void
+		public function onItemDataTip(e:LayoutItemEvent):void
 		{
-			var targetObject:DisplayObject = e.target as DisplayObject;
+			
+			
+			/*
+			var targetObject:DisplayObject = e.item as DisplayObject;
+			
 			while(!(targetObject is AxiisSprite))
 			{
 				targetObject = targetObject.parent;
 				if(targetObject == this)
 					return;
 			}
-			var axiisSprite:AxiisSprite = AxiisSprite(targetObject);
+			*/
+			var dataTips:Array=new Array();
+			
+		
+			//var axiisSprite:AxiisSprite = AxiisSprite(targetObject);
+			
+			var axiisSprite:AxiisSprite = e.item;
+			
 			if(axiisSprite.layout == null)
 				return;
+				
+			var axiisSprites:Array=getHitSiblings(axiisSprite);
 			
-			//var dataTip:DataTip = new DataTip();
+			for each (var a:AxiisSprite in axiisSprites) {
+			
 			var dataTip:DataTip2 = new DataTip2();
-			//dataTip.calloutX = -10;
-			//dataTip.calloutY = -10;
-			//dataTip.calloutWidthRatio = .3;
-			dataTip.data = axiisSprite.data;
-			if(axiisSprite.layout.dataTipLabelFunction != null)
-				dataTip.label = axiisSprite.layout.dataTipLabelFunction(axiisSprite.data);
-			else
-				dataTip.label = axiisSprite.label;
-			dataTip.value = axiisSprite.value;
-			dataTip.index = axiisSprite.index;
-			dataTip.contentFactory = axiisSprite.dataTipContentClass;
+
+				dataTip.data = axiisSprite.data;
+				if(axiisSprite.layout.dataTipLabelFunction != null)
+					dataTip.label = axiisSprite.layout.dataTipLabelFunction(axiisSprite);
+				else
+					dataTip.label = axiisSprite.label;
+				dataTip.value = axiisSprite.value;
+				dataTip.index = axiisSprite.index;
+				dataTip.contentFactory = axiisSprite.dataTipContentClass;
+				dataTips.push(dataTip);
+			}
 			
 			var dataTipManager:IDataTipManager=axiisSprite.layout.dataTipManager;
 			
-			dataTipManager.createDataTip(dataTip,this,axiisSprite);
-			
-			/*
-			if(axiisSprite.dataTipAnchorPoint)
-			{
-				var anchorPoint:Point = axiisSprite.localToGlobal(axiisSprite.dataTipAnchorPoint);
-				anchorPoint = globalToLocal(anchorPoint);
-				
-				var anchoredDataTipManager:AnchoredDataTipManager = new AnchoredDataTipManager();
-				anchoredDataTipManager.createDataTip(dataTip,this,axiisSprite);
-			}
-			else
-			{
-				var freeDataTipManager:FreeDataTipManager = new FreeDataTipManager();
-				freeDataTipManager.createDataTip(dataTip,this,axiisSprite);
-			}
-			8?
-			/*if(axiisSprite.layout)
-			{
-				if(showDataTips && axiisSprite.layout.dataTipLabelFunction != null)
-				{
-					var hitSiblings:Array = getHitSiblings(axiisSprite);
-					for each(var sibling:AxiisSprite in hitSiblings)
-					{
-						showToolTip(sibling);
-					}
-					if(doToolTipsOverlap())
-						repositionToolTips();
-				}
-			}*/
+			dataTipManager.createDataTip(dataTips,this,axiisSprite);
+
 		}
 		
 		/**
@@ -379,19 +357,20 @@ package org.axiis
 			if(!axiisSprite)
 				return;
 			
-			destroyAllToolTips();
 		}
+		
 		
 		
 		private function getHitSiblings(axiisSprite:AxiisSprite):Array
 		{
+			/*
 			var s:Sprite = new Sprite();
 			s.graphics.clear();
 			s.graphics.beginFill(0,0);
 			s.graphics.drawCircle(mouseX,mouseY,hitRadius);
 			s.graphics.endFill();
 			addChild(s);
-			
+			*/
 			var toReturn:Array = [];
 			toReturn.push(axiisSprite);
 			
@@ -404,11 +383,12 @@ package org.axiis
 				}
 			}*/
 			
-			removeChild(s);
+		//	removeChild(s);
 			
 			return toReturn;
 		}
 		
+		/*
 		private function showToolTip(axiisSprite:AxiisSprite):void
 		{
 			var text:String = axiisSprite.layout.dataTipLabelFunction.call(this,axiisSprite.data);
@@ -425,7 +405,7 @@ package org.axiis
 				toolTips.push(tt); 
 			}
 		}
-		
+		*/
 		/**
 		 * Reposition the tool tips by laying them out in four columns around the cursor.
 		 * The first column starts down and to the right of the cursor, the second
@@ -435,6 +415,8 @@ package org.axiis
 		 * 
 		 * This method needs to be adjusted to account for tool tips that end up offscreen.
 		 */
+		 
+		 /*
 		private function repositionToolTips():void
 		{
 			var startX:Number = stage.mouseX;
@@ -532,7 +514,7 @@ package org.axiis
 					tt = null;
 				}	
 			}
-		
+				*/
 		    /**
 		     *  Destroys a specified ToolTip that was created by the <code>createToolTip()</code> method.
 		     *
@@ -545,13 +527,13 @@ package org.axiis
 		     *  <code>currentToolTip</code>.</p>
 		     *
 		     *  @param toolTip The ToolTip instance to destroy.
-		     */
+		     
 		    private function destroyToolTip(toolTip:IToolTip):void
 		    {
 		        var sm:ISystemManager = toolTip.systemManager as ISystemManager;
 		       	//sm.topLevelSystemManager.removeChildFromSandboxRoot("toolTipChildren", DisplayObject(toolTip));
 		
 		        // hide effect?
-		    }
+		    }*/
 	}
 }

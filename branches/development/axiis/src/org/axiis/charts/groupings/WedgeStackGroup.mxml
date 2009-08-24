@@ -37,7 +37,9 @@
 	xmlns:core="org.axiis.core.*"
 	xmlns:utils="org.axiis.utils.*"
 	xmlns:layoutUtils="org.axiis.layouts.utils.*"
-	preRender="onPreRender()" xmlns:groupings="org.axiis.charts.groupings.*" xmlns:geometry="com.degrafa.geometry.*">
+	xmlns:groupings="org.axiis.charts.groupings.*" xmlns:geometry="com.degrafa.geometry.*"
+	dataTipAnchorPoint="{anchorPoint}"
+	preRender="onPreRender()" xmlns:geom="flash.geom.*">
 
 	<!-- NOTE: Currently only tested for positive values -->
 
@@ -57,9 +59,13 @@
 				for (var i:int=0; i < dataItems.length; i++) {
 					maxValue+=getProperty(dataItems[i],dataField);
 				}
-
-				
 				//trace(fontSize + " start angle is " + wedge.startAngle);
+			}
+			
+			public var labelFunction:Function=internalLabelFunction;
+			
+			public function internalLabelFunction(value:String):String {
+				return value;
 			}
 		]]>
 	</mx:Script>
@@ -72,15 +78,21 @@
 	<mx:Number id="maxArc">360</mx:Number>
 	<mx:Number id="startAngle">0</mx:Number>
 	<mx:Boolean id="alignTextOuter">false</mx:Boolean>
+	
 
 	<!-- Common calculations used by geometries -->
 	<utils:NumericExpression id="outerRadius" value="{(width/2)*outerRadiusRatio}"/>
+	<utils:NumericExpression id="innerRadius" value="{(width/2)*innerRadiusRatio}"/>
 	<utils:NumericExpression id="center" value="{boundsRadius.value/2}"/>
 	<utils:NumericExpression id="boundsRadius" value="{Math.min(this.height,this.width)}"/>
 	<utils:NumericExpression id="arc" value="{Number(currentValue)/maxValue*(maxArc-angleGap*itemCount)}"/>
 	<utils:BooleanExpression id="transposeLabel" value="{!((wedge.startAngle + wedge.arc * .5) &gt; 90 &amp;&amp; (wedge.startAngle + wedge.arc *.5) &lt; 270)}" />
 
-	
+	<geom:Point id="anchorPoint" 
+			x="{width/2 + (innerRadius.value + (outerRadius.value-innerRadius.value)/2) * Math.cos((wedge.startAngle + wedge.arc / 2) * Math.PI / 180)}"
+		    y="{width/2 + (innerRadius.value + (outerRadius.value-innerRadius.value)/2) * Math.sin((wedge.startAngle + wedge.arc / 2) * Math.PI / 180)}"/>
+
+		    
 	<groupings:referenceRepeater>
 		<!-- innerRepeater: the reference repeater wedge for the inner ring of wedges -->
 		<layoutUtils:GeometryRepeater id="innerRepeater">
@@ -88,8 +100,8 @@
 				<geometry:Wedge id="wedge"  
 					centerX="{width/2}"
 					centerY="{width/2}"
-					innerRadius="{(width/2)*innerRadiusRatio}" 
-					outerRadius="{(width/2)*outerRadiusRatio}"
+					innerRadius="{innerRadius.value}" 
+					outerRadius="{outerRadius.value}"
 					startAngle="{startAngle}"
 					arc="0"/>
 			</layoutUtils:geometry>
@@ -118,14 +130,15 @@
 			y="{center.value-10}"
 			fontFamily="{fontFamily}"
 			fontSize="{fontSize}"
-			text="{currentLabel}"
+			text="{labelFunction.call(this,currentLabel)}"
 			autoSizeField="true"
 			autoSize="left"
 			textColor="{fontColor}"
+			antiAliasType="advanced"
 			>
 			<degrafa:transform>
 				<degrafa:TransformGroup>
-					<degrafa:TranslateTransform 
+					<degrafa:TranslateTransform id="labelTransform"
 							x="{wedge.outerRadius * labelRadiusRatio + ((alignTextOuter) ? label.textWidth:0) + ((transposeLabel.value) ? -label.textWidth-wedge.outerRadius*.02:0)) * Math.cos((wedge.startAngle + wedge.arc / 2) * Math.PI / 180}"
 							y="{wedge.outerRadius * labelRadiusRatio + ((alignTextOuter) ? label.textWidth:0) + ((transposeLabel.value) ? -label.textWidth-wedge.outerRadius*.02:0)) * Math.sin((wedge.startAngle + wedge.arc / 2) * Math.PI / 180}"
 							/>
@@ -133,5 +146,6 @@
 				</degrafa:TransformGroup>
 			</degrafa:transform>
 		</degrafa:RasterText>
+
 	</groupings:drawingGeometries>
 </groupings:GroupingBase>

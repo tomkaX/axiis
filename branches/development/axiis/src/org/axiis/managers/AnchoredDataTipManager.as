@@ -25,8 +25,12 @@ package org.axiis.managers
 		
 		private var dataTips:Array = [];
 		
-		public function createDataTip(dataTip:UIComponent,context:UIComponent,axiisSprite:AxiisSprite):void
+		private var axiisSprites:Array = [];
+
+		
+		public function createDataTip(dataTips:Array,context:UIComponent,axiisSprite:AxiisSprite):void
 		{
+			var dataTip:UIComponent=dataTips[0];
 			var anchorPoint:Point = calculateDataTipPosition(axiisSprite,context);
 			dataTip.x = anchorPoint.x;
 			dataTip.y = anchorPoint.y;
@@ -34,34 +38,52 @@ package org.axiis.managers
 			systemManager.topLevelSystemManager.addChildToSandboxRoot("toolTipChildren", dataTip);
 			
 			contexts.push(context);
-			dataTips.push(dataTip);
+			this.dataTips.push(dataTip);
+			axiisSprites.push(axiisSprite);
 			
 			axiisSprite.addEventListener(MouseEvent.MOUSE_OUT,handleMouseOut);
+			//axiisSprite.addEventListener(MouseEvent.MOUSE_MOVE,handleMouseMove);
 		}
 		
 		protected function calculateDataTipPosition(trigger:AxiisSprite,context:DisplayObject):Point
 		{
-			var point:Point = trigger.localToGlobal(trigger.dataTipAnchorPoint); 
+			var point:Point=trigger.localToGlobal(trigger.dataTipAnchorPoint);
 			point = systemManager.stage.globalToLocal(point);
 			return point;
 		}
 		
 		protected function handleMouseOut(event:MouseEvent):void
 		{
+			trace("mousing out");
 			destroyAllDataTips();
+		}
+		
+		protected function handleMouseMove(event:MouseEvent):void
+		{
+			//trace("mousing move");
+			
 		}
 		
 		public function destroyAllDataTips():void
 		{
-			for(var a:int = 0; a < contexts.length; a++)
+			while (dataTips.length > 0)
 			{
-				var context:Sprite = contexts[a];
-				var dataTip:UIComponent = dataTips[a];
+				var context:Sprite = contexts.pop();
+				var dataTip:UIComponent = dataTips.pop();
+				var axiisSprite:AxiisSprite = axiisSprites.pop();
 				context.graphics.clear();
 				systemManager.topLevelSystemManager.removeChildFromSandboxRoot("toolTipChildren", dataTip);
+
+				axiisSprite.removeEventListener(MouseEvent.MOUSE_OUT,handleMouseOut);
+				
+				context=null;
+				dataTip=null;
+				axiisSprite=null;
+
 			}
 			contexts = [];
 			dataTips = [];
+			axiisSprites = [];
 		}
 	}
 }

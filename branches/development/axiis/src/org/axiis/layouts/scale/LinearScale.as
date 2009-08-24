@@ -79,6 +79,7 @@ package org.axiis.layouts.scale
 			var per:Number=Math.abs(value)/(max-min);
 			
 			 if (zeroBased && min < 0) {
+			 	per=Math.abs(value)/(max-min);
 				per=Math.abs(min)/(max-min) + (value < 0 ? -per:per);
 			}
 			

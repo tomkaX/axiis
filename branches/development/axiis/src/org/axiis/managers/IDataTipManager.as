@@ -6,7 +6,7 @@ package org.axiis.managers
 	
 	public interface IDataTipManager
 	{
-		function createDataTip(dataTip:UIComponent,context:UIComponent,axiisSprite:AxiisSprite):void;
+		function createDataTip(dataTips:Array,context:UIComponent,axiisSprite:AxiisSprite):void;
 		
 		function destroyAllDataTips():void;
 	}

@@ -27,8 +27,9 @@ package org.axiis.managers
 		
 		private var axiisSprite:AxiisSprite;
 		
-		public function createDataTip(dataTip:UIComponent,context:UIComponent,axiisSprite:AxiisSprite):void
+		public function createDataTip(dataTips:Array,context:UIComponent,axiisSprite:AxiisSprite):void
 		{
+			var dataTip:UIComponent=dataTips[0];
 			destroyAllDataTips();
 			
 			this.dataTip = dataTip;
@@ -47,6 +48,7 @@ package org.axiis.managers
 			axiisSprite.addEventListener(MouseEvent.MOUSE_MOVE,handleMouseMove);
 			axiisSprite.addEventListener(MouseEvent.MOUSE_OUT,handleMouseOut);
 		}
+		
 		
 		protected function calculateDataTipPosition(trigger:DisplayObject,context:DisplayObject):Point
 		{

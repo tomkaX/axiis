@@ -30,7 +30,6 @@ package org.axiis.core
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
-	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.*;
@@ -64,7 +63,24 @@ package org.axiis.core
 		protected var stateToSpriteHash:Dictionary = new Dictionary();
 		
 		// TODO Document dataTipAnchorPoint
-		public var dataTipAnchorPoint:Point;
+		public function get dataTipAnchorPoint():Point {
+			if (_dataTipAnchorPoint)  {
+				return _dataTipAnchorPoint;
+			}
+			else {
+				return new Point(_maxBounds.width/2, _maxBounds.height/2);
+			}
+				
+		}
+		
+		public function set dataTipAnchorPoint(value:Point):void {
+			_dataTipAnchorPoint=value;
+		}
+		
+		private var _dataTipAnchorPoint:Point;
+		
+		//Stores maximum bounds of all geometries
+		private var _maxBounds:Rectangle;
 		
 		// TODO Document dataTipContentClass
 		public var dataTipContentClass:IFactory;
@@ -231,6 +247,7 @@ package org.axiis.core
 			}
 			stateSprite = stateToSpriteHash[state]
 			stateSprite.graphics.clear();
+			_maxBounds=new Rectangle();
 			for each(var geometry:Geometry in geometries)
 			{
 				geometry.preDraw();
@@ -238,7 +255,13 @@ package org.axiis.core
 					? new Rectangle(bounds.x+geometry.x, bounds.y+geometry.y,bounds.width,bounds.height)
 					: geometry.commandStack.bounds;
 				geometry.draw(stateSprite.graphics,drawingBounds);
+				_maxBounds.width=Math.max(_maxBounds.width,drawingBounds.width+drawingBounds.x);
+				_maxBounds.height=Math.max(_maxBounds.height,drawingBounds.height+drawingBounds.y);
+				_maxBounds.x=Math.min(_maxBounds.x,drawingBounds.x);
+				_maxBounds.y=Math.min(_maxBounds.y,drawingBounds.y);
 			}
+			
+			//this.dataTipAnchorPoint=new Point(_maxBounds.x+_maxBounds.width/2,_maxBounds.y+_maxBounds.height/2);
 		}
 
 		/**

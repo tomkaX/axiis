@@ -25,6 +25,8 @@
 
 package org.axiis.layouts.scale
 {
+	import org.axiis.utils.ObjectUtils;
+	
 	/**
 	 * The base class for scales that deal with numerical data.
 	 */
@@ -51,7 +53,7 @@ package org.axiis.layouts.scale
 			var newMin:Object;
 			for each(var o:Object in dataProvider)
 			{
-				var currValue:Object = dataField == null ? o : o[dataField];
+				var currValue:Object = getProperty(o,dataField);
 				if(newMin == null)
 					newMin = currValue;
 				else
@@ -68,13 +70,20 @@ package org.axiis.layouts.scale
 			var newMax:Object;
 			for each(var o:Object in dataProvider)
 			{
-				var currValue:Object = dataField == null ? o : o[dataField];
+				var currValue:Object = getProperty(o,dataField);
 				if(newMax == null)
 					newMax = currValue;
 				else
 					newMax = currValue > newMax ? currValue : newMax;
 			}
 			return newMax;
+		}
+		
+		//Candidate routine to refacotr into utility class (shared with AbstracLayout)
+		private function getProperty(obj:Object, propertyName:Object):Object
+		{ 
+			return ObjectUtils.getProperty(this,obj,propertyName);
+				
 		}
 	}
 }

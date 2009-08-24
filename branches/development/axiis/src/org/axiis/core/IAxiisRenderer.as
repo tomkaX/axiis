@@ -1,5 +1,7 @@
 package org.axiis.core
 {
+	import flash.geom.Point;
+	
 	public interface IAxiisRenderer
 	{
 		function set label(value:String):void;
@@ -13,5 +15,6 @@ package org.axiis.core
 		
 		function set index(value:int):void;
 		function get index():int;
+
 	}
 }

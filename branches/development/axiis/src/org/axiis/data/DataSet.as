@@ -289,7 +289,7 @@ package org.axiis.data
 		/**
 		 * IN DEVELOPMENT - MOVING OVER TO MORE STRONGLY TYPED UNIVERSAL STRUCTURE - DataGroup
 		 */
-		public function aggregateTable(groupings:Array, summaryCols:Array=null):void {
+		public function aggregateTable(name:String, groupings:Array, summaryCols:Array=null):void {
 				var t:Number=flash.utils.getTimer();
 		
 			if (!data["table"]) return; //No table to process)
@@ -297,7 +297,7 @@ package org.axiis.data
 			if (!groupings || groupings.length<1) throw new Error("You must declare groupings to shape data DataSet.processCsvAsShapedData");
 			
 			if (!_data) _data=new Object();
-			_data.shaped=groupTableRows(data["table"].rows, groupings, summaryCols);
+			_data[name]=groupTableRows(data["table"].rows, groupings, summaryCols);
 			
 			trace("DataSet.processCsvShapedData " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
 		}
@@ -789,9 +789,19 @@ package org.axiis.data
 								tempCollection.sums[collection.getItemAt(y).columns[summaryCols[n]].name]+=newObject.sums[collection.getItemAt(y).columns[summaryCols[n]].name];
 							}
 						}
+						else { //We are at the last level in the group - use unique values
+							for (var n:int=0;n<summaryCols.length;n++) {
+								if ( ! newObject.sums[collection.getItemAt(y).columns[summaryCols[n]].name]) newObject.sums[collection.getItemAt(y).columns[summaryCols[n]].name]=0;
+								newObject.sums[collection.getItemAt(y).columns[summaryCols[n]].name]+=collection.getItemAt(y).columns[summaryCols[n]].value;
+							}
+						
+						}
+						
 						
 						tempData.groupedData.addItem(newObject);
 						tempCollection=new DataGroup();
+						
+						
 					}
 
 				}

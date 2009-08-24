@@ -37,11 +37,15 @@
 	xmlns:states="org.axiis.states.*"
 	xmlns:geom="flash.geom.*"
 	xmlns:utils="org.axiis.utils.*"
-	preRender="onPreRender();">
+	preRender="onPreRender();"
+	dataTipManager="{new FreeDataTipManager()}"
+	>
 
 	<!-- public variables -->
 	<mx:Script>
 		<![CDATA[
+			import org.axiis.managers.FreeDataTipManager;
+			import org.axiis.utils.ObjectUtils;
 			import com.degrafa.paint.LinearGradientFill;
 			import org.axiis.core.AxiisSprite;
 			import flash.utils.getTimer;
@@ -391,8 +395,9 @@
 						var stackedValue:Number = 0;
 						var obj:Object = seriesPlots[i];
 						if (ta.length == 0)
-						{ //adds a new node if it is the first time
-							ta.push(new GraphicPoint(-1, Number(verticalScale.valueToLayout(seriesPlots[0][dataField], true)))); //The first marker
+						{ //adds a new node if it is the first time v
+						
+							ta.push(new GraphicPoint(-1, Number(verticalScale.valueToLayout(ObjectUtils.getProperty(this,seriesPlots[0],dataField), true)))); //The first marker
 						}
 
 						var gp:GraphicPoint = new GraphicPoint;
@@ -404,7 +409,7 @@
 
 							if (!stackedValues[i])
 								stackedValues[i] = 0;
-							stackedValues[i] += obj[dataField];
+							stackedValues[i] += ObjectUtils.getProperty(this,obj,dataField);
 							stackedValue = stackedValues[i];
 
 							gp.y = Number(verticalScale.valueToLayout(stackedValue, true));
@@ -422,14 +427,14 @@
 								gp2.x = gp.x;
 								if (!stackedValues2[i])
 									stackedValues2[i] = 0;
-								stackedValues2[i] -= obj[dataField] / 2;
+								stackedValues2[i] -= ObjectUtils.getProperty(this,obj,dataField) / 2;
 								gp2.y = Number(verticalScale.valueToLayout(stackedValues2[i], true));
 								if (flowTa.length == 0)
 									flowTa.push(new GraphicPoint(-1, gp2.y)); //First point in series
 								flowTa.push(gp2);
 								if (!stackedValues[i])
 									stackedValues[i] = 0;
-								stackedValues[i] += obj[dataField] / 2;
+								stackedValues[i] += ObjectUtils.getProperty(this,obj,dataField) / 2;
 								gp.y = Number(verticalScale.valueToLayout(stackedValues[i], true));
 
 							}
@@ -437,7 +442,7 @@
 							{
 								if (!stackedValues[i])
 									stackedValues[i] = 0;
-								stackedValues[i] += obj[dataField];
+								stackedValues[i] += ObjectUtils.getProperty(this,obj,dataField);
 								stackedValue = stackedValues[i];
 								gp.y = Number(verticalScale.valueToLayout(stackedValue, true));
 							}
@@ -445,14 +450,14 @@
 							{
 								if (!stackedValues2[i])
 									stackedValues2[i] = 0;
-								stackedValues2[i] -= obj[dataField];
+								stackedValues2[i] -= ObjectUtils.getProperty(this,obj,dataField);
 								stackedValue = stackedValues2[i];
 								gp.y = Number(verticalScale.valueToLayout(stackedValue, true));
 							}
 						}
 						else
 						{
-							gp.y = Number(verticalScale.valueToLayout(obj[dataField], true));
+							gp.y = Number(verticalScale.valueToLayout(ObjectUtils.getProperty(this,obj,dataField), true));
 						}
 
 						ta.push(gp);
@@ -537,7 +542,8 @@
 
 				}
 			}
-
+			
+		
 			//Stores all the data points (accounts for stacking and alternate layouts
 			private var seriesPoints:Array;
 
@@ -577,6 +583,8 @@
 			public static const MODE_STACK_FLOW:int = 2;
 		]]>
 	</mx:Script>
+	
+	
 
 	<!---
 	The layout mode used to render the lines. One of {MODE_BASELINE,MODE_STACK_ZERO,MODE_STACK_FLOW}.
@@ -638,6 +646,8 @@
 			width="{currentReference.width}"
 			height="{currentReference.height}"
 			name="plotLayout"
+			dataTipLabelFunction="{dataTipLabelFunction}"
+			dataTipManager="{dataTipManager}"
 			preRender="onPlotPreRender();"
 			scaleFill="true"
 			x="0"
@@ -661,6 +671,8 @@
 		
 		<!--- @private -->
 		<layouts:RepeaterLayout id="markerLayout"
+			dataTipLabelFunction="{dataTipLabelFunction}"
+			dataTipManager="{dataTipManager}"
 			width="{currentReference.width}"
 			height="{currentReference.height}"
 			name="markerLayout"

@@ -37,9 +37,16 @@ package org.axiis.core
 	import mx.core.IFactory;
 	
 	import org.axiis.DataCanvas;
+	import org.axiis.events.LayoutItemEvent;
 	import org.axiis.layouts.utils.GeometryRepeater;
-	import org.axiis.managers.FreeDataTipManager;
+	import org.axiis.managers.AnchoredDataTipManager;
 	import org.axiis.managers.IDataTipManager;
+	import org.axiis.utils.ObjectUtils;
+	
+	/**
+	 * Dispatched when an AxiisSprite is mousedOver.
+	 */
+	[Event(name="itemDataTip", type="flash.events.Event")]
 
 	// TODO To keep this as abstract as possible, we could make this not officially implement the interface
 	/**
@@ -65,7 +72,7 @@ package org.axiis.core
 			return _dataTipManager;
 		}		
 		
-		private var _dataTipManager:IDataTipManager=new FreeDataTipManager();
+		private var _dataTipManager:IDataTipManager=new AnchoredDataTipManager;
 		
 		[Bindable]
 		/**
@@ -651,19 +658,29 @@ package org.axiis.core
 			if(value != _layouts)
 			{
 
+				for each(var layout:ILayout in _layouts) {
+					layout.removeEventListener("itemDataTip",onItemDataTip);
+				}
+				
 				_layouts = value;
-			
+				
+				for each(layout in _layouts) {
+					if (layout.emitDataTips)
+						layout.addEventListener("itemDataTip",onItemDataTip);
+				}
+				
+				
 				dispatchEvent(new Event("layoutsChange"));
 			}
 		}
 		private var _layouts:Array = [];
 		
 		//I hate to put yet another function in here, but I think we want a default data tip function
-		private function dataTipFunction(data:Object):String
+		private function dataTipFunction(axiisSprite:AxiisSprite):String
 		{
 			if(dataField && labelField)
 			{
-				return "<b>" + getProperty(data,labelField) + "</b><br/>" + getProperty(data,dataField);
+				return "<b>" + String(getProperty(axiisSprite.data,labelField)) + "</b><br/>" + String(getProperty(axiisSprite.data,dataField));
 			}
 			return "";
 		}
@@ -870,43 +887,16 @@ package org.axiis.core
 		}
 		private var _dataTipContentClass:IFactory;
 		
-		public function getProperty(obj:Object, propertyName:Object):Object
-		{
-			if(obj == null)
-				return null;
-				
-			if (propertyName) {
-				if (propertyName is Function) {
-					return propertyName.call(this,obj);
-				}
-			}	
-			else
-				return obj;
-				
-			var chain:Array=propertyName.split(".");
-			if (chain.length == 1) {
-				if (chain[0].indexOf("[")<0)  //If we have an array return the array element
-					return obj[chain[0]];
-					else {
-						var element:Object= obj[chain[0].substr(0, chain[0].indexOf("["))];
-						return element[chain[0].substr(chain[0].indexOf("[")+1,chain[0].indexOf("]")-chain[0].indexOf("[")-1)];
-					}
-			}
-				
-			else {
-				if (chain[0].indexOf("[")<0)  //If we have an array return the array element
-					return getProperty(obj[chain[0]],chain.slice(1,chain.length).join("."));
-				else
-				{
-						var element:Object= obj[chain[0].substr(0, chain[0].indexOf("["))];
-						var index:String= (chain[0].substr(chain[0].indexOf("[")+1,chain[0].indexOf("]")-chain[0].indexOf("[")-1));
-						trace("index=" + index);
-						return getProperty(element[index],chain.slice(1,chain.length).join("."));
-					}
-					
-			}
-				
+		//When a chid layout emits an event we want to bubble it
+		private function onItemDataTip(e:LayoutItemEvent):void {
+			this.dispatchEvent(new LayoutItemEvent("itemDataTip",e.item,e.sourceEvent));
 		}
+		
+		public function getProperty(obj:Object,propertyName:Object):* { 
+			return ObjectUtils.getProperty(this,obj,propertyName);
+		}
+		
+		
 
 	}
 }

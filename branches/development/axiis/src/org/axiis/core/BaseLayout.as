@@ -31,7 +31,7 @@ package org.axiis.core
 	
 	import mx.core.IFactory;
 	
-	import org.axiis.events.ItemClickEvent;
+	import org.axiis.events.LayoutItemEvent;
 	import org.axiis.states.State;
 	
 	
@@ -58,6 +58,16 @@ package org.axiis.core
 	 * Dispatched when an AxiisSprite is clicked.
 	 */
 	[Event(name="itemClick", type="flash.events.Event")]
+	
+	/**
+	 * Dispatched when an AxiisSprite is mousedOver.
+	 */
+	[Event(name="itemMouseOver", type="flash.events.Event")]
+	
+	/**
+	 * Dispatched when an AxiisSprite is mousedOver.
+	 */
+	[Event(name="itemDataTip", type="flash.events.Event")]
 	
 	// TODO Is "AxiisLayout" a better name for BaseLayout 
 	/**
@@ -233,8 +243,8 @@ package org.axiis.core
 		{
 			_currentIndex = referenceRepeater.currentIteration;
 			_currentDatum = dataItems[_currentIndex];			
-			_currentValue=getProperty(_currentDatum,dataField);
-			_currentLabel = getProperty(_currentDatum,labelField).toString();
+			_currentValue= getProperty(_currentDatum,dataField);
+			_currentLabel = getProperty(_currentDatum,labelField);
 		}
 
 		/**
@@ -252,7 +262,8 @@ package org.axiis.core
 			// Add a new Sprite if there isn't one available on the display list.
 			if(_currentIndex > sprite.drawingSprites.length - 1)
 			{
-				var newChildSprite:AxiisSprite = createChildSprite(this);				
+				var newChildSprite:AxiisSprite = createChildSprite(this);	
+				newChildSprite.addEventListener(MouseEvent.MOUSE_OVER,sprite_onMouseOver); //Only add this to real sprites versus layout sprites.			
 				sprite.addDrawingSprite(newChildSprite);
 				childSprites.push(newChildSprite);
 			}
@@ -318,8 +329,8 @@ package org.axiis.core
 		{
 			var newChildSprite:AxiisSprite = new AxiisSprite();
 			newChildSprite.doubleClickEnabled=true;
-			newChildSprite.layout = layout;
-			newChildSprite.addEventListener("click",sprite_onClick);
+			newChildSprite.layout = layout; 
+			newChildSprite.addEventListener(MouseEvent.CLICK,sprite_onClick);
 			return newChildSprite;
 		}
 
@@ -335,9 +346,17 @@ package org.axiis.core
 			}
 		}
 		
+		private function sprite_onMouseOver(e:Event):void {
+				this.dispatchEvent(new LayoutItemEvent("itemMouseOver",AxiisSprite(e.currentTarget),e));
+				if (emitDataTips) {
+					this.dispatchEvent(new LayoutItemEvent("itemDataTip",AxiisSprite(e.currentTarget),e));
+					e.stopPropagation();
+				}
+		}
+		
 		private function sprite_onClick(e:Event):void {
 				e.stopPropagation();
-				this.dispatchEvent(new ItemClickEvent(AxiisSprite(e.currentTarget)));
+				this.dispatchEvent(new LayoutItemEvent("itemClick",AxiisSprite(e.currentTarget),e));
 		}
 	}
 }

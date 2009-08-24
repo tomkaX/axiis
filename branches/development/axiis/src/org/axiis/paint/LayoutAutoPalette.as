@@ -170,6 +170,7 @@ package org.axiis.paint
 				}
 			}
 			colors = _colors;
+			_currentColor=_colors[0];
 		}
 
 		private function onIndexChanged(e:Event):void
