@@ -25,8 +25,8 @@
 
 package org.axiis.layouts.scale
 {
-	import flash.events.Event;
-	import flash.events.EventDispatcher;
+	import mx.collections.ArrayCollection;
+	import mx.collections.Sort;
 	
 	/**
 	 * A scale that converts categorical (String) data into layout space.
@@ -34,6 +34,8 @@ package org.axiis.layouts.scale
 	 */
 	public class CategoricalScale extends AbstractScale implements IScale
 	{
+		public var sort:Sort;
+		
 		/**
 		 * A sorted list of all unique possible values found within the dataProvider
 		 */
@@ -69,7 +71,7 @@ package org.axiis.layouts.scale
 			if(valueIndex == -1)
 				return NaN;
 			
-			var percentage:Number = (valueIndex + 1) / uniqueValues.length;
+			var percentage:Number = (valueIndex) / (uniqueValues.length - 1);
 			var toReturn:Number = percentage * (maxLayout - minLayout) + minLayout;
 			return toReturn;
 		}
@@ -114,7 +116,13 @@ package org.axiis.layouts.scale
 					toReturn.push(currValue);
 				}
 			}
-			toReturn.sort();
+			if(sort)
+			{
+				var collection:ArrayCollection = new ArrayCollection(toReturn);
+				collection.sort = sort;
+				collection.refresh();
+				toReturn = collection.toArray();
+			}
 			return toReturn;
 		}
 	}

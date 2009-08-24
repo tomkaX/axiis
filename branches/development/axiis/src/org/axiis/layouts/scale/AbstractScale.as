@@ -124,11 +124,10 @@ package org.axiis.layouts.scale
 		}
 		private var _computedMinValue:Object;
 		
-		// TODO This should not be initialized
 		/**
 		 * The minimum value as specified by the user.
 		 */
-		protected var userMinValue:Object=0;
+		protected var userMinValue:Object;
 		
 		//---------------------------------------------------------------------
 		// maxValue
