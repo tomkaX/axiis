@@ -543,6 +543,7 @@
 				}
 			}
 			
+			public var autoAdjustScale:Boolean=true;
 		
 			//Stores all the data points (accounts for stacking and alternate layouts
 			private var seriesPoints:Array;
