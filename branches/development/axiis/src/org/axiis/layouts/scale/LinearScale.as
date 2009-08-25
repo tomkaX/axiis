@@ -76,7 +76,7 @@ package org.axiis.layouts.scale
 		// TODO This comes up a lot... maybe it should be in a util class
 		private function getPercentageBetweenValues(value:Number,min:Number,max:Number):Number
 		{
-			var per:Number=Math.abs(value)/(max-min);
+			var per:Number=(Math.abs(value)-min)/(max-min);
 			
 			 if (zeroBased && min < 0) {
 			 	per=Math.abs(value)/(max-min);
