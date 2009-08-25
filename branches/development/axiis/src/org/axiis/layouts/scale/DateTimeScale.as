@@ -41,7 +41,7 @@ package org.axiis.layouts.scale
 			var minDate:Date = minValue as Date;
 			var maxDate:Date = maxValue as Date;
 			var percentage:Number = getPercentageBetweenValues(Number(value),minDate.valueOf(),maxDate.valueOf());
-			percentage = Math.max(0,Math.min(1.0,percentage));
+			//percentage = Math.max(0,Math.min(1.0,percentage));
 			return percentage * (maxLayout - minLayout) + minLayout;
 		}
 		
@@ -59,7 +59,7 @@ package org.axiis.layouts.scale
 			var minDate:Date = minValue as Date;
 			var maxDate:Date = maxValue as Date;
 			var percentage:Number = getPercentageBetweenValues(Number(layout),Number(minLayout),Number(maxLayout));
-			percentage = Math.max(0,Math.min(1,percentage));
+			//percentage = Math.max(0,Math.min(1,percentage));
 			return new Date(percentage * (maxDate.valueOf() - minDate.valueOf()) + minDate.valueOf());
 		}
 		

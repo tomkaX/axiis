@@ -27,6 +27,8 @@ package org.axiis.layouts.scale
 {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+
+	[Event(name="invalidate",type="flash.events.Event")]
 	
 	/**
 	 * An abstract base class that scales can extend. It provides stubs for
@@ -103,6 +105,7 @@ package org.axiis.layouts.scale
 			if(value != userMinValue)
 			{
 				userMinValue = value;
+				invalidate();
 				dispatchEvent(new Event("minValueChange"));
 			}
 		}
@@ -146,6 +149,7 @@ package org.axiis.layouts.scale
 			if(value != userMaxValue)
 			{
 				userMaxValue = value;
+				invalidate();
 				dispatchEvent(new Event("maxValueChange"));
 			}
 		}
@@ -187,6 +191,7 @@ package org.axiis.layouts.scale
 			if(value != _minLayout)
 			{
 				_minLayout = value;
+				invalidate();
 				dispatchEvent(new Event("minLayoutChange"));
 			}
 		}
@@ -205,6 +210,7 @@ package org.axiis.layouts.scale
 			if(value != _maxLayout)
 			{
 				_maxLayout = value;
+				invalidate();
 				dispatchEvent(new Event("maxLayoutChange"));
 			}
 		}
@@ -216,6 +222,7 @@ package org.axiis.layouts.scale
 		public function invalidate():void
 		{
 			invalidated = true;
+			dispatchEvent(new Event("invalidate"));
 		}
 		
 		/**
