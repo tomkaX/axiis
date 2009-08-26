@@ -80,6 +80,10 @@ package org.axiis.paint
 			generatePalette();			
 		}
 		private var _layout:ILayout;
+		
+		public function get colorFrom():Number {
+			return _colorFrom;
+		}
 
 		/**
 		 * The first color in the palette.
@@ -88,9 +92,14 @@ package org.axiis.paint
 		{
 			if (!isNaN(value))
 				_colorFrom = value;
+
 			generatePalette();
 		}
 		private var _colorFrom:Number = 0;
+		
+		public function getColorTo():Number {
+			return _colorTo;
+		}
 
 		/**
 		 * The last color in the palette.
@@ -99,6 +108,7 @@ package org.axiis.paint
 		{
 			if (!isNaN(value))
 				_colorTo = value;
+				
 			generatePalette();
 		}
 		private var _colorTo:Number = 0xFFFFFF;
@@ -145,7 +155,7 @@ package org.axiis.paint
 		}
 		private function get _currentColor():Number
 		{
-			return __currentColor;
+			return __currentColor; 
 		}
 		private var __currentColor:Number;
 
@@ -158,8 +168,12 @@ package org.axiis.paint
 				palette.colors=_paletteColors;
 			else
 				palette.colors = [_colorFrom, _colorTo];
-				
+			
 			palette.requestedSize = _layout.itemCount;
+			
+			if (_layout.itemCount==1) {
+				trace('stop here');
+			}
 
 			if (autoInterpolate)
 			{
@@ -175,9 +189,14 @@ package org.axiis.paint
 
 		private function onIndexChanged(e:Event):void
 		{
+			if (_layout.currentIndex==-1) {
+				_currentColor=_colors[0];
+				return;
+			}
 			if (!_colors || colors.length != _layout.itemCount)
 				generatePalette();
 			_currentColor = _colors[_layout.currentIndex];
+			
 		}
 	}
 }

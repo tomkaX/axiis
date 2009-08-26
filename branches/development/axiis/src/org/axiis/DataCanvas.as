@@ -226,6 +226,13 @@ package org.axiis
 		{
 			super.updateDisplayList(unscaledWidth,unscaledHeight);
 	
+			//Render layouts first, as they may autoadjust Scales, etc that the background/foreground rely upon
+			while(invalidatedLayouts.length > 0)
+			{
+				var layout:ILayout = ILayout(invalidatedLayouts.pop());				
+				layout.render();
+			}
+			
 			
 			_background.graphics.clear();
 			
@@ -242,11 +249,6 @@ package org.axiis
 				i++;
 			}
 			
-			while(invalidatedLayouts.length > 0)
-			{
-				var layout:ILayout = ILayout(invalidatedLayouts.pop());				
-				layout.render();
-			}
 			
 			i=0;
 			_foreground.graphics.clear();

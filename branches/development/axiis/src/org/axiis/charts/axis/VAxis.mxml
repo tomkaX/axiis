@@ -53,6 +53,7 @@ OTHER DEALINGS IN THE SOFTWARE.
     
 	<mx:Script>
 		<![CDATA[
+			import org.axiis.layouts.scale.AbstractScale;
 			import org.axiis.layouts.scale.IScale;
 			import com.degrafa.core.IGraphicsStroke;
 			
@@ -69,7 +70,31 @@ OTHER DEALINGS IN THE SOFTWARE.
 			private var _labelInterval:Number;
 			
 			[Bindable]
-			public var verticalScale:IScale;
+			public function set verticalScale(value:IScale):void {
+				removeScaleListeners();
+				_verticalScale=value;
+				addScaleListeners();
+			}
+			
+			public function get verticalScale():IScale {
+				return _verticalScale;
+			}
+			
+			private var _verticalScale:IScale;
+			
+			private function addScaleListeners():void {
+				AbstractScale(_verticalScale).addEventListener("invalidated",onScaleChange);
+			}
+			
+			private function removeScaleListeners():void {
+				if (!_verticalScale) return;
+				AbstractScale(_verticalScale).removeEventListener("invalidate",onScaleChange);
+			}
+			
+			private function onScaleChange(e:Event):void {
+				onValueChanged();
+				this.invalidate();
+			}
 			
 			private function onValueChanged():void
 			{
@@ -121,6 +146,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 	
 	<!--- @private -->
 	<utils:NumericExpression id="tickGapWatcher" value="{tickGap}" valueChanged="onValueChanged();" />
+	
 	
 	<axis:referenceRepeater>
 		<utils1:GeometryRepeater> 

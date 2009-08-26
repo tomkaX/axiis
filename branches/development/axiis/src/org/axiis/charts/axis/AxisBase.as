@@ -59,6 +59,7 @@ package org.axiis.charts.axis
 		{
 			super();
 			emitDataTips = false;
+			
 		}
 		
 		[Bindable]

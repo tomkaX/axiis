@@ -54,7 +54,6 @@ package org.axiis.managers
 		
 		protected function handleMouseOut(event:MouseEvent):void
 		{
-			trace("mousing out");
 			destroyAllDataTips();
 		}
 		
