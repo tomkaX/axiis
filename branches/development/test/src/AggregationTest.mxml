@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	layout="vertical"
+	xmlns:data="org.axiis.data.*"
+	creationComplete="start()">
+
+	<mx:Script>
+		<![CDATA[
+			import mx.rpc.xml.SimpleXMLEncoder;
+
+			private function start():void
+			{
+				innerCollection.runAggregations();
+				outerCollection.runAggregations();
+				
+				var index:int = 0;
+				for each (var o:Object in outerCollection)
+				{
+					trace("group " + index + ": " + o.name);
+					index++;
+				}
+				trace("max:",outerCollection.max)
+				trace("min:",outerCollection.min)
+			}
+		]]>
+	</mx:Script>
+
+	<mx:Array id="arr">
+		<mx:Object num="1" name="100"/>
+		<mx:Object num="2" name="100"/>
+		<mx:Object num="3" name="200"/>
+		<mx:Object num="4" name="200"/>
+		<mx:Object num="5" name="300"/>
+	</mx:Array>
+
+	<data:AggregatedCollection id="outerCollection">
+		<data:source>
+			<data:AggregatedCollection id="innerCollection" source="{arr}">
+				<data:aggregates>
+					<data:GroupingAggregator name="group" dataField="name"/>
+				</data:aggregates>
+			</data:AggregatedCollection>
+		</data:source>
+		<data:aggregates>
+			<data:MaxAggregator name="max" dataField="name"/>
+			<data:MinAggregator name="min" dataField="name"/>
+		</data:aggregates>
+	</data:AggregatedCollection>
+
+</mx:Application>
