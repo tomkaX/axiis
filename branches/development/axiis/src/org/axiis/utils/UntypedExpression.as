@@ -3,9 +3,9 @@ package org.axiis.utils
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	
-	public class Expression extends EventDispatcher
+	public class UntypedExpression extends EventDispatcher
 	{
-		public function Expression()
+		public function UntypedExpression()
 		{
 			super();
 		}
