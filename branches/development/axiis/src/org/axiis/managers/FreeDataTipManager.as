@@ -19,6 +19,10 @@ package org.axiis.managers
 			systemManager = ApplicationGlobals.application.systemManager as ISystemManager;
 		}
 		
+		public function get dataTips():Array {
+			return [dataTip];
+		}
+		
 		private var systemManager:ISystemManager;
 		
 		private var context:Sprite;

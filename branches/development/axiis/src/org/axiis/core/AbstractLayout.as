@@ -298,38 +298,44 @@ package org.axiis.core
 			_dataItems=new Array();
 			if (dataProvider is ArrayCollection) {
 				for (var i:int=0;i<dataProvider.source.length;i++) {
-					if (dataFilterFunction != null) {
-							if (dataFilterFunction.call(this,dataProvider.source[i])) {
-								_dataItems.push(dataProvider.source[i]);
+					if (dataProvider.source[i]) {
+						if (dataFilterFunction != null) {
+								if (dataFilterFunction.call(this,dataProvider.source[i])) {
+									_dataItems.push(dataProvider.source[i]);
+								}
 							}
+						else {
+							_dataItems.push(dataProvider.source[i]);
 						}
-					else {
-						_dataItems.push(dataProvider.source[i]);
 					}
 				}
 			}
 			else if (dataProvider is Array) {
 				for (var j:int=0;j<dataProvider.length;j++) {
-					if (dataFilterFunction != null) {
-						if (dataFilterFunction.call(this,dataProvider[j])) {
+					if (dataProvider[i]) {
+						if (dataFilterFunction != null) {
+							if (dataFilterFunction.call(this,dataProvider[j])) {
+								_dataItems.push(dataProvider[j]);
+							}
+						}
+						else {
 							_dataItems.push(dataProvider[j]);
 						}
-					}
-					else {
-						_dataItems.push(dataProvider[j]);
 					}
 				}
 			}
 			else {
 				for each(var o:Object in dataProvider)
 				{
-					if (dataFilterFunction != null) {
-						if (dataFilterFunction.call(this,o)) {
+					if (o) {
+						if (dataFilterFunction != null) {
+							if (dataFilterFunction.call(this,o)) {
+								_dataItems.push(o);
+							}
+						}
+						else {
 							_dataItems.push(o);
 						}
-					}
-					else {
-						_dataItems.push(o);
 					}
 				}
 			}
@@ -853,12 +859,13 @@ package org.axiis.core
 		[Bindable(event="dataTipAnchorPointChange")]
 		/**
 		 * TODO Document dataTipAnchorPoint
+		 * Assumes ANY object with an x and y value :)
 		 */
-		public function get dataTipAnchorPoint():Point
+		public function get dataTipAnchorPoint():Object
 		{
 			return _dataTipAnchorPoint;
 		}
-		public function set dataTipAnchorPoint(value:Point):void
+		public function set dataTipAnchorPoint(value:Object):void
 		{
 			if(value != _dataTipAnchorPoint)
 			{
@@ -867,7 +874,7 @@ package org.axiis.core
 				dispatchEvent(new Event("dataTipAnchorPointChange"));
 			}
 		}
-		private var _dataTipAnchorPoint:Point;
+		private var _dataTipAnchorPoint:Object;
 
 		[Bindable(event="dataTipContentClassChange")]
 		/**

@@ -140,7 +140,7 @@
                          */
                         override protected function repeatComplete():void
                         {
-                                trace("LineSeriesGroup.render elapsed=" + (flash.utils.getTimer() - t) + "ms");
+                             //   trace("LineSeriesGroup.render elapsed=" + (flash.utils.getTimer() - t) + "ms");
                         }
 
 						private var _plotIndexes:Array;
@@ -189,6 +189,10 @@
                                 _plotCollection = firstItem;
                                 
                                 calculateMax();
+                                
+                                this.invalidate();
+                                plotLayout.invalidate();
+                                markerLayout.invalidate();
                         }
 
                    
@@ -348,7 +352,7 @@
                                 if (mode == LineSeriesGroup.MODE_STACK_FLOW && markerLayout.currentIndex == 0)
                                 {
                                         yPoint.value = verticalScale.valueToLayout(0, true);
-                                        trace("yPoint Value=" + yPoint.value);
+                                      //  trace("yPoint Value=" + yPoint.value);
                                 }
                                 else if (mode == LineSeriesGroup.MODE_STACK_FLOW && (markerLayout.currentIndex == 1 || markerLayout.currentIndex == 3))
                                 { //Resolves the fact that the first series is bisected
@@ -425,7 +429,7 @@
                         	}
                         	this.verticalScale.invalidate();
                         	
-                        	trace("Max Value is " + maxY);
+                        //	trace("Max Value is " + maxY);
                         	
                         }
 
@@ -439,8 +443,10 @@
                          */
                         private function calculateCurves():void
                         {
-                        		calculateMax();
-
+                        		//trace("calculate Curves previousMax=" + verticalScale.maxValue);
+                        		//calculateMax();
+                        		
+							//	trace("calculate Curves newMax=" + verticalScale.maxValue);
                                 _minY = new Array();
                                 _maxY = new Array();
                                 var t:Number = flash.utils.getTimer();
@@ -649,7 +655,7 @@
                                 //Now we have our continuous path we need to break them up into segments
 
 
-                                trace("computeCurves elapsed time=" + (flash.utils.getTimer() - t) + "ms");
+                            //    trace("computeCurves elapsed time=" + (flash.utils.getTimer() - t) + "ms");
                         }
 
 

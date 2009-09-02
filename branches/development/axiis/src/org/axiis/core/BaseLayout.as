@@ -243,8 +243,14 @@ package org.axiis.core
 		{
 			_currentIndex = referenceRepeater.currentIteration;
 			_currentDatum = dataItems[_currentIndex];			
-			_currentValue= getProperty(_currentDatum,dataField);
-			_currentLabel = getProperty(_currentDatum,labelField);
+			if (_currentDatum) {
+				_currentValue= getProperty(_currentDatum,dataField);
+				_currentLabel = getProperty(_currentDatum,labelField);
+			}
+			else {
+				_currentValue=null;
+				_currentLabel=null;
+			}
 		}
 
 		/**
@@ -277,7 +283,9 @@ package org.axiis.core
 			
 			currentChild.bounds = bounds;
 			currentChild.scaleFill = scaleFill;
-			currentChild.dataTipAnchorPoint = dataTipAnchorPoint == null ? null : dataTipAnchorPoint.clone();
+			var newAnchor:Point=new Point();
+			if (dataTipAnchorPoint == null) newAnchor=null else {newAnchor.x=dataTipAnchorPoint.x; newAnchor.y=dataTipAnchorPoint.y};
+			currentChild.dataTipAnchorPoint = newAnchor;
 			currentChild.dataTipContentClass = dataTipContentClass;
 			
 			currentChild.storeGeometries(drawingGeometries);

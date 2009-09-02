@@ -9,5 +9,7 @@ package org.axiis.managers
 		function createDataTip(dataTips:Array,context:UIComponent,axiisSprite:AxiisSprite):void;
 		
 		function destroyAllDataTips():void;
+		
+		function get dataTips():Array;
 	}
 }

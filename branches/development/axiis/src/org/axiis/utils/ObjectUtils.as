@@ -1,5 +1,7 @@
 package org.axiis.utils
 {
+	import mx.collections.ArrayCollection;
+	
 	public class ObjectUtils
 	{
 		public function ObjectUtils()
@@ -21,7 +23,15 @@ package org.axiis.utils
 				
 			var chain:Array=propertyName.split(".");
 			if (chain.length == 1) {
-				if (chain[0].indexOf("[")<0)  //If we have an array return the array element
+				if (chain[0].charAt(0)=="[") {
+					if(obj is Array) {
+						return obj[chain[0].substr(1,chain[0].length-1)];
+					}
+					else if (obj is ArrayCollection) {
+						return obj.getItemAt(int(chain[0].substr(1,chain[0].length-1)));
+					}
+				}
+				else if (chain[0].indexOf("[")<0)  //If we have an array return the array element
 					return obj[chain[0]];
 					else {
 						var element:Object= obj[chain[0].substr(0, chain[0].indexOf("["))];
@@ -30,7 +40,17 @@ package org.axiis.utils
 			}
 				
 			else {
-				if (chain[0].indexOf("[")<0)  //If we have an array return the array element
+				if (chain[0].charAt(0)=="[") {
+					if(obj is Array && obj.length > 0) {
+						return getProperty(caller, obj[chain[0].substr(1,chain[0].length-1)],chain.slice(1,chain.length).join("."));
+					}
+					else if (obj is ArrayCollection && obj.length > 0) {
+						return getProperty(caller, obj.getItemAt(int(chain[0].substr(1,chain[0].length-1))),chain.slice(1,chain.length).join("."));
+					}
+					else
+						return null;
+				}
+				else if (chain[0].indexOf("[")<0)  //If we have an array return the array element
 					return getProperty(caller, obj[chain[0]],chain.slice(1,chain.length).join("."));
 				else
 				{

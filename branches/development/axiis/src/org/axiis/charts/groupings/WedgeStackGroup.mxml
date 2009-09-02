@@ -38,7 +38,7 @@
 	xmlns:utils="org.axiis.utils.*"
 	xmlns:layoutUtils="org.axiis.layouts.utils.*"
 	xmlns:groupings="org.axiis.charts.groupings.*" xmlns:geometry="com.degrafa.geometry.*"
-	dataTipAnchorPoint="{anchorPoint}"
+	dataTipAnchorPoint="{anchorPoint}" itemPreDraw="onPreDraw()"
 	preRender="onPreRender()" xmlns:geom="flash.geom.*">
 
 	<!-- NOTE: Currently only tested for positive values -->
@@ -51,6 +51,14 @@
 
 			[Bindable]
 			private var maxValue:Number;
+			[Bindable]
+			private var chord:Number
+			
+			private function onPreDraw():void {
+				var angle:Number=arc.value;
+				chord=Math.abs((outerRadius.value * labelRadiusRatio)*2*Math.sin(arc.value*Math.PI/180/2));
+		//		trace("Chord " + currentLabel + " " + currentValue + " angle=" + arc.value + " chord = " + chord);
+			}
 			
 			private function onPreRender():void {
 				
@@ -58,7 +66,7 @@
 				
 				for (var i:int=0; i < dataItems.length; i++) {
 					maxValue+=getProperty(dataItems[i],dataField);
-				}
+				}			
 				//trace(fontSize + " start angle is " + wedge.startAngle);
 			}
 			
@@ -126,6 +134,7 @@
 			stroke="{stroke}"/>
 			
 		<degrafa:RasterText id="label"
+			visible="{(chord > fontSize)}"
 			x="{center.value}"
 			y="{center.value-10}"
 			fontFamily="{fontFamily}"

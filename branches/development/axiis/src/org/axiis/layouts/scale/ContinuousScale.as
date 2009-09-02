@@ -45,6 +45,7 @@ package org.axiis.layouts.scale
 				computedMaxValue = computeMax();
 		}
 		
+		
 		/**
 		 * Returns the minimum value from the dataProvider. 
 		 */
@@ -85,5 +86,6 @@ package org.axiis.layouts.scale
 			return ObjectUtils.getProperty(this,obj,propertyName);
 				
 		}
+
 	}
 }

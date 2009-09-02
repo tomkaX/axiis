@@ -233,6 +233,8 @@ package org.axiis.data
 			_data.pivot=pivotedTable;
 			
 		}
+	
+		
 		/**
 		 *  groupings: Ordered list of name value pairs ["columnIndex, groupName"] to create heirarchal Groupings
 		 * 
@@ -749,7 +751,7 @@ package org.axiis.data
 				collection.refresh();
 				
 				tempData.groupedData=new DataGroup();
-				tempData.name=groupName;
+				tempData.groupName=groupName;
 				
 				//Go through collection and each time we hit a new unique value create a new group object
 				var currValue:String=collection.getItemAt(0).columns[int(colIndex)].value;
@@ -761,11 +763,12 @@ package org.axiis.data
 				for (var y:int=0;y<collection.length;y++) {
 					
 					//Create summaries
-					for (var n:int=0;n<summaryCols.length;n++) {
-						if ( ! tempData.sums[collection.getItemAt(y).columns[summaryCols[n]].name]) tempData.sums[collection.getItemAt(y).columns[summaryCols[n]].name]=0;
-						tempData.sums[collection.getItemAt(y).columns[summaryCols[n]].name]+=collection.getItemAt(y).columns[summaryCols[n]].value;
+					if (summaryCols) {
+						for (var n:int=0;n<summaryCols.length;n++) {
+							if ( ! tempData.sums[collection.getItemAt(y).columns[summaryCols[n]].name]) tempData.sums[collection.getItemAt(y).columns[summaryCols[n]].name]=0;
+							tempData.sums[collection.getItemAt(y).columns[summaryCols[n]].name]+=collection.getItemAt(y).columns[summaryCols[n]].value;
+						}
 					}
-					
 					if (y!=collection.length-1)
 						nextValue=collection.getItemAt(y+1).columns[int(colIndex)].value;  //look ahead to see if we are at the end of a group.
 					else {
@@ -779,22 +782,28 @@ package org.axiis.data
 							
 						var newObject:DataGroup=new DataGroup();
 						newObject.name=currValue;
+						newObject.groupName=groupName;
 
 						if (groupings.length > 1) { //we need to go one level deeper recursively
 							newObject=groupTableRows(tempCollection,groupings.slice(1,groupings.length),summaryCols);
 							newObject.name=currValue;
+							newObject.parent=tempData;
+							newObject.groupName=groupName;
 							//Create summaries
-							for (var n:int=0;n<summaryCols.length;n++) {
-								if ( ! tempCollection.sums[collection.getItemAt(y).columns[summaryCols[n]].name]) tempCollection.sums[collection.getItemAt(y).columns[summaryCols[n]].name]=0;
-								tempCollection.sums[collection.getItemAt(y).columns[summaryCols[n]].name]+=newObject.sums[collection.getItemAt(y).columns[summaryCols[n]].name];
+							if (summaryCols) {
+								for (var n:int=0;n<summaryCols.length;n++) {
+									if ( ! tempCollection.sums[collection.getItemAt(y).columns[summaryCols[n]].name]) tempCollection.sums[collection.getItemAt(y).columns[summaryCols[n]].name]=0;
+									tempCollection.sums[collection.getItemAt(y).columns[summaryCols[n]].name]+=newObject.sums[collection.getItemAt(y).columns[summaryCols[n]].name];
+								}
 							}
 						}
 						else { //We are at the last level in the group - use unique values
-							for (var n:int=0;n<summaryCols.length;n++) {
-								if ( ! newObject.sums[collection.getItemAt(y).columns[summaryCols[n]].name]) newObject.sums[collection.getItemAt(y).columns[summaryCols[n]].name]=0;
-								newObject.sums[collection.getItemAt(y).columns[summaryCols[n]].name]+=collection.getItemAt(y).columns[summaryCols[n]].value;
-							}
-						
+						 	if (summaryCols) {
+								for (var n:int=0;n<summaryCols.length;n++) {
+									if ( ! newObject.sums[collection.getItemAt(y).columns[summaryCols[n]].name]) newObject.sums[collection.getItemAt(y).columns[summaryCols[n]].name]=0;
+									newObject.sums[collection.getItemAt(y).columns[summaryCols[n]].name]+=collection.getItemAt(y).columns[summaryCols[n]].value;
+								}
+						 	}
 						}
 						
 						
@@ -830,6 +839,7 @@ package org.axiis.data
 				collection.refresh();
 				
 				tempData[groupName]=new ArrayCollection();
+				tempData.groupName=groupName;
 			
 				
 				//Go through collection and each time we hit a new unique value create a new group object
@@ -852,6 +862,7 @@ package org.axiis.data
 							
 						var newObject:Object=new Object();
 						newObject.name=currValue;
+						newObject.groupName=groupName;
 
 						if (groupings.length > 1) { //we need to go one level deeper recursively
 							newObject=createShapedObject(tempCollection,groupings.slice(1,groupings.length),flattenLastGroup);

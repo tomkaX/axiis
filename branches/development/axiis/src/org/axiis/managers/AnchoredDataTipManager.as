@@ -19,18 +19,22 @@ package org.axiis.managers
 			systemManager = ApplicationGlobals.application.systemManager as ISystemManager;
 		}
 		
+		public function get dataTips():Array {
+			return _dataTips;
+		}
+		
 		private var systemManager:ISystemManager;
 		
 		private var contexts:Array = [];
 		
-		private var dataTips:Array = [];
+		private var _dataTips:Array = [];
 		
 		private var axiisSprites:Array = [];
 
 		
-		public function createDataTip(dataTips:Array,context:UIComponent,axiisSprite:AxiisSprite):void
+		public function createDataTip(_dataTips:Array,context:UIComponent,axiisSprite:AxiisSprite):void
 		{
-			var dataTip:UIComponent=dataTips[0];
+			var dataTip:UIComponent=_dataTips[0];
 			var anchorPoint:Point = calculateDataTipPosition(axiisSprite,context);
 			dataTip.x = anchorPoint.x;
 			dataTip.y = anchorPoint.y;
@@ -38,7 +42,7 @@ package org.axiis.managers
 			systemManager.topLevelSystemManager.addChildToSandboxRoot("toolTipChildren", dataTip);
 			
 			contexts.push(context);
-			this.dataTips.push(dataTip);
+			this._dataTips.push(dataTip);
 			axiisSprites.push(axiisSprite);
 			
 			axiisSprite.addEventListener(MouseEvent.MOUSE_OUT,handleMouseOut);
@@ -65,10 +69,10 @@ package org.axiis.managers
 		
 		public function destroyAllDataTips():void
 		{
-			while (dataTips.length > 0)
+			while (_dataTips.length > 0)
 			{
 				var context:Sprite = contexts.pop();
-				var dataTip:UIComponent = dataTips.pop();
+				var dataTip:UIComponent = _dataTips.pop();
 				var axiisSprite:AxiisSprite = axiisSprites.pop();
 				context.graphics.clear();
 				systemManager.topLevelSystemManager.removeChildFromSandboxRoot("toolTipChildren", dataTip);
@@ -81,7 +85,7 @@ package org.axiis.managers
 
 			}
 			contexts = [];
-			dataTips = [];
+			_dataTips = [];
 			axiisSprites = [];
 		}
 	}

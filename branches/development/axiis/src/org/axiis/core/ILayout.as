@@ -257,8 +257,8 @@ package org.axiis.core
 		 */
 		function render(sprite:AxiisSprite = null):void;
 		
-		function set dataTipAnchorPoint(value:Point):void;
-		function get dataTipAnchorPoint():Point;
+		function set dataTipAnchorPoint(value:Object):void;
+		function get dataTipAnchorPoint():Object;
 		function set dataTipContentClass(value:IFactory):void;
 		function get dataTipContentClass():IFactory
 		
