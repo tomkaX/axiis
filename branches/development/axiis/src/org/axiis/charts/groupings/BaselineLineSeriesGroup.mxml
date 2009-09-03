@@ -42,6 +42,7 @@
 
 	<mx:Script>
 	<![CDATA[
+		import com.degrafa.decorators.axiis.BaseLineAreaLineDecorator;
 		import mx.collections.ArrayCollection;
 		import mx.events.IndexChangedEvent;
 		import com.degrafa.core.IGraphicsFill;
@@ -177,7 +178,7 @@
 		 *  A decorator that removes the last three line segments that connect the path
 		 *  to allow for the proper area to be draw under the line.
 		 */
-		protected var __decorator : AreaLineDecorator = new AreaLineDecorator();
+		protected var __decorator : BaseLineAreaLineDecorator= new BaseLineAreaLineDecorator();
 		
 		protected var __degrafaPaths : Array = null;
 		protected var __showAreaFills : Boolean = true;
