@@ -7,12 +7,14 @@
 		<!-- axis -->
 		<component id="HAxis" class="org.axiis.charts.axis.HAxis"/>
 		<component id="VAxis" class="org.axiis.charts.axis.VAxis"/>
+		<component id="SimpleAxisLabels" class="org.axiis.charts.axis.SimpleAxisLabels"/>
 		
 		<!-- groupings -->
 		<component id="BarCluster" class="org.axiis.charts.groupings.BarCluster"/>
 		<component id="BarStack" class="org.axiis.charts.groupings.BarStack"/>
 		<component id="ColumnCluster" class="org.axiis.charts.groupings.ColumnCluster"/>
 		<component id="ColumnStack" class="org.axiis.charts.groupings.ColumnStack"/>
+		<component id="BaselineLineSeriesGroup" class="org.axiis.charts.groupings.BaselineLineSeriesGroup"/>
 		<component id="LineSeriesGroup" class="org.axiis.charts.groupings.LineSeriesGroup"/>
 		<component id="PlotGroup" class="org.axiis.charts.groupings.PlotGroup"/>
 		<component id="WedgeStackGroup" class="org.axiis.charts.groupings.WedgeStackGroup"/>
