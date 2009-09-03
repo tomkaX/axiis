@@ -130,7 +130,7 @@ package org.axiis.layouts.scale
 		/**
 		 * The minimum value as specified by the user.
 		 */
-		protected var userMinValue:Object;
+		protected var userMinValue:Object=0;
 		
 		//---------------------------------------------------------------------
 		// maxValue
@@ -195,7 +195,7 @@ package org.axiis.layouts.scale
 				dispatchEvent(new Event("minLayoutChange"));
 			}
 		}
-		private var _minLayout:Number;
+		private var _minLayout:Number=0;
 		
 		[Bindable(event="maxLayoutChange")]
 		/**

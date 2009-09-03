@@ -312,7 +312,7 @@ package org.axiis.core
 			}
 			else if (dataProvider is Array) {
 				for (var j:int=0;j<dataProvider.length;j++) {
-					if (dataProvider[i]) {
+					if (dataProvider[j]) {
 						if (dataFilterFunction != null) {
 							if (dataFilterFunction.call(this,dataProvider[j])) {
 								_dataItems.push(dataProvider[j]);
