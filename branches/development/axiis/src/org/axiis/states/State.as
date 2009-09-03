@@ -68,6 +68,8 @@ package org.axiis.states
 		{
 			super();
 		}
+		
+		public var enabled:Boolean=true;
 
 		/**
 		 * The values of the properties before they were modified.

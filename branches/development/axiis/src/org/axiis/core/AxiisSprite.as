@@ -148,9 +148,9 @@ package org.axiis.core
 				// Add listeners for all the state changing events
 				for each(var state:State in states)
 				{
-					if(state.enterStateEvent != null)
+					if(state.enterStateEvent != null && state.enabled)
 						addEventListener(state.enterStateEvent,handleStateTriggeringEvent);
-					if(state.exitStateEvent != null)
+					if(state.exitStateEvent != null  && state.enabled)
 						addEventListener(state.exitStateEvent,handleStateTriggeringEvent);
 				}
 			}
@@ -365,6 +365,7 @@ package org.axiis.core
 		{
 			if(state == null)
 				state = AxiisSprite.DEFAULT_STATE;
+		
 			var childToDisplay:Sprite = stateToSpriteHash[state];
 			for each(var stateChild:Sprite in stateToSpriteHash)
 			{				

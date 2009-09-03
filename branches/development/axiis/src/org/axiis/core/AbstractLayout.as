@@ -824,6 +824,7 @@ package org.axiis.core
 		 */
 		public function invalidate():void
 		{
+			this.dataTipManager.destroyAllDataTips();
 			dispatchEvent(new Event("layoutInvalidate"));
 			
 		} 
