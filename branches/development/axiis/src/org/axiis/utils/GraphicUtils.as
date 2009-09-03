@@ -25,10 +25,15 @@
 
 package org.axiis.utils
 {			
+	import com.degrafa.GraphicPoint;
 	import com.degrafa.geometry.segment.LineTo;
 	import com.degrafa.geometry.segment.QuadraticBezierTo;
 	
 	import flash.geom.Point;
+	
+	import mx.collections.ArrayCollection;
+	
+	import org.axiis.layouts.scale.LinearScale;
 
 	/**
 	 * An all static class containing methods used to create Degrafa geometry.
@@ -168,5 +173,93 @@ package org.axiis.utils
 			graphicPoints[j].x, graphicPoints[j].y));
 			return segments;
 	    }
+	    
+	    public static function calculatePosFromX( xPos : Number, dataCollection : Object,
+	    									      xDataField : String, yDataField : String, 
+	    									      xScale : LinearScale, yScale : LinearScale,
+	    									      interpolate : Boolean = true ) : GraphicPoint
+		{
+			var val1 : Object = null;
+			var val2 : Object = null;
+			var xVal : Number = xScale.layoutToValue( xPos ) as Number;
+			
+			var arr : Array = dataCollection as Array;
+			if ( arr == null )
+			{
+				arr = ( dataCollection as ArrayCollection ).source;
+			}
+			var idx : int = calculatePosBinarySearch( arr, xDataField, xVal );
+			if ( idx < 0 ) idx = 0;
+			else if ( idx > arr.length-2 ) idx = arr.length-2;
+			val1 = arr[ idx ];
+			val2 = arr[ idx+1 ];
+			
+			var x1 : Number = xScale.valueToLayout( val1[ xDataField ] );
+			var y1 : Number = yScale.valueToLayout( val1[ yDataField ] );
+			
+			var x2 : Number = xScale.valueToLayout( val2[ xDataField ] );
+			var y2 : Number = yScale.valueToLayout( val2[ yDataField ] );
+			
+			var slope : Number = -1;
+			var yPos : Number = -1;
+			
+			if ( interpolate == true )
+			{
+				if ( val1 != val2 )
+				{
+					slope = ( y2 - y1 ) / ( x2 - x1 );
+				}
+				if ( slope == -1 )
+				{
+					yPos = y1;
+				}
+				else
+				{
+					yPos = ( slope * ( xPos - x1 ) + y1 );
+				}
+			}
+			else
+			{
+				xPos = x1;
+				yPos = y1;
+			}			
+				
+			return new GraphicPoint( xPos, yPos );
+		}
+		
+		protected static function calculatePosBinarySearch( array : Array, dataField : String, val : Number ) : int
+		{
+			var db : int = 0;
+		 
+			var low : int = 0;
+			var high : int = array.length - 1;
+			var middle : int = 0;
+			var compare : int = 0;
+		 
+			while(low <= high)
+			{
+				middle = low + ((high - low) / 2);
+				
+				compare = array[ middle ][ dataField ] < val ? 
+							-1 : array[ middle ][ dataField ] > val ? 
+									1 : 0;
+		 
+				if (compare == 0)
+				{
+					return middle;
+				}
+				else if(compare > 0)
+				{
+					high = middle - 1;
+				}
+				else // if(compare < 0)
+				{
+					low = middle + 1;
+				}
+			}
+			
+			return high;
+		}	
 	}
+	
 }
