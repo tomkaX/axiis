@@ -35,7 +35,7 @@ package  com.degrafa.decorators.axiis {
 					var restroke:Function = CommandStack.currentStroke.reApplyFunction;
 						_reStroke = function(graphics:Graphics):void {
 							restroke(graphics,_currentStrokeArgs);
-						_reStrokeActive = true;
+						_reStrokeActive = true; //
 				}
 			}
 		}
