@@ -171,10 +171,6 @@ package org.axiis.paint
 			
 			palette.requestedSize = _layout.itemCount;
 			
-			if (_layout.itemCount==1) {
-				trace('stop here');
-			}
-
 			if (autoInterpolate)
 			{
 				_colors = new Array();

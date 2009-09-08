@@ -91,7 +91,7 @@ package org.axiis.charts.axis
 		
 		private function internalLabelFunction(value:Object):String
 		{
-			return (Math.round(Number(value)).toString());
+			return (! isNaN(Math.round(Number(value))) ? Math.round(Number(value)).toString():value.toString());
 		}
 		
 		[Bindable(event="gridStrokeChange")]

@@ -92,8 +92,8 @@ package org.axiis.layouts.scale
 				validate();
 				
 			var layoutDelta:Number = maxLayout - minLayout;
-			var layoutPercentage:Number = (Number(layout) - layoutDelta) / (layoutDelta);
-			var index:Number = Math.round(layoutPercentage * uniqueValues.length) - 1;
+			var layoutPercentage:Number = 1-(layoutDelta-Number(layout)) / (layoutDelta);
+			var index:Number = Math.round(layoutPercentage * uniqueValues.length);
 			index = Math.max(0,Math.min(uniqueValues.length - 1,index));
 			return uniqueValues[index];
 		}
@@ -109,9 +109,10 @@ package org.axiis.layouts.scale
 			for each(var o:Object in dataProvider)
 			{
 				var currValue:Object = dataField == null ? o : o[dataField];
+				
 				if((toReturn.indexOf(currValue) == -1)	// Check if the value isn't in the array
-					&& (userMinValue == null || currValue >= userMinValue) // Check if the value is in bounds
-					&& (userMaxValue == null || currValue <= userMaxValue))
+					&& (!userMinValue || currValue >= userMinValue) // Check if the value is in bounds
+					&& (!userMaxValue || currValue <= userMaxValue))
 				{
 					toReturn.push(currValue);
 				}
@@ -125,5 +126,7 @@ package org.axiis.layouts.scale
 			}
 			return toReturn;
 		}
+		
+		
 	}
 }

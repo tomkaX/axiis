@@ -57,17 +57,22 @@ package org.axiis.core
 	/**
 	 * Dispatched when an AxiisSprite is clicked.
 	 */
-	[Event(name="itemClick", type="flash.events.Event")]
+	[Event(name="itemClick", type="org.axiis.events.LayoutItemEvent")]
 	
 	/**
 	 * Dispatched when an AxiisSprite is mousedOver.
 	 */
-	[Event(name="itemMouseOver", type="flash.events.Event")]
+	[Event(name="itemMouseOver", type="org.axiis.events.LayoutItemEvent")]
 	
 	/**
 	 * Dispatched when an AxiisSprite is mousedOver.
 	 */
-	[Event(name="itemDataTip", type="flash.events.Event")]
+	[Event(name="itemMouseMove", type="org.axiis.events.LayoutItemEvent")]
+	
+	/**
+	 * Dispatched when an AxiisSprite is mousedOver.
+	 */
+	[Event(name="itemDataTip", type="org.axiis.events.LayoutItemEvent")]
 	
 	// TODO Is "AxiisLayout" a better name for BaseLayout 
 	/**
@@ -270,6 +275,7 @@ package org.axiis.core
 			{
 				var newChildSprite:AxiisSprite = createChildSprite(this);	
 				newChildSprite.addEventListener(MouseEvent.MOUSE_OVER,sprite_onMouseOver); //Only add this to real sprites versus layout sprites.			
+				newChildSprite.addEventListener(MouseEvent.MOUSE_MOVE,sprite_onMouseMove); 
 				sprite.addDrawingSprite(newChildSprite);
 				childSprites.push(newChildSprite);
 			}
@@ -352,6 +358,10 @@ package org.axiis.core
 				var s:AxiisSprite = AxiisSprite(sprite.removeChild(sprite.drawingSprites[sprite.drawingSprites.length-1]));
 				s.dispose();
 			}
+		}
+		
+		private function sprite_onMouseMove(e:Event):void {
+				this.dispatchEvent(new LayoutItemEvent("itemMouseMove",AxiisSprite(e.currentTarget),e));
 		}
 		
 		private function sprite_onMouseOver(e:Event):void {

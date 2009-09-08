@@ -47,10 +47,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 	xmlns:scale="org.axiis.layouts.scale.*"
 	xmlns:utils="org.axiis.utils.*" 
 	itemPreDraw="onItemPreDraw();"
+	emitDataTips="false"
 	xmlns:core="org.axiis.core.*"
 	xmlns:axis="org.axiis.charts.axis.*"
 	xmlns:utils1="org.axiis.layouts.utils.*">
-	
 	<mx:Script>
 		<![CDATA[
 			import com.degrafa.core.IGraphicsStroke;
@@ -71,6 +71,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 			[Bindable]
 			public var horizontalScale:IScale;
 			
+			[Bindable]
+			public var labelAngle:Number=0;
+			
 			private function onValueChanged():void
 			{
 				if (this.width==0 || isNaN(this.width))
@@ -80,6 +83,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 				var tempArray:Array=new Array();
 				
 				_totalMajorTicks=Math.floor(this.width/majorTickSpacing);
+		
 				var totalMinorTicks:int=Math.floor((this.width/_totalMajorTicks)/tickGap)*_totalMajorTicks;
 			
 				_majorTickInterval=totalMinorTicks/_totalMajorTicks;
@@ -98,9 +102,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 			private function onItemPreDraw():void 
 			{
 				label.fontFamily=fontFamily;
-				label.x=currentReference.x-(label.textWidth)/2;
+				label.x=currentReference.x-(labelAngle == 0 ? label.textWidth/2 : 0);
 				label.y=this.height;
 			}
+
 		]]>
 	</mx:Script>
 	
@@ -120,7 +125,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 	<utils:NumericExpression id="repeaterCountExpression" value="{Math.floor(this.width)}" valueChanged="onValueChanged();" />
 	
 	<!--- @private -->
-	<utils:NumericExpression id="tickGapExpression" value="{tickGap}" valueChanged="onValueChanged();" />
+	<utils:NumericExpression id="tickGapExpression" value="{tickGap + majorTickSpacing}" valueChanged="onValueChanged();" />
 	
 	<axis:referenceRepeater>
 		<utils1:GeometryRepeater> 
@@ -161,9 +166,13 @@ OTHER DEALINGS IN THE SOFTWARE.
 			x="{currentReference.x}" x1="{currentReference.x}"/>
 			
 		<!--- @private -->
-		<degrafa:RasterText id="label" align="right" autoSizeField="true"
+		<degrafa:RasterText id="label" align="{(labelAngle ==0 ? 'center':'left')}" autoSizeField="true"
 			fontFamily="fontFamily" fontSize="{fontSize}" fontWeight="{fontWeight}" textColor="{fontColor}"
-			text="{labelFunction(Number(horizontalScale.layoutToValue(horizontalScale.minLayout+currentReference.x)))}" visible="{showLabelExpression.value}"/>
+			text="{labelFunction(horizontalScale.layoutToValue(horizontalScale.minLayout+currentReference.x))}" visible="{showLabelExpression.value}">
+			<degrafa:transform>
+				<degrafa:RotateTransform angle="{labelAngle}" registrationPoint="centerLeft"/>
+			</degrafa:transform>
+		</degrafa:RasterText>
 	</axis:drawingGeometries>
 
 </axis:AxisBase>

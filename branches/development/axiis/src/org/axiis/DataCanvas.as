@@ -27,13 +27,12 @@ package org.axiis
 {
 	import com.degrafa.IGeometryComposition;
 	
-	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
+	import mx.containers.Canvas;
 	import mx.core.IFactory;
-	import mx.core.UIComponent;
 	
 	import org.axiis.core.AxiisSprite;
 	import org.axiis.core.ILayout;
@@ -44,7 +43,7 @@ package org.axiis
 	/**
 	 * DataCanvas manages the placement and the rendering of layouts.
 	 */
-	public class DataCanvas extends UIComponent
+	public class DataCanvas extends Canvas
 	{
 		[Bindable]
 		/**
@@ -162,13 +161,13 @@ package org.axiis
 			super.createChildren();
 			
 			_background=new AxiisSprite();
-			addChild(_background);
+			this.rawChildren.addChild(_background);
 
 			for each(var layout:ILayout in layouts)
 			{
 				layout.registerOwner(this);
 				var sprite:Sprite = layout.getSprite(this);
-				addChild(sprite);
+				this.rawChildren.addChild(sprite);
 				
 				layout.addEventListener("layoutInvalidate",handleLayoutInvalidate);
 				layout.addEventListener("itemDataTip",onItemDataTip);
@@ -178,7 +177,7 @@ package org.axiis
 			}
 			
 			_foreground=new AxiisSprite();
-			addChild(_foreground);
+			this.rawChildren.addChild(_foreground);
 		}
 		
 		/**

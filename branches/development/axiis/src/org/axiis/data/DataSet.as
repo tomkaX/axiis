@@ -204,11 +204,12 @@ package org.axiis.data
 						var cell:Object;
 						if (rowIndex > tempRows.length-1 ) {
 							newRow=new Object; 
+							newRow.pivotName=col.name;
 							newRow.columns=new Columns(); 
 							cell=new Object();
-							cell.name="pivotedColumn";
+							cell.name=row.columns[pivotColumn].value;
 							cell.index=0;
-							cell.value=col.name;
+							cell.value=col.value;
 							newRow.columns.addItem(cell);
 							tempRows.addItem(newRow); 
 						}

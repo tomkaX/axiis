@@ -39,681 +39,550 @@
         xmlns:utils="org.axiis.utils.*"
         dataTipLabelFunction="{internalDataTipFunction}"
         dataTipManager="{new FreeDataTipManager()}"
-        emitDataTips="false"
+        emitDataTips="true"
+        itemPreDraw="onItemPreDraw()"
+        itemMouseMove="onItemMouseMove(event)"
+        preRender="onPreRender()"
+        
         >
 
         <!-- public variables -->
-        <mx:Script>
-                <![CDATA[
-                	import org.axiis.managers.FreeDataTipManager;
-                	import org.axiis.utils.ObjectUtils;
-                        import org.axiis.layouts.scale.IScale;
-                        import com.degrafa.paint.LinearGradientFill;
-                        import org.axiis.core.AxiisSprite;
-                        import flash.utils.getTimer;
-                        import mx.collections.ArrayCollection;
-                        import com.degrafa.paint.SolidFill;
-                        import com.degrafa.decorators.axiis.AreaLineDecorator;
-                        import com.degrafa.geometry.segment.QuadraticBezierTo;
-                        import com.degrafa.geometry.segment.ClosePath;
-                        import com.degrafa.geometry.segment.LineTo;
-                        import com.degrafa.geometry.segment.MoveTo;
-                        import com.degrafa.GraphicPoint;
-                        import com.degrafa.core.IGraphicsStroke;
-                        import com.degrafa.core.IGraphicsFill;
-                        import org.axiis.utils.GraphicUtils;
+<mx:Script>
+        <![CDATA[
+        
+	import org.axiis.events.LayoutItemEvent;
+	import com.degrafa.geometry.command.CommandStackItem;
+	import com.degrafa.geometry.command.CommandStack;
+	import org.axiis.managers.FreeDataTipManager;
+	import org.axiis.utils.ObjectUtils;
+    import org.axiis.layouts.scale.IScale;
+    import com.degrafa.paint.LinearGradientFill;
+    import org.axiis.core.AxiisSprite;
+    import flash.utils.getTimer;
+    import mx.collections.ArrayCollection;
+    import com.degrafa.paint.SolidFill;
+    import com.degrafa.decorators.axiis.AreaLineDecorator;
+    import com.degrafa.geometry.segment.QuadraticBezierTo;
+    import com.degrafa.geometry.segment.ClosePath;
+    import com.degrafa.geometry.segment.LineTo;
+    import com.degrafa.geometry.segment.MoveTo;
+    import com.degrafa.GraphicPoint;
+    import com.degrafa.core.IGraphicsStroke;
+    import com.degrafa.core.IGraphicsFill;
+    import org.axiis.utils.GraphicUtils;
 
-                        [Inspectable]
-                        [Bindable]
-                        // TODO this needs to invaliate
-                        /**
-                         * The stroke used to render the lines.
-                         */
-                        public var stroke:com.degrafa.core.IGraphicsStroke;
+    [Inspectable]
+    [Bindable]
+    // TODO this needs to invaliate
+    /**
+     * The stroke used to render the lines.
+     */
+    public var stroke:com.degrafa.core.IGraphicsStroke;
 
-                        [Inspectable]
-                        [Bindable]
-                        /**
-                         * The fill used to render the area beneath the lines if area rendering is enabled. 
-                         */
-                        public var fill:com.degrafa.core.IGraphicsFill;
+    [Inspectable]
+    [Bindable]
+    /**
+     * The fill used to render the area beneath the lines if area rendering is enabled. 
+     */
+    public var fill:com.degrafa.core.IGraphicsFill;
 
-                        /**
-                         * A filter function that will be used to determine whether a given data point should be included in the rendering.
-                         */
-                        public var plotFilterFunction:Function;
+    /**
+     * A filter function that will be used to determine whether a given data point should be included in the rendering.
+     */
+    public var plotFilterFunction:Function;
 
-                        private var _seriesCollection:Object;
-                        private var _plotCollection:Object;
+    private var _seriesCollection:Object;
+    private var _plotCollection:Object;
 
-                        private var _prevCurvePath:Array;
-                        private var _maxY:Array;
-                        private var _minY:Array;
+    private var _prevCurvePath:Array;
+    private var _maxY:Array;
+    private var _minY:Array;
 
-                        private var t:Number;
-                        
-                        private var _xDataField:String;
-                        private var _horizontalScale:IScale;
+    private var t:Number;
+    
+    private var _xDataField:String;
+    private var _horizontalScale:IScale;
+    
+    [Bindable]
+    public var currentHIndex:int;
+    
+    
+     /**
+     * The property within each item in the dataProvider that contains the
+     * field used to determine the value of the item on the horizontal axis.
+     */
+    public function get xDataField():String
+    {
+            return _xDataField;
+    }
+    public function set xDataField(value:String):void
+    {
+            if(value != _xDataField)
+            {
+                    _xDataField = value;
+            }
+    }
+    
+    /**
+     * The scale used to map values onto the horizontal axis.
+     */
+    public function get horizontalScale():IScale
+    {
+            return _horizontalScale;
+    }
+    public function set horizontalScale(value:IScale):void
+    {
+            if(value != _horizontalScale)
+            {
+                    _horizontalScale = value;
+            }
+    }
+    
 
-                        /**
-                         * @private
-                         */
-                        override public function render(sprite:AxiisSprite = null):void
+    /**
+     * @private
+     */
+    override public function render(sprite:AxiisSprite = null):void
+    {
+         t = flash.utils.getTimer();
+         super.render(sprite);
+    }
+    
+    private function onPreRender():void {
+    	this.calculateMax();
+    	this.calculateCurves();
+    }
+    
+    private function onItemMouseMove(e:LayoutItemEvent):void {
+    	var value:int=Math.floor(e.item.mouseX/(this.width/this._plotIndexes.length));
+    	if (value!=currentHIndex && this.emitDataTips) {
+    		currentHIndex=value;
+    		this.dispatchEvent(new LayoutItemEvent("itemDataTip",e.item,e));
+    	}
+    	else 
+    		currentHIndex=value;
+    }
+    
+    private function onItemPreDraw():void {
+    	
+   		var ci:int=currentIndex;
+
+   		var segs=new Array();
+   		
+ 		//Grab all of our top segments (need to clone)
+    	segs.push(new MoveTo(_curvePathsTop[ci][0].x-.01,_curvePathsTop[ci][0].y));
+    	for (var i:int=0;i<_curvePathsTop[ci].length;i++) {
+    		segs.push(cloneItem(_curvePathsTop[ci][i]));
+    	}
+    	//Connect down to our bottom segments
+    	segs.push(new LineTo(_curvePathsBottom[ci][_curvePathsBottom[ci].length-1].x,_curvePathsBottom[ci][_curvePathsBottom[ci].length-1].y));
+    	
+    	//Add our bottom segments
+    	for (i=_curvePathsBottom[ci].length-1; i >0; i--) {
+    		// NEED TO CLONE THIS IN REVERSE CX/CY !!!!!
+    		segs.push(cloneItem(_curvePathsBottom[ci][i],_curvePathsBottom[ci][i-1]));
+     	}
+     	//Close the path
+    	segs.push(new LineTo(_curvePathsTop[ci][0].x,_curvePathsTop[ci][0].y));
+    	segs.push(new ClosePath());
+    	
+    	//Check to see if we need to fill
+    	 if (!showArea)
+        {
+                myPath.fill = new SolidFill(0, 0);
+        }
+        else
+        {
+                myPath.fill = fill;
+        }
+    	myPath.segments=segs;
+    	markerRepeater.count=_plotIndexes.length;
+    }
+    
+    private function cloneItem(item:QuadraticBezierTo,prevItem:QuadraticBezierTo=null):QuadraticBezierTo {
+    	var newItem:QuadraticBezierTo=new QuadraticBezierTo(item.cx,item.cy,item.x,item.y);
+    	
+    	if (prevItem) { //When cloning the bottom curves we need to reverse the direction of control points.
+    		newItem.x=prevItem.x;
+    		newItem.y=prevItem.y;
+    	}
+    	return newItem;
+    }
+    
+   
+
+	private var _plotIndexes:Array;
+	
+    /**
+     * @private
+     */
+    override public function invalidateDataProvider():void
+    {
+            super.invalidateDataProvider();
+
+            var firstItem:Object = (_dataProvider is Array) ? _dataProvider[0] : _dataProvider.getItemAt(0);
+
+            var tempItems:Array = new Array();
+            
+            _plotIndexes=new Array();
+            //We assume all plot collections are structured identically - which may not be a valid assumption
+
+            for (var i:int = 0; i < firstItem[plotCollection].length; i++)
+            {
+                var obj:Object = (firstItem[plotCollection] is Array) ? firstItem[plotCollection][i] : firstItem[plotCollection].getItemAt(i);
+                if (plotFilterFunction != null)
+                {
+                    if (plotFilterFunction.call(this, obj)) {
+                        tempItems.push(obj);
+                 		_plotIndexes.push(i);       
+                    }
+                }
+                else
+                {
+                    tempItems.push(obj);
+                    _plotIndexes.push(i);
+                }
+            }
+
+            _seriesCollection = _dataItems;
+
+            _itemCount = _dataItems.length;
+
+            _plotCollection = firstItem;
+            
+            plotCount=_plotIndexes.length;
+            
+            calculateMax();
+            
+            this.invalidate();
+
+    }
+   
+    private function calculateMax():void {
+    	
+    	//For each plotCollection object we total up their y values to determine max
+    	//Apply logic for stacks
+    	if (this.autoAdjustScale == false) return;
+    	
+    	var maxY:Number=Number.NEGATIVE_INFINITY;
+    	var minY:Number=Number.POSITIVE_INFINITY;
+    	
+    	for (var i:int; i<_plotIndexes.length;i++) {
+    		var y:int=0;
+    		var plotMax:Number;
+    		var plotMin:Number;
+    		for each (var series:Object in _seriesCollection) {
+    			if (mode == LineSeriesGroup.MODE_BASELINE) {
+    				maxY=Math.max(ObjectUtils.getProperty(this,series[plotCollection][_plotIndexes[i]],dataField),maxY);
+    				minY=Math.min(ObjectUtils.getProperty(this,series[plotCollection][_plotIndexes[i]],dataField),minY);
+    			}
+    			else {
+    				if (y==0) plotMax=0;
+    				
+    				if (mode == LineSeriesGroup.MODE_STACK_ZERO) {
+    					plotMax+=ObjectUtils.getProperty(this,series[plotCollection][_plotIndexes[i]],dataField);
+    					minY=Math.min(ObjectUtils.getProperty(this,series[plotCollection][_plotIndexes[i]],dataField),minY);
+    				}
+    				else if (mode == LineSeriesGroup.MODE_STACK_FLOW) {
+        				if (y == 0)
                         {
-                                t = flash.utils.getTimer();
-                                super.render(sprite);
+                            plotMax=ObjectUtils.getProperty(this,series[plotCollection][_plotIndexes[i]],dataField)/2;
+                            plotMin=-ObjectUtils.getProperty(this,series[plotCollection][_plotIndexes[i]],dataField)/2;
                         }
-                        
-                        /**
-                         * The property within each item in the dataProvider that contains the
-                         * field used to determine the value of the item on the horizontal axis.
-                         */
-                        public function get xDataField():String
+                        else if (y % 2 == 1)
                         {
-                                return _xDataField;
+                             plotMax+=ObjectUtils.getProperty(this,series[plotCollection][_plotIndexes[i]],dataField); 
                         }
-                        public function set xDataField(value:String):void
+                        else
                         {
-                                if(value != _xDataField)
-                                {
-                                        _xDataField = value;
-                                }
+                        	plotMin-=ObjectUtils.getProperty(this,series[plotCollection][_plotIndexes[i]],dataField);
                         }
-                        
-                        /**
-                         * The scale used to map values onto the horizontal axis.
-                         */
-                        public function get horizontalScale():IScale
-                        {
-                                return _horizontalScale;
-                        }
-                        public function set horizontalScale(value:IScale):void
-                        {
-                                if(value != _horizontalScale)
-                                {
-                                        _horizontalScale = value;
-                                }
-                        }
-
-                        /**
-                         * @private
-                         */
-                        override protected function repeatComplete():void
-                        {
-                             //   trace("LineSeriesGroup.render elapsed=" + (flash.utils.getTimer() - t) + "ms");
-                        }
-
-						private var _plotIndexes:Array;
-						
-                        /**
-                         * @private
-                         */
-                        override public function invalidateDataProvider():void
-                        {
-                                super.invalidateDataProvider();
-
-                                var firstItem:Object = (_dataProvider is Array) ? _dataProvider[0] : _dataProvider.getItemAt(0);
-
-                                var tempItems:Array = new Array();
-                                
-                                _plotIndexes=new Array();
-                                //We assume all plot collections are structured identically - which may not be a valid assumption
-
-                                for (var i:int = 0; i < firstItem[plotCollection].length; i++)
-                                {
-                                        var obj:Object = (firstItem[plotCollection] is Array) ? firstItem[plotCollection][i] : firstItem[plotCollection].getItemAt(i);
-                                        if (plotFilterFunction != null)
-                                        {
-                                                if (plotFilterFunction.call(this, obj)) {
-                                                        tempItems.push(obj);
-                                                 		_plotIndexes.push(i);       
-                                                }
-                                        }
-                                        else
-                                        {
-                                                tempItems.push(obj);
-                                                _plotIndexes.push(i);
-                                        }
-                                }
-
-                                _seriesCollection = _dataItems;
-
-                                _dataItems = tempItems;
-
-                                _itemCount = _dataItems.length;
-
-                                //This will set the repeat cycle for the inner layouts
-                                plotLayout.dataProvider = _seriesCollection;
-                                markerLayout.dataProvider = _seriesCollection;
-
-                                _plotCollection = firstItem;
-                                
-                                calculateMax();
-                                
-                                this.invalidate();
-                                plotLayout.invalidate();
-                                markerLayout.invalidate();
-                        }
-
-                   
-                        private function onPlotPreRender():void
-                        {		
-                        	    if (currentIndex == 0)
-                                { //We only do this on the first pass
-                                	
-                                        calculateCurves();
-
-                                        if (!showArea)
-                                        {
-                                                myPath.fill = new SolidFill(0, 0);
-                                        }
-                                        else
-                                        {
-                                                myPath.fill = fill;
-                                        }
-                                }
-
-
-                        }
-
-                        //Gets our current curves and rounds at borders between repeater sprites
-                        private function getSegments(seriesIndex:int, paths:Array):Array
-                        {
-
-                                var segments:Array = new Array();
-                                if (currentIndex == 0)
-                                {
-                                        segments = paths[seriesIndex].slice(currentIndex, currentIndex + 2);
-                                        segments.splice(0, 0, new MoveTo(segments[0].x, segments[0].y));
-                                        //Clip end point
-                                        segments[segments.length - 1].x = Math.round((seriesPoints[seriesIndex][currentIndex+2].x - seriesPoints[seriesIndex][currentIndex+1].x)/2)
-                                                 + seriesPoints[seriesIndex][currentIndex+1].x;
-
-                                }
-                                else if (currentIndex < itemCount - 1)
-                                {
-                                        segments = paths[seriesIndex].slice(currentIndex * 2 - 1, currentIndex * 2 + 2);
-                                        //Clip Start point
-                                        segments[0].x = Math.round((seriesPoints[seriesIndex][currentIndex+1].x - seriesPoints[seriesIndex][currentIndex].x)/2) 
-                                                + Math.round(seriesPoints[seriesIndex][currentIndex].x);
-                                        segments.splice(0, 1, new MoveTo(segments[0].x, segments[0].y));
-                                        //Clip End Point
-                                        if (currentIndex < itemCount - 2)
-                                                segments[segments.length - 1].x = Math.round((seriesPoints[seriesIndex][currentIndex+2].x - seriesPoints[seriesIndex][currentIndex+1].x)/2)
-                                                        + Math.round(seriesPoints[seriesIndex][currentIndex+1].x);
-                                }
-                                else if (currentIndex == itemCount - 1)
-                                {
-                                        segments = paths[seriesIndex].slice(currentIndex * 2 - 1, currentIndex * 2);
-                                        segments.splice(0, 1, new MoveTo(segments[0].x, segments[0].y));
-                                }
-
-                                return segments;
-                        }
-
-                        /**
-                         * We are going to take slices out of our _curvePathsTop, one slice (2 curves) for each horizontal repeater item
-                         * If we have an area we then close the path with another slice out of the _curvePathsBottom
-                         */
-                        private function onPlotItemPreDraw():void
-                        {
-                        	    var h:Number;
-                                var y:Number;
-                                var seriesIndex:int = plotLayout.currentIndex;
-
-                                /**
-                                 * Need to set our fill bounds for each series
-                                 */
-                                if (mode == LineSeriesGroup.MODE_BASELINE)
-                                {
-                                        _decorator.fillBounds = new Rectangle(0, int(_minY[seriesIndex]), width, height - int(_minY[seriesIndex]));
-                                }
-                                else if (mode == LineSeriesGroup.MODE_STACK_ZERO)
-                                {
-                                        if (seriesIndex == 0)
-                                        {
-                                                h = height - _minY[seriesIndex];
-                                                y = _minY[seriesIndex];
-                                        }
-                                        else
-                                        {
-                                                h = _maxY[seriesIndex - 1] - _minY[seriesIndex];
-                                                y = _minY[seriesIndex];
-                                        }
-                                        _decorator.fillBounds = new Rectangle(0, y, width, h);
-                                }
-
-                                else if (mode == LineSeriesGroup.MODE_STACK_FLOW)
-                                {
-                                        if (seriesIndex == 0)
-                                        {
-                                                h = (_maxY[seriesIndex] - _minY[seriesIndex]) * 2;
-                                                y = _minY[seriesIndex];
-                                        }
-                                        else if (seriesIndex % 2 == 1)
-                                        {
-                                                h = _maxY[seriesIndex - 1] - _minY[seriesIndex];
-                                                y = _minY[seriesIndex];
-                                        }
-                                        else
-                                        {
-                                                h = (_maxY[seriesIndex] - _minY[seriesIndex]) * -1;
-                                                y = _maxY[seriesIndex];
-                                        }
-
-                                        _decorator.fillBounds = new Rectangle(0, y, width, h);
-                                }
-                               // trace("decorator y=" + _decorator.fillBounds.y + " height=" + _decorator.fillBounds.height);
-
-                                myPath.stroke = stroke;
-
-                                var t:Number = flash.utils.getTimer();
-
-
-                                _currentSegments = getSegments(seriesIndex, _curvePathsTop);
-
-                                if (this.showArea)
-                                {
-
-                                        _prevCurvePath = getSegments(seriesIndex, _curvePathsBottom);
-
-                                        //Connect to our previous curves        
-                                        _currentSegments.push(new LineTo(_prevCurvePath[_prevCurvePath.length - 1].x, _prevCurvePath[_prevCurvePath.length - 1].y));
-
-                                        //Add our previous curve
-                                        for (var i:int = _prevCurvePath.length - 1; i > 0; i--)
-                                        {
-                                                //We need to reverse our curve direction use the same control points, but choose the x,y of prior locatioan 
-                                                if (_prevCurvePath[i] is QuadraticBezierTo)
-                                                {
-                                                        var qb:QuadraticBezierTo = _prevCurvePath[i];
-                                                        _currentSegments.push(new QuadraticBezierTo(qb.cx, qb.cy, _prevCurvePath[i - 1].x, _prevCurvePath[i - 1].y));
-                                                }
-                                        }
-                                        _currentSegments.push(new ClosePath());
-
-                                }
-                                myPath.segments = _currentSegments;
-
-
-                                //trace("onPlotItemPreDraw elapsed time=" + (flash.utils.getTimer()-t) + "ms");
-                        }
-
-
-                        private function onMarkerItemPreDraw():void
-                        {
-                                marker.centerX = seriesPoints[markerLayout.currentIndex][currentIndex + 1].x;
-                                marker.visible = this.showMarker;
-                                innerMarker.visible = this.showMarker;
-
-                                if (!this.showMarker)
-                                        return;
-
-                                if (mode == LineSeriesGroup.MODE_STACK_FLOW && markerLayout.currentIndex == 0)
-                                {
-                                        yPoint.value = verticalScale.valueToLayout(0, true);
-                                      //  trace("yPoint Value=" + yPoint.value);
-                                }
-                                else if (mode == LineSeriesGroup.MODE_STACK_FLOW && (markerLayout.currentIndex == 1 || markerLayout.currentIndex == 3))
-                                { //Resolves the fact that the first series is bisected
-                                        marker.visible = false;
-                                        innerMarker.visible = false;
-                                }
-                                else if (mode == LineSeriesGroup.MODE_STACK_FLOW && markerLayout.currentIndex == 2)
-                                {
-                                        yPoint.value = seriesPoints[markerLayout.itemCount][currentIndex + 1].y;
-                                                //marker.centerX+=10;
-                                }
-                                else
-                                {
-
-                                        yPoint.value = seriesPoints[markerLayout.currentIndex][currentIndex + 1].y;
-                                }
-
-
-                        }
-                        
-                        private function calculateMax():void {
-                        	
-                        	//For each plotCollection object we total up their y values to determine max
-                        	//Apply logic for stacks
-                        	if (this.autoAdjustScale == false) return;
-                        	
-                        	var maxY:Number=Number.NEGATIVE_INFINITY;
-                        	var minY:Number=Number.POSITIVE_INFINITY;
-                        	
-                        	for (var i:int; i<_plotIndexes.length;i++) {
-                        		var y:int=0;
-                        		var plotMax:Number;
-                        		var plotMin:Number;
-                        		for each (var series:Object in _seriesCollection) {
-                        			if (mode == LineSeriesGroup.MODE_BASELINE) {
-                        				maxY=Math.max(ObjectUtils.getProperty(this,series[plotCollection][_plotIndexes[i]],dataField),maxY);
-                        			}
-                        			else {
-                        				if (y==0) plotMax=0;
-                        				
-                        				if (mode == LineSeriesGroup.MODE_STACK_ZERO) {
-                        					plotMax+=ObjectUtils.getProperty(this,series[plotCollection][_plotIndexes[i]],dataField);
-                        				}
-                        				else if (mode == LineSeriesGroup.MODE_STACK_FLOW) {
-	                        				if (y == 0)
-	                                        {
-	                                            plotMax=ObjectUtils.getProperty(this,series[plotCollection][_plotIndexes[i]],dataField)/2;
-	                                            plotMin=-ObjectUtils.getProperty(this,series[plotCollection][_plotIndexes[i]],dataField)/2;
-	                                        }
-	                                        else if (y % 2 == 1)
-	                                        {
-	                                             plotMax+=ObjectUtils.getProperty(this,series[plotCollection][_plotIndexes[i]],dataField); 
-	                                        }
-	                                        else
-	                                        {
-	                                        	plotMin-=ObjectUtils.getProperty(this,series[plotCollection][_plotIndexes[i]],dataField);
-	                                        }
-	                           			}
-                        			}
-                        			y++;
-                        		}
-                        		if (mode == LineSeriesGroup.MODE_STACK_FLOW ) {
-                        			maxY=Math.max(plotMax,maxY);
-                        			minY=Math.min(plotMin,minY);
-                        		}
-                        		else if (mode == LineSeriesGroup.MODE_STACK_ZERO) {
-                        			maxY=Math.max(plotMax,maxY);
-                        		}
-                        	}
-
-                        	this.verticalScale.maxValue=maxY;
-                        	if (mode == LineSeriesGroup.MODE_STACK_FLOW ) {
-                        		this.verticalScale.minValue=minY;	
-                        	}
-                        	this.verticalScale.invalidate();
-                        	
-                        //	trace("Max Value is " + maxY);
-                        	
-                        }
-
-                        /**
-                         * This routine pre-calculates all the curves for a series
-                         * While we could calculate on each iteration, it would degrade performance because each curve is depdendent on the previous and next point along its path
-                         * Thus we cache all the curve segments up front, and then just takes slices off them to render
-                         * Curves are stored in multi-dimensional array
-                         *
-                         * segmentGroups[currentIndex][parentLayout.currentIndex]  where currentIndex==the current "series", and parentLayout.currentIndex==the plot point along the curve
-                         */
-                        private function calculateCurves():void
-                        {
-                        		//trace("calculate Curves previousMax=" + verticalScale.maxValue);
-                        		//calculateMax();
-                        		
-							//	trace("calculate Curves newMax=" + verticalScale.maxValue);
-                                _minY = new Array();
-                                _maxY = new Array();
-                                var t:Number = flash.utils.getTimer();
-                                if (!plotCollection)
-                                        return;
-                                //var segmentWidth:Number=width/itemCount;
-
-                                _curvePathsTop = new Array();
-
-                                //Two dimension array used to store each series fields, one row at a time  Array[hField,vField]
-                                seriesPoints = new Array();
-                                _repeatWidth = (width) / (itemCount - 1);
-
-                                var y:int = 0;
-                                var stackedValues:Object = new Object(); //Represents positive values for STACK layouts
-                                var stackedValues2:Object = new Object();
-
-                                //This stores all the plotCollection for one series
-                                var ta:Array = new Array();
-                                var flowTa:Array;
-
-                                var xo:Number = 0;
-
-
-                                for each (var series:Object in _seriesCollection)
-                                { //loop through all series to build our plot locations (to be used to generate curves)
-
-                                        //Gather the data values for our plots
-                                        var seriesPlots:Array = new Array();
-                                        for (var n:int = 0; n < _plotIndexes.length; n++)
-                                        {
-                                                var vObj:Object;
-                                                if (series[plotCollection] is ArrayCollection)
-                                                        vObj = series[plotCollection].getItemAt(_plotIndexes[n]);
-                                                else
-                                                        vObj = series[plotCollection][_plotIndexes[n]];
-                                                
-
-                                                seriesPlots.push(vObj);
-                                        }
-
-                                        //Create temp array to store points
-                                        ta = new Array();
-                                        xo = 0;
-
-										var seriesValues:Array=new Array();
-
-                                        for (var i:int = 0; i < seriesPlots.length; i++)
-                                        { //each series field
-                                                var stackedValue:Number = 0;
-                                                var obj:Object = seriesPlots[i];
-                                                if (ta.length == 0)
-                                                { //adds a new node if it is the first time
-                                                        ta.push(new GraphicPoint(-1, verticalScale.valueToLayout(ObjectUtils.getProperty(this,seriesPlots[0],dataField), true))); //The first marker
-                                                }
-                                                
-                                                /* Chesk if xDataField and horizontalScale are set, and if they are, the x value for the current point
-                                                is determined by the horizontalScale. If not, the default method is used (xo += repeatedWidth)
-                                                */
-                                                if(xDataField && horizontalScale)
-                                                {
-                                                        xo = horizontalScale.valueToLayout(ObjectUtils.getProperty(this,seriesPlots[i],xDataField), false) + 10;
-                                                }
-
-                                                var gp:GraphicPoint = new GraphicPoint;
-                                                gp.x = xo;
-
-
-                                                if (mode == LineSeriesGroup.MODE_STACK_ZERO)
-                                                { //looping through to make stacked values
-
-                                                        if (!stackedValues[i])
-                                                                stackedValues[i] = 0;
-                                                        stackedValues[i] += ObjectUtils.getProperty(this,obj,dataField);
-                                                        stackedValue = stackedValues[i];
-
-                                                        gp.y = verticalScale.valueToLayout(stackedValue, true);
-                                                }
-                                                else if (mode == LineSeriesGroup.MODE_STACK_FLOW)
-                                                {
-                                                        //First item gets split across the zero line
-                                                        //Then we alternate positions
-                                                        if (y == 0)
-                                                        {
-                                                                if (!flowTa)
-                                                                        flowTa = new Array();
-                                                                //For now make two gp's that are bisected at zero
-                                                                var gp2:GraphicPoint = new GraphicPoint;
-                                                                gp2.x = gp.x;
-                                                                if (!stackedValues2[i])
-                                                                        stackedValues2[i] = 0;
-                                                                stackedValues2[i] -= ObjectUtils.getProperty(this,obj,dataField) / 2;
-                                                                gp2.y = verticalScale.valueToLayout(stackedValues2[i], true);
-                                                                if (flowTa.length == 0)
-                                                                        flowTa.push(new GraphicPoint(-1, gp2.y)); //First point in series
-                                                                flowTa.push(gp2);
-                                                                if (!stackedValues[i])
-                                                                        stackedValues[i] = 0;
-                                                                stackedValues[i] += ObjectUtils.getProperty(this,obj,dataField) / 2;
-                                                                gp.y = verticalScale.valueToLayout(stackedValues[i], true);
-
-                                                        }
-                                                        else if (y % 2 == 1)
-                                                        {
-                                                                if (!stackedValues[i])
-                                                                        stackedValues[i] = 0;
-                                                                stackedValues[i] += ObjectUtils.getProperty(this,obj,dataField);
-                                                                stackedValue = stackedValues[i];
-                                                                gp.y = verticalScale.valueToLayout(stackedValue, true);
-                                                        }
-                                                        else
-                                                        {
-                                                                if (!stackedValues2[i])
-                                                                        stackedValues2[i] = 0;
-                                                                stackedValues2[i] -= ObjectUtils.getProperty(this,obj,dataField);
-                                                                stackedValue = stackedValues2[i];
-                                                                gp.y = verticalScale.valueToLayout(stackedValue, true);
-                                                        }
-                                                }
-                                                else
-                                                {
-                                                        gp.y = verticalScale.valueToLayout(ObjectUtils.getProperty(this,obj,dataField), true);
-                                                }
-
-                                                ta.push(gp);
-                                                if (y > _minY.length - 1)
-                                                        _minY.push(height);
-                                                if (y > _maxY.length - 1)
-                                                        _maxY.push(0);
-                                                _minY[y] = Math.min(_minY[y], gp.y);
-                                                _maxY[y] = Math.max(_maxY[y], gp.y);
-                                                xo += _repeatWidth;
-                                        }
-                                        //We have a STACK_FLOW and are at first series we add a series for the bisection
-                                        if (mode == LineSeriesGroup.MODE_STACK_FLOW && y == 0)
-                                        {
-                                                seriesPoints.push(flowTa);
-                                        }
-                                        seriesPoints.push(ta);
-
-                                        y++;
-                                }
-
-                                //Turn the series plotCollection, into curveTo commands
-
-                                for each (var ar:Array in seriesPoints)
-                                {
-                                        _curvePathsTop.push(GraphicUtils.buildSegmentsFromCurvePoints(ar, tension));
-                                }
-
-                                //Create a set of paths we can connect as bottom curves
-                                if (this.showArea)
-                                {
-                                        _curvePathsBottom = new Array();
-
-                                        i = 0;
-                                        for (obj in _curvePathsTop)
-                                        {
-                                                if (mode == LineSeriesGroup.MODE_STACK_FLOW)
-                                                { //Our series alternate with the first one being split into two, then going positive/negative
-                                                        if (i == 1)
-                                                        {
-                                                                _curvePathsBottom.push(_curvePathsTop[0]);
-                                                        }
-                                                        else if (i == 3)
-                                                        {
-                                                                _curvePathsBottom.push(_curvePathsTop[0]);
-                                                        }
-                                                        else if (i > 0)
-                                                        { //We should be a positive value here, so our "bottom" was the last positive value
-                                                                _curvePathsBottom.push(_curvePathsTop[i - 2]);
-                                                        }
-
-
-                                                }
-                                                else
-                                                { //When we have a baseline axis we will create a straight line for the bottom by adding a new path and ignoring the last one
-                                                        if (i == 0 || mode == LineSeriesGroup.MODE_BASELINE)
-                                                        {
-                                                                //First bottom curve is a straigh line;
-                                                                var path:Array = new Array();
-                                                                for (n = 0; n < _curvePathsTop[0].length; n++)
-                                                                {
-                                                                        var q:QuadraticBezierTo = new QuadraticBezierTo(_curvePathsTop[0][n].cx, verticalScale.valueToLayout(0, true), _curvePathsTop[0][n].x, verticalScale.valueToLayout(0, true));
-                                                                        path.push(q);
-                                                                }
-                                                                _curvePathsBottom.push(path);
-                                                        }
-                                                        else
-                                                        {
-                                                                _curvePathsBottom.push(_curvePathsTop[i - 1]);
-                                                        }
-
-                                                }
-
-                                                i++;
-                                        }
-
-                                        if (mode == LineSeriesGroup.MODE_STACK_FLOW)
-                                        { //Remove the first one as it was the result of splitting the first series by bisecting the zero line
-                                                _curvePathsTop.splice(0, 1);
-                                        }
-
-
-                                }
-                                //Now we have our continuous path we need to break them up into segments
-
-
-                            //    trace("computeCurves elapsed time=" + (flash.utils.getTimer() - t) + "ms");
-                        }
-
-
-						private function onItemMouseOver(e:Event):void {
-							currentAxiisSprite=e["item"].parent.parent;
-						}
-						
-						[Bindable]
-						public var currentAxiisSprite:AxiisSprite;
-						
-						private function internalDataTipFunction(axiisSprite:AxiisSprite):String {
-							var parentSprite=axiisSprite.parent.parent;
-							var data:Object=axiisSprite.data[plotCollection][parentSprite.index];
-							return ObjectUtils.getProperty(this,axiisSprite["data"],this.labelField) + " " + ObjectUtils.getProperty(this,data,this.plotLabelField) + ":" + ObjectUtils.getProperty(this,data,this.dataField);
-						}
-
-                        //Stores all the data points (accounts for stacking and alternate layouts
-                        private var seriesPoints:Array;
-
-                        //Used to help calculate common fill bounds for myPath
-                        private var _maxHeight:Number;
-
-                        //Our repeat width depends on the hPadding 
-                        [Bindable]
-                        private var _repeatWidth:Number;
-
-                        //Stores all the precomputed curve segments
-                        private var _curvePathsTop:Array;
-
-                        //Stores all the precomputed curve segments
-                        private var _curvePathsBottom:Array;
-
-                        //The segments used to render the series by myPath
-                        [Bindable]
-                        private var _currentSegments:Array;
-
-                        //Used to remove strokes off the sides and bottom of the path
-                        [Bindable]
-                        private var _decorator:AreaLineDecorator = new AreaLineDecorator();
-                        
-                        [Bindable]
-                        public var plotLabelFunction:Function;
-
-                        //private var _seriesCollection:Object;
-                        /**
-                         * A flag indicating that lines should be rendered in the traditional line chart manner. 
-                         */
-                        public static const MODE_BASELINE:int = 0;
-                        /**
-                         * A flag indicating that lines should be rendered stacked on top of one another. 
-                         */
-                        public static const MODE_STACK_ZERO:int = 1;
-                        /**
-                         * A flag indicating that lines should be rendered using a flow layout. 
-                         */
-                        public static const MODE_STACK_FLOW:int = 2;
-                ]]>
-        </mx:Script>
+           			}
+    			}
+    			y++;
+    		}
+    		if (mode == LineSeriesGroup.MODE_STACK_FLOW ) {
+    			maxY=Math.max(plotMax,maxY);
+    			minY=Math.min(plotMin,minY);
+    		}
+    		else if (mode == LineSeriesGroup.MODE_STACK_ZERO) {
+    			maxY=Math.max(plotMax,maxY);
+    		}
+    	}
+
+    	this.verticalScale.maxValue=maxY;
+		this.verticalScale.minValue=minY;	
+    	
+    	this.verticalScale.invalidate();
+    	
+    //	trace("Max Value is " + maxY);
+    	
+    }
+
+    /**
+     * This routine pre-calculates all the curves for a series
+     * While we could calculate on each iteration, it would degrade performance because each curve is depdendent on the previous and next point along its path
+     * Thus we cache all the curve segments up front, and then just takes slices off them to render
+     * Curves are stored in multi-dimensional array
+     *
+     * segmentGroups[currentIndex][parentLayout.currentIndex]  where currentIndex==the current "series", and parentLayout.currentIndex==the plot point along the curve
+     */
+    private function calculateCurves():void {
+    	
+            _minY = new Array();
+            _maxY = new Array();
+            var t:Number = flash.utils.getTimer();
+            if (!plotCollection)
+                    return;
+            //var segmentWidth:Number=width/itemCount;
+
+            _curvePathsTop = new Array();
+
+            //Two dimension array used to store each series fields, one row at a time  Array[hField,vField]
+            seriesPoints = new Array();
+            _repeatWidth = (width) / (_plotIndexes.length - 1);
+
+            var y:int = 0;
+            var stackedValues:Object = new Object(); //Represents positive values for STACK layouts
+            var stackedValues2:Object = new Object();
+
+            //This stores all the plotCollection for one series
+            var ta:Array = new Array();
+            var flowTa:Array;
+
+            var xo:Number = 0;
+
+
+            for each (var series:Object in _seriesCollection)
+            { //loop through all series to build our plot locations (to be used to generate curves)
+
+                    //Gather the data values for our plots
+                    var seriesPlots:Array = new Array();
+                    for (var n:int = 0; n < _plotIndexes.length; n++)
+                    {
+                            var vObj:Object;
+                            if (series[plotCollection] is ArrayCollection)
+                                    vObj = series[plotCollection].getItemAt(_plotIndexes[n]);
+                            else
+                                    vObj = series[plotCollection][_plotIndexes[n]];
+                            seriesPlots.push(vObj);
+                    }
+
+                    //Create temp array to store points
+                    ta = new Array();
+                    xo = 0;
+
+					var seriesValues:Array=new Array();
+
+                    for (var i:int = 0; i < seriesPlots.length; i++)
+                    { //each series field
+                            var stackedValue:Number = 0;
+                            var obj:Object = seriesPlots[i];
+                            if (ta.length == 0)
+                            { //adds a new node if it is the first time
+                                    ta.push(new GraphicPoint(-1, verticalScale.valueToLayout(ObjectUtils.getProperty(this,seriesPlots[0],dataField), true))); //The first marker
+                            }
+                            
+                            /* Chesk if xDataField and horizontalScale are set, and if they are, the x value for the current point
+                            is determined by the horizontalScale. If not, the default method is used (xo += repeatedWidth)
+                            */
+                            if(xDataField && horizontalScale)
+                            {
+                                    xo = horizontalScale.valueToLayout(ObjectUtils.getProperty(this,seriesPlots[i],xDataField), false) + 10;
+                            }
+
+                            var gp:GraphicPoint = new GraphicPoint;
+                            gp.x = xo;
+
+
+                            if (mode == LineSeriesGroup.MODE_STACK_ZERO)
+                            { //looping through to make stacked values
+
+                                    if (!stackedValues[i])
+                                            stackedValues[i] = 0;
+                                    stackedValues[i] += ObjectUtils.getProperty(this,obj,dataField);
+                                    stackedValue = stackedValues[i];
+
+                                    gp.y = verticalScale.valueToLayout(stackedValue, true);
+                            }
+                            else if (mode == LineSeriesGroup.MODE_STACK_FLOW)
+                            {	    //First item gets split across the zero line
+                                    //Then we alternate positions
+                                    if (y == 0)
+                                    {
+                                            if (!flowTa)
+                                                    flowTa = new Array();
+                                            //For now make two gp's that are bisected at zero
+                                            var gp2:GraphicPoint = new GraphicPoint;
+                                            gp2.x = gp.x;
+                                            if (!stackedValues2[i])
+                                                    stackedValues2[i] = 0;
+                                            stackedValues2[i] -= ObjectUtils.getProperty(this,obj,dataField) / 2;
+                                            gp2.y = verticalScale.valueToLayout(stackedValues2[i], true);
+                                            if (flowTa.length == 0)
+                                                    flowTa.push(new GraphicPoint(-1, gp2.y)); //First point in series
+                                            flowTa.push(gp2);
+                                            if (!stackedValues[i])
+                                                    stackedValues[i] = 0;
+                                            stackedValues[i] += ObjectUtils.getProperty(this,obj,dataField) / 2;
+                                            gp.y = verticalScale.valueToLayout(stackedValues[i], true);
+
+                                    }
+                                    else if (y % 2 == 1)
+                                    {
+                                            if (!stackedValues[i])
+                                                    stackedValues[i] = 0;
+                                            stackedValues[i] += ObjectUtils.getProperty(this,obj,dataField);
+                                            stackedValue = stackedValues[i];
+                                            gp.y = verticalScale.valueToLayout(stackedValue, true);
+                                    }
+                                    else
+                                    {
+                                            if (!stackedValues2[i])
+                                                    stackedValues2[i] = 0;
+                                            stackedValues2[i] -= ObjectUtils.getProperty(this,obj,dataField);
+                                            stackedValue = stackedValues2[i];
+                                            gp.y = verticalScale.valueToLayout(stackedValue, true);
+                                    }
+                            }
+                            else
+                            {
+                                    gp.y = verticalScale.valueToLayout(ObjectUtils.getProperty(this,obj,dataField), true);
+                            }
+
+                            ta.push(gp);
+                            if (y > _minY.length - 1)
+                                    _minY.push(height);
+                            if (y > _maxY.length - 1)
+                                    _maxY.push(0);
+                            _minY[y] = Math.min(_minY[y], gp.y);
+                            _maxY[y] = Math.max(_maxY[y], gp.y);
+                            xo += _repeatWidth;
+                    }
+                    //We have a STACK_FLOW and are at first series we add a series for the bisection
+                    if (mode == LineSeriesGroup.MODE_STACK_FLOW && y == 0)
+                    {
+                            seriesPoints.push(flowTa);
+                    }
+                    seriesPoints.push(ta);
+
+                    y++;
+            }
+
+            //Turn the series plotCollection, into curveTo commands
+
+            for each (var ar:Array in seriesPoints)
+            {
+                    _curvePathsTop.push(GraphicUtils.buildSegmentsFromCurvePoints(ar, tension));
+            }
+
+            //Create a set of paths we can connect as bottom curves
+            if (this.showArea)  {
+                    _curvePathsBottom = new Array();
+                    i = 0;
+                    for (obj in _curvePathsTop)  {
+                            if (mode == LineSeriesGroup.MODE_STACK_FLOW)
+                            { //Our series alternate with the first one being split into two, then going positive/negative
+                                    if (i == 1) {
+                                            _curvePathsBottom.push(_curvePathsTop[0]);
+                                    }
+                                    else if (i == 3) {
+                                            _curvePathsBottom.push(_curvePathsTop[0]);
+                                    }
+                                    else if (i > 0)
+                                    { //We should be a positive value here, so our "bottom" was the last positive value
+                                            _curvePathsBottom.push(_curvePathsTop[i - 2]);
+                                    }
+                            }
+    					   else { //When we have a baseline axis we will create a straight line for the bottom by adding a new path and ignoring the last one
+                                    if (i == 0 || mode == LineSeriesGroup.MODE_BASELINE)
+                                    {  //First bottom curve is a straight line;                                                   
+                                            var path:Array = new Array();
+                                            for (n = 0; n < _curvePathsTop[0].length; n++) {
+                                                    var q:QuadraticBezierTo = new QuadraticBezierTo(_curvePathsTop[0][n].cx, verticalScale.valueToLayout(0, true), _curvePathsTop[0][n].x, verticalScale.valueToLayout(0, true));
+                                                    path.push(q);
+                                            }
+                                            _curvePathsBottom.push(path);       
+                                    }
+                                    else  {		
+                                            _curvePathsBottom.push(_curvePathsTop[i - 1]);
+                                    }
+                            }
+                            i++;
+                    }
+
+                    if (mode == LineSeriesGroup.MODE_STACK_FLOW)  { //Remove the first one as it was the result of splitting the first series by bisecting the zero line
+                            _curvePathsTop.splice(0, 1);
+                    }
+            }
+    }
+
+
+	[Bindable]
+	public var currentAxiisSprite:AxiisSprite;
+	
+	private function internalDataTipFunction(axiisSprite:AxiisSprite):String {
+		if (this.currentHIndex<0) return "";
+		var data:Object=axiisSprite.data[plotCollection][this.currentHIndex];
+		return "<b>" + ObjectUtils.getProperty(this,axiisSprite["data"],this.labelField) + "</b><br/>" + ObjectUtils.getProperty(this,data,this.plotLabelField) + "<br/>" + ObjectUtils.getProperty(this,data,this.dataField);
+	}
+
+	private function getMarkerCX(iteration:int, obj:Object):Number {
+		if (iteration==plotCount-1) return _curvePathsTop[currentIndex][iteration*2-1].x;
+ 		return _curvePathsTop[currentIndex][iteration*2].x;
+	}
+	
+	private function getMarkerCY(iteration:int, obj:Object):Number {
+		if (iteration==plotCount-1) return _curvePathsTop[currentIndex][iteration*2-1].y;
+		return _curvePathsTop[currentIndex][iteration*2].y;
+	}
+	
+    //Stores all the data points (accounts for stacking and alternate layouts
+    private var seriesPoints:Array;
+
+    //Used to help calculate common fill bounds for myPath
+    private var _maxHeight:Number;
+
+    //Our repeat width depends on the hPadding 
+    [Bindable]
+    private var _repeatWidth:Number;
+
+    //Stores all the precomputed curve segments
+    private var _curvePathsTop:Array;
+
+    //Stores all the precomputed curve segments
+    private var _curvePathsBottom:Array;
+
+    //The segments used to render the series by myPath
+    [Bindable]
+    private var _currentSegments:Array;
+
+    //Used to remove strokes off the sides and bottom of the path
+    [Bindable]
+    private var _decorator:AreaLineDecorator = new AreaLineDecorator();
+    
+    [Bindable]
+    public var plotLabelFunction:Function;
+
+    //private var _seriesCollection:Object;
+    /**
+     * A flag indicating that lines should be rendered in the traditional line chart manner. 
+     */
+    public static const MODE_BASELINE:int = 0;
+    /**
+     * A flag indicating that lines should be rendered stacked on top of one another. 
+     */
+    public static const MODE_STACK_ZERO:int = 1;
+    /**
+     * A flag indicating that lines should be rendered using a flow layout. 
+     */
+    public static const MODE_STACK_FLOW:int = 2;
+        ]]>
+</mx:Script>
+
+		<!--- number of plots being mapped on x axis
+		-->
+		<mx:Number id="plotCount"/>
 
 		<!---
          Adjust min/max of vertical scale to fit data (does this destructively to the scale)
@@ -745,7 +614,7 @@
         <mx:Number id="tension">.25</mx:Number>
         
         <!---
-        The radius in pixels of the markers shown at each data point.
+        The diameter in pixels of the markers shown at each data point.
         -->
         <mx:int id="markerSize">8</mx:int>
         
@@ -774,82 +643,36 @@
         <!--- @private -->
         <degrafa:SolidFill color="0xFFFF00" alpha=".7" id="rollOverFill"/>
         
-        
-        
-        <layouts:layouts>
-                <!--- @private -->
-                <layouts:RepeaterLayout id="plotLayout"
-                        width="{currentReference.width}"
-                        height="{currentReference.height}"
-                        name="plotLayout"
-                        preRender="onPlotPreRender();"
-                        scaleFill="true"
-                        x="0"
-                        y="0"
-                        inheritParentBounds="false"
-                        itemPreDraw="onPlotItemPreDraw();"
-                        itemMouseOver="onItemMouseOver(event);"
-                        dataTipLabelFunction="{dataTipLabelFunction}"
-                        dataTipManager="{this.dataTipManager}"
-                        >      
+  
+  <!-- decorators="{[_decorator]}" -->
                         
-                        <layouts:drawingGeometries>
+         <layouts:drawingGeometries>
                       
-                                <degrafa:RegularRectangle width="{width}" height="{height}" x="0" y="0">
-                                        <degrafa:Path id="myPath"
-                                                scaleOnLayout="false"
-                                                decorators="{[_decorator]}"
-                                                enableEvents="false"
-                                                visible="{(_currentSegments.length>1)}"
-                                                stroke="{stroke}"
-                                                fill="{fill}"
-                                                segments="{_currentSegments}">
-                                        </degrafa:Path>
-                                </degrafa:RegularRectangle>
-                        </layouts:drawingGeometries>
-                </layouts:RepeaterLayout>
-                
-                <!--- @private -->
-                <layouts:RepeaterLayout id="markerLayout"
-                        width="{currentReference.width}"
-                        height="{currentReference.height}"
-                        name="markerLayout"
-                        scaleFill="true"
-                        x="0"
-                        y="0"
-                        inheritParentBounds="false"
-                        itemPreDraw="onMarkerItemPreDraw();"
-                   		dataTipManager="{this.dataTipManager}"
-                        >
-                        <layouts:drawingGeometries>
-                                <!--- @private -->
-                                <degrafa:Circle id="marker"
-                                        radius="{markerSize/2}"
-                                        centerY="{yPoint.value}"
-                                        visible="{showMarker}"
-                                        enableEvents="false">
-                                        <degrafa:fill>
-                                                <degrafa:SolidFill color="0xFFFFFF" alpha=".8"/>
-                                        </degrafa:fill>
-                                        <degrafa:stroke>
-                                                <degrafa:SolidStroke color="0" pixelHinting="false" alpha=".6"/>
-                                        </degrafa:stroke>
-                                </degrafa:Circle>
-                                
-                                <!--- @private -->
-                                <degrafa:Circle id="innerMarker"
-                                        radius="{markerSize/2*.6}"
-                                        centerX="{marker.centerX}"
-                                        centerY="{marker.centerY}"
-                                        visible="{showMarker}"
-                                        enableEvents="false">
-                                        <degrafa:fill>
-                                                <degrafa:SolidFill color="{markerColor}" alpha="1"/>
-                                        </degrafa:fill>
-                                </degrafa:Circle>
-
-                        </layouts:drawingGeometries>
-
-                </layouts:RepeaterLayout>
-        </layouts:layouts>
+	            <degrafa:RegularRectangle width="{width}" height="{height}" x="0" y="0">
+	                    <degrafa:Path id="myPath"
+	                            scaleOnLayout="false"
+	                            decorators="{[_decorator]}"
+	                            enableEvents="false"
+	                            stroke="{stroke}"
+	                            fill="{fill}"
+	                            >
+	                    </degrafa:Path>
+	            </degrafa:RegularRectangle>
+	            <degrafa:GeometryRepeater id="markerRepeater" 
+	            	width="{width}" 
+	            	height="{height}" 
+	            	visible="{this.showMarker}" 
+	            	count="{_plotIndexes.length}">
+                	<degrafa:Circle id="marker" radius="{this.markerSize/2}">
+                		<degrafa:fill>
+                			<degrafa:SolidFill color="{this.markerColor}"/>
+                		</degrafa:fill>
+                	</degrafa:Circle>
+                	<degrafa:modifiers>
+                		<degrafa:PropertyModifier targets="{[marker]}" property="centerX" modifier="{getMarkerCX}" modifierOperator="none"/>
+                		<degrafa:PropertyModifier targets="{[marker]}" property="centerY" modifier="{getMarkerCY}" modifierOperator="none"/>
+                	</degrafa:modifiers>
+                </degrafa:GeometryRepeater>
+	    </layouts:drawingGeometries>
+      
 </layouts:RepeaterLayout>
