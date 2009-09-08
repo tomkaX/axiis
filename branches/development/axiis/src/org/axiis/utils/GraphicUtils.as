@@ -188,6 +188,12 @@ package org.axiis.utils
 			{
 				arr = ( dataCollection as ArrayCollection ).source;
 			}
+
+			if ( arr == null )
+			{
+				throw new Error( "dataCollection must be Array or ArrayCollection" );
+			}			
+			
 			var idx : int = calculatePosBinarySearch( arr, xDataField, xVal );
 			if ( idx < 0 ) idx = 0;
 			else if ( idx > arr.length-2 ) idx = arr.length-2;
