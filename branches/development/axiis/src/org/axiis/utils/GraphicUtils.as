@@ -211,7 +211,7 @@ package org.axiis.utils
 			
 			if ( interpolate == true )
 			{
-				if ( val1 != val2 )
+				if ( x2 != x1 )
 				{
 					slope = ( y2 - y1 ) / ( x2 - x1 );
 				}
