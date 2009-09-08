@@ -183,6 +183,7 @@ package org.axiis.utils
 			var val2 : Object = null;
 			var xVal : Number = xScale.layoutToValue( xPos ) as Number;
 			
+			
 			var arr : Array = dataCollection as Array;
 			if ( arr == null )
 			{
@@ -195,8 +196,10 @@ package org.axiis.utils
 			}			
 			
 			var idx : int = calculatePosBinarySearch( arr, xDataField, xVal );
+			
 			if ( idx < 0 ) idx = 0;
 			else if ( idx > arr.length-2 ) idx = arr.length-2;
+			
 			val1 = arr[ idx ];
 			val2 = arr[ idx+1 ];
 			
@@ -226,8 +229,16 @@ package org.axiis.utils
 			}
 			else
 			{
-				xPos = x1;
-				yPos = y1;
+				if ( xPos - x1 < x2 - xPos )
+				{
+					xPos = x1;
+					yPos = y1;
+				}
+				else
+				{
+					xPos = x2;
+					yPos = y2;
+				}
 			}			
 				
 			return new GraphicPoint( xPos, yPos );
