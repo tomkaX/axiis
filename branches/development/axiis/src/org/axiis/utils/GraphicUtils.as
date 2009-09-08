@@ -200,7 +200,7 @@ package org.axiis.utils
 			var x2 : Number = xScale.valueToLayout( val2[ xDataField ] );
 			var y2 : Number = yScale.valueToLayout( val2[ yDataField ] );
 			
-			var slope : Number = -1;
+			var slope : Number = NaN;
 			var yPos : Number = -1;
 			
 			if ( interpolate == true )
@@ -209,7 +209,7 @@ package org.axiis.utils
 				{
 					slope = ( y2 - y1 ) / ( x2 - x1 );
 				}
-				if ( slope == -1 )
+				if ( isNaN( slope ) )
 				{
 					yPos = y1;
 				}
