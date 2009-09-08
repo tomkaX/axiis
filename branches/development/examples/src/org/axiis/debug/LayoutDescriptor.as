@@ -29,11 +29,11 @@ package org.axiis.debug
 			{
 				var layoutChildren:ArrayCollection = new ArrayCollection(AxiisSprite(node).layoutSprites);
 				var drawingChildren:ArrayCollection = new ArrayCollection(AxiisSprite(node).drawingSprites);
-				//var revertingModifications:ArrayCollection = new ArrayCollection(AxiisSprite(node).revertingModifications);
+
 				var r:ArrayCollection = new ArrayCollection();
 				addAll(layoutChildren,r);
 				addAll(drawingChildren,r);
-				//addAll(revertingModifications,r);
+
 				return r; 
 			}
 			return null;
@@ -54,8 +54,7 @@ package org.axiis.debug
 					return true;
 				if(AxiisSprite(node).layoutSprites.length > 0)
 					return true;
-				//if(AxiisSprite(node).revertingModifications.length > 0)
-				//	return true;
+
 			}
 			return false;
 		}
