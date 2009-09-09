@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	layout="absolute"
+	backgroundColor="0xcccccc"
+	applicationComplete="start()"
+	xmlns:axiis="http://www.axiis.org/2009"
+	xmlns:geometry="com.degrafa.geometry.*"
+	xmlns:degrafa="http://www.degrafa.com/2007" viewSourceURL="srcview/index.html">
+
+	<mx:Script>
+		<![CDATA[
+			import flash.utils.setTimeout;
+			import org.axiis.data.DataSet;
+
+			private function start():void
+			{
+				var arr:Array = [];
+				var now:Date = new Date();
+				var daysInMonth:Number = new Date(now.fullYear, now.month + 1, 0).date;
+				arr.push((now.milliseconds) / 1000);
+				arr.push((now.seconds * 1000 + now.milliseconds) / (60 * 1000));
+				arr.push((now.minutes * 60 + now.seconds) / (60 * 60));
+				arr.push((now.hours * 60 + now.minutes) / (60 * 24));
+				arr.push((now.date * 24 + now.hours) / (daysInMonth * 24));
+				arr.push(now.month / 12);
+				radialLayout.dataProvider = arr;
+				
+				setTimeout(start,10);
+			}
+		]]>
+	</mx:Script>
+
+	<mx:Number id="wedgeGap">10</mx:Number>
+	<mx:Number id="innerRadius">20</mx:Number>
+
+	<axiis:NumericExpression id="centerExpression"
+		value="{Math.min(dc.width,dc.height)/2}"/>
+
+	<axiis:NumericExpression id="radiusStep"
+		value="{(centerExpression.value - innerRadius - radialLayout.itemCount * wedgeGap)/(radialLayout.itemCount) + wedgeGap}"/>
+	
+	<mx:Array id="fills">
+		<degrafa:SolidFill color="0xcc0099"/>
+		<degrafa:SolidFill color="0x9900cc"/>
+		<degrafa:SolidFill color="0x0099cc"/>
+		<degrafa:SolidFill color="0x00cc00"/>
+		<degrafa:SolidFill color="0xff9900"/>
+		<degrafa:SolidFill color="0xcc0000"/>
+	</mx:Array>
+
+	<axiis:DataCanvas id="dc"
+		width="100%"
+		height="100%">
+		<axiis:layouts>
+			<axiis:BaseLayout id="radialLayout"
+				width="{dc.width}"
+				height="{dc.height}"
+				emitDataTips="false">
+				<axiis:drawingGeometries>
+					<geometry:Wedge centerX="{radialLayout.width/2}"
+						centerY="{radialLayout.height/2}"
+						innerRadius="{radialLayout.currentReference['innerRadius']}"
+						outerRadius="{radialLayout.currentReference['outerRadius']}"
+						startAngle="{radialLayout.currentReference['startAngle']}"
+						arc="{Number(radialLayout.currentDatum) * 360}"
+						fill="{fills[radialLayout.currentIndex]}">
+					</geometry:Wedge>
+				</axiis:drawingGeometries>
+				<axiis:referenceRepeater>
+					<axiis:GeometryRepeater>
+						<axiis:geometry>
+							<geometry:Wedge id="referenceWedge"
+								centerX="{radialLayout.width/2}"
+								centerY="{radialLayout.height/2}"
+								innerRadius="{innerRadius}"
+								outerRadius="{innerRadius + radiusStep.value - wedgeGap}"
+								startAngle="270"
+								arc="359.99"/>
+						</axiis:geometry>
+						<axiis:modifiers>
+							<axiis:PropertyModifier modifier="{radiusStep.value}" modifierOperator="add" property="innerRadius"/>
+							<axiis:PropertyModifier modifier="{radiusStep.value}" modifierOperator="add" property="outerRadius"/>
+						</axiis:modifiers>
+					</axiis:GeometryRepeater>
+				</axiis:referenceRepeater>
+			</axiis:BaseLayout>
+		</axiis:layouts>
+		<axiis:filters>
+			<mx:DropShadowFilter/>
+		</axiis:filters>
+	</axiis:DataCanvas>
+
+</mx:Application>

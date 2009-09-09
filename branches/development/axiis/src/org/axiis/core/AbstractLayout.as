@@ -297,7 +297,7 @@ package org.axiis.core
 			_dataItems=new Array();
 			if (dataProvider is ArrayCollection) {
 				for (var i:int=0;i<dataProvider.source.length;i++) {
-					if (dataProvider.source[i]) {
+					if (dataProvider.source[i] != null) {
 						if (dataFilterFunction != null) {
 								if (dataFilterFunction.call(this,dataProvider.source[i])) {
 									_dataItems.push(dataProvider.source[i]);
@@ -311,7 +311,7 @@ package org.axiis.core
 			}
 			else if (dataProvider is Array) {
 				for (var j:int=0;j<dataProvider.length;j++) {
-					if (dataProvider[j]) {
+					if (dataProvider[j] != null) {
 						if (dataFilterFunction != null) {
 							if (dataFilterFunction.call(this,dataProvider[j])) {
 								_dataItems.push(dataProvider[j]);
@@ -326,7 +326,7 @@ package org.axiis.core
 			else {
 				for each(var o:Object in dataProvider)
 				{
-					if (o) {
+					if (o != null) {
 						if (dataFilterFunction != null) {
 							if (dataFilterFunction.call(this,o)) {
 								_dataItems.push(o);
