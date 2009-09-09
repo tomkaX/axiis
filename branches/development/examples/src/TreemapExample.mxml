@@ -10,6 +10,7 @@
 
 	<mx:Script>
 		<![CDATA[
+			import org.axiis.managers.FreeDataTipManager;
 			import mx.utils.ColorUtil;
 			import org.axiis.data.DataSet;
 
@@ -88,7 +89,8 @@
 					dataField="totalLines"
 					labelField="name"
 					width="{dc.width}"
-					height="{dc.height}">
+					height="{dc.height}"
+					dataTipManager="{new FreeDataTipManager()}">
 					<extras:drawingGeometries>
 					
 						<!-- The rectangle representing each item -->
@@ -101,46 +103,46 @@
 								<!-- Fill the rectangles red if they contain many private methods, green otherwise. -->
 								<degrafa:LinearGradientFill angle="45">
 									<degrafa:GradientStop id="stop1"
-										color="{ColorUtil.adjustBrightness(currentColor.value, 0xff - Math.abs(colorScaleResult.value * 0xcc))}"/>
+										color="{ColorUtil.adjustBrightness(currentColor.value, 0xff - Math.abs(colorScaleResult.value * 0xbb))}"/>
 									<degrafa:GradientStop id="stop2"
 										color="{ColorUtil.adjustBrightness(currentColor.value, 0xff - Math.abs(colorScaleResult.value * 0x66))}"/>
 								</degrafa:LinearGradientFill>
 							</degrafa:fill>
-						<degrafa:stroke>
-							<degrafa:SolidStroke color="0"/>
-						</degrafa:stroke>
-					</degrafa:RegularRectangle>
+							<degrafa:stroke>
+								<degrafa:SolidStroke color="0"/>
+							</degrafa:stroke>
+						</degrafa:RegularRectangle>
 					
-					<!-- The text displaying the class name. Don't show it if the rectangle is too small. -->
-					<degrafa:RasterText text="{treemapLayout.currentDatum.name}"
-						x="{treemapLayout.currentReference.x}"
-						y="{treemapLayout.currentReference.y}"
-						width="{treemapLayout.currentReference.width}"
-						visible="{treemapLayout.currentReference.height &gt; 18}">
-						<degrafa:fill>
-							<degrafa:SolidFill id="textFill" color="0"/>
-						</degrafa:fill>
-					</degrafa:RasterText>
+						<!-- The text displaying the class name. Don't show it if the rectangle is too small. -->
+						<degrafa:RasterText text="{treemapLayout.currentDatum.name}"
+							x="{treemapLayout.currentReference.x}"
+							y="{treemapLayout.currentReference.y}"
+							width="{treemapLayout.currentReference.width}"
+							visible="{treemapLayout.currentReference.height &gt; 18}">
+							<degrafa:fill>
+								<degrafa:SolidFill id="textFill" color="0"/>
+							</degrafa:fill>
+						</degrafa:RasterText>
 					
-				</extras:drawingGeometries>
+					</extras:drawingGeometries>
 				
-				<!-- The mouseOver state - Color the rectangle black and the text white. -->
-				<extras:states>	
-					<axiis:State enterStateEvent="mouseOver"
-						exitStateEvent="mouseOut"
-						targets="{[stop1,stop2,textFill]}"
-						properties="{['color','color','color']}"
-						values="{[0x000000,0x666666,0xffffff]}"/>
-				</extras:states>
+					<!-- The mouseOver state - Color the rectangle black and the text white. -->
+					<extras:states>	
+						<axiis:State enterStateEvent="mouseOver"
+							exitStateEvent="mouseOut"
+							targets="{[stop1,stop2,textFill]}"
+							properties="{['color','color','color']}"
+							values="{[0x000000,0x666666,0xffffff]}"/>
+					</extras:states>
 				
-			</extras:SquarifiedTreemapLayout>
-		</axiis:layouts>
+				</extras:SquarifiedTreemapLayout>
+			</axiis:layouts>
 		
-		<axiis:filters>
-			<mx:DropShadowFilter distance="10" blurX="8" blurY="8"/>
-		</axiis:filters>
+			<axiis:filters>
+				<mx:DropShadowFilter distance="10" blurX="8" blurY="8"/>
+			</axiis:filters>
 		
-	</axiis:DataCanvas>
+		</axiis:DataCanvas>
 
 	</mx:VBox>
 		

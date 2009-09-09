@@ -29,7 +29,6 @@ package org.axiis.core
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.getTimer;
 	
@@ -54,7 +53,7 @@ package org.axiis.core
 	 * stubs of methods defined in the ILayout interface. It is up to th
 	 * subclass to appropriately override these implementations.
 	 */
-	public class AbstractLayout extends EventDispatcher implements ILayout
+	public class AbstractLayout extends EventDispatcher
 	{
 		/**
 		 * Constructor.
@@ -138,15 +137,15 @@ package org.axiis.core
 		/**
 		 * @copy ILayout#parentLayout
 		 */
-		public function get parentLayout():ILayout
+		public function get parentLayout():AbstractLayout
 		{
 			return _parentLayout;
 		}
-		public function set parentLayout(value:ILayout):void
+		public function set parentLayout(value:AbstractLayout):void
 		{
-			_parentLayout=value;
+			_parentLayout = value;
 		}
-		private var _parentLayout:ILayout;
+		private var _parentLayout:AbstractLayout;
 
 		[Bindable(event="boundsChange")]
 		/**
@@ -621,7 +620,7 @@ package org.axiis.core
 			if(!owner)
 			{
 				owner = dataCanvas;
-				for each(var childLayout:ILayout in layouts)
+				for each(var childLayout:AbstractLayout in layouts)
 				{
 					childLayout.registerOwner(owner);
 				}
@@ -664,7 +663,7 @@ package org.axiis.core
 			if(value != _layouts)
 			{
 
-				for each(var layout:ILayout in _layouts) {
+				for each(var layout:AbstractLayout in _layouts) {
 					layout.removeEventListener("itemDataTip",onItemDataTip);
 				}
 				

@@ -10,7 +10,7 @@
 	values is 100 and a given datum has a value of 10, the reference rectangle
 	created for that datum will be 10% of the total area of the	layout.
 -->
-<axiis:AbsoluteLayout xmlns:mx="http://www.adobe.com/2006/mxml"
+<axiis:BaseLayout xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:axiis="http://www.axiis.org/2009"
 	xmlns:degrafa="http://www.degrafa.com/2007"
 	preRender="preRenderHandler(event)">
@@ -193,4 +193,4 @@
 			</axiis:modifiers>
 		</axiis:GeometryRepeater>
 	</axiis:referenceRepeater>
-</axiis:AbsoluteLayout>
+</axiis:BaseLayout>

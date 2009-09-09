@@ -25,12 +25,10 @@
 
 package org.axiis.paint
 {
-	import com.degrafa.paint.palette.InterpolatedColorPalette;
-
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-
-	import org.axiis.core.ILayout;
+	
+	import org.axiis.core.AbstractLayout;
 
 	/**
 	 * LayoutPalette will generates an Array of colors for a Layout. By default,
@@ -57,11 +55,11 @@ package org.axiis.paint
 		 * The Layout this LayoutPalette should use to determine how many colors
 		 * to produce and to determine which color is the "current" one.
 		 */
-		public function get layout():ILayout
+		public function get layout():AbstractLayout
 		{
 			return _layout
 		}
-		private function set layout(value:ILayout):void
+		private function set layout(value:AbstractLayout):void
 		{
 			if (_layout)
 				_layout.removeEventListener("currentIndexChange", onIndexChanged);
@@ -69,7 +67,7 @@ package org.axiis.paint
 			if (_layout)
 				_layout.addEventListener("currentIndexChange", onIndexChanged);		
 		}
-		private var _layout:ILayout;
+		private var _layout:AbstractLayout;
 
 		[Bindable]
 		/**

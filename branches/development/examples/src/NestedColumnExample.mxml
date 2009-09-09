@@ -28,7 +28,7 @@
 	xmlns:degrafa="http://www.degrafa.com/2007"
 	backgroundGradientColors="[0xFFFFFF,0xDDDDDD]"
 	layout="absolute"
-	initialize="start()"
+	applicationComplete="start()"
 	xmlns:geometry="org.axiis.charts.geometry.*"
 	xmlns:states="org.axiis.states.*"
 	xmlns:Examples="Examples.*" viewSourceURL="srcview/index.html">
@@ -87,7 +87,8 @@
 				name="A"
 				scaleFill="true"
 				dataField="value"
-				percentGap=".05">
+				percentGap=".05"
+				emitDataTips="false">
 				<axiis:drawingGeometries>
 					<degrafa:RegularRectangle id="column1"
 						x="{layout1.currentReference.x}"
@@ -106,7 +107,8 @@
 						dataProvider="{layout1.currentDatum.node}"
 						percentGap="0"
 						name=" B"
-						dataField="value">
+						dataField="value"
+						emitDataTips="false">
 						<axiis:drawingGeometries>
 							<degrafa:RegularRectangle id="column2"
 								x="{layout2.currentReference.x}"
@@ -125,7 +127,8 @@
 								dataProvider="{layout2.currentDatum.node}"
 								percentGap="0"
 								name="  C"
-								dataField="value">
+								dataField="value"
+								emitDataTips="false">
 								<axiis:drawingGeometries>
 									<degrafa:RegularRectangle id="column3"
 										x="{layout3.currentReference.x}"

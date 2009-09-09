@@ -195,7 +195,7 @@ package org.axiis.core
 			
 			if (_dataItems)
 			{
-				var topLayout:ILayout = findTopLayout();
+				var topLayout:AbstractLayout = findTopLayout();
 				allStates = findAllStatesInLayoutTree(topLayout);
 				
 				_itemCount = _dataItems.length;
@@ -211,9 +211,9 @@ package org.axiis.core
 			}
 		}
 		
-		protected function findTopLayout():ILayout
+		protected function findTopLayout():AbstractLayout
 		{
-			var topLayout:ILayout = this;
+			var topLayout:AbstractLayout = this;
 			while(topLayout.parentLayout != null)
 			{
 				topLayout = topLayout.parentLayout;
@@ -221,14 +221,14 @@ package org.axiis.core
 			return topLayout;
 		}
 		
-		protected function findAllStatesInLayoutTree(layout:ILayout):Array
+		protected function findAllStatesInLayoutTree(layout:AbstractLayout):Array
 		{
 			var toReturn:Array = [];
 			for each(var state:State in layout.states)
 			{
 				toReturn.push(state);
 			}
-			for each(var childLayout:ILayout in layout.layouts)
+			for each(var childLayout:AbstractLayout in layout.layouts)
 			{
 				var childLayoutStates:Array = findAllStatesInLayoutTree(childLayout);
 				toReturn = toReturn.concat(childLayoutStates);
@@ -313,11 +313,11 @@ package org.axiis.core
 		protected function renderChildLayouts(child:AxiisSprite):void
 		{
 			var i:int=0;
-			for each(var layout:ILayout in layouts)
+			for each(var layout:AbstractLayout in layouts)
 			{
 				// When we have multiple peer layouts the AxiisSprite needs to
 				// differentiate between child drawing sprites and child layout sprites
-				layout.parentLayout = this as ILayout;
+				layout.parentLayout = this;
 				if (child.layoutSprites.length-1 < i)
 				{
 					var ns:AxiisSprite = createChildSprite(this);
@@ -339,7 +339,7 @@ package org.axiis.core
 			_rendering = false;
 		}
 		
-		private function createChildSprite(layout:ILayout):AxiisSprite
+		private function createChildSprite(layout:AbstractLayout):AxiisSprite
 		{
 			var newChildSprite:AxiisSprite = new AxiisSprite();
 			newChildSprite.doubleClickEnabled=true;

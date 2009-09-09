@@ -44,7 +44,7 @@
 				/>
 		</axiis:backgroundGeometries>
 		<axiis:layouts>
-			<axiis:AbsoluteLayout id="hLayout"
+			<axiis:BaseLayout id="hLayout"
 				x="20"
 				width="{dc.width-20}" 
 				height="{dc.height}"
@@ -91,7 +91,7 @@
 						y="{hLayout.currentReference.height-vScale.valueToLayout(hLayout.currentValue)-20}"/>
 					
 				</axiis:drawingGeometries>
-			</axiis:AbsoluteLayout>
+			</axiis:BaseLayout>
 		</axiis:layouts>
 	</axiis:DataCanvas>
 	

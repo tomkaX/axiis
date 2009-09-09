@@ -185,7 +185,7 @@
 
 	<layouts>
 		<!-- impedanceLayout iterates on each complete set of impedances -->
-		<axiis:AbsoluteLayout id="impedanceLineLayout"
+		<axiis:BaseLayout id="impedanceLineLayout"
 			dataProvider="{dataProvider}"
 			emitDataTips="false"
 			width="{this.width}"
@@ -194,7 +194,7 @@
 			<axiis:layouts>
 				
 				<!-- smithChartLineLayout iterates on each impedance data point and draws connecting lines -->
-				<axiis:AbsoluteLayout id="smithChartLineLayout"
+				<axiis:BaseLayout id="smithChartLineLayout"
 					dataProvider="{impedanceLineLayout.currentDatum}"
 					inheritParentBounds="false"
 					width="{this.width}"
@@ -225,19 +225,19 @@
 									  y1="{Line(smithChartLineLayout.currentReference).y1}"
 									  stroke="{Line(smithChartLineLayout.currentReference).stroke}"/>
 					</axiis:drawingGeometries>
-				</axiis:AbsoluteLayout>
+				</axiis:BaseLayout>
 			</axiis:layouts>
-		</axiis:AbsoluteLayout>
+		</axiis:BaseLayout>
 				
 		<!-- impedanceLayout iterates on each complete set of impedances -->
-		<axiis:AbsoluteLayout id="impedanceLayout"
+		<axiis:BaseLayout id="impedanceLayout"
 			dataProvider="{dataProvider}"
 			width="{this.width}"
 			height="{this.height}">
 			
 			<axiis:layouts>
 				<!-- smithChartLayout iterates on each impedance data point -->
-				<axiis:AbsoluteLayout id="smithChartLayout"
+				<axiis:BaseLayout id="smithChartLayout"
 					dataProvider="{impedanceLayout.currentDatum}"
 					inheritParentBounds="false"
 					dataTipLabelFunction="{getDataTipLabel}"
@@ -276,9 +276,9 @@
 				        </degrafa:Ellipse>
 					</axiis:drawingGeometries>
 					
-				</axiis:AbsoluteLayout>
+				</axiis:BaseLayout>
 			</axiis:layouts>
-		</axiis:AbsoluteLayout>
+		</axiis:BaseLayout>
 	
 	</layouts>
 			

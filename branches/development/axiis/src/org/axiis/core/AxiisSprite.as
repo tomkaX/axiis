@@ -99,7 +99,7 @@ package org.axiis.core
 		/**
 		 * The layout that created and parents this AxiisSprite.
 		 */
-		public var layout:ILayout;
+		public var layout:AbstractLayout;
 		
 		/**
 		 * A rectangle representing the top-left corner and dimensions

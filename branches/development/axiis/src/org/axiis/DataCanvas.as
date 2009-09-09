@@ -34,8 +34,8 @@ package org.axiis
 	import mx.containers.Canvas;
 	import mx.core.IFactory;
 	
+	import org.axiis.core.AbstractLayout;
 	import org.axiis.core.AxiisSprite;
-	import org.axiis.core.ILayout;
 	import org.axiis.events.LayoutItemEvent;
 	import org.axiis.managers.IDataTipManager;
 	import org.axiis.ui.DataTip2;
@@ -163,7 +163,7 @@ package org.axiis
 			_background=new AxiisSprite();
 			this.rawChildren.addChild(_background);
 
-			for each(var layout:ILayout in layouts)
+			for each(var layout:AbstractLayout in layouts)
 			{
 				layout.registerOwner(this);
 				var sprite:Sprite = layout.getSprite(this);
@@ -228,7 +228,7 @@ package org.axiis
 			//Render layouts first, as they may autoadjust Scales, etc that the background/foreground rely upon
 			while(invalidatedLayouts.length > 0)
 			{
-				var layout:ILayout = ILayout(invalidatedLayouts.pop());				
+				var layout:AbstractLayout = AbstractLayout(invalidatedLayouts.pop());
 				layout.render();
 			}
 			
@@ -238,8 +238,8 @@ package org.axiis
 			var i:int=0;
 			for each (var bg:Object in backgroundGeometries) {
 				_backgroundSprites[i].graphics.clear();
-				if (bg is ILayout) {
-					ILayout(bg).render(_backgroundSprites[i])
+				if (bg is AbstractLayout) {
+					AbstractLayout(bg).render(_backgroundSprites[i])
 				}
 				else if (bg is IGeometryComposition) {
 					bg.preDraw();
@@ -253,8 +253,8 @@ package org.axiis
 			_foreground.graphics.clear();
 			for each (var fg:Object in foregroundGeometries) {
 				_foregroundSprites[i].graphics.clear();
-				if (fg is ILayout) {
-					ILayout(fg).render(_foregroundSprites[i])
+				if (fg is AbstractLayout) {
+					AbstractLayout(fg).render(_foregroundSprites[i])
 				}
 				else if (fg is IGeometryComposition) {
 					fg.preDraw();
@@ -278,7 +278,7 @@ package org.axiis
 		 */
 		protected function handleLayoutInvalidate(event:Event):void
 		{
-			var layout:ILayout = event.target as ILayout;
+			var layout:AbstractLayout = event.target as AbstractLayout;
 			if(invalidatedLayouts.indexOf(layout) == -1)
 			{
 				invalidatedLayouts.push(layout);
@@ -291,7 +291,7 @@ package org.axiis
 		 */
 		protected function invalidateAllLayouts():void
 		{
-			for each(var layout:ILayout in layouts)
+			for each(var layout:AbstractLayout in layouts)
 			{
 				invalidatedLayouts.push(layout);
 			}

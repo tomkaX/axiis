@@ -8,7 +8,7 @@
 	
 	@see http://peltiertech.com/Excel/Charts/Waterfall.html
 -->
-<axiis:AbsoluteLayout xmlns:mx="http://www.adobe.com/2006/mxml"
+<axiis:BaseLayout xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:degrafa="http://www.degrafa.com/2007" xmlns:axiis="http://www.axiis.org/2009">
 	
 	<mx:Script>
@@ -77,4 +77,4 @@
 		</axiis:GeometryRepeater>
 	</axiis:referenceRepeater>
 	
-</axiis:AbsoluteLayout>
+</axiis:BaseLayout>

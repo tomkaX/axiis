@@ -30,7 +30,7 @@ package org.axiis.paint
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	
-	import org.axiis.core.ILayout;
+	import org.axiis.core.AbstractLayout;
 
 	/**
 	 * LayoutPalette will generate an Array of colors based on a Layout. The
@@ -66,11 +66,11 @@ package org.axiis.paint
 		 * The Layout this LayoutPalette should use to determine how many colors
 		 * to produce and to determine which color is the "current" one.
 		 */
-		public function get layout():ILayout
+		public function get layout():AbstractLayout
 		{
 			return _layout
 		}
-		private function set layout(value:ILayout):void
+		private function set layout(value:AbstractLayout):void
 		{
 			if (_layout)
 				_layout.removeEventListener("currentIndexChange", onIndexChanged);
@@ -79,7 +79,7 @@ package org.axiis.paint
 				_layout.addEventListener("currentIndexChange", onIndexChanged);
 			generatePalette();			
 		}
-		private var _layout:ILayout;
+		private var _layout:AbstractLayout;
 		
 		public function get colorFrom():Number {
 			return _colorFrom;
