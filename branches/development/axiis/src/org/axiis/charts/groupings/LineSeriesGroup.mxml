@@ -563,6 +563,9 @@
     
     [Bindable]
     public var plotLabelFunction:Function;
+    
+    [Bindable]
+    public var verticalScale:IScale;
 
     //private var _seriesCollection:Object;
     /**
@@ -601,11 +604,7 @@
         The name of the property on the objects in the dataProvider that contains the data to plot
         -->
         <mx:String id="plotCollection"/>
-        
-        <!---
-        The scale used to map values onto the vertical axis.
-        -->
-        <scale:LinearScale id="verticalScale"/>
+
         
         <!---
         The tension used to render the curves in this chart. A value of 0 results in straight lines while

@@ -517,11 +517,11 @@ package org.axiis.core
 		/**
 		 * @copy ILayout#labelField
 		 */
-		public function get labelField():String
+		public function get labelField():Object
 		{
 			return _labelField;
 		}
-		public function set labelField(value:String):void
+		public function set labelField(value:Object):void
 		{
 			if(value != _labelField)
 			{
@@ -533,7 +533,7 @@ package org.axiis.core
 		/**
 		 * @private
 		 */
-		protected var _labelField:String;
+		protected var _labelField:Object;
 		
 			
 		[Bindable(event="xChange")]

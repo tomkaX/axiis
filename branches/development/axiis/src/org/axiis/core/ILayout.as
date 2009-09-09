@@ -142,8 +142,8 @@ package org.axiis.core
 		 * The property within each item in the dataProvider that contains the
 		 * field used to determine the label for the item. 
 		 */
-		function get labelField():String;
-		function set labelField(value:String):void;
+		function get labelField():Object;
+		function set labelField(value:Object):void;
 		
 		// TODO If we do plan on supporting FXG or UIComponents there is no reason this property needs to be at the interface level
 		/**
