@@ -31,6 +31,7 @@
 	
 	<mx:Script>
 		<![CDATA[
+			import org.axiis.managers.FreeDataTipManager;
 			import mx.formatters.NumberFormatter;
 			import com.degrafa.paint.LinearGradientFill;
 			import com.degrafa.GraphicPoint;
@@ -40,6 +41,9 @@
 			import org.axiis.extras.charts.axis.SmithChartAxisData;
 			import org.axiis.extras.layouts.scale.SmithChartScale;
 			import com.degrafa.paint.SolidStroke;
+			
+			[Bindable]
+			protected var freeDataTipManager:FreeDataTipManager = new FreeDataTipManager();
 			
 			[Bindable]
 			public var sc_scale:SmithChartScale = null;
@@ -121,16 +125,16 @@
 			//returns the stroke for a given line
 			private function lineStrokeModifier(iterationCount:int, value:SolidStroke):SolidStroke
 			{
-				value.color = lineColors[impedanceLineLayout.currentIndex];
+				value.color = lineColors[impedanceLayout.currentIndex];
 				return value;
 			}
 			
 			private function getDataTipLabel(value:Object):String
 			{
-				if(value.imped._imag > 0)
-					return nf2.format(value.freq)+" mHz<br/>" + nf1.format(value.imped._real) + " + j " + nf2.format(value.imped._imag);
+				if(value.data.imped._imag > 0)
+					return nf2.format(value.data.freq)+" mHz<br/>" + nf1.format(value.data.imped._real) + " + j " + nf2.format(value.data.imped._imag);
 				else
-					return nf2.format(value.freq)+" mHz<br/>" + nf1.format(value.imped._real) + " - j " + nf2.format(-value.imped._imag);
+					return nf2.format(value.data.freq)+" mHz<br/>" + nf1.format(value.data.imped._real) + " - j " + nf2.format(-value.data.imped._imag);
 			}
 			
 		]]>
@@ -185,7 +189,7 @@
 
 	<layouts>
 		<!-- impedanceLayout iterates on each complete set of impedances -->
-		<axiis:BaseLayout id="impedanceLineLayout"
+		<axiis:BaseLayout id="impedanceLayout"
 			dataProvider="{dataProvider}"
 			emitDataTips="false"
 			width="{this.width}"
@@ -195,8 +199,9 @@
 				
 				<!-- smithChartLineLayout iterates on each impedance data point and draws connecting lines -->
 				<axiis:BaseLayout id="smithChartLineLayout"
-					dataProvider="{impedanceLineLayout.currentDatum}"
+					dataProvider="{impedanceLayout.currentDatum}"
 					inheritParentBounds="false"
+					emitDataTips="false"
 					width="{this.width}"
 					height="{this.width}">
 					
@@ -226,21 +231,13 @@
 									  stroke="{Line(smithChartLineLayout.currentReference).stroke}"/>
 					</axiis:drawingGeometries>
 				</axiis:BaseLayout>
-			</axiis:layouts>
-		</axiis:BaseLayout>
-				
-		<!-- impedanceLayout iterates on each complete set of impedances -->
-		<axiis:BaseLayout id="impedanceLayout"
-			dataProvider="{dataProvider}"
-			width="{this.width}"
-			height="{this.height}">
-			
-			<axiis:layouts>
+
 				<!-- smithChartLayout iterates on each impedance data point -->
 				<axiis:BaseLayout id="smithChartLayout"
 					dataProvider="{impedanceLayout.currentDatum}"
 					inheritParentBounds="false"
 					dataTipLabelFunction="{getDataTipLabel}"
+					dataTipManager="{freeDataTipManager}"
 					width="{this.width}"
 					height="{this.width}">
 					
@@ -279,7 +276,6 @@
 				</axiis:BaseLayout>
 			</axiis:layouts>
 		</axiis:BaseLayout>
-	
 	</layouts>
 			
 </DataCanvas>

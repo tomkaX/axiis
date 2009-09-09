@@ -33,6 +33,7 @@
 	xmlns:Examples="Examples.*"
 	backgroundGradientColors="[0xDDDDDD,0xF5F5F5]"
 	layout="absolute"
+	applicationComplete="init()"
 	viewSourceURL="srcview/index.html"
 	xmlns:axis="org.axiis.extras.charts.axis.*"
 	xmlns:chartextra="org.axiis.extras.charts.*">
@@ -44,8 +45,12 @@
 			import mx.collections.ArrayCollection;
 			
 			[Bindable]
-			private var impedanceData:ArrayCollection = new ArrayCollection(
-			[ [
+			private var impedanceData:ArrayCollection = null;
+			
+			private function init():void
+			{
+ 				var data:Array = 
+ 			  [ [
 				{imped: new Complex(44.38, 29.454), freq: 0.98},
 				{imped: new Complex(55.19, 19.534), freq: 0.99},
 				{imped: new Complex(50.00, -0.001), freq: 1.0},
@@ -58,8 +63,10 @@
 				{imped: new Complex(50.00, -0.001), freq: 1.0},
 				{imped: new Complex(47.36, -2.050), freq: 1.01},
 				{imped: new Complex(59.96, 29.805), freq: 1.02}
-			  ]	]
-			);
+			  ]	];
+			  
+			  impedanceData = new ArrayCollection(data);
+			}
 			
 		]]>
 	</mx:Script>
