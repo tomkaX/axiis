@@ -264,6 +264,7 @@
     	//Apply logic for stacks
     	if (this.autoAdjustScale == false) return;
     	
+    	verticalScale.minValue=Number.POSITIVE_INFINITY;
     	var maxY:Number=Number.NEGATIVE_INFINITY;
     	var minY:Number=Number.POSITIVE_INFINITY;
     	
@@ -307,6 +308,7 @@
     		}
     		else if (mode == LineSeriesGroup.MODE_STACK_ZERO) {
     			maxY=Math.max(plotMax,maxY);
+    			minY=0;
     		}
     	}
 
@@ -340,7 +342,7 @@
 
             //Two dimension array used to store each series fields, one row at a time  Array[hField,vField]
             seriesPoints = new Array();
-            _repeatWidth = (width) / (_plotIndexes.length - 1);
+            _repeatWidth = (width) / (_plotIndexes.length-1);
 
             var y:int = 0;
             var stackedValues:Object = new Object(); //Represents positive values for STACK layouts
@@ -383,12 +385,12 @@
                                     ta.push(new GraphicPoint(-1, verticalScale.valueToLayout(ObjectUtils.getProperty(this,seriesPlots[0],dataField), true))); //The first marker
                             }
                             
-                            /* Chesk if xDataField and horizontalScale are set, and if they are, the x value for the current point
+                            /* Check if xDataField and horizontalScale are set, and if they are, the x value for the current point
                             is determined by the horizontalScale. If not, the default method is used (xo += repeatedWidth)
                             */
                             if(xDataField && horizontalScale)
                             {
-                                    xo = horizontalScale.valueToLayout(ObjectUtils.getProperty(this,seriesPlots[i],xDataField), false) + 10;
+                                    xo = horizontalScale.valueToLayout(ObjectUtils.getProperty(this,seriesPlots[i],xDataField), false);
                             }
 
                             var gp:GraphicPoint = new GraphicPoint;
@@ -451,6 +453,8 @@
                             }
 
                             ta.push(gp);
+                        //    if (i=seriesPlots.length-1) ta.push(gp);
+                            
                             if (y > _minY.length - 1)
                                     _minY.push(height);
                             if (y > _maxY.length - 1)

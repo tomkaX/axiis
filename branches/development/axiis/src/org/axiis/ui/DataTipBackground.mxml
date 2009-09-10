@@ -6,7 +6,7 @@
 			
 			public var calloutX:Number = 0;
 			
-			public var calloutY:Number = 0;
+			public var calloutY:Number = 0; 
 		]]>
 	</mx:Script>
 	<geometry:CalloutBalloon id="ballon"

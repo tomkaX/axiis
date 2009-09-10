@@ -98,17 +98,20 @@ package org.axiis.layouts.scale
 		 */
 		public function get minValue():*
 		{
-			return userMinValue == null ? computedMinValue : userMinValue;
+			return !_minValueChanged ? computedMinValue : userMinValue;
 		}
 		public function set minValue(value:*):void
 		{
 			if(value != userMinValue)
 			{
+				_minValueChanged=true;
 				userMinValue = value;
 				invalidate();
 				dispatchEvent(new Event("minValueChange"));
 			}
 		}
+		
+		protected var _minValueChanged:Boolean=false;
 		
 		/**
 		 * The minimum value in the dataProvider.
@@ -132,6 +135,8 @@ package org.axiis.layouts.scale
 		 */
 		protected var userMinValue:Object=0;
 		
+		
+		
 		//---------------------------------------------------------------------
 		// maxValue
 		//---------------------------------------------------------------------
@@ -142,17 +147,20 @@ package org.axiis.layouts.scale
 		 */
 		public function get maxValue():*
 		{
-			return userMaxValue == null ? computedMaxValue : userMaxValue;
+			return !_maxValueChanged ? computedMaxValue : userMaxValue;
 		}
 		public function set maxValue(value:*):void
 		{
 			if(value != userMaxValue)
 			{
+				_maxValueChanged=true;
 				userMaxValue = value;
 				invalidate();
 				dispatchEvent(new Event("maxValueChange"));
 			}
 		}
+		
+		protected var _maxValueChanged:Boolean=false;
 		
 		/**
 		 * The maximum value in the dataProvider.
@@ -195,6 +203,7 @@ package org.axiis.layouts.scale
 				dispatchEvent(new Event("minLayoutChange"));
 			}
 		}
+		
 		private var _minLayout:Number=0;
 		
 		[Bindable(event="maxLayoutChange")]

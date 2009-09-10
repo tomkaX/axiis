@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<axiis:BaseLayout xmlns="*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:axiis="http://www.axiis.org/2009" xmlns:degrafa="http://www.degrafa.com/2007"
+	 preRender="onPreRender();"
+	 itemPreDraw="onItemPreDraw();">
+<mx:Script>
+	<![CDATA[
+		import flash.utils.getTimer;
+		import mx.controls.Label;
+		import org.axiis.utils.ObjectUtils;
+		import com.degrafa.core.IGraphicsStroke;
+		import com.degrafa.paint.SolidStroke;
+		import org.axiis.layouts.scale.CategoricalScale;
+		
+		[Bindable]
+		public var categoryScale:CategoricalScale;
+		
+		[Bindable]  
+		public var stroke:IGraphicsStroke=new SolidStroke();
+		
+		private function onPreRender():void {
+			var totalChars:String=""; 
+			counter=0;
+			var tempChars:String;
+			var t:Number=flash.utils.getTimer();
+			//Get biggest string (assumes some type of universal spacing
+			//Dont want to use textField in loop as it slows things down
+			for (var i:int=0; i < dataItems.length; i++) {
+				tempChars=String(ObjectUtils.getProperty(this,dataItems[i],labelField));
+				totalChars=(tempChars.length>totalChars.length) ? tempChars:totalChars;
+			}
+			
+			var tf:TextField=new TextField();
+			tf.text=totalChars
+			var tff:TextFormat = new TextFormat(fontFamily,fontSize,0,(fontWeight=="bold"));
+			maxWidth=tf.textWidth+this.labelPadding;
+			
+			if (labelRotation!=0) {
+				maxWidth=(Math.cos(labelRotation*Math.PI/180)*tf.textWidth)+Math.cos((labelRotation-90)*Math.PI/180)*tf.textHeight;
+			}
+			
+		
+			
+			//Now figure out our spacing
+			itemWidth=(this.width-maxWidth*2)/(dataItems.length-2);
+		
+			repeatModulo=Math.ceil(maxWidth/itemWidth)+1;
+			
+			//If maxWidth is more than itemWidth it means we can not put a label at every item and must space them out
+			
+				var num:Number=Math.floor((dataItems.length-2)/(repeatModulo));
+				//trace("we have " + num + " labels");
+
+				if (repeatModulo > 1)
+					startRepeat=Math.ceil((dataItems.length-2)-(num*repeatModulo));
+				else
+					startRepeat=0;
+
+				counter=repeatModulo;
+				
+		//	trace("maxWidth=" + maxWidth + " itemWidth=" + itemWidth + " repeatModulo=" + repeatModulo);
+			
+
+		}
+		
+		private var startRepeat:Number;
+		private var maxWidth:Number;
+		private var itemWidth:Number;
+		private var repeatModulo:Number;
+		private var counter:int=1;
+		
+		private function onItemPreDraw():void {
+			label.x=line.x-maxWidth/2;
+			label.y=line.y1+5;
+			
+			if (currentIndex==0  || currentIndex == dataItems.length-1) {
+				line.visible=true;
+				label.visible=true;
+			}
+			else if (currentIndex <= startRepeat || currentIndex >=dataItems.length-repeatModulo) {
+				label.visible=false;
+				line.visible=false;
+			}
+			else if (counter < repeatModulo) {
+				counter++;
+				label.visible=false;
+				line.visible=false;
+			}
+			else {
+				counter=1;
+				line.visible=true;
+				label.visible=true;
+			}
+		}
+		
+		
+	]]>
+</mx:Script>
+	<mx:Number id="markerSize">5</mx:Number>
+	<mx:Number id="labelPadding">3</mx:Number>
+	<mx:String id="fontFamily">Arial</mx:String>
+	<mx:String id="fontWeight">normal</mx:String>
+	<mx:Number id="fontSize">12</mx:Number>
+	<mx:Number id="labelRotation">0</mx:Number>
+	
+	<axiis:referenceRepeater>
+		<axiis:GeometryRepeater>
+			<axiis:geometry>
+				<degrafa:RegularRectangle x="0" y="0" width="{this.width/dataItems.count}" height="{height}" enableEvents="false"/>
+			</axiis:geometry>
+			<axiis:modifiers>
+				<axiis:PropertyModifier property="x" modifier="{categoryScale.valueToLayout(currentValue)}" modifierOperator="none"/>
+			</axiis:modifiers>
+		</axiis:GeometryRepeater>
+	</axiis:referenceRepeater>
+	<axiis:drawingGeometries>
+		<degrafa:Line id="line"
+			x="{currentReference.x+currentReference.width/2}" 
+			x1="{currentReference.x+currentReference.width/2}" 
+			y="0" 
+			y1="{markerSize}"
+			stroke="{stroke}"
+			/>
+			
+		<degrafa:RasterText id="label"
+			text="{currentLabel}"
+			align="left"
+			autoSize="left"
+			fontFamily="{fontFamily}"
+			fontWeight="{fontWeight}"
+			fontSize="{fontSize}"
+			>
+			<degrafa:transform>
+				<degrafa:RotateTransform angle="{labelRotation}" registrationPoint="bottomLeft"/>
+			</degrafa:transform>
+		</degrafa:RasterText>
+	</axiis:drawingGeometries>
+
+</axiis:BaseLayout>

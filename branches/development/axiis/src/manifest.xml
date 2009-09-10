@@ -7,6 +7,7 @@
 		<!-- axis -->
 		<component id="HAxis" class="org.axiis.charts.axis.HAxis"/>
 		<component id="VAxis" class="org.axiis.charts.axis.VAxis"/>
+		<component id="HCategoryAxis" class="org.axiis.charts.axis.HCategoryAxis"/>
 		<component id="SimpleAxisLabels" class="org.axiis.charts.axis.SimpleAxisLabels"/>
 		
 		<!-- groupings -->
