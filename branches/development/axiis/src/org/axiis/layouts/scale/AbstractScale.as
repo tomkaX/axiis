@@ -102,7 +102,7 @@ package org.axiis.layouts.scale
 		}
 		public function set minValue(value:*):void
 		{
-			if(value != userMinValue)
+			if(value != userMinValue || !_minValueChanged)
 			{
 				_minValueChanged=true;
 				userMinValue = value;
@@ -151,7 +151,7 @@ package org.axiis.layouts.scale
 		}
 		public function set maxValue(value:*):void
 		{
-			if(value != userMaxValue)
+			if(value != userMaxValue || !_maxValueChanged)
 			{
 				_maxValueChanged=true;
 				userMaxValue = value;
