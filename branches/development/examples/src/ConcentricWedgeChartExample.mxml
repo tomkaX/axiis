@@ -17,7 +17,7 @@
 				var arr:Array = [];
 				var now:Date = new Date();
 				var daysInMonth:Number = new Date(now.fullYear, now.month + 1, 0).date;
-				arr.push((now.milliseconds) / 1000);
+				//arr.push((now.milliseconds) / 1000);
 				arr.push((now.seconds * 1000 + now.milliseconds) / (60 * 1000));
 				arr.push((now.minutes * 60 + now.seconds) / (60 * 60));
 				arr.push((now.hours * 60 + now.minutes) / (60 * 24));
@@ -36,11 +36,8 @@
 	<axiis:NumericExpression id="centerExpression"
 		value="{Math.min(dc.width,dc.height)/2}"/>
 
-	<axiis:NumericExpression id="radiusStep"
-		value="{(centerExpression.value - innerRadius - radialLayout.itemCount * wedgeGap)/(radialLayout.itemCount) + wedgeGap}"/>
-	
 	<mx:Array id="fills">
-		<degrafa:SolidFill color="0xcc0099"/>
+		<!--<degrafa:SolidFill color="0xcc0099"/>-->
 		<degrafa:SolidFill color="0x9900cc"/>
 		<degrafa:SolidFill color="0x0099cc"/>
 		<degrafa:SolidFill color="0x00cc00"/>
@@ -52,10 +49,12 @@
 		width="100%"
 		height="100%">
 		<axiis:layouts>
-			<axiis:BaseLayout id="radialLayout"
+			<axiis:ConcentricWedgeLayout id="radialLayout"
 				width="{dc.width}"
 				height="{dc.height}"
-				emitDataTips="false">
+				emitDataTips="false"
+				innerRadius="20"
+				wedgeGap="10">
 				<axiis:drawingGeometries>
 					<geometry:Wedge centerX="{radialLayout.width/2}"
 						centerY="{radialLayout.height/2}"
@@ -66,24 +65,7 @@
 						fill="{fills[radialLayout.currentIndex]}">
 					</geometry:Wedge>
 				</axiis:drawingGeometries>
-				<axiis:referenceRepeater>
-					<axiis:GeometryRepeater>
-						<axiis:geometry>
-							<geometry:Wedge id="referenceWedge"
-								centerX="{radialLayout.width/2}"
-								centerY="{radialLayout.height/2}"
-								innerRadius="{innerRadius}"
-								outerRadius="{innerRadius + radiusStep.value - wedgeGap}"
-								startAngle="270"
-								arc="359.99"/>
-						</axiis:geometry>
-						<axiis:modifiers>
-							<axiis:PropertyModifier modifier="{radiusStep.value}" modifierOperator="add" property="innerRadius"/>
-							<axiis:PropertyModifier modifier="{radiusStep.value}" modifierOperator="add" property="outerRadius"/>
-						</axiis:modifiers>
-					</axiis:GeometryRepeater>
-				</axiis:referenceRepeater>
-			</axiis:BaseLayout>
+			</axiis:ConcentricWedgeLayout>
 		</axiis:layouts>
 		<axiis:filters>
 			<mx:DropShadowFilter/>

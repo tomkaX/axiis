@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<axiis:BaseLayout xmlns="*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:axiis="http://www.axiis.org/2009" xmlns:geometry="com.degrafa.geometry.*">
+	<mx:Script>
+		<![CDATA[
+			[Bindable]
+			public var innerRadius:Number = 0;
+			
+			[Bindable]
+			public var wedgeGap:Number = 0;
+		]]>
+	</mx:Script>
+	
+	<axiis:NumericExpression id="radiusStep"
+		value="{(centerExpression.value - innerRadius - itemCount * wedgeGap)/(itemCount) + wedgeGap}"/>
+		
+	<axiis:NumericExpression id="centerExpression"
+		value="{Math.min(width,height)/2}"/>
+	
+	<axiis:referenceRepeater>
+		<axiis:GeometryRepeater>
+			<axiis:geometry>
+				<geometry:Wedge id="referenceWedge"
+					centerX="{width/2}"
+					centerY="{height/2}"
+					innerRadius="{innerRadius}"
+					outerRadius="{innerRadius + radiusStep.value - wedgeGap}"
+					startAngle="270"
+					arc="359.99"/>
+			</axiis:geometry>
+			<axiis:modifiers>
+				<axiis:PropertyModifier modifier="{radiusStep.value}" modifierOperator="add" property="innerRadius"/>
+				<axiis:PropertyModifier modifier="{radiusStep.value}" modifierOperator="add" property="outerRadius"/>
+			</axiis:modifiers>
+		</axiis:GeometryRepeater>
+	</axiis:referenceRepeater>
+</axiis:BaseLayout>

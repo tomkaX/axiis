@@ -37,6 +37,7 @@
 		
 		<!-- layouts -->
 		<component id="BaseLayout" class="org.axiis.core.BaseLayout"/>
+		<component id="ConcentricWedgeLayout" class="org.axiis.layouts.ConcentricWedgeLayout"/>
 		<component id="HBoxLayout" class="org.axiis.layouts.HBoxLayout"/>
 		<component id="RepeaterLayout" class="org.axiis.layouts.RepeaterLayout"/>
 		<component id="VBoxLayout" class="org.axiis.layouts.VBoxLayout"/>
