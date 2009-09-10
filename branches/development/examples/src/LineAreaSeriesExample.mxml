@@ -56,9 +56,16 @@
 				//This then makes a column for each unique time entrie and a row for each unique column.
 				ds.pivotTable(0);
 				dataProvider = ds.data.pivot.rows;
-				hScale.dataProvider=ds.data.pivot.header.slice(1);
+				hScale.dataProvider=ds.data.pivot.header.slice(1,dataSlice.value+1);
 				hAxis.invalidateDataProvider();
 				dc.invalidateDisplayList();
+			}
+			
+			private function sliceData():void {
+				hScale.dataProvider=ds.data.pivot.header.slice(1,dataSlice.value+1);
+				hAxis.invalidateDataProvider();
+				myLineGroup.invalidateDataProvider();
+				dc.invalidateDisplayList(); 
 			}
 
 			private function axisLabel(obj:Object):String
@@ -141,24 +148,13 @@
 				tickGap="5"
 				majorTickSpacing="50"
 				labelFunction="{axisLabel}"/>
-			<axis:HAxis id="hAxis"
-				horizontalScale="{hScale}"
-				y="15"
+			<axiis:HCategoryAxis id="hAxis"
 				x="10"
-				tickStroke="{axisStroke}"
-				width="{dc.width}"
-				height="{myLineGroup.height}"
-				emitDataTips="false"
-				fontFamily="Myriad Pro"
-				fontColor="0"
-				fontSize="12"
-				tickGap="{myLineGroup.width/(Math.round(myLineGroup.width/myLineGroup.plotCount))}"
-			    minorTickLength="0"
-			    majorTickLength="5"
-				majorTickSpacing="{Math.round(myLineGroup.width/myLineGroup.plotCount)}"
-			    showGridArea="false"
-			    labelAngle="90"
-				/>
+				categoryScale="{this.hScale}"
+				width="{myLineGroup.width}"
+				dataProvider="{hScale.dataProvider}"
+				height="50"
+				y="{myLineGroup.height}"/>
 			<degrafa:Line x="0"
 				x1="{myLineGroup.x+myLineGroup.width}"
 				y="{myLineGroup.height}"
@@ -185,8 +181,10 @@
 				plotCollection="columns"
 				dataField="value"
 				labelField="pivotName"
+				xDataField="name"
 				plotLabelField="name"
 				verticalScale="{vScale}"
+				horizontalScale="{hScale}"
 				stroke="{myStroke}"
 				fill="{areaFill}"/>
 		</axiis:layouts>
@@ -247,7 +245,19 @@
 				maximum="220"
 				value="30"
 				snapInterval="1"
-				change="{dc.invalidateDisplayList(); myLineGroup.invalidateDataProvider();}"
+				change="{sliceData();}"
+				showTrackHighlight="false"
+				verticalCenter="-5"/>
+		</mx:HBox>
+		<mx:HBox>
+		<mx:Label text="Label Rotation" textAlign="right" verticalCenter="0"/>
+			<mx:HSlider width="80"
+				id="labelRotate"
+				minimum="0"
+				maximum="90"
+				value="0"
+				snapInterval="1"
+				change="{hAxis.labelRotation=labelRotate.value;dc.invalidateDisplayList();}"
 				showTrackHighlight="false"
 				verticalCenter="-5"/>
 		</mx:HBox>
