@@ -38,10 +38,10 @@ package org.axiis.layouts.scale
 		override public function validate():void
 		{
 			super.validate();
-			if(!_minValueChanged)
+			if(userMinValue == null)
 				computedMinValue = computeMin();
 			
-			if(!_maxValueChanged)
+			if(userMaxValue == null)
 				computedMaxValue = computeMax();
 		}
 		

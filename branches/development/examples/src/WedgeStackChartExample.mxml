@@ -36,6 +36,7 @@
  
 	<mx:Script>
 		<![CDATA[
+			import org.axiis.core.AxiisSprite;
 			import org.axiis.data.DataSet;
 
 			private var ds:DataSet = new DataSet();
@@ -56,15 +57,15 @@
 			}
 
 			//Currently not being used - DataTips being refactored
-			private function dataTipFunction(data:Object):String
+			private function dataTipFunction(axiisSprite:AxiisSprite):String
 			{
-				if (data["competitors"] != null && data["name"] != null)
+				if (axiisSprite.data["competitors"] != null && axiisSprite.data["name"] != null)
 				{
-					return "<b>" + data["name"] + " Total Medals</b><br/>" + data["competitors"];
+					return "<b>" + axiisSprite.data["name"] + " Total Medals</b><br/>" + axiisSprite.data["competitors"];
 				}
-				else if (data["count"] != null && data["category"] != null)
+				else if (axiisSprite.data["count"] != null && axiisSprite.data["category"] != null)
 				{
-					return "<b>" + data["category"] + " Total Medals</b><br/>" + data["count"];
+					return "<b>" + axiisSprite.data["category"] + " Total Medals</b><br/>" + axiisSprite.data["count"];
 				}
 				return "";
 			}
