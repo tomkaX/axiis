@@ -28,6 +28,8 @@ package org.axiis.layouts.scale
 	import mx.collections.ArrayCollection;
 	import mx.collections.Sort;
 	
+	import org.axiis.utils.ObjectUtils;
+	
 	/**
 	 * A scale that converts categorical (String) data into layout space.
 	 * The categories are assumed to be sorted alphabetically.
@@ -99,6 +101,27 @@ package org.axiis.layouts.scale
 		}
 		
 		/**
+		 * Converts a layout position to the index position of the corresponding
+		 * categorical value.
+		 * 
+		 * @param The layout position to translate into a value.
+		 */
+		public function layoutToIndex(layout:Object):Object
+		{ 
+			if(!(layout is Number))
+				throw new Error("layout parameter must be a Number");
+				
+			if (invalidated)
+				validate();
+				
+			var layoutDelta:Number = maxLayout - minLayout;
+			var layoutPercentage:Number = 1-(layoutDelta-Number(layout)) / (layoutDelta);
+			var index:Number = Math.round(layoutPercentage * uniqueValues.length);
+			index = Math.max(0,Math.min(uniqueValues.length - 1,index));
+			return index;
+		}
+		
+		/**
 		 * Builds a sorted array of the unique values found within the dataProvider.
 		 * Excludes values that fall alphabetically outside the user specified range
 		 * of minLayout to maxLayout. 
@@ -108,7 +131,7 @@ package org.axiis.layouts.scale
 			var toReturn:Array = [];
 			for each(var o:Object in dataProvider)
 			{
-				var currValue:Object = dataField == null ? o : o[dataField];
+				var currValue:Object = ObjectUtils.getProperty(this,o,dataField);
 				
 				if((toReturn.indexOf(currValue) == -1)	// Check if the value isn't in the array
 					&& (!userMinValue || currValue >= userMinValue) // Check if the value is in bounds

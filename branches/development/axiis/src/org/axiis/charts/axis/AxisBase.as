@@ -58,7 +58,7 @@ package org.axiis.charts.axis
 		public function AxisBase()
 		{
 			super();
-			emitDataTips = false;
+			showDataTips = false;
 			
 		}
 		

@@ -121,17 +121,17 @@ package org.axiis.core
 		private var _visible:Boolean=true;
 
 		/**
-		 * @copy ILayout#emitDataTips
+		 * @copy ILayout#showDataTips
 		 */
-		public function get emitDataTips():Boolean
+		public function get showDataTips():Boolean
 		{
-			return _emitDataTips;
+			return _showDataTips;
 		}
-		public function set emitDataTips(value:Boolean):void
+		public function set showDataTips(value:Boolean):void
 		{
-			_emitDataTips=value;
+			_showDataTips=value;
 		}
-		private var _emitDataTips:Boolean = true;
+		private var _showDataTips:Boolean = true;
 		
 		[Bindable]
 		/**
@@ -341,6 +341,8 @@ package org.axiis.core
 			
 			
 			_itemCount=_dataItems.length;
+			this.deselectChildren();  //Since the data has changed so have our indexes, deselect children
+			this.invalidate();
 		
 		}
 		//---------------------------------------------------------------------
@@ -670,7 +672,7 @@ package org.axiis.core
 				_layouts = value;
 				
 				for each(layout in _layouts) {
-					if (layout.emitDataTips)
+					if (layout.showDataTips)
 						layout.addEventListener("itemDataTip",onItemDataTip);
 				}
 				
@@ -903,6 +905,11 @@ package org.axiis.core
 			return ObjectUtils.getProperty(this,obj,propertyName);
 		}
 		
+		private function deselectChildren():void {
+			for (var i:int=0; i<childSprites.length;i++) {
+				childSprites[i].selected=false;
+			}
+		}
 		
 
 	}

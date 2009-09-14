@@ -110,7 +110,7 @@ package org.axiis.states
 		 * A flag indicating that when an AxiisSprite enters this state all of
 		 * its descendents should enter the state as well.
 		 */
-		public var propagateToDescendents:Boolean = false;
+		public var propagateToDescendents:Boolean = true;
 
 		/**
 		 * A flag indicating that when an AxiisSprite enters this state all of

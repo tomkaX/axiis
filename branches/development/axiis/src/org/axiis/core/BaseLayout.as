@@ -60,9 +60,32 @@ package org.axiis.core
 	[Event(name="itemClick", type="org.axiis.events.LayoutItemEvent")]
 	
 	/**
+	 * Dispatched when an AxiisSprite is double clicked.
+	 */
+	[Event(name="itemDoubleClick", type="org.axiis.events.LayoutItemEvent")]
+	
+	/**
+	 * Dispatched when an AxiisSprite is selected
+	 *
+	 */
+	[Event(name="itemSelected", type="org.axiis.events.LayoutItemEvent")]
+	
+	/**
+	 * Dispatched when an AxiisSprite is unselected
+	 *
+	 */
+	[Event(name="itemUnSelected", type="org.axiis.events.LayoutItemEvent")]
+	
+	
+	/**
 	 * Dispatched when an AxiisSprite is mousedOver.
 	 */
 	[Event(name="itemMouseOver", type="org.axiis.events.LayoutItemEvent")]
+	
+	/**
+	 * Dispatched when an AxiisSprite is mousedOut.
+	 */
+	[Event(name="itemMouseOut", type="org.axiis.events.LayoutItemEvent")]
 	
 	/**
 	 * Dispatched when an AxiisSprite is mousedOver.
@@ -158,10 +181,16 @@ package org.axiis.core
 		 */
 		override public function render(newSprite:AxiisSprite = null):void 
 		{
-			if (!visible || !this.dataItems || itemCount==0)
+			if (!visible || !this.dataItems)
 			{
 				if (newSprite)
 					newSprite.visible = false;
+				return;
+			}
+			
+			trimChildSprites();
+			
+			if (itemCount==0) {
 				return;
 			}
 			
@@ -174,7 +203,7 @@ package org.axiis.core
 				this.sprite = newSprite;
 			_rendering = true;
 			
-			trimChildSprites();
+			
 
 			if(!sprite || !_referenceGeometryRepeater)
 				return;			
@@ -275,6 +304,10 @@ package org.axiis.core
 			{
 				var newChildSprite:AxiisSprite = createChildSprite(this);	
 				newChildSprite.addEventListener(MouseEvent.MOUSE_OVER,sprite_onMouseOver); //Only add this to real sprites versus layout sprites.			
+				newChildSprite.addEventListener(MouseEvent.MOUSE_OUT,sprite_onMouseOut);
+				newChildSprite.addEventListener(MouseEvent.DOUBLE_CLICK,sprite_onDoubleClick);
+				newChildSprite.addEventListener(AxiisSprite.EVENT_SELECTED,sprite_onSelected);
+				newChildSprite.addEventListener(AxiisSprite.EVENT_UNSELECTED,sprite_onUnSelected);
 				newChildSprite.addEventListener(MouseEvent.MOUSE_MOVE,sprite_onMouseMove); 
 				sprite.addDrawingSprite(newChildSprite);
 				childSprites.push(newChildSprite);
@@ -350,7 +383,7 @@ package org.axiis.core
 
 		private function trimChildSprites():void
 		{
-			if (!sprite || _itemCount < 1)
+			if (!sprite || _itemCount < 0)
 				return;
 			var trim:int = sprite.drawingSprites.length-_itemCount;
 			for (var i:int=0; i <trim;i++)
@@ -360,13 +393,18 @@ package org.axiis.core
 			}
 		}
 		
+		
 		private function sprite_onMouseMove(e:Event):void {
 				this.dispatchEvent(new LayoutItemEvent("itemMouseMove",AxiisSprite(e.currentTarget),e));
 		}
 		
+		private function sprite_onMouseOut(e:Event):void {
+				this.dispatchEvent(new LayoutItemEvent("itemMouseOut",AxiisSprite(e.currentTarget),e));
+		}
+		
 		private function sprite_onMouseOver(e:Event):void {
 				this.dispatchEvent(new LayoutItemEvent("itemMouseOver",AxiisSprite(e.currentTarget),e));
-				if (emitDataTips) {
+				if (showDataTips) {
 					this.dispatchEvent(new LayoutItemEvent("itemDataTip",AxiisSprite(e.currentTarget),e));
 					e.stopPropagation();
 				}
@@ -375,6 +413,20 @@ package org.axiis.core
 		private function sprite_onClick(e:Event):void {
 				e.stopPropagation();
 				this.dispatchEvent(new LayoutItemEvent("itemClick",AxiisSprite(e.currentTarget),e));
+		}
+		
+		
+		private function sprite_onDoubleClick(e:Event):void {
+				e.stopPropagation();
+				this.dispatchEvent(new LayoutItemEvent("itemDoubleClick",AxiisSprite(e.currentTarget),e));
+		}
+		
+		private function sprite_onSelected(e:Event):void {
+				this.dispatchEvent(new LayoutItemEvent("itemSelected",AxiisSprite(e.currentTarget),e));
+		}
+		
+		private function sprite_onUnSelected(e:Event):void {
+				this.dispatchEvent(new LayoutItemEvent("itemUnSelected",AxiisSprite(e.currentTarget),e));
 		}
 	}
 }

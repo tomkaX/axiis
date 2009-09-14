@@ -41,7 +41,7 @@ package org.axiis.managers
 			this.axiisSprite = axiisSprite;
 			
 			var point:Point = calculateDataTipPosition(axiisSprite,context)
-			dataTip.x = point.x;
+			dataTip.x = point.x+3;
 			dataTip.y = point.y;
 			
 			if(context)

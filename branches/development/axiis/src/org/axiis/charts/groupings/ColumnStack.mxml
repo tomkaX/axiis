@@ -37,7 +37,8 @@
 	xmlns:core="org.axiis.core.*"
 	xmlns:utils="org.axiis.utils.*"
 	xmlns:utils1="org.axiis.layouts.utils.*"
-	preRender="onPreRender()" xmlns:groupings="org.axiis.charts.groupings.*">
+	preRender="onPreRender()" xmlns:groupings="org.axiis.charts.groupings.*"
+	 dataTipAnchorPoint="{column}">
 
 	<!-- NOTE: Currently only tested for positive values -->
 
@@ -80,7 +81,7 @@
 	<groupings:drawingGeometries>
 
 		<!--- @private -->
-		<degrafa:RegularRectangle id="myCol"
+		<degrafa:RegularRectangle id="column"
 			x="0"
 			y="{currentReference.y}"
 			width="{currentReference.width}"
@@ -120,7 +121,7 @@
 		<states:State id="rollOverState"
 			enterStateEvent="mouseOver"
 			exitStateEvent="mouseOut"
-			targets="{[myCol,myCol]}"
+			targets="{[column,column]}"
 			properties="{['fill','stroke']}"
 			values="{[rollOverFill,rollOverStroke]}"/>
 	</groupings:states>

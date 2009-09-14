@@ -37,7 +37,7 @@
   xmlns:axiis="http://www.axiis.org/2009" 
   xmlns:degrafa="http://www.degrafa.com/2007"
   xmlns:degrafaCore="com.degrafa.core"
-  emitDataTips="false">
+  showDataTips="false">
 
 
 	<mx:Script>

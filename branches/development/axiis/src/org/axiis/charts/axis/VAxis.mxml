@@ -161,7 +161,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 	<axis:drawingGeometries>
 		<!--- @private -->
 		<degrafa:RegularRectangle id="gridRect"
-			x="0"
+			x="{majorTickLength}"
 			y="{currentReference.y}"
 			width="{width}" 
 			fill="{gridFill}"
@@ -174,7 +174,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 		
 		<!--- @private -->
 		<degrafa:Line id="minorTick" stroke="{tickStroke}"
-			x="0" x1="{minorTickLength}"  visible="{showMinorTick.value}"
+			x="{majorTickLength-minorTickLength}" x1="{majorTickLength}"  visible="{showMinorTick.value}"
 			y="{currentReference.y}" y1="{currentReference.y}"
 			/>
 		

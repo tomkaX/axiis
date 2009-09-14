@@ -39,7 +39,7 @@
         xmlns:utils="org.axiis.utils.*"
         dataTipLabelFunction="{internalDataTipFunction}"
         dataTipManager="{new FreeDataTipManager()}"
-        emitDataTips="true"
+        showDataTips="true"
         itemPreDraw="onItemPreDraw()"
         itemMouseMove="onItemMouseMove(event)"
         preRender="onPreRender()"
@@ -49,6 +49,7 @@
         <!-- public variables -->
 <mx:Script>
         <![CDATA[
+        	import com.degrafa.paint.SolidStroke;
         
 	import org.axiis.events.LayoutItemEvent;
 	import com.degrafa.geometry.command.CommandStackItem;
@@ -78,6 +79,13 @@
      * The stroke used to render the lines.
      */
     public var stroke:com.degrafa.core.IGraphicsStroke;
+    
+    [Inspectable]
+    [Bindable]
+    /**
+     * The fill used to render the area beneath the lines if area rendering is enabled. 
+     */
+    public var mouseOverStroke:com.degrafa.core.IGraphicsStroke=new SolidStroke(0xFFFF00,.5,2);
 
     [Inspectable]
     [Bindable]
@@ -85,6 +93,14 @@
      * The fill used to render the area beneath the lines if area rendering is enabled. 
      */
     public var fill:com.degrafa.core.IGraphicsFill;
+    
+    
+    [Inspectable]
+    [Bindable]
+    /**
+     * The fill used to render the area beneath the lines if area rendering is enabled. 
+     */
+    public var mouseOverFill:com.degrafa.core.IGraphicsFill=new SolidFill(0xFFFF00,.5);
 
     /**
      * A filter function that will be used to determine whether a given data point should be included in the rendering.
@@ -104,7 +120,7 @@
     private var _horizontalScale:IScale;
     
     [Bindable]
-    public var currentHIndex:int;
+    public var currentPlotIndex:int;
     
     
      /**
@@ -112,7 +128,7 @@
      * field used to determine the value of the item on the horizontal axis.
      */
     public function get xDataField():String
-    {
+    { 
             return _xDataField;
     }
     public function set xDataField(value:String):void
@@ -155,12 +171,12 @@
     
     private function onItemMouseMove(e:LayoutItemEvent):void {
     	var value:int=Math.floor(e.item.mouseX/(this.width/this._plotIndexes.length));
-    	if (value!=currentHIndex && this.emitDataTips) {
-    		currentHIndex=value;
+    	if (value!=currentPlotIndex && this.showDataTips) {
+    		currentPlotIndex=_plotIndexes[value];
     		this.dispatchEvent(new LayoutItemEvent("itemDataTip",e.item,e));
     	}
     	else 
-    		currentHIndex=value;
+    		currentPlotIndex=value;
     }
     
     private function onItemPreDraw():void {
@@ -209,8 +225,8 @@
     	return newItem;
     }
     
-   
 
+	[Bindable]
 	private var _plotIndexes:Array;
 	
     /**
@@ -219,6 +235,8 @@
     override public function invalidateDataProvider():void
     {
             super.invalidateDataProvider();
+            
+            if (_dataItems.length==0) return;
 
             var firstItem:Object = (_dataProvider is Array) ? _dataProvider[0] : _dataProvider.getItemAt(0);
 
@@ -341,7 +359,7 @@
             _curvePathsTop = new Array();
 
             //Two dimension array used to store each series fields, one row at a time  Array[hField,vField]
-            seriesPoints = new Array();
+            _seriesPoints = new Array();
             _repeatWidth = (width) / (_plotIndexes.length-1);
 
             var y:int = 0;
@@ -466,16 +484,16 @@
                     //We have a STACK_FLOW and are at first series we add a series for the bisection
                     if (mode == LineSeriesGroup.MODE_STACK_FLOW && y == 0)
                     {
-                            seriesPoints.push(flowTa);
+                            _seriesPoints.push(flowTa);
                     }
-                    seriesPoints.push(ta);
+                    _seriesPoints.push(ta);
 
                     y++;
             }
 
             //Turn the series plotCollection, into curveTo commands
 
-            for each (var ar:Array in seriesPoints)
+            for each (var ar:Array in _seriesPoints)
             {
                     _curvePathsTop.push(GraphicUtils.buildSegmentsFromCurvePoints(ar, tension));
             }
@@ -526,8 +544,8 @@
 	public var currentAxiisSprite:AxiisSprite;
 	
 	private function internalDataTipFunction(axiisSprite:AxiisSprite):String {
-		if (this.currentHIndex<0) return "";
-		var data:Object=axiisSprite.data[plotCollection][this.currentHIndex];
+		if (this.currentPlotIndex<0) return "";
+		var data:Object=axiisSprite.data[plotCollection][this.currentPlotIndex];
 		return "<b>" + ObjectUtils.getProperty(this,axiisSprite["data"],this.labelField) + "</b><br/>" + ObjectUtils.getProperty(this,data,this.plotLabelField) + "<br/>" + ObjectUtils.getProperty(this,data,this.dataField);
 	}
 
@@ -542,7 +560,12 @@
 	}
 	
     //Stores all the data points (accounts for stacking and alternate layouts
-    private var seriesPoints:Array;
+    public function get seriesPoints():Array {
+    	return _seriesPoints
+    }
+    
+    [Bindable]
+    private var _seriesPoints:Array;
 
     //Used to help calculate common fill bounds for myPath
     private var _maxHeight:Number;
@@ -560,6 +583,7 @@
     //The segments used to render the series by myPath
     [Bindable]
     private var _currentSegments:Array;
+    
 
     //Used to remove strokes off the sides and bottom of the path
     [Bindable]
@@ -570,6 +594,9 @@
     
     [Bindable]
     public var verticalScale:IScale;
+    
+    [Bindable]
+    public var enableRollOver:Boolean=false;
 
     //private var _seriesCollection:Object;
     /**
@@ -644,13 +671,12 @@
         <!--- @private -->
         <utils:NumericExpression id="yPoint"/>
         <!--- @private -->
-        <degrafa:SolidFill color="0xFFFF00" alpha=".7" id="rollOverFill"/>
+
         
   
   <!-- decorators="{[_decorator]}" -->
                         
          <layouts:drawingGeometries>
-                      
 	            <degrafa:RegularRectangle width="{width}" height="{height}" x="0" y="0">
 	                    <degrafa:Path id="myPath"
 	                            scaleOnLayout="false"
@@ -677,5 +703,12 @@
                 	</degrafa:modifiers>
                 </degrafa:GeometryRepeater>
 	    </layouts:drawingGeometries>
-      
+      	
+      	<layouts:states>
+      		<states:State id="rollOverState" enterStateEvent="mouseOver" exitStateEvent="mouseOut" enabled="{enableRollOver}"
+      			targets="{[myPath]}"
+      			properties="{['fill']}"
+      			values="{[mouseOverFill]}"/>
+      	</layouts:states>
+
 </layouts:RepeaterLayout>

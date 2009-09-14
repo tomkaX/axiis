@@ -30,6 +30,7 @@ package org.axiis.core
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.*;
@@ -45,6 +46,8 @@ package org.axiis.core
 	public class AxiisSprite extends FlexSprite
 	{
 		private static const DEFAULT_STATE:State = new State();
+		public static const EVENT_SELECTED:String = "selected";
+		public static const EVENT_UNSELECTED:String = "unselected";
 		
 		/**
 		 * Constructor.
@@ -52,6 +55,7 @@ package org.axiis.core
 		public function AxiisSprite()
 		{
 			super();
+			this.addEventListener(MouseEvent.CLICK,onMouseClick);
 			//addEventListener(MouseEvent.MOUSE_OVER,onMouseOver);
 		}
 		
@@ -90,6 +94,12 @@ package org.axiis.core
 		public var value:Object;
 		
 		public var index:int;
+		
+		/**
+		 * Selected will trigger on/off by double click state
+		 */
+		[Bindable]
+		public var selected:Boolean=false;
 		
 		/**
 		 * The data that this AxiisSprite's geometries represent.
@@ -148,10 +158,12 @@ package org.axiis.core
 				// Add listeners for all the state changing events
 				for each(var state:State in states)
 				{
-					if(state.enterStateEvent != null && state.enabled)
+					if(state.enterStateEvent != null && state.enabled) {
 						addEventListener(state.enterStateEvent,handleStateTriggeringEvent);
-					if(state.exitStateEvent != null  && state.enabled)
+					}
+					if(state.exitStateEvent != null  && state.enabled) {
 						addEventListener(state.exitStateEvent,handleStateTriggeringEvent);
+					}
 				}
 			}
 		}
@@ -236,8 +248,10 @@ package org.axiis.core
 		 */
 		public function storeGeometries(geometries:Array,state:State = null):void
 		{
-			if(state == null)
+			if(state == null) {
 				state = AxiisSprite.DEFAULT_STATE;
+				_activeState=AxiisSprite.DEFAULT_STATE;
+			}
 			var stateSprite:Sprite;
 			if(stateToSpriteHash[state] == null)
 			{
@@ -271,10 +285,20 @@ package org.axiis.core
 		 */
 		protected function handleStateTriggeringEvent(event:Event):void
 		{
-			if(event.target.parent != this || layout.rendering)
+			if((event.target.parent != this && event.type!=AxiisSprite.EVENT_SELECTED && event.type!=AxiisSprite.EVENT_UNSELECTED) || layout.rendering)
 				return;	
 			
 			var state:State = findStatesForEventType(event.type);
+			
+			setState(state); 
+		
+		}
+		
+		/**
+		 * Can be called external to sprite to force entry of state
+		 */
+		public function setState(state:State):void {
+
 			var stateForChildren:State = state.propagateToDescendents ? state : DEFAULT_STATE;
 			var stateForSiblings:State = state.propagateToSiblings ? state : DEFAULT_STATE;
 			var stateForParents:State = state.propagateToAncestors ? state : DEFAULT_STATE;
@@ -285,6 +309,13 @@ package org.axiis.core
 			activateStateForChildren(stateForChildren);
 			render(state);
 		}
+		
+		/**
+		 * Can be called external to sprite to clear states
+		 */
+		 public function clearStates():void {
+		 	setState(DEFAULT_STATE);
+		 }
 		
 		/**
 		 * Returns a state from the states array with the eventType as its enterStateEvent.
@@ -328,12 +359,18 @@ package org.axiis.core
 		 */
 		protected function activateStateForSiblings(state:State):void
 		{
+			if (!parent) return;
+			
 			for(var a:int = 0; a < parent.numChildren; a++)
 			{
 				var currChild:DisplayObject = parent.getChildAt(a);
 				if(currChild != this && currChild is AxiisSprite)
 				{
-					AxiisSprite(currChild).render(state);
+					if (state==DEFAULT_STATE) {
+						AxiisSprite(currChild).render(	AxiisSprite(currChild).activeState);
+					}
+					else
+						AxiisSprite(currChild).render(state);
 				}
 			}
 		}
@@ -355,6 +392,12 @@ package org.axiis.core
 			}
 		}
 		
+		public function get activeState():State {
+			return _activeState;
+		}
+		
+		protected var _activeState:State;
+		
 		/**
 		 * Displays the child sprite for the state parameter and hides all others.
 		 * If no state is provided, the default state is used instead.
@@ -364,8 +407,11 @@ package org.axiis.core
 		public function render(state:State = null):void
 		{
 			if(state == null)
-				state = AxiisSprite.DEFAULT_STATE;
-		
+				state = _activeState;
+
+			_activeState=state;
+
+			if (!stateToSpriteHash) return;
 			var childToDisplay:Sprite = stateToSpriteHash[state];
 			for each(var stateChild:Sprite in stateToSpriteHash)
 			{				
@@ -399,9 +445,22 @@ package org.axiis.core
 		}
 		
 	
-		/*private function onMouseOver(e:Event):void {
-			var tte:ToolTipEvent=new ToolTipEvent(ToolTipEvent.TOOL_TIP_SHOW);
-			this.dispatchEvent(tte);
-		}*/
+		private var lastClick:Number;
+		
+		private function onMouseClick(e:Event):void {
+			//Code for selected/unselected on double click events
+			if (flash.utils.getTimer()-lastClick < 300) {
+				this.dispatchEvent(new Event(MouseEvent.DOUBLE_CLICK));
+			}
+			selected=!selected;
+				if (selected) {
+					this.dispatchEvent(new Event(AxiisSprite.EVENT_SELECTED))
+				}
+				else {
+					this.dispatchEvent(new Event(AxiisSprite.EVENT_UNSELECTED))
+				}
+			
+			lastClick=flash.utils.getTimer();
+		}
 	}
 }

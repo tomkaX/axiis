@@ -29,7 +29,7 @@ package org.axiis.charts.groupings
 		 */
 		public function get stroke():IGraphicsStroke
 		{
-			return _stroke;
+			return _stroke; 
 		}
 		public function set stroke(value:IGraphicsStroke):void
 		{
@@ -252,7 +252,7 @@ package org.axiis.charts.groupings
 		 */
 		public function get showDataLabel():Boolean
 		{
-			return _showDataLabel;
+			return _showDataLabel; 
 		}
 		public function set showDataLabel(value:Boolean):void
 		{
