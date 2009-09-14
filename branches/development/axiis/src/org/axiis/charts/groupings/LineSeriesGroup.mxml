@@ -499,7 +499,6 @@
             }
 
             //Create a set of paths we can connect as bottom curves
-            if (this.showArea)  {
                     _curvePathsBottom = new Array();
                     i = 0;
                     for (obj in _curvePathsTop)  {
@@ -531,7 +530,6 @@
                                     }
                             }
                             i++;
-                    }
 
                     if (mode == LineSeriesGroup.MODE_STACK_FLOW)  { //Remove the first one as it was the result of splitting the first series by bisecting the zero line
                             _curvePathsTop.splice(0, 1);
