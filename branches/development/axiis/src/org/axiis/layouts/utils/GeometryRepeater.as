@@ -136,7 +136,8 @@ package org.axiis.layouts.utils
 			
 			
 			var app:Object = SystemManager.getSWFRoot(this)
-			var millisecondsPerFrame:Number = app.stage ? 1000 / app.stage.frameRate : 50;
+			var millisecondsPerFrame:Number = ( app != null && app.stage != null ) ? 
+													1000 / app.stage.frameRate : 50;
 			var startTime:int = getTimer();
 			var totalTime:int = 0;
 			while(totalTime < millisecondsPerFrame && currentIteration < numIterations)
