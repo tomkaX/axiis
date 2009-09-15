@@ -41,10 +41,10 @@ package  com.degrafa.decorators.axiis {
 		}
 		
 		override public function lineTo(x:Number, y:Number, graphics:Graphics):void {
-			if ( _commandStack.cursor.currentIndex == _commandStack.length - 3 )
-			{
+			//if ( _commandStack.cursor.currentIndex == _commandStack.length - 3 )
+			//{
 				graphics.lineStyle();
-			}
+			//}
 			graphics.lineTo(x,y);
 			if (_reStrokeActive) _reStroke(graphics);
 		}
