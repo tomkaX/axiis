@@ -81,7 +81,7 @@ package org.axiis.charts.groupings
 			{
 				_fontFamily = value;
 				dispatchEvent(new Event("fontFamilyChange"));
-				invalidate();
+				//invalidate();
 			}
 		}
 		private var _fontFamily:String = "Arial";
@@ -100,7 +100,7 @@ package org.axiis.charts.groupings
 			{
 				_fontSize = value;
 				dispatchEvent(new Event("fontSizeChange"));
-				invalidate();
+			//	invalidate();
 			}
 		}
 		private var _fontSize:Number = 12;
@@ -119,7 +119,7 @@ package org.axiis.charts.groupings
 			{
 				_fontColor = value;
 				dispatchEvent(new Event("fontColorChange"));
-				invalidate();
+				//invalidate();
 			}
 		}
 		private var _fontColor:Number = 0;
@@ -141,7 +141,7 @@ package org.axiis.charts.groupings
 			{
 				_fontWeight = value;
 				dispatchEvent(new Event("fontWeightChange"));
-				invalidate();
+				//invalidate();
 			}
 		}
 		private var _fontWeight:String = "normal";
@@ -161,7 +161,7 @@ package org.axiis.charts.groupings
 			{
 				_dataFontFamily = value;
 				dispatchEvent(new Event("dataFontFamilyChange"));
-				invalidate();
+				//invalidate();
 			}
 		}
 		private var _dataFontFamily:String = "Arial";
@@ -180,7 +180,7 @@ package org.axiis.charts.groupings
 			{
 				_dataFontSize = value;
 				dispatchEvent(new Event("dataFontSizeChange"));
-				invalidate();
+				//invalidate();
 			}
 		}
 		private var _dataFontSize:Number = 12;
@@ -199,7 +199,7 @@ package org.axiis.charts.groupings
 			{
 				_dataFontColor = value;
 				dispatchEvent(new Event("dataFontColorChange"));
-				invalidate();
+			//	invalidate();
 			}
 		}
 		private var _dataFontColor:Number = 0;
@@ -221,7 +221,7 @@ package org.axiis.charts.groupings
 			{
 				_dataFontWeight = value;
 				dispatchEvent(new Event("dataFontWeightChange"));
-				invalidate();
+				//invalidate();
 			}
 		}
 		private var _dataFontWeight:String = "normal";
@@ -240,7 +240,7 @@ package org.axiis.charts.groupings
 			{
 				_showLabel = value;
 				dispatchEvent(new Event("showLabelChange"));
-				invalidate();
+				//invalidate();
 			}
 		}
 		private var _showLabel:Boolean = true;
@@ -260,7 +260,7 @@ package org.axiis.charts.groupings
 			{
 				_showDataLabel = value;
 				dispatchEvent(new Event("showDataLabelChange"));
-				invalidate();
+				//invalidate();
 			}
 		}
 		private var _showDataLabel:Boolean = true;
