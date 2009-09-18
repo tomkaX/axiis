@@ -15,7 +15,7 @@
 	 included in all copies or substantial portions of the Software.
 
 	 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	 EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+	 EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
 	 OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 	 NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 	 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
@@ -141,7 +141,7 @@
 				tickStroke="{axisStroke}"
 				width="{dc.width}"
 				height="{myLineGroup.height}"
-				emitDataTips="false"
+				showDataTips="false"
 				fontFamily="Myriad Pro"
 				fontColor="0"
 				fontSize="14"
@@ -149,7 +149,7 @@
 				majorTickSpacing="50"
 				labelFunction="{axisLabel}"/>
 			<axiis:HCategoryAxis id="hAxis"
-				x="10"
+				x="{myLineGroup.x}"
 				categoryScale="{this.hScale}"
 				width="{myLineGroup.width}"
 				dataProvider="{hScale.dataProvider}"
@@ -165,7 +165,7 @@
 		<!-- Layouts -->
 		<axiis:layouts>
 			<groupings:LineSeriesGroup id="myLineGroup"
-				x="10"
+				x="12"
 				y="0"
 				height="{dc.height-70}"
 				width="{dc.width}"
@@ -186,7 +186,8 @@
 				verticalScale="{vScale}"
 				horizontalScale="{hScale}"
 				stroke="{myStroke}"
-				fill="{areaFill}"/>
+				fill="{areaFill}"
+				 enableRollOver="true"/>
 		</axiis:layouts>
 	</axiis:DataCanvas>
 

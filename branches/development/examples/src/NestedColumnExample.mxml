@@ -88,7 +88,7 @@
 				scaleFill="true"
 				dataField="value"
 				percentGap=".05"
-				emitDataTips="false">
+				showDataTips="false">
 				<axiis:drawingGeometries>
 					<degrafa:RegularRectangle id="column1"
 						x="{layout1.currentReference.x}"
@@ -108,7 +108,7 @@
 						percentGap="0"
 						name=" B"
 						dataField="value"
-						emitDataTips="false">
+						showDataTips="false">
 						<axiis:drawingGeometries>
 							<degrafa:RegularRectangle id="column2"
 								x="{layout2.currentReference.x}"
@@ -128,7 +128,7 @@
 								percentGap="0"
 								name="  C"
 								dataField="value"
-								emitDataTips="false">
+								showDataTips="false">
 								<axiis:drawingGeometries>
 									<degrafa:RegularRectangle id="column3"
 										x="{layout3.currentReference.x}"

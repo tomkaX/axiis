@@ -65,7 +65,7 @@
 			dataField="{dataField}"
 			width="{width}"
 			height="{height}"
-			emitDataTips="false">
+			showDataTips="false">
 			<layouts:drawingGeometries>
 				<degrafa:RegularRectangle
 					x="{waterfallLayout.currentReference.x}"

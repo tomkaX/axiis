@@ -73,7 +73,7 @@
 	<mx:Number id="percentGap">.02</mx:Number>
 
 
-	<axiis:LinearScale id="vScale" dataProvider="{dataProvider}" minLayout="0" maxLayout="{hLayout.width}"/>
+	<axiis:LinearScale id="vScale" dataProvider="{dataProvider}" minLayout="0" minValue="0" maxLayout="{hLayout.width}"/>
 
 	<mx:VBox width="300" top="30" left="50" visible="false">
 		<mx:HBox>
@@ -113,7 +113,7 @@
 				width="{dc.width-70}"
 				y="5"
 				height="{hLayout.height}"
-				emitDataTips="false"
+				showDataTips="false"
 				fontFamily="Myriad Pro"
 				fontColor="0"
 				fontSize="14"

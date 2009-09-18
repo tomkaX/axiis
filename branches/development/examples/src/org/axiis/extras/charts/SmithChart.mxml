@@ -191,7 +191,7 @@
 		<!-- impedanceLayout iterates on each complete set of impedances -->
 		<axiis:BaseLayout id="impedanceLayout"
 			dataProvider="{dataProvider}"
-			emitDataTips="false"
+			showDataTips="false"
 			width="{this.width}"
 			height="{this.height}">
 			
@@ -201,7 +201,7 @@
 				<axiis:BaseLayout id="smithChartLineLayout"
 					dataProvider="{impedanceLayout.currentDatum}"
 					inheritParentBounds="false"
-					emitDataTips="false"
+					showDataTips="false"
 					width="{this.width}"
 					height="{this.width}">
 					
