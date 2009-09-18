@@ -278,6 +278,7 @@ package org.axiis.core
 			//this.dataTipAnchorPoint=new Point(_maxBounds.x+_maxBounds.width/2,_maxBounds.y+_maxBounds.height/2);
 		}
 
+		private var _disposed:Boolean=false;
 		/**
 		 * Handler for any event from the states enterStateEvent.
 		 * This begins the state change process and propagates
@@ -285,6 +286,7 @@ package org.axiis.core
 		 */
 		protected function handleStateTriggeringEvent(event:Event):void
 		{
+		
 			if((event.target.parent != this && event.type!=AxiisSprite.EVENT_SELECTED && event.type!=AxiisSprite.EVENT_UNSELECTED) || layout.rendering)
 				return;	
 			
@@ -359,7 +361,7 @@ package org.axiis.core
 		 */
 		protected function activateStateForSiblings(state:State):void
 		{
-			if (!parent) return;
+			//if (!parent) return;
 			
 			for(var a:int = 0; a < parent.numChildren; a++)
 			{
@@ -392,10 +394,12 @@ package org.axiis.core
 			}
 		}
 		
+		
 		public function get activeState():State {
 			return _activeState;
 		}
 		
+		[Bindable]
 		protected var _activeState:State;
 		
 		/**
@@ -431,36 +435,56 @@ package org.axiis.core
 			while (numChildren > 0)
 			{
 				var s:Sprite = Sprite(getChildAt(0));
-				if(s is AxiisSprite)
+				if(s is AxiisSprite) 
 					AxiisSprite(s).dispose();
 				s.graphics.clear();
+			    
 				removeChild(s);
 			}
 			for each (var obj:Object in eventListeners)
 			{
 				super.removeEventListener(obj.type, obj.listener,obj.useCapture);
 			}
+			layout=null;
+			_layoutSprites=null;
+			_drawingSprites=null;
 			states = null;
 			stateToSpriteHash = null;
 		}
 		
 	
 		private var lastClick:Number;
+		private var cancelClick:Boolean=false;
 		
 		private function onMouseClick(e:Event):void {
 			//Code for selected/unselected on double click events
-			if (flash.utils.getTimer()-lastClick < 300) {
+			if (flash.utils.getTimer()-lastClick < 250) {
+				cancelClick=true;  //We don't want to emit an itemclick event on a double click.
 				this.dispatchEvent(new Event(MouseEvent.DOUBLE_CLICK));
+				return;
 			}
-			selected=!selected;
-				if (selected) {
-					this.dispatchEvent(new Event(AxiisSprite.EVENT_SELECTED))
-				}
-				else {
-					this.dispatchEvent(new Event(AxiisSprite.EVENT_UNSELECTED))
-				}
-			
 			lastClick=flash.utils.getTimer();
+			setTimeout(onMouseClickTimeout,250,e);
+			
+		}
+		
+		private function onMouseClickTimeout(e:Event):void {
+			if (this.cancelClick) {
+				e.stopPropagation();
+				cancelClick=false;
+				return;
+			}
+			cancelClick=false;
+			
+			selected=!selected;
+
+			if (selected) {
+				this.dispatchEvent(new Event(AxiisSprite.EVENT_SELECTED))
+			}
+			else {
+				this.dispatchEvent(new Event(AxiisSprite.EVENT_UNSELECTED))
+			}
+			
 		}
 	}
 }

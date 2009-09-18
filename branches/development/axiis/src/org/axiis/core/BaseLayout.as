@@ -147,6 +147,13 @@ package org.axiis.core
 			invalidate();
 		}
 		
+		override public function get childSprites():Array {
+			if (sprite)
+				return sprite.drawingSprites;	
+			else
+				return [];
+		}
+		
 		/**
 		 * @private
 		 */
@@ -302,7 +309,8 @@ package org.axiis.core
 			// Add a new Sprite if there isn't one available on the display list.
 			if(_currentIndex > sprite.drawingSprites.length - 1)
 			{
-				var newChildSprite:AxiisSprite = createChildSprite(this);	
+				var newChildSprite:AxiisSprite = createChildSprite(this);	 
+				newChildSprite.addEventListener(MouseEvent.CLICK,sprite_onClick);
 				newChildSprite.addEventListener(MouseEvent.MOUSE_OVER,sprite_onMouseOver); //Only add this to real sprites versus layout sprites.			
 				newChildSprite.addEventListener(MouseEvent.MOUSE_OUT,sprite_onMouseOut);
 				newChildSprite.addEventListener(MouseEvent.DOUBLE_CLICK,sprite_onDoubleClick);
@@ -310,7 +318,7 @@ package org.axiis.core
 				newChildSprite.addEventListener(AxiisSprite.EVENT_UNSELECTED,sprite_onUnSelected);
 				newChildSprite.addEventListener(MouseEvent.MOUSE_MOVE,sprite_onMouseMove); 
 				sprite.addDrawingSprite(newChildSprite);
-				childSprites.push(newChildSprite);
+			//	childSprites.push(newChildSprite);
 			}
 			var currentChild:AxiisSprite = AxiisSprite(sprite.drawingSprites[currentIndex]);
 			currentChild.data = currentDatum;
@@ -376,8 +384,7 @@ package org.axiis.core
 		{
 			var newChildSprite:AxiisSprite = new AxiisSprite();
 			newChildSprite.doubleClickEnabled=true;
-			newChildSprite.layout = layout; 
-			newChildSprite.addEventListener(MouseEvent.CLICK,sprite_onClick);
+			newChildSprite.layout = layout;
 			return newChildSprite;
 		}
 
@@ -386,10 +393,12 @@ package org.axiis.core
 			if (!sprite || _itemCount < 0)
 				return;
 			var trim:int = sprite.drawingSprites.length-_itemCount;
+
 			for (var i:int=0; i <trim;i++)
 			{
 				var s:AxiisSprite = AxiisSprite(sprite.removeChild(sprite.drawingSprites[sprite.drawingSprites.length-1]));
 				s.dispose();
+				s=null;
 			}
 		}
 		

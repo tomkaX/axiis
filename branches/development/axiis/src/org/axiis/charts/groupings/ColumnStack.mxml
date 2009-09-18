@@ -44,11 +44,12 @@
 
 	<mx:Script>
 		<![CDATA[
+			import org.axiis.utils.ObjectUtils;
 			import com.degrafa.core.IGraphicsStroke;
 			import com.degrafa.core.IGraphicsFill;
 
 			private function onPreRender():void
-			{
+			{ 
 				//We need this because of a binding collision on the height - need to investigate to see why this is happening.
 				if (dataItems && dataItems.length > 0)
 					refRect.y = this.height - Number(verticalScale.valueToLayout(dataItems[0][dataField]));
@@ -68,7 +69,8 @@
 		<utils1:GeometryRepeater>
 			<utils1:geometry>
 				<!--- @private -->
-				<degrafa:RegularRectangle id="refRect" x="0" width="{width}" height="0"/>
+				<degrafa:RegularRectangle id="refRect" x="0" width="{width}" height="0" />
+				
 			</utils1:geometry>
 			<utils1:modifiers>
 				<!--- @private -->

@@ -169,7 +169,7 @@ package org.axiis.paint
 			else
 				palette.colors = [_colorFrom, _colorTo];
 			
-			palette.requestedSize = _layout.itemCount;
+			palette.requestedSize = Math.max(_layout.itemCount,2);
 			
 			if (autoInterpolate)
 			{

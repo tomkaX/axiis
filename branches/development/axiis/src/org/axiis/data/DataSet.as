@@ -784,7 +784,8 @@ package org.axiis.data
 						var newObject:DataGroup=new DataGroup();
 						newObject.name=currValue;
 						newObject.groupName=groupName;
-
+						newObject.parent=tempData;
+						
 						if (groupings.length > 1) { //we need to go one level deeper recursively
 							newObject=groupTableRows(tempCollection,groupings.slice(1,groupings.length),summaryCols);
 							newObject.name=currValue;

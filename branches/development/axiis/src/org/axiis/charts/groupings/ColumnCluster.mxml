@@ -37,11 +37,12 @@
 						xmlns:utils="org.axiis.utils.*"
 						xmlns:utils1="org.axiis.layouts.utils.*"
 						xmlns:states="org.axiis.states.*"
-						dataTipAnchorPoint="{column}">
+						dataTipAnchorPoint="{dataTipPoint}" xmlns:geom="flash.geom.*">
 
 	<!-- public variables -->
 	<mx:Script>
 		<![CDATA[
+			import com.degrafa.IGeometryComposition;
 			import com.degrafa.paint.SolidStroke;
 			import mx.events.PropertyChangeEvent;
 			import com.degrafa.core.IGraphicsStroke;
@@ -83,12 +84,27 @@
 					invalidate();
 				}
 			}
+			
+			public function set additionalGeometries(value:IGeometryComposition) {
+				_additionalGeometries=value;
+				geomPlaceholder.geometry=[_additionalGeometries];
+			}
+			
+			public function get additionalGeometries():IGeometryComposition {
+				return _additionalGeometries;
+			}
+			
+			[Bindable]
+			private var _additionalGeometries:IGeometryComposition;
+			
 			private var _showValueLabel:Boolean=true;
 		]]>
 	</mx:Script>
 
 	<!--- @private -->
 	<mx:Number id="percentGap">.05</mx:Number>
+	
+	<mx:Number id="minColumnWidth">15</mx:Number>
 
 	<!---
 		 The scale used to determine the height of each column.
@@ -102,6 +118,8 @@
 	<!--- @private -->
 	<utils:NumericExpression id="valueLabelLayout"
 							 value="{column.y-valueLabel.height-3 + (currentValue > 0 ? 0:column.height+valueLabel.height+3)}"/>
+							 
+	<geom:Point id="dataTipPoint" x="{column.x+column.width/2}" y="{column.y}"/>
 
 	<groupings:referenceRepeater>
 		<utils1:GeometryRepeater>
@@ -121,12 +139,14 @@
 	</groupings:referenceRepeater>
 
 	<groupings:drawingGeometries>
+	
+	
 
 		<!--- @private -->
 		<degrafa:RegularRectangle id="column"
 								  x="{currentReference.x}"
 								  y="{((currentValue >= 0) ? currentReference.height-Number(this.verticalScale.valueToLayout(currentValue)) : currentReference.height-Number(this.verticalScale.valueToLayout(0)))}"
-								  width="{Math.max(15,currentReference.width)}"
+								  width="{Math.max(minColumnWidth,currentReference.width)}"
 								  height="{(currentValue > 0 ? Number(this.verticalScale.valueToLayout(currentValue))-Number(this.verticalScale.valueToLayout(0)) : Number(this.verticalScale.valueToLayout(0))-Number(this.verticalScale.valueToLayout(currentValue))) }"
 								  fill="{fill}"
 								  stroke="{stroke}">
@@ -164,6 +184,9 @@
 							fontFamily="{dataFontFamily}"
 							fontWeight="{dataFontWeight}"/>
 
+		<!-- @private -->
+		<degrafa:RegularRectangle id="geomPlaceholder" width="{this.width}" height="{this.height}" />
+		
 	</groupings:drawingGeometries>
 	<groupings:fills>
 		<degrafa:SolidFill id="rollOverFill"

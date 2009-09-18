@@ -905,9 +905,9 @@ package org.axiis.core
 			return ObjectUtils.getProperty(this,obj,propertyName);
 		}
 		
-		private function deselectChildren():void {
+		protected function deselectChildren():void {
 			for (var i:int=0; i<childSprites.length;i++) {
-				childSprites[i].selected=false;
+				AxiisSprite(childSprites[i]).selected=false;
 			}
 		}
 		
