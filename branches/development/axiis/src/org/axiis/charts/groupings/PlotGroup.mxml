@@ -110,12 +110,17 @@
 		The stroke applied to the highlight at the center of each circle. 
 	-->
 	<degrafa:SolidStroke id="highlightStroke" color="0xDDDD00" weight="2"/>
+	
+	<!--
+		The default radius to use when radiusField is not specified
+	-->
+	<mx:Number id="defaultRadius">6</mx:Number>
 
 	<layouts:drawingGeometries>
 	
 		<!--- @private -->
 		<degrafa:Circle id="plotCircle"
-			radius="{(radiusField !='' &amp;&amp; radiusScale.minLayout > Number.NEGATIVE_INFINITY) ? Number(radiusScale.valueToLayout(currentDatum[radiusField])) : 6 }"
+			radius="{((radiusField !='' || radiusField == null)  &amp;&amp; radiusScale.minLayout > Number.NEGATIVE_INFINITY) ? Number(radiusScale.valueToLayout(currentDatum[radiusField])) : defaultRadius }"
 			centerX="{Number(horizontalScale.valueToLayout(currentDatum[horizontalField]))}"
 			centerY="{Number(verticalScale.valueToLayout(currentDatum[verticalField],true))}"
 			fill="{plotFill}"
@@ -124,7 +129,7 @@
 		
 		<!--- @private -->
 		<degrafa:Circle id="highlightCircle"
-			radius="{(radiusField !='' &amp;&amp; radiusScale.minLayout > Number.NEGATIVE_INFINITY) ? Number(radiusScale.valueToLayout(currentDatum[radiusField])) + 4 : 6 }"
+			radius="{((radiusField !='' || radiusField == null) &amp;&amp; radiusScale.minLayout > Number.NEGATIVE_INFINITY) ? Number(radiusScale.valueToLayout(currentDatum[radiusField])) + 4 : defaultRadius }"
 			centerX="{Number(horizontalScale.valueToLayout(currentDatum[horizontalField]))}"
 			centerY="{Number(verticalScale.valueToLayout(currentDatum[verticalField],true))}"
 			stroke="{highlightStroke}"
