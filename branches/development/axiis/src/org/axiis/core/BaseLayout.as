@@ -97,6 +97,13 @@ package org.axiis.core
 	 */
 	[Event(name="itemDataTip", type="org.axiis.events.LayoutItemEvent")]
 	
+	
+	/**
+	 * Dispatched when layout has completed its render cycle
+	 *
+	 */
+	[Event(name="renderComplete", type="flash.events.Event")]
+	
 	// TODO Is "AxiisLayout" a better name for BaseLayout 
 	/**
 	 * BaseLayout is a data driven layout engine that uses GeometryRepeaters
@@ -381,6 +388,7 @@ package org.axiis.core
 			sprite.visible = visible;
 			_rendering = false;
 			_isRendering = false;
+			this.dispatchEvent(new Event("renderComplete"));
 		}
 		
 		private function createChildSprite(layout:AbstractLayout):AxiisSprite
