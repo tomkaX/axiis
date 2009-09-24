@@ -38,7 +38,7 @@ package org.axiis
 	import org.axiis.core.AxiisSprite;
 	import org.axiis.events.LayoutItemEvent;
 	import org.axiis.managers.IDataTipManager;
-	import org.axiis.ui.DataTip2;
+	import org.axiis.ui.DataTip;
 	
 	/**
 	 * DataCanvas manages the placement and the rendering of layouts.
@@ -298,24 +298,12 @@ package org.axiis
 			super.invalidateDisplayList();
 		}
 		
-		// TODO This should be private
 		/**
 		 * @private
 		 */
-		public function onItemDataTip(e:LayoutItemEvent):void
+		private function onItemDataTip(e:LayoutItemEvent):void
 		{
 			
-			
-			/*
-			var targetObject:DisplayObject = e.item as DisplayObject;
-			
-			while(!(targetObject is AxiisSprite))
-			{
-				targetObject = targetObject.parent;
-				if(targetObject == this)
-					return;
-			}
-			*/
 			var dataTips:Array=new Array();
 			
 		
@@ -330,7 +318,7 @@ package org.axiis
 			
 			for each (var a:AxiisSprite in axiisSprites) {
 			
-			var dataTip:DataTip2 = new DataTip2();
+			var dataTip:DataTip = new DataTip();
 
 				dataTip.data = axiisSprite.data;
 				if(axiisSprite.layout.dataTipLabelFunction != null)
@@ -364,6 +352,10 @@ package org.axiis
 		
 		private function getHitSiblings(axiisSprite:AxiisSprite):Array
 		{
+			var toReturn:Array = [];
+			toReturn.push(axiisSprite);
+			
+			
 			/*
 			var s:Sprite = new Sprite();
 			s.graphics.clear();
@@ -372,8 +364,6 @@ package org.axiis
 			s.graphics.endFill();
 			addChild(s);
 			*/
-			var toReturn:Array = [];
-			toReturn.push(axiisSprite);
 			
 			/*var siblings:Array = axiisSprite.layout.childSprites;
 			for each(var sibling:AxiisSprite in siblings)
@@ -384,157 +374,8 @@ package org.axiis
 				}
 			}*/
 			
-		//	removeChild(s);
-			
 			return toReturn;
 		}
 		
-		/*
-		private function showToolTip(axiisSprite:AxiisSprite):void
-		{
-			var text:String = axiisSprite.layout.dataTipLabelFunction.call(this,axiisSprite.data);
-			if(text != null && text != "")
-			{
-				//var tt:IToolTip = ToolTipManager.createToolTip(text,stage.mouseX + 10,stage.mouseY + 10);
-				var tt:IToolTip = createToolTip(text,stage.mouseX + 10,stage.mouseY + 10);
-				if(axiisSprite.layout.dataTipPositionFunction != null)
-				{
-					var position:Point = axiisSprite.layout.dataTipPositionFunction.call(this,axiisSprite,tt);
-					tt.x = position.x;
-					tt.y = position.y;
-				}
-				toolTips.push(tt); 
-			}
-		}
-		*/
-		/**
-		 * Reposition the tool tips by laying them out in four columns around the cursor.
-		 * The first column starts down and to the right of the cursor, the second
-		 * starts down and to the left, the third is above and to the left, and the
-		 * last column starts above and to the right. Each column grows vertically
-		 * away from the cursor.
-		 * 
-		 * This method needs to be adjusted to account for tool tips that end up offscreen.
-		 */
-		 
-		 /*
-		private function repositionToolTips():void
-		{
-			var startX:Number = stage.mouseX;
-			var startY:Number = stage.mouseY;
-			var gapX:Number = 10;
-			var gapY:Number = 10;
-			var offsetYs:Array = [0,0,0,0];
-			for(var a:int = 0; a < toolTips.length; a++)
-			{
-				var tt:DataTip = toolTips[a] as DataTip;
-				var offsetY:Number = offsetYs[a % 4];
-				if(a % 4 == 0)
-				{
-					tt.x = startX + gapX;
-					tt.y = startY + gapY + offsetY;
-				}
-				else if(a % 4 == 1)
-				{
-					tt.x = startX - gapX - tt.width;
-					tt.y = startY + gapY + offsetY;
-				}
-				else if(a % 4 == 2)
-				{
-					tt.x = startX - gapX - tt.width;
-					tt.y = startY - gapY - tt.height - offsetY;
-				}
-				else
-				{
-					tt.x = startX + gapX;
-					tt.y = startY - gapY - tt.height - offsetY;
-				}
-				offsetYs[a % 4] += tt.height;
-				tt.calloutX=startX-tt.x;
-				tt.calloutY=startY-tt.y;
-			}
-		}
-		
-		private function doToolTipsOverlap():Boolean 	
-		{
-			if(toolTips.length < 1)
-				return false;
-				
-			var toolTipsOverlap:Boolean = false;
-			for(var a:int = 0; a < toolTips.length - 1; a++)
-			{
-				var toolTip1:IToolTip = toolTips[a];
-				for(var b:int = a + 1; b < toolTips.length; b++)
-				{
-					var toolTip2:IToolTip = toolTips[b];
-					if(toolTip1.hitTestObject(toolTip2 as DisplayObject))
-						return true;
-				}
-			}
-			return false;
-		}
-		
-		
-		    private function createToolTip(text:String, x:Number, y:Number,
-                                         errorTipBorderStyle:String = null,
-                                         context:IUIComponent = null):IToolTip
-		    {
-		        var toolTip:DataTip=new DataTip;
-		
-		        var sm:ISystemManager = context ?
-		                                          context.systemManager as ISystemManager:
-		                                          ApplicationGlobals.application.systemManager as ISystemManager;
-		       	//sm.topLevelSystemManager.addChildToSandboxRoot("toolTipChildren", toolTip as DisplayObject);
-		
-		        if (errorTipBorderStyle)
-		        {
-		            toolTip.setStyle("styleName", "errorTip");
-		            toolTip.setStyle("borderStyle", errorTipBorderStyle);
-		        }
-				
-				toolTip.width=100;
-				toolTip.height=100;
-		        toolTip.text = text;
-				toolTip.calloutX=-10;
-				toolTip.calloutY=-10;
-				toolTip.calloutWidthRatio=.3;
-		        toolTip.move(x, y);
-		        // Ensure that tip is on screen?
-		        // Should x and y for error tip be tip of pointy border?
-		
-		        // show effect?
-		
-		        return toolTip as IToolTip;
-		    }
-		    
-		    private function destroyAllToolTips():void {
-				while(toolTips.length > 0)
-				{
-					var tt:IToolTip = IToolTip(toolTips.pop());
-					destroyToolTip(tt);
-					tt = null;
-				}	
-			}
-				*/
-		    /**
-		     *  Destroys a specified ToolTip that was created by the <code>createToolTip()</code> method.
-		     *
-		     *  <p>This method calls the <code>removeChild()</code> method to remove the specified
-		     *  ToolTip from the SystemManager's ToolTips layer.
-		     *  It will then be garbage-collected unless you keep a
-		     *  reference to it.</p>
-		     *
-		     *  <p>You should not call this method on the ToolTipManager's
-		     *  <code>currentToolTip</code>.</p>
-		     *
-		     *  @param toolTip The ToolTip instance to destroy.
-		     
-		    private function destroyToolTip(toolTip:IToolTip):void
-		    {
-		        var sm:ISystemManager = toolTip.systemManager as ISystemManager;
-		       	//sm.topLevelSystemManager.removeChildFromSandboxRoot("toolTipChildren", DisplayObject(toolTip));
-		
-		        // hide effect?
-		    }*/
 	}
 }

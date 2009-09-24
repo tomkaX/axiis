@@ -14,9 +14,9 @@ package org.axiis.ui
 	
 	import org.axiis.core.IAxiisRenderer;
 
-	public class DataTip2 extends UIComponent implements IAxiisRenderer
+	public class DataTip extends UIComponent implements IAxiisRenderer
 	{
-		public function DataTip2()
+		public function DataTip()
 		{
 			super();
 			mouseEnabled = false;

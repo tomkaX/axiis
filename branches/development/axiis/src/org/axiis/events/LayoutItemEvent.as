@@ -4,8 +4,13 @@ package org.axiis.events
 	
 	import org.axiis.core.AxiisSprite;
 	
+	/**
+	 * @class LayoutItemEvent is the primary event disptached by BaseLayout when a user interacts with an AxiisSprite contained within the layout
+	 * events such as MouseOver, MouseOut, MouseClick, selected, unselected etc
+	 */
 	public class LayoutItemEvent extends Event
 	{
+		
 		public function get item():AxiisSprite {
 			return _item;
 		}

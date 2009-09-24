@@ -2,12 +2,20 @@ package org.axiis.utils
 {
 	import mx.collections.ArrayCollection;
 	
-	public class ObjectUtils
-	{
+	public class ObjectUtils {
+	
+	 /**
+	 * This Object Utility class is primarily used to extract property values from dynamic objects
+	 */
 		public function ObjectUtils()
 		{
 		}
 		
+		 /**
+	 	 * Extracts @param propertyName from @param obj
+	 	 * @param propertyName supports a dot.dot syntax as well as Arrays 
+	 	 * i.e propertyName="myObject.myArray[3].myOtherProperty" is a valid syntax
+	 	 */
 		public static  function getProperty(caller:Object, obj:Object, propertyName:Object):*
 		{
 			if(obj == null)
