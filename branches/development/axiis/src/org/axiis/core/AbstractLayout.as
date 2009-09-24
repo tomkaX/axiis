@@ -95,10 +95,11 @@ package org.axiis.core
 		public var palettes:Array = [];
 		
 		// TODO We have "rendering" and "isRendering".  We need to remove one
+		// I prefer 'isRendering', more descriptive to me - TG
 		/**
 		 * Indicates that this layout is currently running its render cycle.
 		 */
-		public function isRendering():Boolean {
+		public function get isRendering():Boolean {
 			return _isRendering;
 		}
 		/**
@@ -280,6 +281,13 @@ package org.axiis.core
 		 */
 		protected var _dataProvider:Object;
 		
+		//Used when filtering data rows tells external classes what index it is on
+		public function get dataFilterIndex():Number {
+			return _dataFilterIndex;
+		}
+		
+		protected var _dataFilterIndex:Number=-1;
+		
 		// TODO This should really be renamed. It *validates* the dataProvider more than it invalidates it. Perhaps we could use a method that returns the dataItems rather than setting them directly.
 		/**
 		 * Iterates over the items in the dataProvider and stores them in
@@ -297,6 +305,7 @@ package org.axiis.core
 			_dataItems=new Array();
 			if (dataProvider is ArrayCollection) {
 				for (var i:int=0;i<dataProvider.source.length;i++) {
+					_dataFilterIndex=i;
 					if (dataProvider.source[i] != null) {
 						if (dataFilterFunction != null) {
 								if (dataFilterFunction.call(this,dataProvider.source[i])) {
@@ -311,6 +320,7 @@ package org.axiis.core
 			}
 			else if (dataProvider is Array) {
 				for (var j:int=0;j<dataProvider.length;j++) {
+					_dataFilterIndex=j;
 					if (dataProvider[j] != null) {
 						if (dataFilterFunction != null) {
 							if (dataFilterFunction.call(this,dataProvider[j])) {
@@ -324,8 +334,11 @@ package org.axiis.core
 				}
 			}
 			else {
+				var z:int=0;
 				for each(var o:Object in dataProvider)
 				{
+					_dataFilterIndex=z;
+					z++;
 					if (o != null) {
 						if (dataFilterFunction != null) {
 							if (dataFilterFunction.call(this,o)) {
@@ -339,7 +352,7 @@ package org.axiis.core
 				}
 			}
 			
-			
+			_dataFilterIndex=-1;
 			_itemCount=_dataItems.length;
 			this.deselectChildren();  //Since the data has changed so have our indexes, deselect children
 			this.invalidate();

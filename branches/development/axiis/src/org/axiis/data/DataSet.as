@@ -52,7 +52,11 @@ package org.axiis.data
 	import mx.utils.StringUtil;
 	
 	/**
-	 * This class is the universal data conncector for Axiis visualizations
+	 * This class is a data utility class that can be used for pre-proccesing of server side data into 
+	 * friendly collections that are easy to process within Axiis Layouts.
+	 * Axiis DOES NOT require you use this class for its visualizations and layouts.  Axiis Layouts are designed to 
+	 * work with Objects, Arrays, ArrayCollections, and XMLListCollections.   But, when using hierarchal layouts the Axiis framework does expect
+	 * parent child relationships are supported through parent-child object relationships.  
 	 * It will support grouping on common fields with operations like sum, count, avg.
 	 * It will turn flat table (.csv/array) data into object level data.
 	 */
@@ -80,7 +84,7 @@ package org.axiis.data
 		[Bindable(event="dataChange")]
 		/**
 		 * The object produced during the most recent call to either
-		 * processXmlString, processCsvAsTable, pivotTable, shapeTable, or
+		 * processXmlString, processCsvAsTable, pivotTable, or
 		 * aggregateData.
 		 */
 		public function get data():Object
@@ -140,7 +144,7 @@ package org.axiis.data
 		}
 		
 		/**
-		 * Converts a CSV Payload into a object/array structure.
+		 * Converts a CSV Payload into a table structure
 		 * 
 		 * <p>The structure has the following format:</p>
 		 * 
@@ -236,61 +240,41 @@ package org.axiis.data
 		}
 	
 		
-		/**
-		 *  groupings: Ordered list of name value pairs ["columnIndex, groupName"] to create heirarchal Groupings
-		 * 
-		 *  Example: processCsvAsShapedData(myData,["0,region","1,country"]);
-		 *  Would take data, and create a 2-level grouped hierarchy, with region being the parent group of country
-		 *   
-		 * 
-		 *  flattenLastGroup:  If the lowest level grouping returns only one row for that group, it will add the COLUMNS of that one row directly to the group object
-		 *  				   (versus a 1 item arrayCollection of rows)
-		*/
-		/*public function processCsvAsShapedData(payload:String, groupings:Array, flattenLastGroup:Boolean=true):void {
-			//Process CSV Source, use instructions to group into hiearicies
-			//Convert CSV into data.row[n].col[n] format for dynamic object
-			var t:Number=flash.utils.getTimer();
-			
-			var tempData:Object=createTableFromCsv(payload);
-			
-			if (!groupings || groupings.length<1) throw new Error("You must declare groupings to shape data DataSet.processCsvAsShapedData");
-			
-			if (!_data) _data=new Object();
-			
-			_data.shaped=createShapedObject(tempData.rows,groupings,flattenLastGroup);
-			
-			trace("DataSet.processCsvShapedData " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
-		}
-		*/
 		
 		/**
-		 *  Converts table data and uses unique values for specified columns and groups data into a hierarchal object.
+		 * Groups table data into a hierarchal collection of @class DataGroup and performs a SUM aggregation at each level for
+		 * columns described by @param summaryCols.
 		 * 
-		 *  @param groupings An ordered list of name value pairs ["columnIndex, groupName"] used to create heirarchal groupings.
-		 * <p>
-		 * For example, <code>shapeTable(myData,["0,region","1,country"]);</code>
-		 * takes myData, and create a 2-level grouped hierarchy, with region being the parent group of country
-		 * </p>
+		 * This function assumes you have already created a table structure within the DataSet, which currently can only be generated
+		 * via the processCsvAsTable() function;
 		 * 
-		 * @param flattenLastGroup When true and when the lowest level grouping
-		 * returns only one row for that group, this causes the method to add
-		 * the COLUMNS of that one row directly to the group object.
-		*/
-		public function shapeTable(groupings:Array, flattenLastGroup:Boolean=true):void {
-				var t:Number=flash.utils.getTimer();
-		
-			if (!data["table"]) return; //No table to process)
-			
-			if (!groupings || groupings.length<1) throw new Error("You must declare groupings to shape data DataSet.processCsvAsShapedData");
-			
-			if (!_data) _data=new Object();
-			_data.shaped=createShapedObject(data["table"].rows,groupings,flattenLastGroup);
-			
-			trace("DataSet.processCsvShapedData " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
-		}
-		
-		/**
-		 * IN DEVELOPMENT - MOVING OVER TO MORE STRONGLY TYPED UNIVERSAL STRUCTURE - DataGroup
+		 * @class DataGroup can contain child @class DataGroups within its @param groupedData property
+		 * 
+		 * SUM is currently the only aggregation supported and is stored in the @class DataGroup @param sums property.
+		 *
+		 * 
+		 * @param name The name that will be used to store this aggregate - it will be dynamically appended to a property of the @param data within the @class DataSet.
+		 * @param groupings is an array of comma sepearted values representing the ordinal position of the table column and the groupName you want to assign it that will
+		 * be used to create your groupings
+		 * <pre>
+		 * <code>
+		 * 	myGroupings:Array=['0, Column0','1, Column1']
+		 * </code>
+		 * </pre>
+		 * @param summaryCols is an array of column ordinal positions you want to have aggregated via a sum operation
+		 * <pre>
+		 * <code>
+		 * 	mySums:Array=[2,3]
+		 * </code>
+		 * </pre>
+		 * 
+		 * <pre>
+		 * <code>
+		 * 	myDataSet.aggregateTable("myFirstGroup", myGroupings, mySums);
+		 *  var sum1:Number = myDataSet.data.myFirstGroup.sums.Column2   (assumes your table had a column with a Column2 header name)
+		 * </code>
+		 * </pre>
+		 *  DEVELOPER NOTE: aggregateTable will most likely be deprecated in a future release in favor of a more universal grouping and aggregation format.
 		 */
 		public function aggregateTable(name:String, groupings:Array, summaryCols:Array=null):void {
 				var t:Number=flash.utils.getTimer();
@@ -305,21 +289,6 @@ package org.axiis.data
 			trace("DataSet.processCsvShapedData " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
 		}
 		
-		/**
-		 * IN DEVELOPMENT - MOVING OVER TO MORE STRONGLY TYPED UNIVERSAL STRUCTURE - DataGroup
-		 */
-		public function groupTable(groupings:Array, flattenLastGroup:Boolean=true):void {
-				var t:Number=flash.utils.getTimer();
-		
-			if (!data["table"]) return; //No table to process)
-			
-			if (!groupings || groupings.length<1) throw new Error("You must declare groupings to shape data DataSet.processCsvAsShapedData");
-			
-			if (!_data) _data=new Object();
-			_data.grouped=createDataGroup(data["table"].rows,groupings,flattenLastGroup);
-			
-			trace("DataSet.groupTable " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
-		}
 		
 		/**
 		 * Perform simple aggregations against the "data" property by dynamically adding properties to the parent object.
@@ -344,6 +313,7 @@ package org.axiis.data
 		 * @param collectionName The name of the collection within the "data" property.  You can use "." notation to drill down to it
 		 * @param properties An array of collection item properties you want to aggregate. You can use "." notation to drill down to specific objects within a collection item.
 		 * 
+		 * DEVELOPER NOTE: aggregateData will most likely be deprecated in a future release in favor of a more universal grouping and aggregation format.
 		 */
 		public function aggregateData(data:Object, collectionName:String, properties:Array):void {
 			//First find our collection

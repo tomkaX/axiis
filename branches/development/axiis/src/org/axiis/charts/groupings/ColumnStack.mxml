@@ -110,7 +110,6 @@
 		</degrafa:RasterText>
 	</groupings:drawingGeometries>
 
-	<!-- FIXME THIS HINTS THAT STATES MIGHT BE BROKEN -->
 	<groupings:fills>
 		<degrafa:SolidFill id="rollOverFill" color="0xDDDD00" alpha=".6"/>
 	</groupings:fills>

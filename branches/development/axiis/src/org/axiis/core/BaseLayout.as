@@ -195,8 +195,6 @@ package org.axiis.core
 				return;
 			}
 			
-			trimChildSprites();
-			
 			if (itemCount==0) {
 				return;
 			}
@@ -204,16 +202,19 @@ package org.axiis.core
 			if (newSprite)
 				newSprite.visible=true;
 			
-			dispatchEvent(new Event("preRender"));
-			
 			if(newSprite)
 				this.sprite = newSprite;
-			_rendering = true;
 			
+			_rendering = true;
+			_isRendering=true;
 			
 
 			if(!sprite || !_referenceGeometryRepeater)
-				return;			
+				return;		
+			
+			dispatchEvent(new Event("preRender"));	
+				
+			trimChildSprites();
 			
 			if (inheritParentBounds && parentLayout)
 			{
@@ -245,6 +246,7 @@ package org.axiis.core
 					_referenceGeometryRepeater.repeat(itemCount, preIteration, postIteration, repeatComplete);
 				}
 			}
+
 		}
 		
 		protected function findTopLayout():AbstractLayout
@@ -378,6 +380,7 @@ package org.axiis.core
 		{
 			sprite.visible = visible;
 			_rendering = false;
+			_isRendering = false;
 		}
 		
 		private function createChildSprite(layout:AbstractLayout):AxiisSprite
@@ -392,14 +395,16 @@ package org.axiis.core
 		{
 			if (!sprite || _itemCount < 0)
 				return;
+		
 			var trim:int = sprite.drawingSprites.length-_itemCount;
+			
+			for (var i:int=0; i <=trim;i++)
+				{
+					var s:AxiisSprite = AxiisSprite(sprite.removeChild(sprite.drawingSprites[sprite.drawingSprites.length-1]));
+					s.dispose();
+					s=null;
+				}
 
-			for (var i:int=0; i <trim;i++)
-			{
-				var s:AxiisSprite = AxiisSprite(sprite.removeChild(sprite.drawingSprites[sprite.drawingSprites.length-1]));
-				s.dispose();
-				s=null;
-			}
 		}
 		
 		

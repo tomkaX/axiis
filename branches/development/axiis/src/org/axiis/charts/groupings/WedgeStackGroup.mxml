@@ -24,22 +24,25 @@
 	 OTHER DEALINGS IN THE SOFTWARE.
 -->
 <!---
-	ColumStack groups a series of vertical columns vertically
-	and labels them. This class is intended to be used to produce
-	multi-series column charts.
+	 ColumStack groups a series of vertical columns vertically
+	 and labels them. This class is intended to be used to produce
+	 multi-series column charts.
 -->
 <groupings:GroupingBase xmlns:mx="http://www.adobe.com/2006/mxml"
-	xmlns:degrafa="http://www.degrafa.com/2007"
-	name="outerlayout"
-	xmlns:layouts="org.axiis.layouts.*"
-	xmlns:scale="org.axiis.layouts.scale.*"
-	xmlns:states="org.axiis.states.*"
-	xmlns:core="org.axiis.core.*"
-	xmlns:utils="org.axiis.utils.*"
-	xmlns:layoutUtils="org.axiis.layouts.utils.*"
-	xmlns:groupings="org.axiis.charts.groupings.*" xmlns:geometry="com.degrafa.geometry.*"
-	dataTipAnchorPoint="{anchorPoint}" itemPreDraw="onPreDraw()"
-	preRender="onPreRender()" xmlns:geom="flash.geom.*">
+						xmlns:degrafa="http://www.degrafa.com/2007"
+						name="outerlayout"
+						xmlns:layouts="org.axiis.layouts.*"
+						xmlns:scale="org.axiis.layouts.scale.*"
+						xmlns:states="org.axiis.states.*"
+						xmlns:core="org.axiis.core.*"
+						xmlns:utils="org.axiis.utils.*"
+						xmlns:layoutUtils="org.axiis.layouts.utils.*"
+						xmlns:groupings="org.axiis.charts.groupings.*"
+						xmlns:geometry="com.degrafa.geometry.*"
+						dataTipAnchorPoint="{anchorPoint}"
+						itemPreDraw="onPreDraw()"
+						preRender="onPreRender()"
+						xmlns:geom="flash.geom.*">
 
 	<!-- NOTE: Currently only tested for positive values -->
 
@@ -53,105 +56,156 @@
 			private var maxValue:Number;
 			[Bindable]
 			private var chord:Number
-			
-			private function onPreDraw():void {
+
+			private function onPreDraw():void
+			{
 				var angle:Number=arc.value;
-				chord=Math.abs((outerRadius.value * labelRadiusRatio)*2*Math.sin(arc.value*Math.PI/180/2));
-		//		trace("Chord " + currentLabel + " " + currentValue + " angle=" + arc.value + " chord = " + chord);
+				chord=Math.abs((outerRadius.value * labelRadiusRatio) * 2 * Math.sin(arc.value * Math.PI / 180 / 2));
+				//		trace("Chord " + currentLabel + " " + currentValue + " angle=" + arc.value + " chord = " + chord);
 			}
-			
-			private function onPreRender():void {
-				
+
+			private function onPreRender():void
+			{
+
 				maxValue=0;
-				
-				for (var i:int=0; i < dataItems.length; i++) {
-					maxValue+=getProperty(dataItems[i],dataField);
-				}			
+
+				for (var i:int=0; i < dataItems.length; i++)
+				{
+					maxValue+=getProperty(dataItems[i], dataField);
+				}
 				//trace(fontSize + " start angle is " + wedge.startAngle);
 			}
-			
+
 			public var labelFunction:Function=internalLabelFunction;
-			
-			public function internalLabelFunction(value:String):String {
+
+			public function internalLabelFunction(value:String):String
+			{
 				return value;
 			}
 		]]>
 	</mx:Script>
-	
+
 	<!-- Preference Settings -->
+
+	<!---
+		 The gap between elements in degrees.
+	-->
 	<mx:Number id="angleGap">.7</mx:Number>
+
+	<!---
+		 The inner radius of the wedge as a ratio of the radius.
+	-->
 	<mx:Number id="innerRadiusRatio">.4</mx:Number>
+
+	<!---
+		 The outer radius of the wedge as a ratio of the radius.
+	-->
 	<mx:Number id="outerRadiusRatio">1</mx:Number>
+
+	<!---
+		 The radius of the label rendering as a ratio of the radius.
+	-->
 	<mx:Number id="labelRadiusRatio">.97</mx:Number>
+
+	<!---
+		 The maximum arc expressed by the whole WedgeStackGroup.
+	-->
 	<mx:Number id="maxArc">360</mx:Number>
+
+	<!---
+		 The starting angle to render the first item in degrees.
+	-->
 	<mx:Number id="startAngle">0</mx:Number>
+
+	<!---
+		 true = text gets aligned outside of the labelRadiusRatio
+		 false = text gets aligned inside of the labelRadiusRatio
+	-->
 	<mx:Boolean id="alignTextOuter">false</mx:Boolean>
-	
+
 
 	<!-- Common calculations used by geometries -->
-	<utils:NumericExpression id="outerRadius" value="{(width/2)*outerRadiusRatio}"/>
-	<utils:NumericExpression id="innerRadius" value="{(width/2)*innerRadiusRatio}"/>
-	<utils:NumericExpression id="center" value="{boundsRadius.value/2}"/>
-	<utils:NumericExpression id="boundsRadius" value="{Math.min(this.height,this.width)}"/>
-	<utils:NumericExpression id="arc" value="{Number(currentValue)/maxValue*(maxArc-angleGap*itemCount)}"/>
-	<utils:BooleanExpression id="transposeLabel" value="{!((wedge.startAngle + wedge.arc * .5) &gt; 90 &amp;&amp; (wedge.startAngle + wedge.arc *.5) &lt; 270)}" />
+	<!--- @private -->
+	<utils:NumericExpression id="outerRadius"
+							 value="{(width/2)*outerRadiusRatio}"/>
+	<!--- @private -->
+	<utils:NumericExpression id="innerRadius"
+							 value="{(width/2)*innerRadiusRatio}"/>
+	<!--- @private -->
+	<utils:NumericExpression id="center"
+							 value="{boundsRadius.value/2}"/>
+	<!--- @private -->
+	<utils:NumericExpression id="boundsRadius"
+							 value="{Math.min(this.height,this.width)}"/>
+	<!--- @private -->
+	<utils:NumericExpression id="arc"
+							 value="{Number(currentValue)/maxValue*(maxArc-angleGap*itemCount)}"/>
+	<!--- @private -->
+	<utils:BooleanExpression id="transposeLabel"
+							 value="{!((wedge.startAngle + wedge.arc * .5) &gt; 90 &amp;&amp; (wedge.startAngle + wedge.arc *.5) &lt; 270)}"/>
 
-	<geom:Point id="anchorPoint" 
-			x="{width/2 + (innerRadius.value + (outerRadius.value-innerRadius.value)/2) * Math.cos((wedge.startAngle + wedge.arc / 2) * Math.PI / 180)}"
-		    y="{width/2 + (innerRadius.value + (outerRadius.value-innerRadius.value)/2) * Math.sin((wedge.startAngle + wedge.arc / 2) * Math.PI / 180)}"/>
+	<!--- @private -->
+	<geom:Point id="anchorPoint"
+				x="{width/2 + (innerRadius.value + (outerRadius.value-innerRadius.value)/2) * Math.cos((wedge.startAngle + wedge.arc / 2) * Math.PI / 180)}"
+				y="{width/2 + (innerRadius.value + (outerRadius.value-innerRadius.value)/2) * Math.sin((wedge.startAngle + wedge.arc / 2) * Math.PI / 180)}"/>
 
-		    
+	<!--- @private -->
 	<groupings:referenceRepeater>
 		<!-- innerRepeater: the reference repeater wedge for the inner ring of wedges -->
 		<layoutUtils:GeometryRepeater id="innerRepeater">
-			<layoutUtils:geometry> 
-				<geometry:Wedge id="wedge"  
-					centerX="{width/2}"
-					centerY="{width/2}"
-					innerRadius="{innerRadius.value}" 
-					outerRadius="{outerRadius.value}"
-					startAngle="{startAngle}"
-					arc="0"/>
+			<layoutUtils:geometry>
+				<geometry:Wedge id="wedge"
+								centerX="{width/2}"
+								centerY="{width/2}"
+								innerRadius="{innerRadius.value}"
+								outerRadius="{outerRadius.value}"
+								startAngle="{startAngle}"
+								arc="0"/>
 			</layoutUtils:geometry>
 			<layoutUtils:modifiers>
-				<layoutUtils:PropertyModifier property="startAngle" modifier="{wedge.arc+angleGap}" modifierOperator="add"/>
-				<layoutUtils:PropertyModifier property="arc" modifier="{arc.value}" modifierOperator="none"/>
+				<layoutUtils:PropertyModifier property="startAngle"
+											  modifier="{wedge.arc+angleGap}"
+											  modifierOperator="add"/>
+				<layoutUtils:PropertyModifier property="arc"
+											  modifier="{arc.value}"
+											  modifierOperator="none"/>
 			</layoutUtils:modifiers>
-		</layoutUtils:GeometryRepeater> 
+		</layoutUtils:GeometryRepeater>
 	</groupings:referenceRepeater>
+	<!--- @private -->
 	<groupings:drawingGeometries>
 		<!-- wedgeRenderer: the drawing geometry for the inner ring of wedges -->
 		<geometry:Wedge x="0"
-			y="0"
-			id="wedgeRenderer"
-			innerRadius="{wedge.innerRadius}"
-			outerRadius="{wedge.outerRadius}"
-			startAngle="{wedge.startAngle}"
-			arc="{wedge.arc}"
-			centerX="{wedge.centerX}"
-			centerY="{wedge.centerY}"
-			fill="{fill}"
-			stroke="{stroke}"/>
-			
+						y="0"
+						id="wedgeRenderer"
+						innerRadius="{wedge.innerRadius}"
+						outerRadius="{wedge.outerRadius}"
+						startAngle="{wedge.startAngle}"
+						arc="{wedge.arc}"
+						centerX="{wedge.centerX}"
+						centerY="{wedge.centerY}"
+						fill="{fill}"
+						stroke="{stroke}"/>
+
 		<degrafa:RasterText id="label"
-			visible="{(chord > fontSize)}"
-			x="{center.value}"
-			y="{center.value-10}"
-			fontFamily="{fontFamily}"
-			fontSize="{fontSize}"
-			text="{labelFunction.call(this,currentLabel)}"
-			autoSizeField="true"
-			autoSize="left"
-			textColor="{fontColor}"
-			antiAliasType="advanced"
-			>
+							visible="{(chord > fontSize)}"
+							x="{center.value}"
+							y="{center.value-10}"
+							fontFamily="{fontFamily}"
+							fontSize="{fontSize}"
+							text="{labelFunction.call(this,currentLabel)}"
+							autoSizeField="true"
+							autoSize="left"
+							textColor="{fontColor}"
+							antiAliasType="advanced">
 			<degrafa:transform>
 				<degrafa:TransformGroup>
 					<degrafa:TranslateTransform id="labelTransform"
-							x="{wedge.outerRadius * labelRadiusRatio + ((alignTextOuter) ? label.textWidth:0) + ((transposeLabel.value) ? -label.textWidth-wedge.outerRadius*.02:0)) * Math.cos((wedge.startAngle + wedge.arc / 2) * Math.PI / 180}"
-							y="{wedge.outerRadius * labelRadiusRatio + ((alignTextOuter) ? label.textWidth:0) + ((transposeLabel.value) ? -label.textWidth-wedge.outerRadius*.02:0)) * Math.sin((wedge.startAngle + wedge.arc / 2) * Math.PI / 180}"
-							/>
-					<degrafa:RotateTransform id="innerTextRotate" registrationPoint="centerLeft" angle="{wedge.startAngle + wedge.arc / 2 + ((transposeLabel.value) ? 0:180)}"/>
+												x="{wedge.outerRadius * labelRadiusRatio + ((alignTextOuter) ? label.textWidth:0) + ((transposeLabel.value) ? -label.textWidth-wedge.outerRadius*.02:0)) * Math.cos((wedge.startAngle + wedge.arc / 2) * Math.PI / 180}"
+												y="{wedge.outerRadius * labelRadiusRatio + ((alignTextOuter) ? label.textWidth:0) + ((transposeLabel.value) ? -label.textWidth-wedge.outerRadius*.02:0)) * Math.sin((wedge.startAngle + wedge.arc / 2) * Math.PI / 180}"/>
+					<degrafa:RotateTransform id="innerTextRotate"
+											 registrationPoint="centerLeft"
+											 angle="{wedge.startAngle + wedge.arc / 2 + ((transposeLabel.value) ? 0:180)}"/>
 				</degrafa:TransformGroup>
 			</degrafa:transform>
 		</degrafa:RasterText>

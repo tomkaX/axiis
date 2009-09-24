@@ -111,6 +111,10 @@ package org.axiis.paint
 				
 			generatePalette();
 		}
+		
+		public function get colorTo():Number {
+			return _colorTo;
+		}
 		private var _colorTo:Number = 0xFFFFFF;
 
 		[Bindable]

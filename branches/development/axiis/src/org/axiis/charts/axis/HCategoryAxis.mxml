@@ -1,4 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2009 Team Axiis
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions: 
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+-->
+
+<!---
+	HCategoryAxis renders values from left to right between a indexed collection of string values
+	and is intended to be rendered beneath other layouts to provide a
+	point of reference for those visualizations.
+	
+	<p>
+	HCategory Axis trys to optmize its layout based on the maximum widht/length of all labels in collection
+	</p>
+	
+-->
+
 <axiis:BaseLayout xmlns="*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:axiis="http://www.axiis.org/2009" xmlns:degrafa="http://www.degrafa.com/2007"
 	 preRender="onPreRender();"
 	 itemPreDraw="onItemPreDraw();">
@@ -12,9 +48,16 @@
 		import org.axiis.layouts.scale.CategoricalScale;
 		
 		[Bindable]
+		/**
+		 * The scale used to plot out the labels.  We are tied to the scale spacing and HCategoryAxis attempts
+		 * to space things evenly along these plots.  But currently the second and second to last plots may be asymetric.
+		 */ 
 		public var categoryScale:CategoricalScale;
 		
-		[Bindable]  
+		[Bindable] 
+		/**
+		 * Stroke used for tick marks.
+		 */ 
 		public var stroke:IGraphicsStroke=new SolidStroke();
 		
 		private function onPreRender():void {
@@ -105,11 +148,29 @@
 		}	
 	]]>
 </mx:Script>
-	<mx:Number id="markerSize">5</mx:Number>
+	<!---
+		 The length in pixels of the label marker (line)
+	-->
+	<mx:Number id="markerLength">5</mx:Number>
+	<!---
+		 Minimum padding between labels.
+	-->
 	<mx:Number id="labelPadding">3</mx:Number>
+	<!---
+		 font family of labels.
+	-->
 	<mx:String id="fontFamily">Arial</mx:String>
+	<!---
+		 font weight of labels.
+	-->
 	<mx:String id="fontWeight">normal</mx:String>
+	<!---
+		 font size of labels.
+	-->
 	<mx:Number id="fontSize">12</mx:Number>
+	<!---
+		 rotation of text for labels - should keep between 0-90.
+	-->
 	<mx:Number id="labelRotation">0</mx:Number>
 	
 	<axiis:referenceRepeater>
@@ -127,7 +188,7 @@
 			x="{currentReference.x+currentReference.width/2}" 
 			x1="{currentReference.x+currentReference.width/2}" 
 			y="0" 
-			y1="{markerSize}"
+			y1="{markerLength}"
 			stroke="{stroke}"
 			/>
 			

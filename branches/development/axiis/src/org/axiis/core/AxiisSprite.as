@@ -252,10 +252,10 @@ package org.axiis.core
 				state = AxiisSprite.DEFAULT_STATE;
 				_activeState=AxiisSprite.DEFAULT_STATE;
 			}
-			var stateSprite:Sprite;
+			var stateSprite:AxiisSprite;
 			if(stateToSpriteHash[state] == null)
 			{
-				stateSprite = new Sprite();
+				stateSprite = new AxiisSprite();
 				stateToSpriteHash[state] = stateSprite;
 				addChild(stateSprite);
 			}
@@ -436,18 +436,18 @@ package org.axiis.core
 			{
 				var s:Sprite = Sprite(getChildAt(0));
 				if(s is AxiisSprite) 
+					removeChild(s);
 					AxiisSprite(s).dispose();
-				s.graphics.clear();
-			    
-				removeChild(s);
+					s.graphics.clear();
+					s=null;
 			}
 			for each (var obj:Object in eventListeners)
 			{
 				super.removeEventListener(obj.type, obj.listener,obj.useCapture);
 			}
 			layout=null;
-			_layoutSprites=null;
-			_drawingSprites=null;
+		//	_layoutSprites=null;
+		//	_drawingSprites=null;
 			states = null;
 			stateToSpriteHash = null;
 		}
