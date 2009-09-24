@@ -115,12 +115,17 @@
 		The default radius to use when radiusField is not specified
 	-->
 	<mx:Number id="defaultRadius">6</mx:Number>
+	
+	<!---
+		 Whether or not markers should be displayed at each data point
+	-->
+	<mx:Boolean id="showMarker">true</mx:Boolean>	
 
 	<layouts:drawingGeometries>
 	
 		<!--- @private -->
 		<degrafa:Circle id="plotCircle"
-			radius="{((radiusField !='' || radiusField == null)  &amp;&amp; radiusScale.minLayout > Number.NEGATIVE_INFINITY) ? Number(radiusScale.valueToLayout(currentDatum[radiusField])) : defaultRadius }"
+			radius="{((radiusField !='' &amp;&amp; radiusField != null)  &amp;&amp; radiusScale.minLayout > Number.NEGATIVE_INFINITY) ? Number(radiusScale.valueToLayout(currentDatum[radiusField])) : defaultRadius }"
 			centerX="{Number(horizontalScale.valueToLayout(currentDatum[horizontalField]))}"
 			centerY="{Number(verticalScale.valueToLayout(currentDatum[verticalField],true))}"
 			fill="{plotFill}"
@@ -129,7 +134,7 @@
 		
 		<!--- @private -->
 		<degrafa:Circle id="highlightCircle"
-			radius="{((radiusField !='' || radiusField == null) &amp;&amp; radiusScale.minLayout > Number.NEGATIVE_INFINITY) ? Number(radiusScale.valueToLayout(currentDatum[radiusField])) + 4 : defaultRadius }"
+			radius="{((radiusField !='' &amp;&amp; radiusField != null) &amp;&amp; radiusScale.minLayout > Number.NEGATIVE_INFINITY) ? Number(radiusScale.valueToLayout(currentDatum[radiusField])) + 4 : defaultRadius }"
 			centerX="{Number(horizontalScale.valueToLayout(currentDatum[horizontalField]))}"
 			centerY="{Number(verticalScale.valueToLayout(currentDatum[verticalField],true))}"
 			stroke="{highlightStroke}"
@@ -154,6 +159,7 @@
 		<degrafa:RegularRectangle id="marker"
 			width="{markerGeometry.width}"
 			height="{markerGeometry.height}"
+			visible="{showMarker}"
 			x="{Number(horizontalScale.valueToLayout(currentDatum[horizontalField]))-markerGeometry.width/2}"
 			y="{Number(verticalScale.valueToLayout(currentDatum[verticalField],true))-markerGeometry.height/2}"
 			geometry="{[markerGeometry]}"/>
