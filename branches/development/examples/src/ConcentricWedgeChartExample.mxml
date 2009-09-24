@@ -52,9 +52,10 @@
 			<axiis:ConcentricWedgeLayout id="radialLayout"
 				width="{dc.width}"
 				height="{dc.height}"
-				emitDataTips="false"
+				showDataTips="false"
 				innerRadius="20"
 				wedgeGap="10">
+
 				<axiis:drawingGeometries>
 					<geometry:Wedge centerX="{radialLayout.width/2}"
 						centerY="{radialLayout.height/2}"
