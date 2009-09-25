@@ -578,11 +578,10 @@
 						}
 					}
 					i++;
-
-					if (mode == LineSeriesGroup.MODE_STACK_FLOW)
-					{ //Remove the first one as it was the result of splitting the first series by bisecting the zero line
-						_curvePathsTop.splice(0, 1);
-					}
+				}
+				if (mode == LineSeriesGroup.MODE_STACK_FLOW)
+				{ //Remove the first one as it was the result of splitting the first series by bisecting the zero line
+					_curvePathsTop.splice(0, 1);
 				}
 			}
 
