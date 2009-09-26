@@ -73,7 +73,7 @@ package org.axiis.extras.layouts.scale
 		 * We don't do computed mins and maxes because there is no sliding scale.  it's a fixed scale from 0 to the user-specified
 		 * width of the chart.
 		 */
-		public function valueToLayout(value:Object, invert:Boolean=false):*
+		public function valueToLayout(value:*, invert:Boolean=false, clamp:Boolean = false):*
 		{
 			if(!(value is Complex))
 				throw new Error("value must be a complex number for a Smith Chart");
@@ -90,7 +90,7 @@ package org.axiis.extras.layouts.scale
 		/**
 		 * For a given GraphicPoint (layout), return the complex number representing the de-normalized (resistance,reactance)
 		 */
-		public function layoutToValue(layout:Object):Object
+		public function layoutToValue(layout:*, invert:Boolean=false, clamp:Boolean = false):*
 		{
 			if(!(layout is GraphicPoint))
 				throw new Error("layout must be a GraphicPoint for a Smith Chart");

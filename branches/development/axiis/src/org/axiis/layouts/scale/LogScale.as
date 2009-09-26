@@ -28,8 +28,7 @@ package org.axiis.layouts.scale
 	import flash.events.Event;
 
 	/**
-	 * A scale that converts logarithmic data to layout space. Values from the
-	 * dataProvider are converted to layout-space using log base 10.
+	 * A scale that converts logarithmic data to layout space.
 	 */
 	public class LogScale extends ContinuousScale implements IScale
 	{
@@ -61,37 +60,49 @@ package org.axiis.layouts.scale
 		/**
 		 * @inheritDoc IScale#valueToLayout
 		 */
-		public function valueToLayout(value:Object,invert:Boolean=false):*
+		public function valueToLayout(value:*,invert:Boolean=false,clamp:Boolean = false):*
 		{
-			var logValue:Number = Math.log(Number(value)) / logOfBase;
+			if(!(value is Number))
+				throw new Error("To use valueToLayout the value parameter must be a Number");
+				
+			if(invalidated)
+				validate();
 			
-			// These two values should be stored at the class level to prevent redundant computation
-			var logMinValue:Number = Math.log(Number(minLayout)) / logOfBase;
-			var logMaxValue:Number = Math.log(Number(maxValue)) / logOfBase;
+			// We offset the min, max, and value so the new minimum is at 1 and the scale factor remains the same.
+			var logMinValue:Number = Math.log(1) / logOfBase;
+			var logMaxValue:Number = Math.log(maxValue - minValue + 1) / logOfBase;
+			var logValue:Number = Math.log(value - minValue + 1) / logOfBase;
 			
-			var percentage:Number = getPercentageBetweenValues(logValue,logMinValue,logMaxValue)
-			percentage = Math.max(0,Math.min(1,percentage));
-			return percentage * (maxLayout - minLayout) + minLayout;
+			var percent:Number = ScaleUtils.inverseLerp(logValue,logMinValue,logMaxValue);
+			if(invert)
+				percent = 1 - percent;
+			if(clamp)
+				percent = Math.max(0,Math.min(1,percent));
+			var toReturn:Number = ScaleUtils.lerp(percent,minLayout,maxLayout);
+			
+			//trace("base =",base,"logOfBase =",logOfBase,"value =",value,"logValue =",logValue,"% =",percent,"toReturn =",toReturn);
+			return toReturn;
 		}
 		
 		/**
 		 * @inheritDoc IScale#layoutToValue
 		 */
-		public function layoutToValue(layout:Object):Object
+		public function layoutToValue(layout:*,invert:Boolean = false,clamp:Boolean = false):*
 		{
 			if(!(layout is Number))
-				throw new Error("layout parameter must be a Number");
+				throw new Error("To use layoutToValue the layout parameter must be a Number");
 
-			var percentage:Number = getPercentageBetweenValues(Number(layout),Number(minLayout),Number(maxLayout))
-			percentage = Math.max(0,Math.min(1,percentage));
-			percentage = Math.pow(percentage,10); 
-			return percentage * (Number(maxValue) - Number(minValue)) + Number(minValue);
-		}
-		
-		// This comes up a lot... maybe it should be in a util class
-		private function getPercentageBetweenValues(value:Number,minimum:Number,maximum:Number):Number
-		{
-			return 1 - (maximum - value) / (maximum - minimum);
+			if (invalidated)
+				validate();
+				
+			var percent:Number = ScaleUtils.inverseLerp(layout,minLayout,maxLayout);
+			if(invert)
+				percent = 1 - percent;
+			if(clamp)
+				percent = Math.max(0,Math.min(1,percent));
+			percent = Math.pow(percent,base);
+			var toReturn:Number = ScaleUtils.lerp(percent,minValue,maxValue);
+			return toReturn;
 		}
 	}
 }

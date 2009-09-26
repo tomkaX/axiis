@@ -30,43 +30,67 @@ package org.axiis.layouts.scale
 	 */
 	public class DateTimeScale extends ContinuousScale implements IScale
 	{
+		override public function validate() : void
+		{
+			super.validate();
+			if(dataProvider != null)
+				_computedAverage = new Date(computedSum.valueOf() / dataProvider.length);
+			else
+				_computedAverage = null;
+		}
+		
+		override protected function computeSum():*
+		{
+			var sum:Number = 0;
+			for each(var num:Date in dataProvider)
+			{
+				sum += num.valueOf();
+			}
+			return new Date(sum);
+		}
+		
 		/**
 		 * @inheritDoc IScale#valueToLayout
 		 */
-		public function valueToLayout(value:Object,invert:Boolean=false):*
+		public function valueToLayout(value:*, invert:Boolean=false, clamp:Boolean = false):*
 		{
+			if(!(value is Date))
+				throw new Error("To use valueToLayout the value parameter must be a Date");
+			
 			if(invalidated)
 				validate();
 			
-			var minDate:Date = minValue as Date;
-			var maxDate:Date = maxValue as Date;
-			var percentage:Number = getPercentageBetweenValues(Number(value),minDate.valueOf(),maxDate.valueOf());
-			//percentage = Math.max(0,Math.min(1.0,percentage));
-			return percentage * (maxLayout - minLayout) + minLayout;
+			//trace(minVal)
+			var minDateMilli:Number = (minValue as Date).valueOf();
+			var maxDateMilli:Number = (maxValue as Date).valueOf();
+			var valueMilli:Number = (value as Date).valueOf();
+			var percent:Number = ScaleUtils.inverseLerp(valueMilli,minDateMilli,maxDateMilli);
+			if(invert)
+				percent = 1 - percent;
+			if(clamp)
+				percent = Math.max(0,Math.min(1,percent));
+			var toReturn:Number = ScaleUtils.lerp(percent,minLayout,maxLayout);
+			return toReturn;
 		}
 		
 		/**
 		 * @inheritDoc IScale#layoutToValue
 		 */
-		public function layoutToValue(layout:Object):Object
+		public function layoutToValue(layout:*, invert:Boolean = false, clamp:Boolean = false):*
 		{
 			if(!(layout is Number))
-				throw new Error("layout parameter must be a Number");
+				throw new Error("To use layoutToValue the layout parameter must be a Number");
 
-			if (this.invalidated)
+			if (invalidated)
 				validate();
-			
-			var minDate:Date = minValue as Date;
-			var maxDate:Date = maxValue as Date;
-			var percentage:Number = getPercentageBetweenValues(Number(layout),Number(minLayout),Number(maxLayout));
-			//percentage = Math.max(0,Math.min(1,percentage));
-			return new Date(percentage * (maxDate.valueOf() - minDate.valueOf()) + minDate.valueOf());
-		}
-		
-		// This comes up a lot... maybe it should be in a util class
-		private function getPercentageBetweenValues(value:Number,minimum:Number,maximum:Number):Number
-		{
-			return 1 - (maximum - value) / (maximum - minimum);
+				
+			var percent:Number = ScaleUtils.inverseLerp(layout,minLayout,maxLayout);
+			if(invert)
+				percent = 1 - percent;
+			if(clamp)
+				percent = Math.max(0,Math.min(1,percent));
+			var toReturn:Number = ScaleUtils.lerp(percent,minValue,maxValue);
+			return new Date(toReturn);
 		}
 	}
 }

@@ -25,34 +25,75 @@
 
 package org.axiis.layouts.scale
 {
-	import org.axiis.utils.ObjectUtils;
+	import flash.events.Event;
 	
+	import org.axiis.utils.ObjectUtils;
+
 	/**
 	 * The base class for scales that deal with numerical data.
 	 */
 	public class ContinuousScale extends AbstractScale
 	{
+		// These are untyped because we need to support average of Numbers and Dates
+		[Bindable("computedAverageChange")]
+		public function get computedAverage():*
+		{
+			if(invalidated)
+				validate();
+			return __computedAverage;
+		}
+		protected function set _computedAverage(value:*):void
+		{
+			if(value != __computedAverage)
+			{
+				__computedAverage = value;
+				dispatchEvent(new Event("computedAverageChange"));
+			}
+		}
+		private var __computedAverage:*;
+		
+		[Bindable("computedSumChange")]
+		public function get computedSum():*
+		{
+			if(invalidated)
+				validate();
+			return __computedSum;
+		}
+		protected function set _computedSum(value:*):void
+		{
+			if(value != __computedSum)
+			{
+				__computedSum = value;
+				dispatchEvent(new Event("computedSumChange"));
+			}
+		}
+		private var __computedSum:*;
+		
 		/**
 		 * @inheritDoc IScale#validate  
 		 */
 		override public function validate():void
 		{
 			super.validate();
-			if(userMinValue == null)
-				computedMinValue = computeMin();
-			
-			if(userMaxValue == null)
-				computedMaxValue = computeMax();
+			_computedMinValue = computeMin();
+			_computedMaxValue = computeMax();
+			_computedSum = computeSum();
+			if(dataProvider)
+				_computedAverage = computedSum / dataProvider.length;
+			else
+				_computedAverage = NaN;
 		}
-		
 		
 		/**
 		 * Returns the minimum value from the dataProvider. 
 		 */
-		protected function computeMin():Object
+		protected function computeMin():*
 		{
-			var newMin:Object;
-			for each(var o:Object in dataProvider)
+			if(collection == null || collection.length == 0)
+				return NaN;
+			
+			var newMin:*;
+			for each(var o:* in collection)
 			{
 				var currValue:Object = getProperty(o,dataField);
 				if(newMin == null)
@@ -66,12 +107,15 @@ package org.axiis.layouts.scale
 		/**
 		 * Returns the maximum value from the dataProvider. 
 		 */
-		protected function computeMax():Object
+		protected function computeMax():*
 		{
-			var newMax:Object;
-			for each(var o:Object in dataProvider)
+			if(collection == null || collection.length == 0)
+				return NaN;
+			
+			var newMax:*;
+			for each(var o:* in collection)
 			{
-				var currValue:Object = getProperty(o,dataField);
+				var currValue:* = getProperty(o,dataField);
 				if(newMax == null)
 					newMax = currValue;
 				else
@@ -80,12 +124,23 @@ package org.axiis.layouts.scale
 			return newMax;
 		}
 		
+		protected function computeSum():*
+		{
+			if(collection == null || collection.length == 0)
+				return NaN;
+				
+			var sum:Number = 0;
+			for each(var num:Number in collection)
+			{
+				sum += num;
+			}
+			return sum;
+		}
+		
 		//Candidate routine to refacotr into utility class (shared with AbstracLayout)
 		private function getProperty(obj:Object, propertyName:Object):Object
 		{ 
 			return ObjectUtils.getProperty(this,obj,propertyName);
-				
 		}
-
 	}
 }

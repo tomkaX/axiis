@@ -52,9 +52,9 @@ package org.axiis.layouts.scale
 			uniqueValues = extractUniqueValues();
 			if(uniqueValues.length > 0)
 			{
-				computedMinValue = uniqueValues[0];
-				computedMaxValue = uniqueValues[uniqueValues.length - 1];
-			}				
+				_computedMinValue = uniqueValues[0];
+				_computedMaxValue = uniqueValues[uniqueValues.length - 1];
+			}
 		}
 		
 		/**
@@ -64,7 +64,7 @@ package org.axiis.layouts.scale
 		 * @param value The value to be converted into layout space.
 		 * @param invert Whether the minValue translates to minLayout (false) or to maxLayout (true).
 		 */
-		public function valueToLayout(value:Object,invert:Boolean=false):*
+		public function valueToLayout(value:*,invert:Boolean=false,clamp:Boolean = false):*
 		{
 			if(invalidated)
 				validate();
@@ -73,8 +73,14 @@ package org.axiis.layouts.scale
 			if(valueIndex == -1)
 				return NaN;
 			
-			var percentage:Number = (valueIndex) / (uniqueValues.length - 1);
-			var toReturn:Number = percentage * (maxLayout - minLayout) + minLayout;
+			var percent:Number = (valueIndex) / (uniqueValues.length - 1);
+			if(invert)
+				percent = 1 - percent;
+				
+			// Clamping does not make sense in a categorical scales
+			//if(clamp)
+			//	percent = Math.min(1,Math.max(0,percent));
+			var toReturn:Number = ScaleUtils.lerp(percent,minLayout,maxLayout);
 			return toReturn;
 		}
 		
@@ -85,7 +91,7 @@ package org.axiis.layouts.scale
 		 * 
 		 * @param The layout position to translate into a value.
 		 */
-		public function layoutToValue(layout:Object):Object
+		public function layoutToValue(layout:*,invert:Boolean = false,clamp:Boolean = false):*
 		{ 
 			if(!(layout is Number))
 				throw new Error("layout parameter must be a Number");
@@ -94,8 +100,14 @@ package org.axiis.layouts.scale
 				validate();
 				
 			var layoutDelta:Number = maxLayout - minLayout;
-			var layoutPercentage:Number = 1-(layoutDelta-Number(layout)) / (layoutDelta);
-			var index:Number = Math.round(layoutPercentage * uniqueValues.length);
+			var percent:Number = 1-(layoutDelta-Number(layout)) / (layoutDelta);
+			if(invert)
+				percent = 1 - percent;
+				
+			// Clamping does not make sense in a categorical scales
+			//if(clamp)
+			//	percent = Math.min(1,Math.max(0,percent));
+			var index:Number = Math.round(percent * uniqueValues.length);
 			index = Math.max(0,Math.min(uniqueValues.length - 1,index));
 			return uniqueValues[index];
 		}
@@ -106,7 +118,7 @@ package org.axiis.layouts.scale
 		 * 
 		 * @param The layout position to translate into a value.
 		 */
-		public function layoutToIndex(layout:Object):Object
+		public function layoutToIndex(layout:Number):Number
 		{ 
 			if(!(layout is Number))
 				throw new Error("layout parameter must be a Number");
@@ -149,7 +161,5 @@ package org.axiis.layouts.scale
 			}
 			return toReturn;
 		}
-		
-		
 	}
 }

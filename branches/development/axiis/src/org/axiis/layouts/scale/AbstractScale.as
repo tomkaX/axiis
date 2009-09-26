@@ -27,6 +27,9 @@ package org.axiis.layouts.scale
 {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	
+	import mx.collections.ArrayCollection;
+	import mx.events.CollectionEvent;
 
 	[Event(name="invalidate",type="flash.events.Event")]
 	
@@ -47,27 +50,52 @@ package org.axiis.layouts.scale
 		 * values and layouts the next time either layoutToValue or valueToLayout
 		 * is called. 
 		 */
-		protected var invalidated:Boolean = false;
-		
-		// TODO we need to watch for changes to the dataProvider and call invalidate 
+		public function get invalidated():Boolean
+		{
+			return _invalidated;
+		}
+		private var _invalidated:Boolean = false;
+		 
 		[Bindable(event="dataProviderChange")]		
 		/**
 		 * @copy IScale#dataProvider
 		 */
 		public function get dataProvider():Object
 		{
-			return _dataProvider;
+			return rawDataProvider;
 		}
 		public function set dataProvider(value:Object):void
 		{
-			if(value != _dataProvider)
+			if(value != rawDataProvider)
 			{
-				_dataProvider = value;
+				rawDataProvider = value;
+				
+				if(collection)
+					collection.removeEventListener(CollectionEvent.COLLECTION_CHANGE,onCollectionChange)
+					
+				collection = new ArrayCollection();
+				if(value == null)
+				{
+					collection.source = [];
+				}
+				else if(value is Array)
+				{
+					collection.source = (value as Array);
+				}
+				else if(value is ArrayCollection)
+				{
+					collection.source = ArrayCollection(value).toArray();
+				}
+				
+				collection.addEventListener(CollectionEvent.COLLECTION_CHANGE,onCollectionChange);
 				invalidate();
+				
 				dispatchEvent(new Event("dataProviderChange"));
 			}
 		}
-		private var _dataProvider:Object;
+		private var rawDataProvider:Object;
+		
+		protected var collection:ArrayCollection;
 		
 		[Bindable(event="dataFieldChange")]
 		/**
@@ -105,32 +133,34 @@ package org.axiis.layouts.scale
 			if(value != userMinValue)
 			{
 				userMinValue = value;
-				invalidate();
 				dispatchEvent(new Event("minValueChange"));
 			}
 		}
 		
+		[Bindable(event="computedMinValueChange")]
 		/**
 		 * The minimum value in the dataProvider.
 		 */
-		protected function get computedMinValue():Object
+		public function get computedMinValue():*
 		{
-			return _computedMinValue;
+			if(invalidated)
+				validate();
+			return __computedMinValue;
 		}
-		protected function set computedMinValue(value:Object):void
+		protected function set _computedMinValue(value:*):void
 		{
-			if(value != _computedMinValue)
+			if(value != __computedMinValue)
 			{
-				_computedMinValue = value;
-				dispatchEvent(new Event("minValueChange"));
+				__computedMinValue = value;
+				dispatchEvent(new Event("computedMinValueChange"));
 			}
 		}
-		private var _computedMinValue:Object;
+		private var __computedMinValue:*;
 		
 		/**
 		 * The minimum value as specified by the user.
 		 */
-		protected var userMinValue:Object=0;
+		protected var userMinValue:*;
 		
 		//---------------------------------------------------------------------
 		// maxValue
@@ -149,36 +179,38 @@ package org.axiis.layouts.scale
 			if(value != userMaxValue)
 			{
 				userMaxValue = value;
-				invalidate();
 				dispatchEvent(new Event("maxValueChange"));
 			}
 		}
 		
+		[Bindable("computedMaxValueChange")]
 		/**
 		 * The maximum value in the dataProvider.
 		 */
-		protected function get computedMaxValue():Object
+		public function get computedMaxValue():*
 		{
-			return _computedMaxValue;
+			if(invalidated)
+				validate();
+			return __computedMaxValue;
 		}
-		protected function set computedMaxValue(value:Object):void
+		protected function set _computedMaxValue(value:*):void
 		{
-			if(value != _computedMaxValue)
+			if(value != __computedMaxValue)
 			{
-				_computedMaxValue = value;
-				dispatchEvent(new Event("maxValueChange"));
+				__computedMaxValue = value;
+				dispatchEvent(new Event("computedMaxValueChange"));
 			}
 		}
-		private var _computedMaxValue:Object;
+		private var __computedMaxValue:*;
 		
 		/**
 		 * The maximum value as specified by the user.
 		 */
-		protected var userMaxValue:Object;
+		protected var userMaxValue:*;
 		
 		//---------------------------------------------------------------------
 		
-		[Bindable(event="minLayoutChange")]
+		[Bindable]
 		/**
 		 * @copy IScale#minLayout
 		 */
@@ -191,11 +223,10 @@ package org.axiis.layouts.scale
 			if(value != _minLayout)
 			{
 				_minLayout = value;
-				invalidate();
 				dispatchEvent(new Event("minLayoutChange"));
 			}
 		}
-		private var _minLayout:Number=0;
+		private var _minLayout:Number = NaN;
 		
 		[Bindable(event="maxLayoutChange")]
 		/**
@@ -209,19 +240,18 @@ package org.axiis.layouts.scale
 		{
 			if(value != _maxLayout)
 			{
-				_maxLayout = value;
-				invalidate();
+				_maxLayout = value;				
 				dispatchEvent(new Event("maxLayoutChange"));
 			}
 		}
-		private var _maxLayout:Number;
+		private var _maxLayout:Number = NaN;
 		
 		/**
 		 * Marks this IScale as needing its minValue and maxValue recomputed.
 		 */
 		public function invalidate():void
 		{
-			invalidated = true;
+			_invalidated = true;
 			dispatchEvent(new Event("invalidate"));
 		}
 		
@@ -230,7 +260,12 @@ package org.axiis.layouts.scale
 		 */
 		public function validate():void
 		{
-			invalidated = false;
+			_invalidated = false;
 		}
+		
+		protected function onCollectionChange(event:CollectionEvent):void
+		{
+			invalidate();
+		}	
 	}
 }

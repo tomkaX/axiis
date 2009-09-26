@@ -188,7 +188,7 @@
 						stroke="{stroke}"/>
 
 		<degrafa:RasterText id="label"
-							visible="{(chord > fontSize)}"
+							visible="{showDataLabel &amp;&amp; (chord > fontSize)}"
 							x="{center.value}"
 							y="{center.value-10}"
 							fontFamily="{fontFamily}"

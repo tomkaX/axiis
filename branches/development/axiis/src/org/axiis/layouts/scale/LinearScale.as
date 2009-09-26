@@ -24,69 +24,52 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 package org.axiis.layouts.scale
-{
-	
-	
+{	
 	/**
 	 * A scale that deals with linear numeric data.
 	 */
 	public class LinearScale extends ContinuousScale implements IScale
 	{
-		// TODO Let's move this to ContinuousScale since that deals with numerical data
-		/**
-		 * Whether the scale should use zero as it's baseline (true) or allow for negative values.
-		 */
-		public var zeroBased:Boolean = true;
+		public function LinearScale()
+		{
+			super();
+		}
 		
 		/**
 		 * @inheritDoc IScale#valueToLayout
 		 */
-		public function valueToLayout(value:Object, invert:Boolean=false):*
+		public function valueToLayout(value:*, invert:Boolean=false,clamp:Boolean = false):*
 		{
-			//if(value == null)
-//				trace("is null " + Number(value))
-			
 			if(invalidated)
 				validate();
 				
-			var per:Number= getPercentageBetweenValues(Number(value),Number(minValue),Number(maxValue));
-			per = Math.max(0,Math.min(1.0,per));
+			var percent:Number = ScaleUtils.inverseLerp(value,minValue,maxValue);
 			if(invert)
-				per=1-per;
-			var toReturn:* = (maxLayout-minLayout)*per + minLayout;
+				percent = 1 - percent;
+			if(clamp)
+				percent = Math.max(0,Math.min(1,percent));
+			var toReturn:Number = ScaleUtils.lerp(percent,minLayout,maxLayout);
 			return toReturn;
 		}
 		
 		/**
 		 * @inheritDoc IScale#layoutToValue
 		 */
-		public function layoutToValue(layout:Object):Object
+		public function layoutToValue(layout:*,invert:Boolean = false,clamp:Boolean = false):*
 		{
 			if(!(layout is Number))
-				throw new Error("layout parameter must be a Number");
+				throw new Error("To use layoutToValue the layout parameter must be a Number");
 
-			if (this.invalidated)
+			if (invalidated)
 				validate();
 				
-			var percentage:Number = Number(layout)/(maxLayout-minLayout)
-			
-			return percentage * (Number(maxValue) - Number(minValue)) + Number(minValue);
+			var percent:Number = ScaleUtils.inverseLerp(layout,minLayout,maxLayout);
+			if(invert)
+				percent = 1 - percent;
+			if(clamp)
+				percent = Math.max(0,Math.min(1,percent));
+			var toReturn:Number = ScaleUtils.lerp(percent,minValue,maxValue);
+			return toReturn;
 		}
-		
-		// TODO This comes up a lot... maybe it should be in a util class
-		private function getPercentageBetweenValues(value:Number,min:Number,max:Number):Number
-		{
-			var per:Number=(Math.abs(value)-min)/(max-min);
-			
-			 if (zeroBased && min < 0) {
-			 	per=Math.abs(value)/(max-min);
-				per=Math.abs(min)/(max-min) + (value < 0 ? -per:per);
-			}
-			
-			return per;
-		}
-		
-		
-		
 	}
 }

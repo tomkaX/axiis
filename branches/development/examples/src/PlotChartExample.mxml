@@ -82,7 +82,7 @@
 		dataProvider="{dataProvider}"
 		minLayout="3"
 		maxLayout="{Math.min(plotGroup.height, plotGroup.width)*.1}"
-		minValue="0"/>
+		minValue="1"/>
 	<axiis:LinearScale id="vScale"
 		dataProvider="{dataProvider}"
 		minValue="0"
