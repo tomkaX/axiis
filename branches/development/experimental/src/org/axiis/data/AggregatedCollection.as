@@ -1,4 +1,4 @@
-package org.axiis.data
+package org.axiis.experimental.data
 {
 	import flash.events.Event;
 	import flash.utils.flash_proxy;
@@ -12,6 +12,7 @@ package org.axiis.data
 	import mx.events.CollectionEvent;
 	import mx.events.CollectionEventKind;
 	import mx.utils.ObjectProxy;
+	import org.axiis.data.IAggregator;
 
 	use namespace flash_proxy;
 

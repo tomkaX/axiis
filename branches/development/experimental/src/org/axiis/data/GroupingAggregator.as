@@ -1,4 +1,4 @@
-package org.axiis.data
+package org.axiis.experimental.data
 {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;

@@ -1,11 +1,11 @@
-package org.axiis.data
+package org.axiis.experimental.data
 {
 	import flash.events.Event;
-
-	[Bindable]	
-	public class MinAggregator implements IAggregator
+	import flash.events.EventDispatcher;
+	
+	public class MaxAggregator extends EventDispatcher implements IAggregator
 	{
-		public function MinAggregator()
+		public function MaxAggregator()
 		{
 			super();
 		}
@@ -32,7 +32,7 @@ package org.axiis.data
 		
 		public function aggregate(source:Array):*
 		{
-			var min:Number = Number.MAX_VALUE;
+			var max:Number = -Number.MAX_VALUE;
 			for each(var o:Object in source)
 			{
 				var dataValue:Number;
@@ -44,9 +44,10 @@ package org.axiis.data
 				{
 					dataValue = Number(o);
 				}
-				min = Math.min(min,dataValue);
+				max = Math.max(max,dataValue);
 			}
-			return min;
+			return max;
 		}
+		
 	}
 }
