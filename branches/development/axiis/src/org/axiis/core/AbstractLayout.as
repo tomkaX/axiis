@@ -34,6 +34,7 @@ package org.axiis.core
 	
 	import mx.collections.ArrayCollection;
 	import mx.core.IFactory;
+	import mx.core.UIComponent;
 	
 	import org.axiis.DataCanvas;
 	import org.axiis.events.LayoutItemEvent;
@@ -665,6 +666,13 @@ package org.axiis.core
 		 */
 		public var name:String = "";
 		
+		
+		/**
+		 * Determines how long (milliseconds) a layout will spend on a given frame to render X number of datums
+		 * 
+		 */
+		 public var msPerRenderFrame:Number=50;
+		
 		[Bindable(event="layoutsChange")]
 		/**
 		 * @copy ILayout#layouts
@@ -894,6 +902,9 @@ package org.axiis.core
 		[Bindable(event="dataTipContentClassChange")]
 		/**
 		 * TODO Document dataTipContentClass
+		 * NOTE : Not sure that a factory pattern is what we want here.
+		 *  1. It makes it difficult to get access to the concrete class at run time
+		 *  2. It might be memory intensive, and easier to pass around a single class that is arleady in memory
 		 */
 		public function get dataTipContentClass():IFactory
 		{
@@ -909,6 +920,27 @@ package org.axiis.core
 		}
 		private var _dataTipContentClass:IFactory;
 		
+		
+		[Bindable(event="dataTipContentComponentChange")]
+		/**
+		 * dataTipContentComponent
+		 * 
+		 * Used by the data tip of this layout
+		 */
+		public function get dataTipContentComponent():UIComponent
+		{
+			return _dataTipContentComponent;
+		}
+		public function set dataTipContentComponent(value:UIComponent):void
+		{
+			if(value != _dataTipContentComponent)
+			{
+				_dataTipContentComponent = value;
+				dispatchEvent(new Event("dataTipContentComponentChange"));
+			}
+		}
+		private var _dataTipContentComponent:UIComponent;
+		
 		//When a chid layout emits an event we want to bubble it
 		private function onItemDataTip(e:LayoutItemEvent):void {
 			this.dispatchEvent(new LayoutItemEvent("itemDataTip",e.item,e.sourceEvent));
@@ -923,6 +955,9 @@ package org.axiis.core
 				AxiisSprite(childSprites[i]).selected=false;
 			}
 		}
+		
+		
+		
 		
 
 	}

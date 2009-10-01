@@ -220,6 +220,8 @@ package org.axiis.core
 				return;		
 			
 			dispatchEvent(new Event("preRender"));	
+			
+			_referenceGeometryRepeater.millisecondsPerFrame=this.msPerRenderFrame;
 				
 			trimChildSprites();
 			

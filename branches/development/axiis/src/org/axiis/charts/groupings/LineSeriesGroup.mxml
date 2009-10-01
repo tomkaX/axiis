@@ -126,6 +126,7 @@
 
 
 			private var _seriesCollection:Object;
+			[Bindable]
 			private var _plotCollection:Object;
 
 			private var _prevCurvePath:Array;

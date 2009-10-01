@@ -62,8 +62,11 @@ package org.axiis.layouts.scale
 		 */
 		public function valueToLayout(value:*,invert:Boolean=false,clamp:Boolean = false):*
 		{
-			if(!(value is Number))
-				throw new Error("To use valueToLayout the value parameter must be a Number");
+			//Commented out 2 lines below as some of the layouts call this at component initialization when they do not have valid values
+			//Tg 10/1/09
+			
+			//if(!(value is Number))
+			//	throw new Error("To use valueToLayout the value parameter must be a Number");
 				
 			if(invalidated)
 				validate();

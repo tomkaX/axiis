@@ -10,7 +10,6 @@ package org.axiis.ui
 	import mx.core.Application;
 	import mx.core.IFactory;
 	import mx.core.UIComponent;
-	import mx.graphics.SolidColor;
 	
 	import org.axiis.core.IAxiisRenderer;
 
@@ -111,6 +110,13 @@ package org.axiis.ui
 		}
 		private var _index:int;
 		
+		/**
+		 * A static component that gets passed to any instance of this data tip
+		 * - gets set by the layout
+		 */
+		 [Bindable]
+		public var contentComponent:UIComponent;
+		
 		[Bindable(event="contentFactoryChange")]
 		/**
 		 * TODO Document contentFactory
@@ -206,7 +212,9 @@ package org.axiis.ui
 					removeChild(content);
 					content = null;
 				}
-				if(contentFactory)
+				if (contentComponent) 
+					content=contentComponent;
+				else if(contentFactory)
 					content = UIComponent(contentFactory.newInstance());
 				else
 					content = new TextDataTipContent();
@@ -235,8 +243,8 @@ package org.axiis.ui
 			//this.graphics.drawCircle(0,0,10);
 			
 			var screen:Rectangle = Application(Application.application).screen;
-			var contentWidth:Number = content.measuredWidth;
-			var contentHeight:Number = content.measuredHeight;
+			var contentWidth:Number = Math.max(content.measuredWidth,content.width);
+			var contentHeight:Number = Math.max(content.measuredHeight,content.height);
 			var contentX:Number = Math.max(-x,Math.min(screen.width - contentWidth - x,calloutWidth));
 			var contentY:Number = Math.max(-y,Math.min(screen.height - contentHeight - y,calloutHeight));
 			if(contentX < 0)

@@ -96,6 +96,11 @@ package org.axiis.layouts.utils
 		private var _iterationLoopComplete:Boolean = true;
 		
 		/**
+		 * Determines how many milliseconds repeater will iterate before waiting for the next frame;
+		 */
+		 public var millisecondsPerFrame:Number=50;
+		
+		/**
 		 * Begins the modifications process.
 		 * 
 		 * <p>
@@ -136,8 +141,7 @@ package org.axiis.layouts.utils
 			
 			
 			var app:Object = SystemManager.getSWFRoot(this)
-			var millisecondsPerFrame:Number = ( app != null && app.stage != null ) ? 
-													1000 / app.stage.frameRate : 50;
+
 			var startTime:int = getTimer();
 			var totalTime:int = 0;
 			while(totalTime < millisecondsPerFrame && currentIteration < numIterations)

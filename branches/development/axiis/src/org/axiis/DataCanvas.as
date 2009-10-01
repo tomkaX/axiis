@@ -327,7 +327,13 @@ package org.axiis
 					dataTip.label = axiisSprite.label;
 				dataTip.value = axiisSprite.value;
 				dataTip.index = axiisSprite.index;
+				dataTip.contentComponent = axiisSprite.layout.dataTipContentComponent;
+				
+				//This seems weird, why does axxisSprite need to know about the dataTipContent class?
+				//Not sure a factory pattern is what we want here
 				dataTip.contentFactory = axiisSprite.dataTipContentClass;
+				
+				
 				dataTips.push(dataTip);
 			}
 			

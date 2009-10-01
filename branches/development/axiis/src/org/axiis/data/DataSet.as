@@ -52,11 +52,13 @@ package org.axiis.data
 	import mx.utils.StringUtil;
 	
 	/**
-	 * This class is a data utility class that can be used for pre-proccesing of server side data into 
-	 * friendly collections that are easy to process within Axiis Layouts.
+	 * DataSet is a data utility class that can be used for pre-proccesing of external data into 
+	 * usable Flex collections that are easy to process within Axiis Layouts.
 	 * Axiis DOES NOT require you use this class for its visualizations and layouts.  Axiis Layouts are designed to 
 	 * work with Objects, Arrays, ArrayCollections, and XMLListCollections.   But, when using hierarchal layouts the Axiis framework does expect
 	 * parent child relationships are supported through parent-child object relationships.  
+	 * 
+	 * DataSet provides functionality to group, aggregate, pivot, and shape data.
 	 * It will support grouping on common fields with operations like sum, count, avg.
 	 * It will turn flat table (.csv/array) data into object level data.
 	 */
@@ -173,7 +175,42 @@ package org.axiis.data
 			
 			if (!_data) _data=new Object();
 			
-			_data["table"]=createTableFromCsv(payload,addSummaryFields);
+			_data["table"]=createTableFromDelimeter(",",payload,addSummaryFields);
+			
+			trace("DataSet.processCsvAsTable " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
+		}
+		
+			/**
+		 * Converts a TSV Payload into a table structure
+		 * 
+		 * <p>The structure has the following format:</p>
+		 * 
+		 * <p>
+		 * <ul>
+		 * <li>data.rows[]</li>
+		 * <ul>
+		 * <li>row.index = ordinal position</li>
+		 * <li>row.columns[] = array of columns</li>
+		 * <ul>
+		 * <li>column.index = ordinal position</li>
+		 * <li>column.name = header name for column</li>
+		 * <li> - column.value = value</li>
+		 * </ul>
+		 * </ul>
+		 * </ul>
+		 * </p>
+		 * 
+		 * @param payload The TSV formatted text to convert. 
+		 * @param addSummaryFields When true, this method will dynamically add
+		 * min and max values to each row for each column.
+		 */
+		public function processTsvAsTable(payload:String, addSummaryFields:Boolean=false):void {
+			var t:Number=flash.utils.getTimer();
+			//Convert CSV into data.row[n].col[n] format for dynamic object
+			
+			if (!_data) _data=new Object();
+			
+			_data["table"]=createTableFromDelimeter("\t",payload,addSummaryFields);
 			
 			trace("DataSet.processCsvAsTable " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
 		}
@@ -518,7 +555,7 @@ package org.axiis.data
 		 * Parses a CSV string into our private _dataRows
 		 * 
 		 */
-		private function createTableFromCsv(value:String, addSummaries:Boolean=false, firstRowIsHeader:Boolean=true, convertNullsToZero:Boolean=true):Object {
+		private function createTableFromDelimeter(delimiter:String, value:String, addSummaries:Boolean=false, firstRowIsHeader:Boolean=true, convertNullsToZero:Boolean=true):Object {
 			//First we need to use a regEx to find any string enclosed in Quotes - as they are being escaped
 			
 			var table:Object=new Object();
@@ -532,12 +569,14 @@ package org.axiis.data
 			var tempData:String="";
 			var pattern:RegExp = /"[^"]*"/g;
 			
+			
 			//Find anything enclosed in quotes
 			var arr:Array=temp.match(pattern);
 			for (var x:int=0;x<arr.length;x++) {
 				var s:String=arr[x];
-				var re:RegExp =/,/g;
-				s=s.replace(re,"&comma;");
+				//var re:RegExp =/,/g;
+				var re:RegExp=new RegExp(delimiter,"g");
+				s=s.replace(re,"&placeHolder;");
 				temp=temp.replace(arr[x],s);
 			}
 			
@@ -551,7 +590,7 @@ package org.axiis.data
 			if (rowArray.length==1) 
 				rowArray=temp.split("\r");
 
-			var header:Array=rowArray[0].split(",");
+			var header:Array=rowArray[0].split(delimiter);
 			
 			_colCount=header.length;
 			
@@ -559,7 +598,7 @@ package org.axiis.data
 			
 			for (var i:int=start;i<rowArray.length;i++) { 
 
-				var row:Array=rowArray[i].split(","); //Create a row
+				var row:Array=rowArray[i].split(delimiter); //Create a set of columns
 				var rowOutput:Object=new Object();
 				var cols:Columns=new Columns();
 				//We go through this cleanining stage to prepare raw CSV data
@@ -568,8 +607,8 @@ package org.axiis.data
 						
 						var dataCell:String=row[z];
 						//clean up commas encoding
-						var re1:RegExp=/\&comma;/g;
-						dataCell=dataCell.replace(re1,",");
+						var re1:RegExp=/\&placeHolder;/g;
+						dataCell=dataCell.replace(re1,delimiter);
 						
 						//Clean up any encoding quotes excel put it at front of cell
 						if (dataCell.charAt(0)=='"')

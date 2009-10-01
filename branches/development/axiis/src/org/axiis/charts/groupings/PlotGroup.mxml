@@ -43,13 +43,14 @@
 
 	<mx:Script>
 		<![CDATA[
+			import org.axiis.utils.ObjectUtils;
 			import com.degrafa.paint.SolidStroke;
 			import com.degrafa.core.IGraphicsStroke;
 			import com.degrafa.paint.SolidFill;
 			import com.degrafa.core.IGraphicsFill;
 			import com.degrafa.geometry.Geometry;
 
-			[Bindable]
+			[Bindable] 
 			/**
 			 * The fill applied to the circles.
 			 */
@@ -125,18 +126,18 @@
 	
 		<!--- @private -->
 		<degrafa:Circle id="plotCircle"
-			radius="{((radiusField !='' &amp;&amp; radiusField != null)  &amp;&amp; radiusScale.minLayout > Number.NEGATIVE_INFINITY) ? Number(radiusScale.valueToLayout(currentDatum[radiusField])) : defaultRadius }"
-			centerX="{Number(horizontalScale.valueToLayout(currentDatum[horizontalField]))}"
-			centerY="{Number(verticalScale.valueToLayout(currentDatum[verticalField],true))}"
+			radius="{((radiusField !='' &amp;&amp; radiusField != null)  &amp;&amp; radiusScale.minLayout > Number.NEGATIVE_INFINITY) ? Number(radiusScale.valueToLayout(ObjectUtils.getProperty(this,currentDatum,radiusField))) : defaultRadius }"
+			centerX="{Number(horizontalScale.valueToLayout(ObjectUtils.getProperty(this,currentDatum,horizontalField)))}"
+			centerY="{Number(verticalScale.valueToLayout(ObjectUtils.getProperty(this,currentDatum,verticalField),true))}"
 			fill="{plotFill}"
 			stroke="{plotStroke}"
 			filters="{[new DropShadowFilter(5,45,0,.4,5,plotCircle.radius*.2)]}"/>
 		
 		<!--- @private -->
 		<degrafa:Circle id="highlightCircle"
-			radius="{((radiusField !='' &amp;&amp; radiusField != null) &amp;&amp; radiusScale.minLayout > Number.NEGATIVE_INFINITY) ? Number(radiusScale.valueToLayout(currentDatum[radiusField])) + 4 : defaultRadius }"
-			centerX="{Number(horizontalScale.valueToLayout(currentDatum[horizontalField]))}"
-			centerY="{Number(verticalScale.valueToLayout(currentDatum[verticalField],true))}"
+			radius="{((radiusField !='' &amp;&amp; radiusField != null) &amp;&amp; radiusScale.minLayout > Number.NEGATIVE_INFINITY) ? Number(radiusScale.valueToLayout(ObjectUtils.getProperty(this,currentDatum,radiusField))) + 4 : defaultRadius }"
+			centerX="{Number(horizontalScale.valueToLayout(ObjectUtils.getProperty(this,currentDatum,horizontalField)))}"
+			centerY="{Number(verticalScale.valueToLayout(ObjectUtils.getProperty(this,currentDatum,verticalField),true))}"
 			stroke="{highlightStroke}"
 			visible="false"/>
 
@@ -160,8 +161,8 @@
 			width="{markerGeometry.width}"
 			height="{markerGeometry.height}"
 			visible="{showMarker}"
-			x="{Number(horizontalScale.valueToLayout(currentDatum[horizontalField]))-markerGeometry.width/2}"
-			y="{Number(verticalScale.valueToLayout(currentDatum[verticalField],true))-markerGeometry.height/2}"
+			x="{Number(horizontalScale.valueToLayout(ObjectUtils.getProperty(this,currentDatum,horizontalField)))-markerGeometry.width/2}"
+			y="{Number(verticalScale.valueToLayout(ObjectUtils.getProperty(this,currentDatum,verticalField),true))-markerGeometry.height/2}"
 			geometry="{[markerGeometry]}"/>
 
 	</layouts:drawingGeometries>

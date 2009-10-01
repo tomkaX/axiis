@@ -17,7 +17,7 @@ included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
 OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
@@ -65,6 +65,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 			counter=0;
 			var tempChars:String;
 			var t:Number=flash.utils.getTimer();
+			
+			
 			//Get biggest string (assumes some type of universal spacing
 			//Dont want to use textField in loop as it slows things down
 			for (var i:int=0; i < dataItems.length; i++) {
@@ -73,7 +75,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 			}
 			
 			var tf:TextField=new TextField();
-			tf.text=totalChars
+			tf.text=totalChars+"XX";
 			var tff:TextFormat = new TextFormat(fontFamily,fontSize,0,(fontWeight=="bold"));
 			maxWidth=tf.textWidth+this.labelPadding;
 			
@@ -84,58 +86,45 @@ OTHER DEALINGS IN THE SOFTWARE.
 		
 			
 			//Now figure out our spacing
-			itemWidth=(this.width-maxWidth*2)/(dataItems.length-2);
-		
-			repeatModulo=Math.ceil(maxWidth/itemWidth)+1;
 			
-			//If maxWidth is more than itemWidth it means we can not put a label at every item and must space them out
+			markerSpacing=this.width/(dataItems.length-1)
 			
-				var num:Number=Math.floor((dataItems.length-2)/(repeatModulo));
-				//trace("we have " + num + " labels");
+			var maxItems:int=Math.floor((this.width-maxWidth)/maxWidth);
+			
+			var maxMarkerWidth:int=Math.floor(markerSpacing*dataItems.length-2);
 
-				if (repeatModulo > 1)
-					startRepeat=Math.ceil((dataItems.length-2)-(num*repeatModulo));
-				else
-					startRepeat=0;
-
-				counter=repeatModulo;
-				
-		//	trace("maxWidth=" + maxWidth + " itemWidth=" + itemWidth + " repeatModulo=" + repeatModulo);
-			
+			lastX=0;
 
 		}
+		
+		private var markerSpacing:Number;
 		
 		private var startRepeat:Number;
 		private var maxWidth:Number;
 		private var itemWidth:Number;
 		private var repeatModulo:Number;
 		private var counter:int=1;
-		private var lastX:int;
+		private var lastX:int=0;
 		
 		private function onItemPreDraw():void {
 			label.x=line.x-(labelRotation == 0 ? label.textWidth/2 : maxWidth/2);
 			label.y=line.y1+5;
 			
-			if (currentIndex==0  || currentIndex == dataItems.length-1) {
+			if (currentIndex==0 || currentIndex==itemCount-1) {
 				line.visible=true;
 				label.visible=true;
+			}
+			else if (line.x-lastX >=maxWidth && line.x+maxWidth < this.width) {
 				lastX=line.x;
-			}
-			else if (currentIndex <= startRepeat || currentIndex >=dataItems.length-repeatModulo || line.x-lastX < maxWidth) {
-				label.visible=false;
-				line.visible=false;
-			}
-			else if (counter < repeatModulo) {
-				counter++;
-				label.visible=false;
-				line.visible=false;
+				line.visible=true;
+				label.visible=true;
 			}
 			else {
-				counter=1;
-				line.visible=true;
-				label.visible=true;
-				lastX=line.x;
+				line.visible=false;
+				label.visible=false;
 			}
+			
+			
 			
 			
 		}

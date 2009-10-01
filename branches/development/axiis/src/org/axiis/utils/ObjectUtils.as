@@ -64,7 +64,6 @@ package org.axiis.utils
 				{
 						var element:Object= obj[chain[0].substr(0, chain[0].indexOf("["))];
 						var index:String= (chain[0].substr(chain[0].indexOf("[")+1,chain[0].indexOf("]")-chain[0].indexOf("[")-1));
-						trace("index=" + index);
 						return getProperty(caller, element[index],chain.slice(1,chain.length).join("."));
 					}
 					
