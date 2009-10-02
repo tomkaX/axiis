@@ -28,7 +28,7 @@
 	</mx:Script>
 
 	<Examples:ExampleBackground subTitle="Custom Visualization"
-		title="Wedge Stack Graph"
+		title="Tree Map - Action Script Classes"
 		width="100%"
 		height="100%" /> 
 	
@@ -46,7 +46,7 @@
 	
 	<!-- If the colorScaleResult is positive, we use red, otherwise we use green -->
 	<axiis:NumericExpression id="currentColor"
-		value="{colorScaleResult.value &gt; 0 ? 0xff0000 : 0x00ff00}"/>
+		value="{colorScaleResult.value &gt; 0 ? 0x44FF33 : 0x3355FF}"/>
 	
 	<mx:VBox horizontalAlign="center"
 		top="70"
@@ -109,12 +109,18 @@
 								</degrafa:LinearGradientFill>
 							</degrafa:fill>
 							<degrafa:stroke>
-								<degrafa:SolidStroke color="0"/>
+								<degrafa:LinearGradientStroke angle="325">
+									<degrafa:GradientStop
+										color="{ColorUtil.adjustBrightness(currentColor.value, 0xff - Math.abs(colorScaleResult.value * 0xbb))}"/>
+									<degrafa:GradientStop
+										color="{ColorUtil.adjustBrightness(currentColor.value, 0xff - Math.abs(colorScaleResult.value * 0x66))}"/>
+								</degrafa:LinearGradientStroke>
+
 							</degrafa:stroke>
 						</degrafa:RegularRectangle>
 					
 						<!-- The text displaying the class name. Don't show it if the rectangle is too small. -->
-						<degrafa:RasterText text="{treemapLayout.currentDatum.name}"
+						<degrafa:RasterText text="{treemapLayout.currentDatum.name}" fontFamily="Myriad Pro"
 							x="{treemapLayout.currentReference.x}"
 							y="{treemapLayout.currentReference.y}"
 							width="{treemapLayout.currentReference.width}"
@@ -139,7 +145,7 @@
 			</axiis:layouts>
 		
 			<axiis:filters>
-				<mx:DropShadowFilter distance="10" blurX="8" blurY="8"/>
+				<mx:DropShadowFilter distance="3" blurX="4" blurY="4" alpha=".4"/>
 			</axiis:filters>
 		
 		</axiis:DataCanvas>

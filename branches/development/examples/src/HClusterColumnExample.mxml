@@ -76,7 +76,7 @@
 	<mx:String id="childLabelField">category</mx:String>
 	<mx:Number id="percentGap">.02</mx:Number>
 
-	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0" maxLayout="{hLayout.height}" id="vScale"/>
+	<axiis:LinearScale dataProvider="{dataProvider}" minLayout="0"  minValue="0" maxLayout="{hLayout.height}" id="vScale"/>
 
 	<axiis:DataCanvas top="100"
 		bottom="120"

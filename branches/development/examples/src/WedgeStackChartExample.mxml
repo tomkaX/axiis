@@ -164,8 +164,8 @@
 								propagateToAncestors="true"
 								propagateToDescendents="false"
 								targets="{[outerWedgeFill,outerWedgeGroup.wedge,outerWedgeGroup.label,innerWedgeGroup.label]}"
-								properties="{['color','outerRadius','textColor','textColor']}"
-								values="{[colorFunction,outerRadius.value*1.2,0xFFFFFF,0]}" />
+								properties="{['color','outerRadius','textColor','fontWeight']}"
+								values="{[colorFunction,outerRadius.value*1.2,0xFFFFFF,'bold']}" />
 						</axiis:states>
 
 					</axiis:WedgeStackGroup>
@@ -173,15 +173,15 @@
  				</axiis:layouts>
 
 				<axiis:states>
-					
+					 
 				<axiis:State enterStateEvent="mouseOver"
 						exitStateEvent="mouseOut"
 						propagateToAncestorsSiblings="false"
 						propagateToAncestors="false"
 						propagateToDescendents="true"
-						targets="{[innerWedgeFillStop1,outerWedgeGroup.label]}"	
-						properties="{['color','textColor']}"
-						values="{[colorFunction,0]}"/>
+						targets="{[innerWedgeFillStop1,outerWedgeFill, outerWedgeGroup ,outerWedgeGroup.label]}"	
+						properties="{['color','color','outerRadiusRatio','fontWeight']}"
+						values="{[colorFunction,colorFunction,1.1,'bold']}"/>
 						
 				</axiis:states>
 
