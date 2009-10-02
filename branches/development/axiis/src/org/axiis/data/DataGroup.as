@@ -3,11 +3,13 @@ package org.axiis.data
 	import mx.collections.ArrayCollection;
 	
 	/**
-	 * This class is supports the @class DataSet class for aggregation and grouping operations and should not be instantiated externally
+	 * This class is supports the DataSet class for aggregation and grouping operations and should not be instantiated externally
 	 */
 	public class DataGroup extends ArrayCollection
 	{
-		
+		/**
+		 * Constructor	
+		 */
 		public function DataGroup()
 		{
 		}

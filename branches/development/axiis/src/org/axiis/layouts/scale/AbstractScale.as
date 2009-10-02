@@ -31,6 +31,9 @@ package org.axiis.layouts.scale
 	import mx.collections.ArrayCollection;
 	import mx.events.CollectionEvent;
 
+	/**
+	 * Dispatched when the data in the becomes invalid and the new min, max, sum, and average need to be computed.
+	 */
 	[Event(name="invalidate",type="flash.events.Event")]
 	
 	/**
@@ -263,6 +266,9 @@ package org.axiis.layouts.scale
 			_invalidated = false;
 		}
 		
+		/**
+		 * @private
+		 */
 		protected function onCollectionChange(event:CollectionEvent):void
 		{
 			invalidate();

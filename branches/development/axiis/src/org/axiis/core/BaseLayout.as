@@ -29,11 +29,10 @@ package org.axiis.core
 	import flash.geom.*;
 	import flash.utils.*;
 	
-	import mx.core.IFactory;
-	
 	import org.axiis.events.LayoutItemEvent;
 	import org.axiis.states.State;
 	
+	import mx.core.IFactory;
 	
 	// TODO This event should be moved to AbstractLayout
 	/**
@@ -119,6 +118,16 @@ package org.axiis.core
 		{
 			super();
 		}
+		
+		/**
+		 * The value of the buttonMode flag to set for each child Sprite
+		 */
+		public var buttonMode:Boolean = false;
+		
+		/**
+		 * The value of the useHandCursor flag to set each child Sprite
+		 */
+		public var useHandCursor:Boolean = false;
 
 		private var allStates:Array = [];
 
@@ -148,12 +157,18 @@ package org.axiis.core
 		 */
 		public var inheritParentBounds:Boolean = true;
 		
+		/**
+		 * @private
+		 */
 		override public function set dataTipContentClass(value:IFactory) : void
 		{
 			super.dataTipContentClass = value;
 			invalidate();
 		}
 		
+		/**
+		 * @private
+		 */
 		override public function get childSprites():Array {
 			if (sprite)
 				return sprite.drawingSprites;	
@@ -213,8 +228,6 @@ package org.axiis.core
 				this.sprite = newSprite;
 			
 			_rendering = true;
-			_isRendering=true;
-			
 
 			if(!sprite || !_referenceGeometryRepeater)
 				return;		
@@ -258,6 +271,9 @@ package org.axiis.core
 
 		}
 		
+		/**
+		 * @private
+		 */
 		protected function findTopLayout():AbstractLayout
 		{
 			var topLayout:AbstractLayout = this;
@@ -268,6 +284,9 @@ package org.axiis.core
 			return topLayout;
 		}
 		
+		/**
+		 * @private
+		 */
 		protected function findAllStatesInLayoutTree(layout:AbstractLayout):Array
 		{
 			var toReturn:Array = [];
@@ -329,7 +348,6 @@ package org.axiis.core
 				newChildSprite.addEventListener(AxiisSprite.EVENT_UNSELECTED,sprite_onUnSelected);
 				newChildSprite.addEventListener(MouseEvent.MOUSE_MOVE,sprite_onMouseMove); 
 				sprite.addDrawingSprite(newChildSprite);
-			//	childSprites.push(newChildSprite);
 			}
 			var currentChild:AxiisSprite = AxiisSprite(sprite.drawingSprites[currentIndex]);
 			currentChild.data = currentDatum;
@@ -339,6 +357,8 @@ package org.axiis.core
 			
 			dispatchEvent(new Event("itemPreDraw"));
 			
+			currentChild.useHandCursor = useHandCursor;
+			currentChild.buttonMode = buttonMode;
 			currentChild.bounds = bounds;
 			currentChild.scaleFill = scaleFill;
 			var newAnchor:Point=new Point();
@@ -389,7 +409,6 @@ package org.axiis.core
 		{
 			sprite.visible = visible;
 			_rendering = false;
-			_isRendering = false;
 			this.dispatchEvent(new Event("renderComplete"));
 		}
 		

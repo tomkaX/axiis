@@ -11,6 +11,10 @@ package org.axiis.managers
 	
 	import org.axiis.core.AxiisSprite;
 
+	/**
+	 * FreeDataTipManager will lay out a single data tip that follows the cursor
+	 * as the user moves the mouse.
+	 */
 	public class FreeDataTipManager implements IDataTipManager
 	{
 		public function FreeDataTipManager()
@@ -19,6 +23,9 @@ package org.axiis.managers
 			systemManager = ApplicationGlobals.application.systemManager as ISystemManager;
 		}
 		
+		/**
+		 * @inheritDoc IDataTipManager#dataTips
+		 */
 		public function get dataTips():Array {
 			return [dataTip];
 		}
@@ -31,6 +38,9 @@ package org.axiis.managers
 		
 		private var axiisSprite:AxiisSprite;
 		
+		/**
+		 * @inheritDoc IDataTipManager#createDataTip
+		 */
 		public function createDataTip(dataTips:Array,context:UIComponent,axiisSprite:AxiisSprite):void
 		{
 			var dataTip:UIComponent=dataTips[0];
@@ -53,7 +63,9 @@ package org.axiis.managers
 			axiisSprite.addEventListener(MouseEvent.MOUSE_OUT,handleMouseOut);
 		}
 		
-		
+		/**
+		 * @private
+		 */
 		protected function calculateDataTipPosition(trigger:DisplayObject,context:DisplayObject):Point
 		{
 			var point:Point = new Point(trigger.mouseX,trigger.mouseY); 
@@ -62,6 +74,9 @@ package org.axiis.managers
 			return point;
 		}
 		
+		/**
+		 * @private
+		 */
 		protected function handleMouseMove(event:MouseEvent):void
 		{
 			if(context != null)
@@ -73,11 +88,17 @@ package org.axiis.managers
 			}
 		}
 		
+		/**
+		 * @private
+		 */
 		protected function handleMouseOut(event:MouseEvent):void
 		{
 			destroyAllDataTips();
 		}
 		
+		/**
+		 * @inheritDoc IDataTipManager#destroyAllDataTips
+		 */
 		public function destroyAllDataTips():void
 		{
 			if(context != null && dataTip != null && axiisSprite != null)

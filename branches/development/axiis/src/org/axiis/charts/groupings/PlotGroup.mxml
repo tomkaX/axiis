@@ -112,7 +112,7 @@
 	-->
 	<degrafa:SolidStroke id="highlightStroke" color="0xDDDD00" weight="2"/>
 	
-	<!--
+	<!---
 		The default radius to use when radiusField is not specified
 	-->
 	<mx:Number id="defaultRadius">6</mx:Number>

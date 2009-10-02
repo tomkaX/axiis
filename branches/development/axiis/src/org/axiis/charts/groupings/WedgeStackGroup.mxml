@@ -24,9 +24,7 @@
 	 OTHER DEALINGS IN THE SOFTWARE.
 -->
 <!---
-	 ColumStack groups a series of vertical columns vertically
-	 and labels them. This class is intended to be used to produce
-	 multi-series column charts.
+	 WedgeStackGroup renders a series of wedges along an arc. This is useful for creating radial visualizations, such pie charts.  
 -->
 <groupings:GroupingBase xmlns:mx="http://www.adobe.com/2006/mxml"
 						xmlns:degrafa="http://www.degrafa.com/2007"
@@ -75,6 +73,17 @@
 				}
 			}
 
+			/**
+			 * A function that is used to determine how each item in the
+			 * dataProvider should be labeled.
+			 *
+			 * <p>
+			 * The function takes a single parameter, the Object to be plotted,
+			 * and should return the String that should be placed on the axis.
+			 * The default implementation assumes that each Object is a String
+			 * and simply returns the argument.
+			 * </p>
+			 */
 			public var labelFunction:Function=internalLabelFunction;
 
 			public function internalLabelFunction(value:String):String
@@ -151,8 +160,10 @@
 	<!--- @private -->
 	<groupings:referenceRepeater>
 		<!-- innerRepeater: the reference repeater wedge for the inner ring of wedges -->
+		<!--- @private -->
 		<layoutUtils:GeometryRepeater id="innerRepeater">
 			<layoutUtils:geometry>
+				<!--- @private -->
 				<geometry:Wedge id="wedge"
 								centerX="{width/2}"
 								centerY="{width/2}"
@@ -174,6 +185,7 @@
 	<!--- @private -->
 	<groupings:drawingGeometries>
 		<!-- wedgeRenderer: the drawing geometry for the inner ring of wedges -->
+		<!--- @private -->
 		<geometry:Wedge x="0"
 						y="0"
 						id="wedgeRenderer"
@@ -185,13 +197,14 @@
 						centerY="{wedge.centerY}"
 						fill="{fill}"
 						stroke="{stroke}"/>
-
+		<!--- @private -->
 		<degrafa:RasterText id="label"
 							visible="{showDataLabel &amp;&amp; (chord > fontSize)}"
 							x="{center.value}"
 							y="{center.value-10}"
 							fontFamily="{fontFamily}"
 							fontSize="{fontSize}"
+							fontWeight="{fontWeight}"
 							text="{labelFunction.call(this,currentLabel)}"
 							autoSizeField="true"
 							autoSize="left"
@@ -199,15 +212,18 @@
 							antiAliasType="advanced">
 			<degrafa:transform>
 				<degrafa:TransformGroup>
+				<!--- @private -->
 					<degrafa:TranslateTransform id="labelTransform"
-												x="{wedge.outerRadius * labelRadiusRatio + ((alignTextOuter) ? label.textWidth:0) + ((transposeLabel.value) ? -label.textWidth-wedge.outerRadius*.02:0)) * Math.cos((wedge.startAngle + wedge.arc / 2) * Math.PI / 180}"
-												y="{wedge.outerRadius * labelRadiusRatio + ((alignTextOuter) ? label.textWidth:0) + ((transposeLabel.value) ? -label.textWidth-wedge.outerRadius*.02:0)) * Math.sin((wedge.startAngle + wedge.arc / 2) * Math.PI / 180}"/>
+												x="{wedge.outerRadius * labelRadiusRatio + ((alignTextOuter) ? label.textWidth:0) + ((transposeLabel.value) ? -label.textWidth-wedge.outerRadius*.02:0)) * Math.cos((wedgeRenderer.startAngle + wedge.arc / 2) * Math.PI / 180}"
+												y="{wedge.outerRadius * labelRadiusRatio + ((alignTextOuter) ? label.textWidth:0) + ((transposeLabel.value) ? -label.textWidth-wedge.outerRadius*.02:0)) * Math.sin((wedgeRenderer.startAngle + wedge.arc / 2) * Math.PI / 180}"/>
+				<!--- @private -->
 					<degrafa:RotateTransform id="innerTextRotate"
 											 registrationPoint="centerLeft"
-											 angle="{wedge.startAngle + wedge.arc / 2 + ((transposeLabel.value) ? 0:180)}"/>
+											 angle="{wedgeRenderer.startAngle + wedge.arc / 2 + ((transposeLabel.value) ? 0:180)}"/>
 				</degrafa:TransformGroup>
 			</degrafa:transform>
 		</degrafa:RasterText>
 
 	</groupings:drawingGeometries>
+	
 </groupings:GroupingBase>

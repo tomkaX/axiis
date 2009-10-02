@@ -47,7 +47,7 @@
 			/**
 			 * The stroke used to draw lines of the bracket.
 			 */
-			public var markerStroke:IGraphicsStroke=new SolidStroke(0xFFFFFF, .5, 1);
+			public var markerStroke:com.degrafa.core.IGraphicsStroke=new SolidStroke(0xFFFFFF, .5, 1);
 		]]>
 	</mx:Script>
 
@@ -85,6 +85,7 @@
 					  y="{this.y+height-height*.2}"
 					  y1="{this.y+height}"
 					  stroke="{markerStroke}"/>
+		<!--- @private -->
 		<degrafa:RasterText id="label"
 							htmlText="{labelValue}"
 							y="{this.y+height}"

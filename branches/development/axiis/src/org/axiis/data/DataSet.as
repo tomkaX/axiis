@@ -802,7 +802,7 @@ package org.axiis.data
 							newObject.groupName=groupName;
 							//Create summaries
 							if (summaryCols) {
-								for (var n:int=0;n<summaryCols.length;n++) {
+								for (n=0;n<summaryCols.length;n++) {
 									if ( ! tempCollection.sums[collection.getItemAt(y).columns[summaryCols[n]].name]) tempCollection.sums[collection.getItemAt(y).columns[summaryCols[n]].name]=0;
 									tempCollection.sums[collection.getItemAt(y).columns[summaryCols[n]].name]+=newObject.sums[collection.getItemAt(y).columns[summaryCols[n]].name];
 								}
@@ -810,7 +810,7 @@ package org.axiis.data
 						}
 						else { //We are at the last level in the group - use unique values
 						 	if (summaryCols) {
-								for (var n:int=0;n<summaryCols.length;n++) {
+								for (n=0;n<summaryCols.length;n++) {
 									if ( ! newObject.sums[collection.getItemAt(y).columns[summaryCols[n]].name]) newObject.sums[collection.getItemAt(y).columns[summaryCols[n]].name]=0;
 									newObject.sums[collection.getItemAt(y).columns[summaryCols[n]].name]+=collection.getItemAt(y).columns[summaryCols[n]].value;
 								}

@@ -4,6 +4,9 @@ package com.degrafa.geometry
 	import com.degrafa.geometry.RoundedRectangleComplex;
 	
 	[Bindable]
+	/**
+	 * CalloutBalloon is the Geometry used to render the default Axiis data tip.
+	 */
 	public class CalloutBalloon extends RoundedRectangleComplex
 	{
 		private var _calloutY:Number;
@@ -54,9 +57,12 @@ package com.degrafa.geometry
 			
 		}	
 		
-		
+		/**
+		 * Constructor.
+		 */
 		public function CalloutBalloon()
 		{
+			super();
 		}
 		
 		override public function preDraw():void {

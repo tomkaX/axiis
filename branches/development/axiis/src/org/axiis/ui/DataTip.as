@@ -13,8 +13,14 @@ package org.axiis.ui
 	
 	import org.axiis.core.IAxiisRenderer;
 
+	/**
+	 * A data tip is a tool tip that appears when the user mouses over an AxiisSprite.
+	 */
 	public class DataTip extends UIComponent implements IAxiisRenderer
 	{
+		/**
+		 * Constructor.
+		 */
 		public function DataTip()
 		{
 			super();
@@ -24,15 +30,24 @@ package org.axiis.ui
 		
 		private var contentFactoryDirty:Boolean = true;
 		
+		/**
+		 * @private
+		 */
 		protected var content:UIComponent;
 		
+		/**
+		 * @private
+		 */
 		protected var backgroundGeometry:GeometryGroup;
 		
+		/**
+		 * @private
+		 */
 		protected var callout:CalloutBalloon;
 		
 		[Bindable(event="labelChange")]
 		/**
-		 * TODO Document label
+		 * @inheritDoc IAxiisRenderer#label
 		 */
 		public function get label():String
 		{
@@ -52,7 +67,7 @@ package org.axiis.ui
 		
 		[Bindable(event="dataChange")]
 		/**
-		 * TODO Document data
+		 * @inheritDoc IAxiisRenderer#data
 		 */
 		public function get data():Object
 		{
@@ -72,7 +87,7 @@ package org.axiis.ui
 		
 		[Bindable(event="valueChange")]
 		/**
-		 * TODO Document value
+		 * @inheritDoc IAxiisRenderer#value
 		 */
 		public function get value():Object
 		{
@@ -92,7 +107,7 @@ package org.axiis.ui
 		
 		[Bindable(event="indexChange")]
 		/**
-		 * TODO Document index
+		 * @inheritDoc IAxiisRenderer#index
 		 */
 		public function get index():int
 		{
@@ -110,16 +125,16 @@ package org.axiis.ui
 		}
 		private var _index:int;
 		
+		[Bindable]
 		/**
-		 * A static component that gets passed to any instance of this data tip
-		 * - gets set by the layout
+		 * A static component that gets passed to any instance of this data tip - gets set by the layout
 		 */
-		 [Bindable]
 		public var contentComponent:UIComponent;
 		
 		[Bindable(event="contentFactoryChange")]
 		/**
-		 * TODO Document contentFactory
+		 * A ClassFactory that is used as this data tip's content. The default content renderer is the TextDataTipContent,
+		 * which simply renders the label for the datum.
 		 */
 		public function get contentFactory():IFactory
 		{
@@ -140,7 +155,7 @@ package org.axiis.ui
 		
 		[Bindable(event="calloutWidthChange")]
 		/**
-		 * TODO Document calloutWidth
+		 * The width of the tail of the background callout balloon.
 		 */
 		public function get calloutWidth():Number
 		{
@@ -159,7 +174,7 @@ package org.axiis.ui
 		
 		[Bindable(event="calloutHeightChange")]
 		/**
-		 * TODO Document calloutHeight
+		 * The height of the tail of the background callout balloon.
 		 */
 		public function get calloutHeight():Number
 		{

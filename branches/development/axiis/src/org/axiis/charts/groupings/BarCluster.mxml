@@ -24,7 +24,7 @@
 	 OTHER DEALINGS IN THE SOFTWARE.
 -->
 <!---
-	 BarCluster which groups a series of bars together vertically
+	 BarCluster groups a series of bars together vertically
 	 and labels them. This class is intended to be used to produce multi-series
 	 bar charts.
 -->

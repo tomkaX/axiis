@@ -70,16 +70,17 @@ OTHER DEALINGS IN THE SOFTWARE.
 			private var _labelInterval:Number;
 			
 			[Bindable]
+			/**
+			 * The scale used to determine the text of each label.
+			 */
+			public function get verticalScale():IScale {
+				return _verticalScale;
+			}
 			public function set verticalScale(value:IScale):void {
 				removeScaleListeners();
 				_verticalScale=value;
 				addScaleListeners();
 			}
-			
-			public function get verticalScale():IScale {
-				return _verticalScale;
-			}
-			
 			private var _verticalScale:IScale;
 			
 			private function addScaleListeners():void {

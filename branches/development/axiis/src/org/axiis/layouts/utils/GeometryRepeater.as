@@ -78,11 +78,15 @@ package org.axiis.layouts.utils
 		{
 			return _currentIteration;
 		}
-		private function set currentIteration(value:int):void
+		private function set _currentIteration(value:int):void
 		{
-			_currentIteration = value;
+			__currentIteration = value;
 		}
-		private var _currentIteration:int = -1;
+		private function get _currentIteration():int
+		{
+			return __currentIteration;
+		}
+		private var __currentIteration:int = -1;
 		
 		/**
 		 * A flag indicating that the GeometryRepeater has finished repeating
@@ -129,7 +133,7 @@ package org.axiis.layouts.utils
 			
 			_iterationLoopComplete = false;
 			clearTimeout(timerID);
-			currentIteration = 0;
+			_currentIteration = 0;
 			repeatHelper(numIterations,preIterationCallback,postIterationCallback,completeCallback);
 		}
 		
@@ -159,7 +163,7 @@ package org.axiis.layouts.utils
 						modifier.apply();
 					}
 				}
-				currentIteration++;
+				_currentIteration++;
 				
 				if (postIterationCallback != null)
 					postIterationCallback.call(this);

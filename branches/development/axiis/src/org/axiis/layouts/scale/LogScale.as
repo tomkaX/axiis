@@ -41,6 +41,9 @@ package org.axiis.layouts.scale
 		private var logOfBase:Number;
 		
 		[Bindable(event="baseChange")]
+		/**
+		 * The base of the logarithm used in the scale
+		 */
 		public function get base():Number
 		{
 			return _base;

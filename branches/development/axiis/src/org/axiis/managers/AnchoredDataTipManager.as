@@ -11,6 +11,13 @@ package org.axiis.managers
 	
 	import org.axiis.core.AxiisSprite;
 
+	/**
+	 * AnchoredDataTipManager will lay out a single data tip at a fixed point.
+	 * The data tip will be anchored at the dataTipAnchorPosition of the
+	 * AxiisSprite the user is interacting with. AxiisSprites have their
+	 * dataTipAnchorPosition set during their parentLayout's render cycle based
+	 * on the parentLayout's dataTipAnchorPosition.
+	 */
 	public class AnchoredDataTipManager implements IDataTipManager
 	{
 		public function AnchoredDataTipManager()
@@ -19,6 +26,9 @@ package org.axiis.managers
 			systemManager = ApplicationGlobals.application.systemManager as ISystemManager;
 		}
 		
+		/**
+		 * @inheritDoc IDataTipManager#dataTips
+		 */
 		public function get dataTips():Array {
 			return _dataTips;
 		}
@@ -31,7 +41,9 @@ package org.axiis.managers
 		
 		private var axiisSprites:Array = [];
 
-		
+		/**
+		 * @inheritDoc IDataTipManager#createDataTip
+		 */
 		public function createDataTip(_dataTips:Array,context:UIComponent,axiisSprite:AxiisSprite):void
 		{
 			var dataTip:UIComponent=_dataTips[0];
@@ -49,6 +61,9 @@ package org.axiis.managers
 			//axiisSprite.addEventListener(MouseEvent.MOUSE_MOVE,handleMouseMove);
 		}
 		
+		/**
+		 * @private
+		 */
 		protected function calculateDataTipPosition(trigger:AxiisSprite,context:DisplayObject):Point
 		{
 			var point:Point=trigger.localToGlobal(trigger.dataTipAnchorPoint);
@@ -56,17 +71,26 @@ package org.axiis.managers
 			return point;
 		}
 		
+		/**
+		 * @private
+		 */
 		protected function handleMouseOut(event:MouseEvent):void
 		{
 			destroyAllDataTips();
 		}
 		
+		/**
+		 * @private
+		 */
 		protected function handleMouseMove(event:MouseEvent):void
 		{
 			//trace("mousing move");
 			
 		}
 		
+		/**
+		 * @inheritDoc IDataTipManager#destroyAllDataTips
+		 */
 		public function destroyAllDataTips():void
 		{
 			while (_dataTips.length > 0)

@@ -85,18 +85,6 @@
 				}
 			}
 			
-			public function set additionalGeometries(value:IGeometryComposition) {
-				_additionalGeometries=value;
-				geomPlaceholder.geometry=[_additionalGeometries];
-			}
-			
-			public function get additionalGeometries():IGeometryComposition {
-				return _additionalGeometries;
-			}
-			
-			[Bindable]
-			private var _additionalGeometries:IGeometryComposition;
-			
 			private var _showValueLabel:Boolean=true;
 		]]>
 	</mx:Script>
@@ -104,6 +92,9 @@
 	<!--- @private -->
 	<mx:Number id="percentGap">.05</mx:Number>
 	
+	<!---
+		The minimum width of each column
+	-->
 	<mx:Number id="minColumnWidth">15</mx:Number>
 
 	<!---
@@ -118,7 +109,8 @@
 	<!--- @private -->
 	<utils:NumericExpression id="valueLabelLayout"
 							 value="{column.y-valueLabel.height-3 + (currentValue >= 0 ? 0:column.height+valueLabel.height+3)}"/>
-							 
+	
+	<!--- @private -->
 	<geom:Point id="dataTipPoint" x="{column.x+column.width/2}" y="{column.y}"/>
 
 	<groupings:referenceRepeater>
@@ -184,11 +176,12 @@
 							fontFamily="{dataFontFamily}"
 							fontWeight="{dataFontWeight}"/>
 
-		<!-- @private -->
+		<!--- @private -->
 		<degrafa:RegularRectangle id="geomPlaceholder" width="{this.width}" height="{this.height}" />
 		
 	</groupings:drawingGeometries>
 	<groupings:fills>
+		<!--- @private -->
 		<degrafa:SolidFill id="rollOverFill"
 						   color="0xDDDD00"
 						   alpha=".6"/>

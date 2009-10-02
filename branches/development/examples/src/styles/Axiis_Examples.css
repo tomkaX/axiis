@@ -9,8 +9,3 @@
     fontFamily: "Myriad Pro";
     fontWeight: bold;
 }
-
-ToolTip
-{
-	borderSkin:ClassReference('org.axiis.core.HTMLToolTip');
-}

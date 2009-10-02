@@ -48,11 +48,10 @@ package org.axiis.core
 	 */
 	[Event(name="itemDataTip", type="flash.events.Event")]
 
-	// TODO To keep this as abstract as possible, we could make this not officially implement the interface
 	/**
-	 * AbstractLayout is an base class that provides basic implementations or
-	 * stubs of methods defined in the ILayout interface. It is up to th
-	 * subclass to appropriately override these implementations.
+	 * AbstractLayout is an base class that provides definitions of properties and
+	 * stubs for methods required by BaseLayout. It is up to the subclass to appropriately
+	 * override these implementations.
 	 */
 	public class AbstractLayout extends EventDispatcher
 	{
@@ -64,14 +63,15 @@ package org.axiis.core
 			super();
 		}
 		
+		/**
+		 * The IDataTipManager responsible for laying out data tips for children of this layout.
+		 */
+		public function get dataTipManager():IDataTipManager {
+			return _dataTipManager;
+		}
 		public function set dataTipManager(value:IDataTipManager):void {
 			_dataTipManager=value;
 		}
-
-		public function get dataTipManager():IDataTipManager {
-			return _dataTipManager;
-		}		
-		
 		private var _dataTipManager:IDataTipManager=new AnchoredDataTipManager;
 		
 		[Bindable]
@@ -95,22 +95,11 @@ package org.axiis.core
 		 */
 		public var palettes:Array = [];
 		
-		// TODO We have "rendering" and "isRendering".  We need to remove one
-		// I prefer 'isRendering', more descriptive to me - TG
-		/**
-		 * Indicates that this layout is currently running its render cycle.
-		 */
-		public function get isRendering():Boolean {
-			return _isRendering;
-		}
-		/**
-		 * @private
-		 */
-		protected var _isRendering:Boolean=false;
-		
 		[Bindable]
 		/**
-		 * @copy ILayout#visible
+		 * Whether or not this layout is visible. Layouts that are not visible
+		 * will return from their render methods immediately after they are
+		 * called without making any changes to the display list.
 		 */
 		public function get visible():Boolean
 		{
@@ -123,7 +112,8 @@ package org.axiis.core
 		private var _visible:Boolean=true;
 
 		/**
-		 * @copy ILayout#showDataTips
+		 * A flag that indicates to DataCanvas that it should listen for mouse
+		 * events that signal the need to create a data tip.
 		 */
 		public function get showDataTips():Boolean
 		{
@@ -137,7 +127,7 @@ package org.axiis.core
 		
 		[Bindable]
 		/**
-		 * @copy ILayout#parentLayout
+		 * A reference to the layout that contains this layout.
 		 */
 		public function get parentLayout():AbstractLayout
 		{
@@ -151,7 +141,7 @@ package org.axiis.core
 
 		[Bindable(event="boundsChange")]
 		/**
-		 * @copy ILayout#bounds
+		 * A rectangle that acts as the bounding area for this layout
 		 */
 		public function get bounds():Rectangle
 		{
@@ -199,7 +189,7 @@ package org.axiis.core
 		
 		[Bindable(event="itemCountChange")]
 		/**
-		 * @copy ILayout#itemCount
+		 * The number of items in the dataProvider.
 		 */
 		public function get itemCount():int
 		{
@@ -256,7 +246,14 @@ package org.axiis.core
 		
 		[Bindable(event="dataProviderChange")]
 		/**
-		 * @copy ILayout#dataProvider
+		 * An Array, ArrayCollection, or Object containing the data this layout
+		 * should render.
+		 * 
+		 * <p>
+		 * If this property is Array or ArrayCollection the layout should render
+		 * each item. If this property is an Object, it should use an array of
+		 * the object's properties as they are exposed in a for..each loop.
+		 * </p> 
 		 */
 		public function get dataProvider():Object
 		{
@@ -287,6 +284,9 @@ package org.axiis.core
 			return _dataFilterIndex;
 		}
 		
+		/**
+		 * @private
+		 */
 		protected var _dataFilterIndex:Number=-1;
 		
 		// TODO This should really be renamed. It *validates* the dataProvider more than it invalidates it. Perhaps we could use a method that returns the dataItems rather than setting them directly.
@@ -365,7 +365,8 @@ package org.axiis.core
 		
 		[Bindable(event="currentIndexChange")]
 		/**
-		 * @copy ILayout#currentIndex
+		 * The index of the item in the dataProvider that the layout is
+		 * currently rendering.
 		 */
 		public function get currentIndex():int
 		{
@@ -393,16 +394,16 @@ package org.axiis.core
 		
 		[Bindable(event="currentDatumChange")]
 		/**
-		 * @copy ILayout#currentDatum
+		 * The item in the dataProvider that the layout is currently rendering.
 		 */
-		public function get currentDatum():Object
+		public function get currentDatum():*
 		{
 			return _currentDatum;
 		}
 		/**
 		 * @private
 		 */
-		protected function set _currentDatum(value:Object):void
+		protected function set _currentDatum(value:*):void
 		{
 			//if(value != __currentDatum)
 			{
@@ -413,24 +414,26 @@ package org.axiis.core
 		/**
 		 * @private
 		 */
-		protected function get _currentDatum():Object
+		protected function get _currentDatum():*
 		{
 			return __currentDatum;
 		}
-		private var __currentDatum:Object;
+		private var __currentDatum:*;
 		
 		[Bindable(event="currentValueChange")]
 		/**
-		 * @copy ILayout#currentValue
+		 * The value of the item in the dataProvider that the layout is
+		 * currently rendering, as determined by taking currentDatum[dataField],
+		 * if a dataField is defined.
 		 */
-		public function get currentValue():Object
+		public function get currentValue():*
 		{
 			return _currentValue;
 		}
 		/**
 		 * @private
 		 */
-		protected function set _currentValue(value:Object):void
+		protected function set _currentValue(value:*):void
 		{
 			//if(value != __currentValue)
 			{
@@ -441,16 +444,18 @@ package org.axiis.core
 		/**
 		 * @private
 		 */
-		protected function get _currentValue():Object
+		protected function get _currentValue():*
 		{
 			return __currentValue;
 		}
-		private var __currentValue:Object=0;
+		private var __currentValue:*;
 		
 		[Bindable(event="currentLabelChange")]
 		// TODO the label function should be applied somewhere other than the getter
 		/**
-		 * @copy ILayout#currentLabel
+		 * The label of the item in the dataProvider that the layout is
+		 * currently rendering, as determine by taking currentDatum[labelField],
+		 * if a labelField is defined.
 		 */
 		public function get currentLabel():String
 		{
@@ -481,7 +486,9 @@ package org.axiis.core
 		
 		[Bindable(event="currentReferenceChange")]
 		/**
-		 * @copy ILayout#currentReference
+		 * The geometry that is being used to render the current data item as it
+		 * appears after the necessary iterations of the referenceRepeater have
+		 * been executed. 
 		 */
 		public function get currentReference():Geometry  
 		{
@@ -508,7 +515,8 @@ package org.axiis.core
 		
 		[Bindable(event="dataFieldChange")]
 		/**
-		 * @copy ILayout#dataField
+		 * The property within each item in the dataProvider that contains the
+		 * field used to determine the value of the item.
 		 */
 		public function get dataField():Object
 		{
@@ -530,7 +538,8 @@ package org.axiis.core
 		
 		[Bindable(event="labelFieldChange")]
 		/**
-		 * @copy ILayout#labelField
+		 * The property within each item in the dataProvider that contains the
+		 * field used to determine the label for the item. 
 		 */
 		public function get labelField():Object
 		{
@@ -553,7 +562,8 @@ package org.axiis.core
 			
 		[Bindable(event="xChange")]
 		/**
-		 * @copy ILayout#x
+		 * The horizontal position of the top left corner of this layout within
+		 * its parent.
 		 */
 		public function get x():Number
 		{
@@ -572,7 +582,8 @@ package org.axiis.core
 		
 		[Bindable(event="yChange")]
 		/**
-		 * @copy ILayout#y
+		 * The vertical position of the top left corner of this layout within
+		 * its parent.
 		 */
 		public function get y():Number
 		{
@@ -591,7 +602,7 @@ package org.axiis.core
 		
 		[Bindable(event="widthChange")]
 		/**
-		 * @copy ILayout#width
+		 * The width of the layout.
 		 */
 		public function get width():Number
 		{
@@ -610,7 +621,7 @@ package org.axiis.core
 		
 		[Bindable(event="heightChange")]
 		/**
-		 * @copy ILayout#height
+		 * The height of the layout.
 		 */
 		public function get height():Number
 		{
@@ -628,8 +639,8 @@ package org.axiis.core
 		private var _height:Number=0;
 		
 		/**
-		 * Registers a DisplayObject as the owner of this ILayout.
-		 * Throws an error if the ILayout already has an owner.
+		 * Registers a DisplayObject as the owner of this layout.
+		 * Throws an error if the layout already has an owner.
 		 */
 		public function registerOwner(dataCanvas:DataCanvas):void  
 		{
@@ -652,7 +663,7 @@ package org.axiis.core
 		protected var owner:DataCanvas;
 		
 		/**
-		 * @copy ILayout#childSprites
+		 * The AxiisSprites this layout has created to render each item in its dataProvider.
 		 */
 		public function get childSprites():Array
 		{
@@ -666,7 +677,6 @@ package org.axiis.core
 		 */
 		public var name:String = "";
 		
-		
 		/**
 		 * Determines how long (milliseconds) a layout will spend on a given frame to render X number of datums
 		 * 
@@ -675,7 +685,7 @@ package org.axiis.core
 		
 		[Bindable(event="layoutsChange")]
 		/**
-		 * @copy ILayout#layouts
+		 * The layouts that should be displayed within this layout. 
 		 */
 		public function get layouts():Array
 		{
@@ -728,7 +738,13 @@ package org.axiis.core
 		
 		[Bindable(event="dataTipLabelFunctionChange")]
 		/**
-		 * @copy ILayout#dataTipLabelFunction
+		 * A method used to determine the text that appears in the data tip for
+		 * an item rendered by this layout.
+		 * 
+		 * <p>
+		 * This method takes one argument, the item to determine the label for,
+		 * and returns a String, the text to show in the data tip.
+		 * </p>
 		 */
 		public function get dataTipLabelFunction():Function
 		{
@@ -744,28 +760,11 @@ package org.axiis.core
 		}
 		private var _dataTipLabelFunction:Function=dataTipFunction;
 		
-		[Bindable(event="dataTipPositionFunctionChange")]
-		/**
-		 * @copy ILayout#dataTipLabelFunction
-		 */
-		public function get dataTipPositionFunction():Function
-		{
-			return _dataTipPositionFunction;
-		}
-		public function set dataTipPositionFunction(value:Function):void
-		{
-			if(value != _dataTipPositionFunction)
-			{
-				_dataTipPositionFunction = value;
-				dispatchEvent(new Event("dataTipPositionFunctionChange"));
-			}
-		}
-		private var _dataTipPositionFunction:Function;
-		
 		[Inspectable(category="General")]
 		[Bindable(event="referenceRepeaterChange")]
 		/**
-		 * @copy ILayout#referenceRepeater
+		 * A GeometryRepeater that will be applied to the drawingGeometries once
+		 * for each item in the dataProvider.
 		 */
 		public function get referenceRepeater():GeometryRepeater
 		{
@@ -787,7 +786,12 @@ package org.axiis.core
 	
 		[Bindable(event="geometryChange")]
 		/**
-		 * @copy ILayout#drawingGeometries
+		 * An array of geometries that should be drawn for each item in the data
+		 * provider. You can modify these items by using GeometryRepeaters
+		 * and PropertyModifiers.
+		 * 
+		 * @see GeometryRepeater
+		 * @see PropertyModifier
 		 */
 		public function get drawingGeometries():Array
 		{
@@ -807,6 +811,10 @@ package org.axiis.core
 		/**
 		 * The sprite this layout is currently rendering to.
 		 */
+		protected function get sprite():AxiisSprite
+		{
+			return _sprite;
+		}
 		protected function set sprite(value:AxiisSprite):void
 		{
 			if(value != _sprite)
@@ -815,14 +823,11 @@ package org.axiis.core
 				dispatchEvent(new Event("spriteChange"));
 			}
 		}
-		protected function get sprite():AxiisSprite
-		{
-			return _sprite;
-		}
 		private var _sprite:AxiisSprite;
 		
 		/**
-		 * @copy ILayout#getSprite
+		 * Returns the Sprite associated with this layout if owner is
+		 * in fact the owner of this layout.
 		 */
 		public function getSprite(owner:DataCanvas):Sprite
 		{
@@ -831,16 +836,25 @@ package org.axiis.core
 			return sprite;
 		}
 		
-		/** 
+		/**
 		 * Draws this layout to the specified AxiisSprite.
+		 * 
+		 * <p>
+		 * If no sprite is provided this layout will use the last AxiisSprite
+		 * it rendered to, if such an AxiisSprite exists. Otherwise this returns
+		 * immediately.
+		 * </p> 
+		 * 
+		 * <p>
+		 * This method is meant to be overridden by a subclass.
+		 * </p>
 		 * 
 		 * @param sprite The AxiisSprite this layout should render to.
 		 */
-		public function render(newSprite:AxiisSprite = null):void {
-			//Meant to be overridden by concrete classes
+		public function render(newSprite:AxiisSprite = null):void
+		{
 		}
 		
-		// TODO this should be in ILayout
 		/**
 		 * Notifies the DataCanvas that this layout needs to be rendered. 
 		 */
@@ -853,8 +867,12 @@ package org.axiis.core
 		
 		[Bindable(event="renderingChange")]
 		/**
-		 * @copy ILayout#rendering 
+		 * Whether or not this layout is currently in a render cycle. Rendering
+		 * can take place over several frames. By watching this property you
+		 * can take an appropriate action handle artifacts for multiframe
+		 * rendering, such as hiding the layout entirely.
 		 */
+
 		public function get rendering():Boolean
 		{
 			return _rendering;
@@ -881,8 +899,8 @@ package org.axiis.core
 		
 		[Bindable(event="dataTipAnchorPointChange")]
 		/**
-		 * TODO Document dataTipAnchorPoint
-		 * Assumes ANY object with an x and y value :)
+		 * An Object with x and y values used to determine the location of anchored data tips. By using
+		 * the currentReference, you can update this value during the render cycle.
 		 */
 		public function get dataTipAnchorPoint():Object
 		{
@@ -900,11 +918,11 @@ package org.axiis.core
 		private var _dataTipAnchorPoint:Object;
 
 		[Bindable(event="dataTipContentClassChange")]
+		// NOTE : Not sure that a factory pattern is what we want here.
+		// *  1. It makes it difficult to get access to the concrete class at run time
+		// *  2. It might be memory intensive, and easier to pass around a single class that is arleady in memory
 		/**
-		 * TODO Document dataTipContentClass
-		 * NOTE : Not sure that a factory pattern is what we want here.
-		 *  1. It makes it difficult to get access to the concrete class at run time
-		 *  2. It might be memory intensive, and easier to pass around a single class that is arleady in memory
+		 * A ClassFactory that creates the UIComponent that should be used in the data tip for this AxiisSprite.  
 		 */
 		public function get dataTipContentClass():IFactory
 		{
@@ -923,9 +941,7 @@ package org.axiis.core
 		
 		[Bindable(event="dataTipContentComponentChange")]
 		/**
-		 * dataTipContentComponent
-		 * 
-		 * Used by the data tip of this layout
+		 * A component that gets passed to any data tip.
 		 */
 		public function get dataTipContentComponent():UIComponent
 		{
@@ -946,10 +962,18 @@ package org.axiis.core
 			this.dispatchEvent(new LayoutItemEvent("itemDataTip",e.item,e.sourceEvent));
 		}
 		
+		/**
+		 * Uses ObjectUtils.getProperty(this,obj,propertyName) to get a property on an object.
+		 * 
+		 * @see ObjectUtils#getProperty
+		 */
 		public function getProperty(obj:Object,propertyName:Object):* { 
 			return ObjectUtils.getProperty(this,obj,propertyName);
 		}
 		
+		/**
+		 * Marks all children as deselected.
+		 */
 		protected function deselectChildren():void {
 			for (var i:int=0; i<childSprites.length;i++) {
 				AxiisSprite(childSprites[i]).selected=false;

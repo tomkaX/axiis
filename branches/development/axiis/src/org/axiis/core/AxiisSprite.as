@@ -66,7 +66,9 @@ package org.axiis.core
 		 */
 		protected var stateToSpriteHash:Dictionary = new Dictionary();
 		
-		// TODO Document dataTipAnchorPoint
+		/**
+		 * A point relative to the parentLayout that determines where anchored data tips should be positioned.
+		 */
 		public function get dataTipAnchorPoint():Point {
 			if (_dataTipAnchorPoint)  {
 				return _dataTipAnchorPoint;
@@ -76,7 +78,6 @@ package org.axiis.core
 			}
 				
 		}
-		
 		public function set dataTipAnchorPoint(value:Point):void {
 			_dataTipAnchorPoint=value;
 		}
@@ -86,19 +87,30 @@ package org.axiis.core
 		//Stores maximum bounds of all geometries
 		private var _maxBounds:Rectangle;
 		
-		// TODO Document dataTipContentClass
+		/**
+		 * A ClassFactory that creates the UIComponent that should be used in the data tip for this AxiisSprite.  
+		 */
 		public var dataTipContentClass:IFactory;
 		
+		/**
+		 * The label for the object rendered. This is the same label the object took on during the layout render cycle.
+		 */
 		public var label:String;
 		
+		/**
+		 * The value of the object being rendered. This is the same value the object took on during the layout render cycle.
+		 */
 		public var value:Object;
 		
+		/**
+		 * The index into the layout's dataProvider where <code>data</code> is found.
+		 */
 		public var index:int;
 		
+		[Bindable]
 		/**
 		 * Selected will trigger on/off by double click state
 		 */
-		[Bindable]
 		public var selected:Boolean=false;
 		
 		/**
@@ -149,6 +161,10 @@ package org.axiis.core
 		 *  
 		 * @see State
 		 */
+		public function get states():Array
+		{
+			return _states;
+		}
 		public function set states(value:Array):void
 		{
 			if(value != _states)
@@ -166,10 +182,6 @@ package org.axiis.core
 					}
 				}
 			}
-		}
-		public function get states():Array
-		{
-			return _states;
 		}
 		private var _states:Array = [];
 		
@@ -394,12 +406,17 @@ package org.axiis.core
 			}
 		}
 		
-		
+		/**
+		 * The state the AxiisSprite is currently renderering
+		 */
 		public function get activeState():State {
 			return _activeState;
 		}
 		
 		[Bindable]
+		/**
+		 * @private
+		 */
 		protected var _activeState:State;
 		
 		/**

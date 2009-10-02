@@ -157,6 +157,7 @@
 				markerGeometry="{marker}"
 				height="{dc.height-15}"
 				width="{dc.width-15}"
+				showDataTips="false"
 				x="15">
 			</axiis:PlotGroup>
 		</axiis:layouts>

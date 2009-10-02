@@ -36,6 +36,9 @@ package org.axiis.layouts.scale
 	 */
 	public class CategoricalScale extends AbstractScale implements IScale
 	{
+		/**
+		 * A sorting method used to determine the order of the objects in the dataProvider
+		 */
 		public var sort:Sort;
 		
 		/**

@@ -1,6 +1,8 @@
 package org.axiis.layouts.scale
 {
-
+	/**
+	 * An all-static class which provides basic linear interpolation methods
+	 */
 	public class ScaleUtils
 	{
 		/**

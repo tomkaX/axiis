@@ -69,9 +69,15 @@ OTHER DEALINGS IN THE SOFTWARE.
 			private var _labelInterval:Number;
 			
 			[Bindable]
+			/**
+			 * The scale used to determine the text of each label.
+			 */
 			public var horizontalScale:IScale;
 			
 			[Bindable]
+			/**
+			 * The rotation, in degress, of the labels.
+			 */
 			public var labelAngle:Number=0;
 			
 			private function onValueChanged():void

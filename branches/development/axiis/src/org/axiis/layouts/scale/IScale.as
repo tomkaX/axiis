@@ -43,7 +43,7 @@ package org.axiis.layouts.scale
 		
 		/**
 		 * The name of the property of the Objects in the dataProvider
-		 * that should be used when computing maximum and minimum values.
+		 * that should be used when computing min, max, sum, and average values.
 		 * If this property is not set, the implementing class should
 		 * use the Objects themselves.
 		 */

@@ -111,14 +111,17 @@
 	</groupings:drawingGeometries>
 
 	<groupings:fills>
+		<!--- @private -->
 		<degrafa:SolidFill id="rollOverFill" color="0xDDDD00" alpha=".6"/>
 	</groupings:fills>
 
 	<groupings:strokes>
+		<!--- @private -->
 		<degrafa:SolidStroke id="rollOverStroke" weight="1" color="black"/>
 	</groupings:strokes>
 	
 	<groupings:states>
+		<!--- @private -->
 		<states:State id="rollOverState"
 			enterStateEvent="mouseOver"
 			exitStateEvent="mouseOut"

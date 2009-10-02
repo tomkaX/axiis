@@ -30,18 +30,24 @@ package org.axiis.layouts.scale
 	import org.axiis.utils.ObjectUtils;
 
 	/**
-	 * The base class for scales that deal with numerical data.
+	 * The base class for scales that deal with numerical and date data.
 	 */
 	public class ContinuousScale extends AbstractScale
 	{
 		// These are untyped because we need to support average of Numbers and Dates
 		[Bindable("computedAverageChange")]
+		/**
+		 * The average value in the dataProvider.
+		 */
 		public function get computedAverage():*
 		{
 			if(invalidated)
 				validate();
 			return __computedAverage;
 		}
+		/**
+		 * @private
+		 */
 		protected function set _computedAverage(value:*):void
 		{
 			if(value != __computedAverage)
@@ -53,12 +59,18 @@ package org.axiis.layouts.scale
 		private var __computedAverage:*;
 		
 		[Bindable("computedSumChange")]
+		/**
+		 * The sum of the value in the dataProvider.
+		 */
 		public function get computedSum():*
 		{
 			if(invalidated)
 				validate();
 			return __computedSum;
 		}
+		/**
+		 * @private
+		 */
 		protected function set _computedSum(value:*):void
 		{
 			if(value != __computedSum)
@@ -124,21 +136,27 @@ package org.axiis.layouts.scale
 			return newMax;
 		}
 		
+		/**
+		 * Returns the sum of the items in the dataProvider.
+		 */
 		protected function computeSum():*
 		{
 			if(collection == null || collection.length == 0)
 				return NaN;
 				
 			var sum:Number = 0;
-			for each(var num:Number in collection)
+			for each(var o:* in collection)
 			{
-				sum += num;
+				var currValue:Number = getProperty(o,dataField);
+				sum += currValue;
 			}
 			return sum;
 		}
 		
-		//Candidate routine to refacotr into utility class (shared with AbstracLayout)
-		private function getProperty(obj:Object, propertyName:Object):Object
+		/**
+		 * @private
+		 */
+		protected function getProperty(obj:Object, propertyName:Object):*
 		{ 
 			return ObjectUtils.getProperty(this,obj,propertyName);
 		}

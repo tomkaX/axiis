@@ -1,19 +1,42 @@
+///////////////////////////////////////////////////////////////////////////////
+//	Copyright (c) 2009 Team Axiis
+//
+//	Permission is hereby granted, free of charge, to any person
+//	obtaining a copy of this software and associated documentation
+//	files (the "Software"), to deal in the Software without
+//	restriction, including without limitation the rights to use,
+//	copy, modify, merge, publish, distribute, sublicense, and/or sell
+//	copies of the Software, and to permit persons to whom the
+//	Software is furnished to do so, subject to the following
+//	conditions:
+//
+//	The above copyright notice and this permission notice shall be
+//	included in all copies or substantial portions of the Software.
+//
+//	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+//	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+//	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+//	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+//	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+//	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+//	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+//	OTHER DEALINGS IN THE SOFTWARE.
+///////////////////////////////////////////////////////////////////////////////
+
 package org.axiis.utils
 {
 	import mx.collections.ArrayCollection;
 	
-	public class ObjectUtils {
-	
-	 /**
-	 * This Object Utility class is primarily used to extract property values from dynamic objects
+	/**
+	 * This ObjectUtility class is primarily used to extract property values from dynamic objects
 	 */
-		public function ObjectUtils()
-		{
-		}
+	public class ObjectUtils {
 		
-		 /**
-	 	 * Extracts @param propertyName from @param obj
-	 	 * @param propertyName supports a dot.dot syntax as well as Arrays 
+		/**
+	 	 * Extracts propertyName from obj
+	 	 * @param caller The object invoking this function.
+	 	 * @param obj The object to extract a property value from
+	 	 * @param propertyName The String representing a property to extract. propertyName supports a dot.dot syntax as well as Arrays 
 	 	 * i.e propertyName="myObject.myArray[3].myOtherProperty" is a valid syntax
 	 	 */
 		public static  function getProperty(caller:Object, obj:Object, propertyName:Object):*
@@ -62,7 +85,7 @@ package org.axiis.utils
 					return getProperty(caller, obj[chain[0]],chain.slice(1,chain.length).join("."));
 				else
 				{
-						var element:Object= obj[chain[0].substr(0, chain[0].indexOf("["))];
+						element= obj[chain[0].substr(0, chain[0].indexOf("["))];
 						var index:String= (chain[0].substr(chain[0].indexOf("[")+1,chain[0].indexOf("]")-chain[0].indexOf("[")-1));
 						return getProperty(caller, element[index],chain.slice(1,chain.length).join("."));
 					}

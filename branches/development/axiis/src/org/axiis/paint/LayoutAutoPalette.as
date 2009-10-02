@@ -59,6 +59,9 @@ package org.axiis.paint
 		 */
 		private var palette:InterpolatedColorPalette = new InterpolatedColorPalette();
 
+		/**
+		 * A flag that, if true, instructs the LayoutAutoPalette to automatically create a palette based on the colorFrom and colorTo properties.
+		 */
 		public var autoInterpolate:Boolean = true;
 
 		[Bindable]
@@ -81,13 +84,12 @@ package org.axiis.paint
 		}
 		private var _layout:AbstractLayout;
 		
-		public function get colorFrom():Number {
-			return _colorFrom;
-		}
-
 		/**
 		 * The first color in the palette.
 		 */
+		public function get colorFrom():Number {
+			return _colorFrom;
+		}
 		public function set colorFrom(value:Number):void
 		{
 			if (!isNaN(value))
@@ -97,10 +99,6 @@ package org.axiis.paint
 		}
 		private var _colorFrom:Number = 0;
 		
-		public function getColorTo():Number {
-			return _colorTo;
-		}
-
 		/**
 		 * The last color in the palette.
 		 */

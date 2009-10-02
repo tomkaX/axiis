@@ -42,9 +42,10 @@ package org.axiis.layouts.scale
 		override protected function computeSum():*
 		{
 			var sum:Number = 0;
-			for each(var num:Date in dataProvider)
+			for each(var o:* in collection)
 			{
-				sum += num.valueOf();
+				var currValue:Number = getProperty(o,dataField).valueOf();
+				sum += currValue;
 			}
 			return new Date(sum);
 		}

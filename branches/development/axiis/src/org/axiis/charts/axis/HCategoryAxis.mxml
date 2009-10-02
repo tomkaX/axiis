@@ -34,8 +34,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 	</p>
 	
 -->
-
-<axiis:BaseLayout xmlns="*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:axiis="http://www.axiis.org/2009" xmlns:degrafa="http://www.degrafa.com/2007"
+<core:BaseLayout xmlns="*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:degrafa="http://www.degrafa.com/2007"
+	xmlns:core="org.axiis.core.*" xmlns:utils="org.axiis.layouts.utils.*"
 	 preRender="onPreRender();"
 	 itemPreDraw="onItemPreDraw();">
 <mx:Script>
@@ -58,7 +58,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 		/**
 		 * Stroke used for tick marks.
 		 */ 
-		public var stroke:IGraphicsStroke=new SolidStroke();
+		public var stroke:com.degrafa.core.IGraphicsStroke=new SolidStroke();
 		
 		private function onPreRender():void {
 			var totalChars:String=""; 
@@ -130,6 +130,12 @@ OTHER DEALINGS IN THE SOFTWARE.
 		}
 		
 		[Bindable]
+		/**
+		 * A function used to determine the text of each label.
+		 * 
+		 * The method should take one argument, a value from the dataProvider, and return a String to use as the label.
+		 * The default method applies toString() to the argument.
+		 */
 		public var axisLabelFunction:Function=internalLabelFunction;
 		
 		private function internalLabelFunction(value:Object):String {
@@ -162,17 +168,17 @@ OTHER DEALINGS IN THE SOFTWARE.
 	-->
 	<mx:Number id="labelRotation">0</mx:Number>
 	
-	<axiis:referenceRepeater>
-		<axiis:GeometryRepeater>
-			<axiis:geometry>
+	<core:referenceRepeater>
+		<utils:GeometryRepeater>
+			<utils:geometry>
 				<degrafa:RegularRectangle x="0" y="0" width="{this.width/dataItems.count}" height="{height}" enableEvents="false"/>
-			</axiis:geometry>
-			<axiis:modifiers>
-				<axiis:PropertyModifier property="x" modifier="{categoryScale.valueToLayout(currentValue)}" modifierOperator="none"/>
-			</axiis:modifiers>
-		</axiis:GeometryRepeater>
-	</axiis:referenceRepeater>
-	<axiis:drawingGeometries>
+			</utils:geometry>
+			<utils:modifiers>
+				<utils:PropertyModifier property="x" modifier="{categoryScale.valueToLayout(currentValue)}" modifierOperator="none"/>
+			</utils:modifiers>
+		</utils:GeometryRepeater>
+	</core:referenceRepeater>
+	<core:drawingGeometries>
 		<degrafa:Line id="line"
 			x="{currentReference.x+currentReference.width/2}" 
 			x1="{currentReference.x+currentReference.width/2}" 
@@ -193,6 +199,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 				<degrafa:RotateTransform angle="{labelRotation}" registrationPoint="bottomLeft"/>
 			</degrafa:transform>
 		</degrafa:RasterText>
-	</axiis:drawingGeometries>
+	</core:drawingGeometries>
 
-</axiis:BaseLayout>
+</core:BaseLayout>
