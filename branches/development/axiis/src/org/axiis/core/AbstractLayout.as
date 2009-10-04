@@ -302,7 +302,6 @@ package org.axiis.core
 		 */
 		public function invalidateDataProvider():void
 		{
-			
 			_dataItems=new Array();
 			if (dataProvider is ArrayCollection) {
 				for (var i:int=0;i<dataProvider.source.length;i++) {
@@ -335,8 +334,9 @@ package org.axiis.core
 				}
 			}
 			else {
+				_dataItems.push(dataProvider);
 				var z:int=0;
-				for each(var o:Object in dataProvider)
+				/*for each(var o:Object in dataProvider)
 				{
 					_dataFilterIndex=z;
 					z++;
@@ -350,7 +350,7 @@ package org.axiis.core
 							_dataItems.push(o);
 						}
 					}
-				}
+				}*/
 			}
 			
 			_dataFilterIndex=-1;

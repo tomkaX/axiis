@@ -1,4 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+	 Copyright (c) 2009 Team Axiis
+
+	 Permission is hereby granted, free of charge, to any person
+	 obtaining a copy of this software and associated documentation
+	 files (the "Software"), to deal in the Software without
+	 restriction, including without limitation the rights to use,
+	 copy, modify, merge, publish, distribute, sublicense, and/or sell
+	 copies of the Software, and to permit persons to whom the
+	 Software is furnished to do so, subject to the following
+	 conditions:
+
+	 The above copyright notice and this permission notice shall be
+	 included in all copies or substantial portions of the Software.
+
+	 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	 EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+	 OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	 NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+	 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+	 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+	 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+	 OTHER DEALINGS IN THE SOFTWARE.
+-->
+
+<!-- Stats from http://www.w3schools.com/browsers/browsers_stats.asp -->
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:axiis="http://www.axiis.org/2009"
 	xmlns:geometry="com.degrafa.geometry.*"
@@ -10,10 +36,8 @@
 
 	<mx:Script>
 		<![CDATA[
-			import mx.utils.ObjectProxy;
 			import org.axiis.core.AxiisSprite;
 			import org.axiis.managers.FreeDataTipManager;
-			import com.degrafa.geometry.Wedge;
 			import org.axiis.data.DataSet;
 			import mx.events.FlexEvent;
 
@@ -43,61 +67,16 @@
 
 			protected function application1_applicationCompleteHandler(event:FlexEvent):void
 			{
-				var browserNames:Array = [];
-				var outputXML:XML = new XML("<data/>")
-				var currentYear:Number;
-				var currentMonth:String;
-				var browsersForYear:Array = [];
-				for each (var subTable:XML in tableData.tr)
-				{
-					var firstChildText:String = subTable.children()[0].text()
-					var firstChildNumber:Number = parseInt(firstChildText);
-
-					// This is a year row - the rest of the columns have the browser names
-					if (!isNaN(firstChildNumber))
-					{
-						currentYear = firstChildNumber;
-						browsersForYear = [];
-						var browserNameElements:XMLList = subTable.children();
-						for (var a:int = 1; a < browserNameElements.length(); a++)
-						{
-							var browserNameElement:XML = browserNameElements[a];
-							var browserName:String = browserNameElement.text().toString();
-							browsersForYear.push(browserName);
-							if(browserNames.indexOf(browserName) == -1)
-								browserNames.push(browserName);
-						}
-					}
-					// This is a month row - it has the market share percentages
-					else
-					{
-						currentMonth = firstChildText;
-						if (currentMonth != "")
-						{
-							var monthXML:XML = new XML("<month/>")
-							monthXML.@value = currentMonth + " " + currentYear;
-							var marketShareElements:XMLList = subTable.children();
-							for (var a:int = 1; a < browserNameElements.length(); a++)
-							{
-								var browserXML:XML = new XML("<browser/>")
-								browserXML.@name = browsersForYear[a - 1];
-
-								var marketShareElement:String = marketShareElements[a].text().toString();
-								if (marketShareElement == "")
-									browserXML.@share = 0;
-								else
-									browserXML.@share = parseFloat(marketShareElements[a].text().toString().split("%")[0]) / 100;
-								browserXML.@month = currentMonth + " " + currentYear;
-								monthXML.appendChild(browserXML);
-							}
-							outputXML.appendChild(monthXML);
-						}
-					}
-				}
 				var ds:DataSet = new DataSet();
-				ds.processXmlString(outputXML.toString());
+				ds.processXmlString(browserStatsXML.toString());
 				radialLayout.dataProvider = ds.data.object.data.month.source.concat().reverse();
 				
+				var browserNames:Array = [];
+				for each(var browser:XML in browserStatsXML..browser)
+				{
+					if(browserNames.indexOf(browser.@name.toString()) == -1)
+						browserNames.push(browser.@name.toString());
+				}
 				browserNames.sort();
 				browserNames.push("Other/Missing data");
 				legendLayout.dataProvider = browserNames;
@@ -110,7 +89,7 @@
 		]]>
 	</mx:Script>
 
-	<mx:XML id="tableData"
+	<mx:XML id="browserStatsXML"
 		source="data/browser_stats.xml"/>
 
 	<mx:NumberFormatter id="nf" precision="2"/>

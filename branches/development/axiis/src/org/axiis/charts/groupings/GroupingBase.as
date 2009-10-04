@@ -2,8 +2,6 @@ package org.axiis.charts.groupings
 {
 	import com.degrafa.core.IGraphicsFill;
 	import com.degrafa.core.IGraphicsStroke;
-	import com.degrafa.paint.SolidFill;
-	import com.degrafa.paint.SolidStroke;
 	
 	import flash.events.Event;
 	
@@ -109,20 +107,27 @@ package org.axiis.charts.groupings
 		/**
 		 * The color of the labels.
 		 */
-		public function get fontColor():Number
+		public function get fontColor():*
 		{
 			return _fontColor;
 		}
-		public function set fontColor(value:Number):void
+		public function set fontColor(value:*):void
 		{
 			if(value != _fontColor)
 			{
-				_fontColor = value;
+				if(value is String && String(value).indexOf("#") != -1)
+				{
+					_fontColor = parseInt(String(value).substr(1),16);
+				}
+				else
+				{
+					_fontColor = value;
+				}
 				dispatchEvent(new Event("fontColorChange"));
 				//invalidate();
 			}
 		}
-		private var _fontColor:Number = 0;
+		private var _fontColor:* = 0;
 	
 		[Bindable(event="fontWeightChange")]
 		/**
