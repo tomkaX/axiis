@@ -208,6 +208,8 @@
 
 			private function onItemPreDraw():void
 			{
+				if(_curvePathsTop.length == 0)
+					return;
 
 				var ci:int=currentIndex;
 
@@ -259,7 +261,7 @@
 
 
 			[Bindable]
-			private var _plotIndexes:Array;
+			private var _plotIndexes:Array = [];
 
 			/**
 			 * @private
@@ -322,6 +324,9 @@
 				var maxY:Number=Number.NEGATIVE_INFINITY;
 				var minY:Number=Number.POSITIVE_INFINITY;
 
+				if(_plotIndexes == null)
+					return;
+					
 				for (var i:int; i < _plotIndexes.length; i++)
 				{
 					var y:int=0;

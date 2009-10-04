@@ -100,7 +100,7 @@
 		minLayout="0"
 		maxLayout="359.99"/>
 
-	<Examples:ExampleBackground width="100%" height="100%" title="Historical Browser Market Shares" subTitle="Custom Visualziation"/>
+	<Examples:ExampleBackground width="100%" height="100%" title="W3.org's Historical Browser Statistics" subTitle="Custom Visualziation"/>
 
 	<mx:Label text="August 2009" horizontalCenter="0" top="100"/>
 

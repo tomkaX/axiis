@@ -335,8 +335,8 @@ package org.axiis.core
 			}
 			else {
 				_dataItems.push(dataProvider);
-				var z:int=0;
-				/*for each(var o:Object in dataProvider)
+				/*var z:int=0;
+				for each(var o:Object in dataProvider)
 				{
 					_dataFilterIndex=z;
 					z++;
