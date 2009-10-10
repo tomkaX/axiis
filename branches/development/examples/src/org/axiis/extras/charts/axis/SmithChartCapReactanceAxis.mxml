@@ -107,6 +107,29 @@
 				return dataProvider[iterationCount].caparc1;
 			}
 			
+			private function xModifier(iterationCount:int, value:Number):Number
+			{
+				return (scale.center+scale.chartRadius) - (dataProvider[iterationCount].r1*scale.chartRadius/1000)
+			}
+			
+			private function widthModifier(iterationCount:int, value:Number):Number
+			{
+				return 2 * (dataProvider[iterationCount].r1*scale.chartRadius/1000);				
+			}
+			
+			private function heightModifier(iterationCount:int, value:Number):Number
+			{
+				return 2 * (dataProvider[iterationCount].r1*scale.chartRadius/1000);				
+			}
+			
+			/**
+			 * returns the stroke for this resistance arc
+			 */
+			private function strokeModifier(iterationCount:int, value:Object):Object
+			{
+				return dataProvider[iterationCount].stroke0;
+			}
+			
 			/**
 			 * Reinitialize and redraw the graph
 			 */
@@ -131,13 +154,13 @@
 				<degrafa:EllipticalArc/>
 			</axiis:geometry>
 			<axiis:modifiers>
-				<axiis:PropertyModifier property="x" modifier="{(scale.center+scale.chartRadius) - (SmithChartAxisData.arcData.getItemAt(reactanceArcRepeater.currentIteration).r1*scale.chartRadius/1000)}" modifierOperator="none"/>
+				<axiis:PropertyModifier property="x" modifier="{xModifier}" modifierOperator="none"/>
 				<axiis:PropertyModifier property="y" modifier="{scale.center}" modifierOperator="none"/>
-				<axiis:PropertyModifier property="width" modifier="{2 * (SmithChartAxisData.arcData.getItemAt(reactanceArcRepeater.currentIteration).r1*scale.chartRadius/1000)}" modifierOperator="none"/>
-				<axiis:PropertyModifier property="height" modifier="{2 * (SmithChartAxisData.arcData.getItemAt(reactanceArcRepeater.currentIteration).r1*scale.chartRadius/1000)}" modifierOperator="none"/>
+				<axiis:PropertyModifier property="width" modifier="{widthModifier}" modifierOperator="none"/>
+				<axiis:PropertyModifier property="height" modifier="{heightModifier}" modifierOperator="none"/>
 				<axiis:PropertyModifier property="startAngle" modifier="{reactanceStartAngleModifier}" modifierOperator="none"/>
 				<axiis:PropertyModifier property="arc" modifier="{reactanceArcModifier}" modifierOperator="none"/>
-				<axiis:PropertyModifier property="stroke" modifier="{SmithChartAxisData.arcData.getItemAt(reactanceArcRepeater.currentIteration).stroke0}" modifierOperator="none"/>
+				<axiis:PropertyModifier property="stroke" modifier="{strokeModifier}" modifierOperator="none"/>
 			</axiis:modifiers>
 		</axiis:GeometryRepeater>
 	</axis:referenceRepeater>
