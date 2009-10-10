@@ -152,16 +152,18 @@
 						rounding="nearest"/>
 							
 	<backgroundGeometries>
-		<degrafa:RadialGradientFill id="gradientFill" angle="0" focalPointRatio="1">
-			<degrafa:GradientStop alpha=".25" color="#ff0000" ratio="0"/>
-			<degrafa:GradientStop alpha=".25" color="#ffff00" ratio=".25"/>
-			<degrafa:GradientStop alpha=".25" color="#00ff00" ratio=".5"/>
-			<degrafa:GradientStop alpha=".25" color="#00ffff" ratio=".85"/>
-			<degrafa:GradientStop alpha=".25" color="#0000ff" ratio="1"/>
-		</degrafa:RadialGradientFill>
-
 		<!-- background gradient -->
-		<degrafa:Circle centerX="{sc_scale.center}" centerY="{sc_scale.center}" radius="{sc_scale.chartRadius}" fill="{gradientFill}"/>
+		<degrafa:Circle centerX="{sc_scale.center}" centerY="{sc_scale.center}" radius="{sc_scale.chartRadius}">
+			<degrafa:fill>
+				<degrafa:RadialGradientFill id="gradientFill" angle="0" focalPointRatio="1">
+					<degrafa:GradientStop alpha=".25" color="#ff0000" ratio="0"/>
+					<degrafa:GradientStop alpha=".25" color="#ffff00" ratio=".25"/>
+					<degrafa:GradientStop alpha=".25" color="#00ff00" ratio=".5"/>
+					<degrafa:GradientStop alpha=".25" color="#00ffff" ratio=".85"/>
+					<degrafa:GradientStop alpha=".25" color="#0000ff" ratio="1"/>
+				</degrafa:RadialGradientFill>
+			</degrafa:fill>
+		</degrafa:Circle>
 
 		<!-- outer circles -->
 		<degrafa:CircleRepeater centerX="{sc_scale.center}"
@@ -181,7 +183,7 @@
 								x="{sc_scale.center - sc_scale.chartRadius}"
 								x1="{sc_scale.center + sc_scale.chartRadius}"
 								y="{sc_scale.center}"/>
-	
+
 		<axis:SmithChartResistanceAxis id="sc_res_axis" scale="{sc_scale}" width="{this.width}" height="{this.height}"/>
 		<axis:SmithChartIndReactanceAxis id="sc_ind_rea_axis" scale="{sc_scale}" width="{this.width}" height="{this.height}"/>
 		<axis:SmithChartCapReactanceAxis id="sc_cap_rea_axis" scale="{sc_scale}" width="{this.width}" height="{this.height}"/>
