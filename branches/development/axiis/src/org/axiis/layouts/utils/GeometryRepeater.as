@@ -71,7 +71,6 @@ package org.axiis.layouts.utils
 		 * The number of iterations that the GeometryRepeater has processed.
 		 * When the GeometryRepeater is not running, this value is -1.
 		 */
-		[Bindable]
 		public function get currentIteration():int
 		{
 			return _currentIteration;
