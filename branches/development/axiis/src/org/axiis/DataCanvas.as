@@ -327,6 +327,8 @@ package org.axiis
 					dataTip.label = axiisSprite.label;
 				dataTip.value = axiisSprite.value;
 				dataTip.index = axiisSprite.index;
+				dataTip.backgroundFill=e.item.layout.dataTipFill;
+				dataTip.backgroundStroke=e.item.layout.dataTipStroke;
 				dataTip.contentComponent = axiisSprite.layout.dataTipContentComponent;
 				
 				//This seems weird, why does axxisSprite need to know about the dataTipContent class?

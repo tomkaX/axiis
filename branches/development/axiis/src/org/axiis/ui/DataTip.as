@@ -1,10 +1,13 @@
 package org.axiis.ui
 {
 	import com.degrafa.GeometryGroup;
+	import com.degrafa.core.IGraphicsFill;
+	import com.degrafa.core.IGraphicsStroke;
 	import com.degrafa.geometry.CalloutBalloon;
 	import com.degrafa.paint.*;
 	
 	import flash.events.Event;
+	import flash.filters.DropShadowFilter;
 	import flash.geom.Rectangle;
 	
 	import mx.core.Application;
@@ -27,6 +30,17 @@ package org.axiis.ui
 			mouseEnabled = false;
 			mouseChildren = false;
 		}
+		
+		/**
+		 * overides default fill of callout
+		 */
+		public var backgroundFill:IGraphicsFill;
+		
+		/**
+		 * overides default stroke of callout
+		 */
+		public var backgroundStroke:IGraphicsStroke;
+
 		
 		private var contentFactoryDirty:Boolean = true;
 		
@@ -207,6 +221,7 @@ package org.axiis.ui
 				fill.gradientStops = [new GradientStop(0xAAAAAA),new GradientStop(0xEEEEEE)];
 				fill.angle = 90;
 				callout.fill = fill;
+				callout.filters=[new DropShadowFilter(4,45,0,.5,8,8)];
 				
 				var stroke:SolidStroke = new SolidStroke(0x999999);
 				callout.stroke = stroke;
@@ -268,6 +283,9 @@ package org.axiis.ui
 				contentY = -contentHeight - 8;
 			content.move(contentX,contentY);
 			content.setActualSize(contentWidth,contentHeight);
+			
+			if (backgroundFill) callout.fill=backgroundFill;
+			if (backgroundStroke) callout.stroke=backgroundStroke;
 			
 			/*this.graphics.lineStyle(1,0);
 			this.graphics.beginFill(0xffffff,.5);

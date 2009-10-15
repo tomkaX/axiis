@@ -85,6 +85,18 @@
 				}
 			}
 			
+			  public function set additionalGeometries(value:IGeometryComposition) {
+                                _additionalGeometries=value;
+                                geomPlaceholder.geometry=[_additionalGeometries];
+                        }
+                        
+                        public function get additionalGeometries():IGeometryComposition {
+                                return _additionalGeometries;
+                        }
+                        
+                        [Bindable]
+                        private var _additionalGeometries:IGeometryComposition;
+			
 			private var _showValueLabel:Boolean=true;
 		]]>
 	</mx:Script>

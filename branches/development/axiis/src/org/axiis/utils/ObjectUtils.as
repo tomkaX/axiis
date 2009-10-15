@@ -62,12 +62,15 @@ package org.axiis.utils
 						return obj.getItemAt(int(chain[0].substr(1,chain[0].length-1)));
 					}
 				}
-				else if (chain[0].indexOf("[")<0)  //If we have an array return the array element
+				else if (chain[0].indexOf("[")<0)  {//If we have an array return the array element
+					//trace("ObjectUtil returning = " + obj[chain[0]]);
 					return obj[chain[0]];
-					else {
-						var element:Object= obj[chain[0].substr(0, chain[0].indexOf("["))];
-						return element[chain[0].substr(chain[0].indexOf("[")+1,chain[0].indexOf("]")-chain[0].indexOf("[")-1)];
-					}
+						
+				}
+				else {
+					var element:Object= obj[chain[0].substr(0, chain[0].indexOf("["))];
+					return element[chain[0].substr(chain[0].indexOf("[")+1,chain[0].indexOf("]")-chain[0].indexOf("[")-1)];
+				}
 			}
 				
 			else {

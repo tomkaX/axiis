@@ -107,11 +107,14 @@ package org.axiis.layouts.scale
 			var newMin:*;
 			for each(var o:* in collection)
 			{
-				var currValue:Object = getProperty(o,dataField);
-				if(newMin == null)
-					newMin = currValue;
-				else
-					newMin = currValue < newMin ? currValue : newMin;
+				var currValue:* = getProperty(o,dataField);
+			//	trace("currvalue=" + currValue);
+				if (! isNaN(currValue)) {
+					if(newMin == null)
+						newMin = currValue;
+					else
+						newMin = currValue < newMin ? currValue : newMin;
+				}
 			}
 			return newMin;
 		}
@@ -128,10 +131,12 @@ package org.axiis.layouts.scale
 			for each(var o:* in collection)
 			{
 				var currValue:* = getProperty(o,dataField);
-				if(newMax == null)
-					newMax = currValue;
-				else
-					newMax = currValue > newMax ? currValue : newMax;
+				if (! isNaN(currValue)) {
+					if(newMax == null)
+						newMax = currValue;
+					else
+						newMax = currValue > newMax ? currValue : newMax;
+				}
 			}
 			return newMax;
 		}

@@ -48,6 +48,7 @@
 	
 	<!-- paint -->
 	<component id="LayoutAutoPalette" class="org.axiis.paint.LayoutAutoPalette"/>
+	<component id="LayoutPalette" class="org.axiis.paint.LayoutPalette"/>
 	
 	<!-- states -->
 	<component id="State" class="org.axiis.states.State"/>

@@ -25,7 +25,7 @@ package org.axiis.data
 		public var name:String;
 		
 		/**
-		 * The data that was being used to create this group
+		 * The first row/unique object of data that is being used to create this group
 		 */
 		public var sourceData:Object;
 		

@@ -1,6 +1,6 @@
 package org.axiis.core
 {
-	import flash.geom.Point;
+	import com.degrafa.core.IGraphicsFill;
 	
 	/**
 	 * An interface for objects that are used to render an item from the Axiis render cycle.
@@ -34,5 +34,6 @@ package org.axiis.core
 		 */
 		function get index():int;
 		function set index(value:int):void;
+
 	}
 }

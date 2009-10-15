@@ -114,6 +114,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 		]]>
 	</mx:Script>
+
 	
 	<!--- @private -->
 	<utils:BooleanExpression id="showLabelExpression" value="{ (showLabels &amp;&amp; (showMajorTickExpression.value==true))}"/>

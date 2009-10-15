@@ -62,8 +62,9 @@ package org.axiis.data
 	 * It will support grouping on common fields with operations like sum, count, avg.
 	 * It will turn flat table (.csv/array) data into object level data.
 	 */
-	public class DataSet extends EventDispatcher
-	{
+	 
+	public class DataSet extends EventDispatcher {
+		
 		// TODO AGGREGATE_SUM and AGGREGATE_AVG are unused.
 		public static const AGGREGATE_SUM:int = 0;
 		public static const AGGREGATE_AVG:int = 2;
@@ -212,7 +213,7 @@ package org.axiis.data
 			
 			_data["table"]=createTableFromDelimeter("\t",payload,addSummaryFields);
 			
-			trace("DataSet.processCsvAsTable " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
+			trace("DataSet.processTsvAsTable " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
 		}
 		
 		/**
@@ -323,7 +324,7 @@ package org.axiis.data
 			if (!_data) _data=new Object();
 			_data[name]=groupTableRows(data["table"].rows, groupings, summaryCols);
 			
-			trace("DataSet.processCsvShapedData " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
+			trace("DataSet.aggregateTable " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
 		}
 		
 		
@@ -356,7 +357,7 @@ package org.axiis.data
 			//First find our collection
 			var t:Number=flash.utils.getTimer();
 			aggregate(data,collectionName.split("."),properties);
-			trace("DataSet.aggregateCollection=" + (flash.utils.getTimer()-t) + "ms");
+			trace("DataSet.aggregateData=" + (flash.utils.getTimer()-t) + "ms");
 		}
 		
 		
@@ -590,7 +591,10 @@ package org.axiis.data
 			if (rowArray.length==1) 
 				rowArray=temp.split("\r");
 
-			var header:Array=rowArray[0].split(delimiter);
+			//Remove quotes out of header
+			var re:RegExp=new RegExp("\"","g");
+			
+			var header:Array=rowArray[0].replace(re,"").split(delimiter);
 			
 			_colCount=header.length;
 			
@@ -609,6 +613,9 @@ package org.axiis.data
 						//clean up commas encoding
 						var re1:RegExp=/\&placeHolder;/g;
 						dataCell=dataCell.replace(re1,delimiter);
+						
+						//Check to see if we are encoded as a string so we don't convert to a number later
+						var isString:Boolean=(dataCell.charAt(0)=='"' && dataCell.charAt(dataCell.length-1)=='"');
 						
 						//Clean up any encoding quotes excel put it at front of cell
 						if (dataCell.charAt(0)=='"')
@@ -633,7 +640,7 @@ package org.axiis.data
 						
 						cell["name"]=header[z];
 						cell["index"]=z;
-						cell["value"]=(!isNaN(Number(dataCell))) ? Number(dataCell):dataCell;
+						cell["value"]=(!isNaN(Number(dataCell)) && !isString) ? Number(dataCell):dataCell;
 						
 						//We are automatically adding sum values for each column here
 						if (addSummaries && !tempPayload["col_"+z+"_sum"]) tempPayload["col_"+z+"_sum"]=0;
@@ -762,6 +769,7 @@ package org.axiis.data
 				
 				tempData.groupedData=new DataGroup();
 				tempData.groupName=groupName;
+
 				
 				//Go through collection and each time we hit a new unique value create a new group object
 				var currValue:String=collection.getItemAt(0).columns[int(colIndex)].value;
@@ -787,7 +795,7 @@ package org.axiis.data
 					
 					currValue=collection.getItemAt(y).columns[int(colIndex)].value;
 					tempCollection.addItem(collection.getItemAt(y));
-						
+					
 					if (currValue!=nextValue) {
 							
 						var newObject:DataGroup=new DataGroup();
@@ -795,6 +803,7 @@ package org.axiis.data
 						newObject.groupName=groupName;
 						newObject.parent=tempData;
 						
+	
 						if (groupings.length > 1) { //we need to go one level deeper recursively
 							newObject=groupTableRows(tempCollection,groupings.slice(1,groupings.length),summaryCols);
 							newObject.name=currValue;
@@ -816,8 +825,7 @@ package org.axiis.data
 								}
 						 	}
 						}
-						
-						
+						newObject.sourceData=tempCollection.source.slice(0,tempCollection.source.length);  //Make a copy of our collection
 						tempData.groupedData.addItem(newObject);
 						tempCollection=new DataGroup();
 						

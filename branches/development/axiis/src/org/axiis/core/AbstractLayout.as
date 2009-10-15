@@ -24,6 +24,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 package org.axiis.core
 {
+	import com.degrafa.core.IGraphicsFill;
+	import com.degrafa.core.IGraphicsStroke;
 	import com.degrafa.geometry.Geometry;
 	
 	import flash.display.Sprite;
@@ -73,6 +75,14 @@ package org.axiis.core
 			_dataTipManager=value;
 		}
 		private var _dataTipManager:IDataTipManager=new AnchoredDataTipManager;
+		
+		
+		/** 
+		 * I Hate to put this here, but until we rethink DataTips it seems like the best place
+		 */
+		 public var dataTipFill:IGraphicsFill;
+		 public var dataTipStroke:IGraphicsStroke;
+		  
 		
 		[Bindable]
 		/**
@@ -334,7 +344,7 @@ package org.axiis.core
 				}
 			}
 			else {
-				_dataItems.push(dataProvider);
+				//_dataItems.push(dataProvider);
 				/*var z:int=0;
 				for each(var o:Object in dataProvider)
 				{
