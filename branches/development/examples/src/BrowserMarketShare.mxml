@@ -30,61 +30,74 @@
 	xmlns:geometry="com.degrafa.geometry.*"
 	xmlns:degrafa="http://www.degrafa.com/2007"
 	layout="absolute"
-	applicationComplete="application1_applicationCompleteHandler(event)" xmlns:Examples="Examples.*" viewSourceURL="srcview/index.html">
+	applicationComplete="application1_applicationCompleteHandler(event)"
+	xmlns:Examples="Examples.*"
+	viewSourceURL="srcview/index.html"
+	width="1024"
+	height="768">
 
 	<mx:Style source="styles/Axiis_Examples.css"/>
 
 	<mx:Script>
 		<![CDATA[
-			import org.axiis.core.AxiisSprite;
-			import org.axiis.managers.FreeDataTipManager;
-			import org.axiis.data.DataSet;
 			import mx.events.FlexEvent;
+
+			import org.axiis.core.AxiisSprite;
+			import org.axiis.data.DataSet;
+			import org.axiis.events.LayoutItemEvent;
+			import org.axiis.managers.FreeDataTipManager;
 
 			[Bindable]
 			private var currentArc:Number = 0;
-			
-			private var browserColors:Object = {
-				'IE8':0x00ddff,
-				'IE7':0x00ccee,
-				'IE6':0x0099ff,
-				'IE5':0x0066ff,
-				'IE4':0x003399,
-				'Firefox':0xff9900,
-				'Mozilla':0x996600,
-				'Chrome':0x00ff00,
-				'Safari':0x60779C,
-				'Opera':0xff0000,
-				'Opera 7':0xff5555,
-				'Opera 8':0xff3333,
-				'AOL':0xFFD52F,
-				'Netscape 7/8':0x66ff66,
-				'Netscape 7':0x66ff66,
-				'Netscape 5':0x88ff88,
-				'Netscape 4':0x99ff99,
-				'Netscape 3':0xaaffaa
-			}
+
+			private var browserColors:Object = {'IE8': 0x00ddff, 'IE7': 0x00ccee, 'IE6': 0x0099ff, 'IE5': 0x0066ff, 'IE4': 0x003399, 'Firefox': 0xff9900, 'Mozilla': 0x996600, 'Chrome': 0x00ff00, 'Safari': 0x60779C, 'Opera': 0xff0000, 'Opera 7': 0xff5555, 'Opera 8': 0xff3333, 'AOL': 0xFFD52F, 'Netscape 7/8': 0x66ff66, 'Netscape 7': 0x66ff66, 'Netscape 5': 0x88ff88, 'Netscape 4': 0x99ff99, 'Netscape 3': 0xaaffaa}
+
+			private var browsersToInclude:Array;
 
 			protected function application1_applicationCompleteHandler(event:FlexEvent):void
 			{
 				var ds:DataSet = new DataSet();
 				ds.processXmlString(browserStatsXML.toString());
 				radialLayout.dataProvider = ds.data.object.data.month.source.concat().reverse();
-				
+
 				var browserNames:Array = [];
-				for each(var browser:XML in browserStatsXML..browser)
+				for each (var browser:XML in browserStatsXML..browser)
 				{
-					if(browserNames.indexOf(browser.@name.toString()) == -1)
+					if (browserNames.indexOf(browser.@name.toString()) == -1)
 						browserNames.push(browser.@name.toString());
 				}
 				browserNames.sort();
 				browserNames.push("Other/Missing data");
+				browsersToInclude = browserNames.concat();
 				legendLayout.dataProvider = browserNames;
 			}
-			
+
 			private function labelDataTip(axiisSprite:AxiisSprite):String
 			{
 				return axiisSprite.data.month + "\n" + axiisSprite.data.name + ": " + nf.format(axiisSprite.data.share * 100) + "%";
+			}
+
+			protected function filterByBrowserName(browserRecord:Object):Boolean
+			{
+				return browsersToInclude.indexOf(browserRecord.name) != -1;
+			}
+
+			// We're excluding browsers from items in the "selected" state
+			protected function legendLayout_itemClickHandler(event:LayoutItemEvent):void
+			{
+				var clickedBrowserName:String = event.item.data.toString();
+				if (event.item.selected)
+				{
+					browsersToInclude.push(clickedBrowserName);
+				}
+				else
+				{
+					var index:int = browsersToInclude.indexOf(clickedBrowserName);
+					if (index != -1)
+						browsersToInclude.splice(index, 1);
+				}
+
+				dc.invalidateDisplayList();
 			}
 		]]>
 	</mx:Script>
@@ -92,7 +105,8 @@
 	<mx:XML id="browserStatsXML"
 		source="data/browser_stats.xml"/>
 
-	<mx:NumberFormatter id="nf" precision="2"/>
+	<mx:NumberFormatter id="nf"
+		precision="2"/>
 
 	<axiis:LinearScale id="arcScale"
 		minValue="0"
@@ -100,9 +114,14 @@
 		minLayout="0"
 		maxLayout="359.99"/>
 
-	<Examples:ExampleBackground width="100%" height="100%" title="W3.org's Historical Browser Statistics" subTitle="Custom Visualziation"/>
+	<Examples:ExampleBackground width="100%"
+		height="100%"
+		title="W3.org's Historical Browser Statistics"
+		subTitle="Custom Visualziation"/>
 
-	<mx:Label text="August 2009" horizontalCenter="0" top="100"/>
+	<mx:Label text="August 2009"
+		horizontalCenter="0"
+		top="100"/>
 
 	<axiis:DataCanvas id="dc"
 		width="95%"
@@ -121,6 +140,7 @@
 						height="{radialLayout.height}"
 						preRender="{currentArc = 0}"
 						itemPreDraw="{currentArc += arcScale.valueToLayout(arcLayout.currentDatum.share)}"
+						dataFilterFunction="{filterByBrowserName}"
 						dataTipManager="{new FreeDataTipManager()}"
 						dataTipLabelFunction="{labelDataTip}">
 						<axiis:drawingGeometries>
@@ -132,10 +152,12 @@
 								startAngle="{270 + currentArc - arcScale.valueToLayout(arcLayout.currentDatum.share)}"
 								arc="{arcScale.valueToLayout(arcLayout.currentDatum.share)}">
 								<geometry:stroke>
-									<degrafa:SolidStroke id="wedgeStroke" color="0"/>
+									<degrafa:SolidStroke id="wedgeStroke"
+										color="0"/>
 								</geometry:stroke>
 								<geometry:fill>
-									<degrafa:SolidFill id="wedgeFill" color="{browserColors[arcLayout.currentDatum.name]}"/>
+									<degrafa:SolidFill id="wedgeFill"
+										color="{browsersToInclude.indexOf(arcLayout.currentDatum.name) == -1 ? 0 : browserColors[arcLayout.currentDatum.name]}"/>
 								</geometry:fill>
 							</geometry:Wedge>
 						</axiis:drawingGeometries>
@@ -154,9 +176,11 @@
 			<mx:DropShadowFilter/>
 		</axiis:filters>
 	</axiis:DataCanvas>
-		
-	<mx:Label text="January 2002" horizontalCenter="0" verticalCenter="55"/>
-	
+
+	<mx:Label text="January 2002"
+		horizontalCenter="0"
+		verticalCenter="55"/>
+
 	<axiis:DataCanvas id="legendDC"
 		width="200"
 		height="{legendLayout.itemCount * 18}"
@@ -166,7 +190,8 @@
 			<axiis:VBoxLayout id="legendLayout"
 				width="{legendDC.width}"
 				height="{legendDC.height}"
-				showDataTips="false">
+				showDataTips="false"
+				itemClick="legendLayout_itemClickHandler(event)">
 				<axiis:drawingGeometries>
 					<degrafa:RegularRectangle x="{legendLayout.currentReference.x}"
 						y="{legendLayout.currentReference.y}"
@@ -176,16 +201,28 @@
 							<degrafa:SolidStroke color="0"/>
 						</degrafa:stroke>
 						<degrafa:fill>
-							<degrafa:SolidFill color="{browserColors[legendLayout.currentDatum]}"
+							<degrafa:SolidFill id="legendMarkerFill"
+								color="{browserColors[legendLayout.currentDatum]}"
 								alpha="{legendLayout.currentDatum == 'Other/Missing data' ? 0 : 1}"/>
 						</degrafa:fill>
 					</degrafa:RegularRectangle>
-					<degrafa:RasterText x="22"
+					<degrafa:RasterText id="legendLabel"
+						x="22"
 						y="{legendLayout.currentReference.y}"
+						width="150"
+						fontFamily="Verdana"
+						fontSize="11"
 						text="{legendLayout.currentDatum}"/>
 				</axiis:drawingGeometries>
+				<axiis:states>
+					<axiis:State enterStateEvent="{AxiisSprite.EVENT_SELECTED}"
+						exitStateEvent="{AxiisSprite.EVENT_UNSELECTED}"
+						targets="{[legendMarkerFill,legendLabel]}"
+						properties="{['alpha','italic']}"
+						values="{[.1,true]}"/>
+				</axiis:states>
 			</axiis:VBoxLayout>
 		</axiis:layouts>
 	</axiis:DataCanvas>
-		
+
 </mx:Application>

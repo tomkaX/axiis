@@ -128,9 +128,9 @@ package org.axiis.core
 		 * The value of the useHandCursor flag to set each child Sprite
 		 */
 		public var useHandCursor:Boolean = false;
-
+		
 		private var allStates:Array = [];
-
+		
 		[Bindable(event="scaleFillChange")]
 		/**
 		 * Whether or not the fills in this geometry should be scaled within the
@@ -217,10 +217,6 @@ package org.axiis.core
 				return;
 			}
 			
-			if (itemCount==0) {
-				return;
-			}
-			
 			if (newSprite)
 				newSprite.visible=true;
 			
@@ -228,22 +224,22 @@ package org.axiis.core
 				this.sprite = newSprite;
 			
 			_rendering = true;
-
+			
 			if(!sprite || !_referenceGeometryRepeater)
 				return;		
 			
 			dispatchEvent(new Event("preRender"));	
 			
 			_referenceGeometryRepeater.millisecondsPerFrame=this.msPerRenderFrame;
-				
+			
 			trimChildSprites();
 			
 			if (inheritParentBounds && parentLayout)
 			{
 				bounds = new Rectangle(parentLayout.currentReference.x + (isNaN(x) ? 0 : x),
-									parentLayout.currentReference.y + (isNaN(y) ? 0 : y),
-									parentLayout.currentReference.width,
-									parentLayout.currentReference.height);
+					parentLayout.currentReference.y + (isNaN(y) ? 0 : y),
+					parentLayout.currentReference.width,
+					parentLayout.currentReference.height);
 			}
 			else
 			{
@@ -257,18 +253,13 @@ package org.axiis.core
 				var topLayout:AbstractLayout = findTopLayout();
 				allStates = findAllStatesInLayoutTree(topLayout);
 				
-				_itemCount = _dataItems.length;
-				if(_itemCount > 0)
-				{
-					_currentDatum = null;
-					_currentValue = null;
-					_currentLabel = null
-					_currentIndex = -1;
+				_currentDatum = null;
+				_currentValue = null;
+				_currentLabel = null
+				_currentIndex = -1;
 					
-					_referenceGeometryRepeater.repeat(itemCount, preIteration, postIteration, repeatComplete);
-				}
+				_referenceGeometryRepeater.repeat(itemCount, preIteration, postIteration, repeatComplete);
 			}
-
 		}
 		
 		/**
@@ -323,7 +314,7 @@ package org.axiis.core
 				_currentLabel=null;
 			}
 		}
-
+		
 		/**
 		 * The callback method called by the referenceRepeater after it applies
 		 * the PropertyModifiers on each iteration. This method updates the
@@ -419,57 +410,54 @@ package org.axiis.core
 			newChildSprite.layout = layout;
 			return newChildSprite;
 		}
-
+		
 		private function trimChildSprites():void
 		{
 			if (!sprite || _itemCount < 0)
 				return;
-		
-			var trim:int = sprite.drawingSprites.length-_itemCount;
-			
-			for (var i:int=0; i <=trim;i++)
-				{
-					var s:AxiisSprite = AxiisSprite(sprite.removeChild(sprite.drawingSprites[sprite.drawingSprites.length-1]));
-					s.dispose();
-					s=null;
-				}
 
+			while(sprite.drawingSprites.length > _itemCount)
+			{
+				var s:AxiisSprite = AxiisSprite(sprite.removeChild(sprite.drawingSprites.pop()));
+				s.dispose();
+				s=null;
+			}
 		}
 		
 		
 		private function sprite_onMouseMove(e:Event):void {
-				this.dispatchEvent(new LayoutItemEvent("itemMouseMove",AxiisSprite(e.currentTarget),e));
+			this.dispatchEvent(new LayoutItemEvent("itemMouseMove",AxiisSprite(e.currentTarget),e));
 		}
 		
 		private function sprite_onMouseOut(e:Event):void {
-				this.dispatchEvent(new LayoutItemEvent("itemMouseOut",AxiisSprite(e.currentTarget),e));
+			this.dispatchEvent(new LayoutItemEvent("itemMouseOut",AxiisSprite(e.currentTarget),e));
 		}
 		
 		private function sprite_onMouseOver(e:Event):void {
-				this.dispatchEvent(new LayoutItemEvent("itemMouseOver",AxiisSprite(e.currentTarget),e));
-				if (showDataTips) {
-					this.dispatchEvent(new LayoutItemEvent("itemDataTip",AxiisSprite(e.currentTarget),e));
-					e.stopPropagation();
-				}
+			this.dispatchEvent(new LayoutItemEvent("itemMouseOver",AxiisSprite(e.currentTarget),e));
+			if (showDataTips) {
+				this.dispatchEvent(new LayoutItemEvent("itemDataTip",AxiisSprite(e.currentTarget),e));
+				e.stopPropagation();
+			}
 		}
 		
 		private function sprite_onClick(e:Event):void {
-				e.stopPropagation();
-				this.dispatchEvent(new LayoutItemEvent("itemClick",AxiisSprite(e.currentTarget),e));
+			e.stopPropagation();
+			this.dispatchEvent(new LayoutItemEvent("itemClick",AxiisSprite(e.currentTarget),e));
 		}
 		
 		
 		private function sprite_onDoubleClick(e:Event):void {
-				e.stopPropagation();
-				this.dispatchEvent(new LayoutItemEvent("itemDoubleClick",AxiisSprite(e.currentTarget),e));
+			e.stopPropagation();
+			this.dispatchEvent(new LayoutItemEvent("itemDoubleClick",AxiisSprite(e.currentTarget),e));
 		}
 		
 		private function sprite_onSelected(e:Event):void {
-				this.dispatchEvent(new LayoutItemEvent("itemSelected",AxiisSprite(e.currentTarget),e));
+			this.dispatchEvent(new LayoutItemEvent("itemSelected",AxiisSprite(e.currentTarget),e));
 		}
 		
 		private function sprite_onUnSelected(e:Event):void {
-				this.dispatchEvent(new LayoutItemEvent("itemUnSelected",AxiisSprite(e.currentTarget),e));
+			this.dispatchEvent(new LayoutItemEvent("itemUnSelected",AxiisSprite(e.currentTarget),e));
 		}
 	}
 }
