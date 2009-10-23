@@ -33,13 +33,16 @@
 	applicationComplete="application1_applicationCompleteHandler(event)"
 	xmlns:Examples="Examples.*"
 	viewSourceURL="srcview/index.html"
-	width="1024"
-	height="768">
+	width="100%"
+	height="100%">
 
 	<mx:Style source="styles/Axiis_Examples.css"/>
 
 	<mx:Script>
 		<![CDATA[
+
+			import mx.utils.ColorUtil;
+
 			import mx.events.FlexEvent;
 
 			import org.axiis.core.AxiisSprite;
@@ -99,6 +102,12 @@
 
 				dc.invalidateDisplayList();
 			}
+			
+			protected function legendLayout_itemMouseOver(event:LayoutItemEvent):void {
+	//			arcLayout.childSprites[event.item.index].setState(highlightState);
+	//			trace(event);
+			}
+			
 		]]>
 	</mx:Script>
 
@@ -125,9 +134,9 @@
 
 	<axiis:DataCanvas id="dc"
 		width="95%"
-		height="95%"
+		bottom="20"
 		top="120"
-		horizontalCenter="0">
+		left="20">
 		<axiis:layouts>
 			<axiis:ConcentricWedgeLayout id="radialLayout"
 				width="{dc.width}"
@@ -152,8 +161,7 @@
 								startAngle="{270 + currentArc - arcScale.valueToLayout(arcLayout.currentDatum.share)}"
 								arc="{arcScale.valueToLayout(arcLayout.currentDatum.share)}">
 								<geometry:stroke>
-									<degrafa:SolidStroke id="wedgeStroke"
-										color="0"/>
+									<degrafa:SolidStroke id="wedgeStroke" color="{ColorUtil.adjustBrightness(browserColors[arcLayout.currentDatum.name],-60)}" pixelHinting="true" alpha=".7" weight=".5"/>
 								</geometry:stroke>
 								<geometry:fill>
 									<degrafa:SolidFill id="wedgeFill"
@@ -166,15 +174,18 @@
 								exitStateEvent="mouseOut"
 								targets="{[wedgeFill]}"
 								properties="{['color']}"
-								values="{[0xff00ff]}"/>
+								values="{[ColorUtil.adjustBrightness(browserColors[arcLayout.currentDatum.name],-60)]}"/>
 						</axiis:states>
 					</axiis:BaseLayout>
 				</axiis:layouts>
+				<axiis:states>
+						<axiis:State id="highlightState" propagateToDescendents="true"
+								targets="{[wedgeFill]}"
+								properties="{['color']}"
+								values="{[0xFF0000]}"/>
+				</axiis:states>
 			</axiis:ConcentricWedgeLayout>
 		</axiis:layouts>
-		<axiis:filters>
-			<mx:DropShadowFilter/>
-		</axiis:filters>
 	</axiis:DataCanvas>
 
 	<mx:Label text="January 2002"
@@ -183,22 +194,23 @@
 
 	<axiis:DataCanvas id="legendDC"
 		width="200"
-		height="{legendLayout.itemCount * 18}"
-		bottom="5"
-		left="5">
+		bottom="20"
+		top="120"
+		right="20">
 		<axiis:layouts>
-			<axiis:VBoxLayout id="legendLayout"
+			<axiis:VBoxLayout id="legendLayout" percentGap=".1"
 				width="{legendDC.width}"
 				height="{legendDC.height}"
 				showDataTips="false"
-				itemClick="legendLayout_itemClickHandler(event)">
+				itemClick="legendLayout_itemClickHandler(event)"
+				itemMouseOver="legendLayout_itemMouseOver(event)">
 				<axiis:drawingGeometries>
 					<degrafa:RegularRectangle x="{legendLayout.currentReference.x}"
 						y="{legendLayout.currentReference.y}"
 						width="18"
 						height="18">
 						<degrafa:stroke>
-							<degrafa:SolidStroke color="0"/>
+							<degrafa:SolidStroke color="0" pixelHinting="true" alpha=".7"/>
 						</degrafa:stroke>
 						<degrafa:fill>
 							<degrafa:SolidFill id="legendMarkerFill"
