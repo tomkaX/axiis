@@ -51,6 +51,13 @@ OTHER DEALINGS IN THE SOFTWARE.
 			 * The distance in pixels between successive wedges
 			 */
 			public var radialGap:Number = 0;
+			
+			[Bindable]
+			[Inspectable(defaultValue='outward',enumeration='outward,inward')]
+			/**
+			 * 
+			 */
+			public var direction:String = "outward"
 		]]>
 	</mx:Script>
 
@@ -69,17 +76,17 @@ OTHER DEALINGS IN THE SOFTWARE.
 				<geometry:Wedge id="referenceWedge"
 					centerX="{width/2}"
 					centerY="{height/2}"
-					innerRadius="{innerRadius}"
-					outerRadius="{innerRadius + radiusStep.value - radialGap}"
+					innerRadius="{direction == 'inward' ? centerExpression.value - 5 : innerRadius}"
+					outerRadius="{direction == 'inward' ? centerExpression.value : innerRadius + radiusStep.value - radialGap}"
 					startAngle="270"
 					arc="359.99"/>
 			</utils:geometry>
 			<utils:modifiers>
 				<utils:PropertyModifier modifier="{radiusStep.value}"
-					modifierOperator="add"
+					modifierOperator="{direction == 'inward' ? 'subtract' : 'add'}"
 					property="innerRadius"/>
 				<utils:PropertyModifier modifier="{radiusStep.value}"
-					modifierOperator="add"
+					modifierOperator="{direction == 'inward' ? 'subtract' : 'add'}"
 					property="outerRadius"/>
 			</utils:modifiers>
 		</utils:GeometryRepeater>

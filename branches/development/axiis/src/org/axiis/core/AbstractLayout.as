@@ -344,23 +344,8 @@ package org.axiis.core
 				}
 			}
 			else {
+				// The dataProvider is a single Object. Put it on _dataItems as the only element
 				//_dataItems.push(dataProvider);
-				/*var z:int=0;
-				for each(var o:Object in dataProvider)
-				{
-					_dataFilterIndex=z;
-					z++;
-					if (o != null) {
-						if (dataFilterFunction != null) {
-							if (dataFilterFunction.call(this,o)) {
-								_dataItems.push(o);
-							}
-						}
-						else {
-							_dataItems.push(o);
-						}
-					}
-				}*/
 			}
 			
 			_dataFilterIndex=-1;
