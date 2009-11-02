@@ -45,7 +45,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 	<core:referenceRepeater>
 		<utils:GeometryRepeater>
 			<utils:geometry>
-				<degrafa:RegularRectangle x="0" y="0" width="{(width / itemCount) - (width * percentGap/2)}" height="{height}" enableEvents="false"/>
+				<degrafa:RegularRectangle x="0" y="0" width="{(width / itemCount) - (width/itemCount * percentGap)}" height="{height}" enableEvents="false"/>
 			</utils:geometry>
 			<utils:modifiers>
 				<utils:PropertyModifier property="x" modifier="{width/itemCount}" modifierOperator="add"/>

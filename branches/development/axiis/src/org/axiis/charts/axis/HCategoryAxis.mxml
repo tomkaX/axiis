@@ -114,7 +114,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 				line.visible=true;
 				label.visible=true;
 			}
-			else if (line.x-lastX >=maxWidth && line.x+maxWidth < this.width) {
+			else if (line.x-lastX >=maxWidth && line.x+maxWidth/2 < this.width) {
 				lastX=line.x;
 				line.visible=true;
 				label.visible=true;
@@ -159,6 +159,12 @@ OTHER DEALINGS IN THE SOFTWARE.
 		 font weight of labels.
 	-->
 	<mx:String id="fontWeight">normal</mx:String>
+	
+	<!---
+		 font color of labels.
+	-->
+	<mx:Number id="fontColor">0</mx:Number>
+	
 	<!---
 		 font size of labels.
 	-->
@@ -189,8 +195,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 			
 		<degrafa:RasterText id="label"
 			text="{axisLabelFunction(currentLabel)}"
-			align="left"
-			autoSize="left"
+			align="left" autoSizeField="true"
+			autoSize="left" textColor="{fontColor}"
 			fontFamily="{fontFamily}"
 			fontWeight="{fontWeight}"
 			fontSize="{fontSize}"

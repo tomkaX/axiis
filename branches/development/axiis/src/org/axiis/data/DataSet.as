@@ -170,13 +170,13 @@ package org.axiis.data
 		 * @param addSummaryFields When true, this method will dynamically add
 		 * min and max values to each row for each column.
 		 */
-		public function processCsvAsTable(payload:String, addSummaryFields:Boolean=false):void {
+		public function processCsvAsTable(payload:String, convertNulls:Boolean=true, addSummaryFields:Boolean=false):void {
 			var t:Number=flash.utils.getTimer();
 			//Convert CSV into data.row[n].col[n] format for dynamic object
 			
 			if (!_data) _data=new Object();
 			
-			_data["table"]=createTableFromDelimeter(",",payload,addSummaryFields);
+			_data["table"]=createTableFromDelimeter(",",payload,addSummaryFields,convertNulls);
 			
 			trace("DataSet.processCsvAsTable " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
 		}
@@ -205,13 +205,13 @@ package org.axiis.data
 		 * @param addSummaryFields When true, this method will dynamically add
 		 * min and max values to each row for each column.
 		 */
-		public function processTsvAsTable(payload:String, addSummaryFields:Boolean=false):void {
+		public function processTsvAsTable(payload:String, convertNulls:Boolean=true, addSummaryFields:Boolean=false):void {
 			var t:Number=flash.utils.getTimer();
 			//Convert CSV into data.row[n].col[n] format for dynamic object
 			
 			if (!_data) _data=new Object();
 			
-			_data["table"]=createTableFromDelimeter("\t",payload,addSummaryFields);
+			_data["table"]=createTableFromDelimeter("\t",payload,addSummaryFields,convertNulls);
 			
 			trace("DataSet.processTsvAsTable " + (flash.utils.getTimer()-t) + "ms for " + this._rowCount + " rows");
 		}
@@ -556,7 +556,7 @@ package org.axiis.data
 		 * Parses a CSV string into our private _dataRows
 		 * 
 		 */
-		private function createTableFromDelimeter(delimiter:String, value:String, addSummaries:Boolean=false, firstRowIsHeader:Boolean=true, convertNullsToZero:Boolean=true):Object {
+		private function createTableFromDelimeter(delimiter:String, value:String, addSummaries:Boolean=false, convertNullsToZero:Boolean=true, firstRowIsHeader:Boolean=true):Object {
 			//First we need to use a regEx to find any string enclosed in Quotes - as they are being escaped
 			
 			var table:Object=new Object();
@@ -633,6 +633,10 @@ package org.axiis.data
 						if (convertNullsToZero) {
 							if (dataCell.length==0) dataCell="0";
 							if (nullValues.indexOf(dataCell) > -1) dataCell="0";
+						}
+						else {
+							if (dataCell.length==0) dataCell=null;
+							if (nullValues.indexOf(dataCell) > -1) dataCell=null;
 						}
 						
 						var cell:Object=new Object();//Potentially we want to use ObjectProxies to detect changes
@@ -749,7 +753,7 @@ package org.axiis.data
 		}
 		
 		/**
-		 * IN DEV
+		 * Null values of column.value will stop the recursion and no children will be built.
 		 */
 		 
 		private function groupTableRows(collection:ArrayCollection, groupings:Array, summaryCols:Array):DataGroup {
@@ -777,6 +781,7 @@ package org.axiis.data
 				var tempCollection:DataGroup=new DataGroup();
 				
 				
+			//	if (currValue==null) return null;
 				
 				for (var y:int=0;y<collection.length;y++) {
 					
@@ -797,14 +802,14 @@ package org.axiis.data
 					tempCollection.addItem(collection.getItemAt(y));
 					
 					if (currValue!=nextValue) {
-							
+
 						var newObject:DataGroup=new DataGroup();
 						newObject.name=currValue;
 						newObject.groupName=groupName;
 						newObject.parent=tempData;
 						
 	
-						if (groupings.length > 1) { //we need to go one level deeper recursively
+						if (groupings.length > 1 && currValue!=null) { //we need to go one level deeper recursively
 							newObject=groupTableRows(tempCollection,groupings.slice(1,groupings.length),summaryCols);
 							newObject.name=currValue;
 							newObject.parent=tempData;

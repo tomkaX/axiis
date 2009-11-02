@@ -277,7 +277,6 @@ package org.axiis.core
 				_dataProvider = value;
 				
 				invalidateDataProvider();
-				invalidate();
 				
 				dispatchEvent(new Event("dataProviderChange"));
 				

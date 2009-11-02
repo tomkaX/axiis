@@ -140,10 +140,16 @@
 
 			[Bindable]
 			/**
-			 * @private
+			 * Shows the current horizontal plot index on LayoutItemEvents
 			 */
 			public var currentPlotIndex:int;
 
+			
+			[Bindable]
+			/**
+			 * Used by external plot filter functions
+			 */
+			 public var plotFilterIndex:int;
 
 			/**
 			 * The property within each item in the dataProvider that contains the
@@ -237,7 +243,7 @@
 				//Check to see if we need to fill
 				if (!showArea)
 				{
-					myPath.fill=new SolidFill(0, 0);
+					myPath.fill=null;
 				}
 				else
 				{
@@ -285,6 +291,7 @@
 					var obj:Object=(firstItem[plotCollection] is Array) ? firstItem[plotCollection][i] : firstItem[plotCollection].getItemAt(i);
 					if (plotFilterFunction != null)
 					{
+						plotFilterIndex=i;
 						if (plotFilterFunction.call(this, obj))
 						{
 							tempItems.push(obj);

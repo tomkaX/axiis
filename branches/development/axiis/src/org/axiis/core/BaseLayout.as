@@ -212,11 +212,17 @@ package org.axiis.core
 		{
 			if (!visible || !this.dataItems)
 			{
+				
 				if (newSprite)
 					newSprite.visible = false;
 				return;
 			}
-			
+
+			if (itemCount==0) {
+				trimChildSprites();
+				return;
+			}
+
 			if (newSprite)
 				newSprite.visible=true;
 			
@@ -416,12 +422,26 @@ package org.axiis.core
 			if (!sprite || _itemCount < 0)
 				return;
 
+		
+			var trim:int = sprite.drawingSprites.length-_itemCount;
+			
+			for (var i:int=0; i <=trim;i++)
+				{
+					var s:AxiisSprite = AxiisSprite(sprite.removeChild(sprite.drawingSprites[sprite.drawingSprites.length-1]));
+					if (s)
+						s.dispose();
+					s=null;
+				}
+
+
+/*  Michaels code - removed - algo above clears all sprites correctly
 			while(sprite.drawingSprites.length > _itemCount)
 			{
 				var s:AxiisSprite = AxiisSprite(sprite.removeChild(sprite.drawingSprites.pop()));
 				s.dispose();
 				s=null;
 			}
+*/
 		}
 		
 		

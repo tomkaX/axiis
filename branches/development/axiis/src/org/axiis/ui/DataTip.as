@@ -31,6 +31,11 @@ package org.axiis.ui
 			mouseChildren = false;
 		}
 		
+		public var paddingLeft:Number=8;
+		public var paddingRight:Number=8;
+		public var paddingTop:Number=8;
+		public var paddingBottom:Number=8;
+		
 		/**
 		 * overides default fill of callout
 		 */
@@ -221,7 +226,7 @@ package org.axiis.ui
 				fill.gradientStops = [new GradientStop(0xAAAAAA),new GradientStop(0xEEEEEE)];
 				fill.angle = 90;
 				callout.fill = fill;
-				callout.filters=[new DropShadowFilter(4,45,0,.5,8,8)];
+				callout.filters=[new DropShadowFilter(4,45,0,.5,20,20)];
 				
 				var stroke:SolidStroke = new SolidStroke(0x999999);
 				callout.stroke = stroke;
@@ -251,7 +256,7 @@ package org.axiis.ui
 				addChild(content);
 				contentFactoryDirty = false;
 			}
-			if(content)
+			if(content is IAxiisRenderer)
 			{
 				IAxiisRenderer(content).data = data;
 				IAxiisRenderer(content).value = value;
@@ -292,10 +297,10 @@ package org.axiis.ui
 			this.graphics.drawRect(contentX,contentY,content.width,content.height);
 			this.graphics.endFill();*/
 			
-			callout.x = contentX - 8;
-			callout.y = contentY - 8;
-			callout.width = contentWidth + 16;
-			callout.height = contentHeight + 16;
+			callout.x = contentX - paddingLeft;
+			callout.y = contentY - paddingRight;
+			callout.width = contentWidth + paddingLeft + paddingRight;
+			callout.height = contentHeight + paddingTop + paddingBottom;
 		}
 	}
 }

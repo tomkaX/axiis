@@ -298,6 +298,7 @@ package org.axiis.core
 		 */
 		protected function handleStateTriggeringEvent(event:Event):void
 		{
+			if (!event.target.parent) return;
 		
 			if((event.target.parent != this && event.type!=AxiisSprite.EVENT_SELECTED && event.type!=AxiisSprite.EVENT_UNSELECTED) || layout.rendering)
 				return;	
