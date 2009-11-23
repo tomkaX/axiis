@@ -343,8 +343,10 @@ package org.axiis.core
 				}
 			}
 			else {
-				// The dataProvider is a single Object. Put it on _dataItems as the only element
-				//_dataItems.push(dataProvider);
+				// If the dataProvider is just a single object we need to push it onto _dataItems
+				// because none of the above cases will have taken care of it. This arises when
+				// using DataSet.processXML when a node has no siblings.
+				_dataItems.push(dataProvider);
 			}
 			
 			_dataFilterIndex=-1;

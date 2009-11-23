@@ -382,6 +382,12 @@ package org.axiis.data
 					}
 					totalAggregates(object, collection, properties, collections[collections.length-1]);
 				}
+				else {
+					// We need to deal with the special case where the "collection" is actually just a single object
+					obj=collection;
+					aggregate(obj,collections.slice(1,collections.length),properties);
+					totalAggregates(object, collection, properties, collections[collections.length-1]);
+				}
 			} 
 			else {   //We are at the deepest collection
 				var aggregates:Object=object.aggregates;
@@ -397,6 +403,12 @@ package org.axiis.data
 						obj=collection[i];
 						processAggregateObject(obj,properties,aggregates,collections[0]);
 					}
+				}
+				else
+				{
+					// We need to deal with the special case where the "collection" is actually just a single object
+					obj=collection;
+					processAggregateObject(obj,properties,aggregates,collections[0]);
 				}
 				
 				for (var n:int=0;n<properties.length;n++) {
