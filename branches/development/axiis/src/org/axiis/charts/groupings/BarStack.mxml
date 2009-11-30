@@ -39,6 +39,12 @@
 	xmlns:groupings="org.axiis.charts.groupings.*"
 	fontSize="10">
 
+	<mx:Script>
+		<![CDATA[
+			import org.axiis.utils.ObjectUtils;
+			
+		]]>
+	</mx:Script>
 	<!---
 		 The scale used to map data values to the BarStack's coordinate space.
 	-->
@@ -59,7 +65,7 @@
 				<!--- @private -->
 				<utils:PropertyModifier id="widthModifier" property="width" modifier="{Number(this.horizontalScale.valueToLayout(currentValue))}" modifierOperator="none"/>
 				<!--- @private -->
-				<utils:PropertyModifier id="xModifier" property="x" modifier="{(currentIndex == 0) ? 0 : Number(this.horizontalScale.valueToLayout(dataItems[currentIndex-1][dataField]))}" modifierOperator="add"/>
+				<utils:PropertyModifier id="xModifier" property="x" modifier="{(currentIndex == 0) ? 0 : Number(this.horizontalScale.valueToLayout(ObjectUtils.getProperty(this,dataItems[currentIndex-1],dataField)))}" modifierOperator="add"/>
 			</utils:modifiers>
 		</utils:GeometryRepeater>
 	</groupings:referenceRepeater>
