@@ -29,8 +29,8 @@
 	 out horizontally.
 -->
 <degrafa:RegularRectangle xmlns="*"
-						  xmlns:mx="http://www.adobe.com/2006/mxml"
-						  xmlns:degrafa="http://www.degrafa.com/2007">
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:degrafa="http://www.degrafa.com/2007">
 
 	<mx:Script>
 		<![CDATA[
@@ -41,13 +41,13 @@
 			/**
 			 * The text of the label placed beneath the bracket.
 			 */
-			public var labelValue:String="";
+			public var labelValue:String = "";
 
 			[Bindable]
 			/**
 			 * The stroke used to draw lines of the bracket.
 			 */
-			public var markerStroke:com.degrafa.core.IGraphicsStroke=new SolidStroke(0xFFFFFF, .5, 1);
+			public var markerStroke:com.degrafa.core.IGraphicsStroke = new SolidStroke(0xFFFFFF, .5, 1);
 		]]>
 	</mx:Script>
 
@@ -63,41 +63,41 @@
 	<degrafa:geometry>
 		<!-- bottom line -->
 		<degrafa:Line x="{this.x}"
-					  x1="{this.x+width}"
-					  y="{this.y+height-height*.2}"
-					  y1="{this.y+height-height*.2}"
-					  stroke="{markerStroke}"/>
+			x1="{this.x+width}"
+			y="{this.y+height-height*.2}"
+			y1="{this.y+height-height*.2}"
+			stroke="{markerStroke}"/>
 		<!-- left line -->
 		<degrafa:Line x="{this.x}"
-					  x1="{this.x}"
-					  y="{this.y+height-height*.2}"
-					  y1="{this.y}"
-					  stroke="{markerStroke}"/>
+			x1="{this.x}"
+			y="{this.y+height-height*.2}"
+			y1="{this.y}"
+			stroke="{markerStroke}"/>
 		<!-- right line -->
 		<degrafa:Line x="{this.x+width}"
-					  x1="{this.x+width}"
-					  y="{this.y+height-height*.2}"
-					  y1="{this.y}"
-					  stroke="{markerStroke}"/>
+			x1="{this.x+width}"
+			y="{this.y+height-height*.2}"
+			y1="{this.y}"
+			stroke="{markerStroke}"/>
 		<!-- center line -->
 		<degrafa:Line x="{this.x+width/2}"
-					  x1="{this.x+width/2}"
-					  y="{this.y+height-height*.2}"
-					  y1="{this.y+height}"
-					  stroke="{markerStroke}"/>
+			x1="{this.x+width/2}"
+			y="{this.y+height-height*.2}"
+			y1="{this.y+height}"
+			stroke="{markerStroke}"/>
 		<!--- @private -->
 		<degrafa:RasterText id="label"
-							htmlText="{labelValue}"
-							y="{this.y+height}"
-							autoSize="center"
-							autoSizeField="true"
-							height="20"
-							align="center"
-							fontSize="{fontSize}"
-							textColor="{fontColor}"
-							fontWeight="{fontWeight}"
-							fontFamily="{fontFamily}"
-							x="{this.x+width/2-label.textWidth/2}"/>
+			htmlText="{labelValue}"
+			y="{height}"
+			fontSize="{fontSize}"
+			textColor="{fontColor}"
+			fontWeight="{fontWeight}"
+			fontFamily="{fontFamily}"
+			width="100%">
+			<degrafa:textFormat>
+				<degrafa:DegrafaTextFormat align="center"/>
+			</degrafa:textFormat>
+		</degrafa:RasterText>
 	</degrafa:geometry>
 
 </degrafa:RegularRectangle>
