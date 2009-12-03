@@ -42,7 +42,23 @@
 	<mx:Script>
 		<![CDATA[
 			import org.axiis.utils.ObjectUtils;
+			import com.degrafa.IGeometryComposition;
 			
+			public function set additionalGeometries(value:IGeometryComposition)
+			{
+				_additionalGeometries=value;
+				geomPlaceholder.geometry=[_additionalGeometries];
+			}
+			
+			public function get additionalGeometries():IGeometryComposition
+			{
+				return _additionalGeometries;
+			}
+			
+			[Bindable]
+			private var _additionalGeometries:IGeometryComposition;
+
+
 		]]>
 	</mx:Script>
 	<!---
@@ -103,6 +119,11 @@
 			fontWeight="{fontWeight}"
 			textColor="{fontColor}">
 		</degrafa:RasterText>
+		
+			<!--- @private -->
+		<degrafa:RegularRectangle id="geomPlaceholder"
+								  width="{this.width}"
+								  height="{this.height}"/>
 	</groupings:drawingGeometries>
 	
 	<!--

@@ -374,7 +374,7 @@ package org.axiis.core
 		 */
 		protected function activateStateForSiblings(state:State):void
 		{
-			//if (!parent) return;
+			if (!parent) return;
 			
 			for(var a:int = 0; a < parent.numChildren; a++)
 			{

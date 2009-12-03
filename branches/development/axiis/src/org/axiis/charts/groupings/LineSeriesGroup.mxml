@@ -449,6 +449,7 @@
 					//Create temp array to store points
 					ta=new Array();
 					xo=0;
+					
 
 					var seriesValues:Array=new Array();
 
@@ -456,18 +457,21 @@
 					{ //each series field
 						var stackedValue:Number=0;
 						var obj:Object=seriesPlots[i];
+						
+						if (xDataField && horizontalScale)
+						{
+							xo=horizontalScale.valueToLayout(ObjectUtils.getProperty(this, seriesPlots[i], xDataField), false);
+						}
+						
 						if (ta.length == 0)
 						{ //adds a new node if it is the first time
-							ta.push(new GraphicPoint(-1, verticalScale.valueToLayout(ObjectUtils.getProperty(this, seriesPlots[0], dataField), true))); //The first marker
+							ta.push(new GraphicPoint(xo-.01, verticalScale.valueToLayout(ObjectUtils.getProperty(this, seriesPlots[0], dataField), true))); //The first marker
 						}
 
 						/* Check if xDataField and horizontalScale are set, and if they are, the x value for the current point
 						   is determined by the horizontalScale. If not, the default method is used (xo += repeatedWidth)
 						 */
-						if (xDataField && horizontalScale)
-						{
-							xo=horizontalScale.valueToLayout(ObjectUtils.getProperty(this, seriesPlots[i], xDataField), false);
-						}
+						
 
 						var gp:GraphicPoint=new GraphicPoint;
 						gp.x=xo;

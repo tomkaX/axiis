@@ -21,7 +21,30 @@ package org.axiis.layouts.scale
 		 */
 		public static function inverseLerp(value:Number, min:Number, max:Number):Number
 		{
-			return (value - min) / (max - min);
+			//I know there is a more elegant way to calculate the below with polynomials, I am just too dense 
+			//To figure it out so for now we work the permutations. - TG  11/6/09
+			
+			var toReturn:Number;
+			
+			if (value >=0 && min >=0) {
+				toReturn=(value-min)/(max-min);
+			}
+			else if (value < 0 && min >=0) {
+				toReturn=(value-min)/(max-min);
+			}
+			else if (value == 0 && min < 0) {
+				toReturn=-min/(max-min);
+			}
+			else if (value >=0 && min < 0) {
+				toReturn=(value-min)/(max-min);
+			}
+			else if (value < 0 && min < 0) {
+				toReturn=(-min+value)/(max-min);
+			}
+			
+		//	trace("value = " + value + " min=" + min + " max=" + max + " return=" + toReturn);
+			
+			return toReturn;
 		}
 	}
 }

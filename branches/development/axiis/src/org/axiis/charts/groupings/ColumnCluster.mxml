@@ -37,7 +37,8 @@
 						xmlns:utils="org.axiis.utils.*"
 						xmlns:utils1="org.axiis.layouts.utils.*"
 						xmlns:states="org.axiis.states.*"
-						dataTipAnchorPoint="{dataTipPoint}" xmlns:geom="flash.geom.*">
+						dataTipAnchorPoint="{dataTipPoint}"
+						xmlns:geom="flash.geom.*">
 
 	<!-- public variables -->
 	<mx:Script>
@@ -62,8 +63,8 @@
 			 * </p>
 			 */
 			public var labelFunction:Function;
-			
-			private var selected_stroke:SolidStroke=new SolidStroke(0,1,3);
+
+			private var selected_stroke:SolidStroke=new SolidStroke(0, 1, 3);
 
 			[Bindable(event="showValueLabelChange")]
 			/**
@@ -84,28 +85,30 @@
 					invalidate();
 				}
 			}
-			
-			  public function set additionalGeometries(value:IGeometryComposition) {
-                                _additionalGeometries=value;
-                                geomPlaceholder.geometry=[_additionalGeometries];
-                        }
-                        
-                        public function get additionalGeometries():IGeometryComposition {
-                                return _additionalGeometries;
-                        }
-                        
-                        [Bindable]
-                        private var _additionalGeometries:IGeometryComposition;
-			
+
+			public function set additionalGeometries(value:IGeometryComposition)
+			{
+				_additionalGeometries=value;
+				geomPlaceholder.geometry=[_additionalGeometries];
+			}
+
+			public function get additionalGeometries():IGeometryComposition
+			{
+				return _additionalGeometries;
+			}
+
+			[Bindable]
+			private var _additionalGeometries:IGeometryComposition;
+
 			private var _showValueLabel:Boolean=true;
 		]]>
 	</mx:Script>
 
 	<!--- @private -->
 	<mx:Number id="percentGap">.05</mx:Number>
-	
+
 	<!---
-		The minimum width of each column
+		 The minimum width of each column
 	-->
 	<mx:Number id="minColumnWidth">15</mx:Number>
 
@@ -121,9 +124,11 @@
 	<!--- @private -->
 	<utils:NumericExpression id="valueLabelLayout"
 							 value="{column.y-valueLabel.height-3 + (currentValue >= 0 ? 0:column.height+valueLabel.height+3)}"/>
-	
+
 	<!--- @private -->
-	<geom:Point id="dataTipPoint" x="{column.x+column.width/2}" y="{column.y}"/>
+	<geom:Point id="dataTipPoint"
+				x="{column.x+column.width/2}"
+				y="{column.y}"/>
 
 	<groupings:referenceRepeater>
 		<utils1:GeometryRepeater>
@@ -143,8 +148,8 @@
 	</groupings:referenceRepeater>
 
 	<groupings:drawingGeometries>
-	
-	
+
+
 
 		<!--- @private -->
 		<degrafa:RegularRectangle id="column"
@@ -189,8 +194,10 @@
 							fontWeight="{dataFontWeight}"/>
 
 		<!--- @private -->
-		<degrafa:RegularRectangle id="geomPlaceholder" width="{this.width}" height="{this.height}" />
-		
+		<degrafa:RegularRectangle id="geomPlaceholder"
+								  width="{this.width}"
+								  height="{this.height}"/>
+
 	</groupings:drawingGeometries>
 	<groupings:fills>
 		<!--- @private -->
@@ -201,11 +208,11 @@
 
 	<groupings:states>
 		<!--states:State enterStateEvent="mouseOver"
-					  exitStateEvent="mouseOut"
-					  targets="{[column,label]}"
-					  properties="{['fill','textColor']}"
-					  values="{[rollOverFill,0xFFFFFF]}"/-->
-					  
+			 exitStateEvent="mouseOut"
+			 targets="{[column,label]}"
+			 properties="{['fill','textColor']}"
+			 values="{[rollOverFill,0xFFFFFF]}"/-->
+
 		<states:State enterStateEvent="selected"
 					  exitStateEvent="unselected"
 					  targets="{[column]}"

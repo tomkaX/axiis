@@ -48,7 +48,11 @@ package org.axiis.layouts.scale
 				percent = 1 - percent;
 			if(clamp)
 				percent = Math.max(0,Math.min(1,percent));
+				
 			var toReturn:Number = ScaleUtils.lerp(percent,minLayout,maxLayout);
+			
+		//	trace("value = " + value + " is percent=" + percent + " of max=" + maxValue + " - min=" + minValue + " to return=" + toReturn);
+			
 			return toReturn;
 		}
 		
@@ -69,7 +73,9 @@ package org.axiis.layouts.scale
 			if(clamp)
 				percent = Math.max(0,Math.min(1,percent));
 			var toReturn:Number = ScaleUtils.lerp(percent,minValue,maxValue);
+			
 			return toReturn;
+			
 		}
 	}
 }
