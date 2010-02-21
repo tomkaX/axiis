@@ -122,8 +122,13 @@ package org.axiis.layouts.utils
 		 * @param completeCallback A function that will be called when
 		 * <code>numIterations</code> of this GeometryRepeater have been
 		 * executed.
+		 * @param canIterateCallback A function that will be called before 
+		 * every iteration. It has to return a <code>Boolean</code> value.
+		 * If the result is <code>true</code> the iteration proceeds normally,
+		 * if it is <code>false</code> then it will try aggain later until 
+		 * the function returns <code>true</code> and proceed the iteration
 		 */
-		public function repeat(numIterations:int, preIterationCallback:Function = null, postIterationCallback:Function=null, completeCallback:Function = null):void
+		public function repeat(numIterations:int, preIterationCallback:Function = null, postIterationCallback:Function=null, completeCallback:Function = null, canIterateCallBack:Function = null):void
 		{
 			if(numIterations <= 0)
 				return;
@@ -131,19 +136,27 @@ package org.axiis.layouts.utils
 			_iterationLoopComplete = false;
 			clearTimeout(timerID);
 			_currentIteration = 0;
-			repeatHelper(numIterations,preIterationCallback,postIterationCallback,completeCallback);
+			repeatHelper(numIterations,preIterationCallback,postIterationCallback,completeCallback,canIterateCallBack);
 		}
 		
 		/**
 		 * @private
 		 */
-		protected function repeatHelper(numIterations:int,preIterationCallback:Function = null, postIterationCallback:Function=null, completeCallback:Function = null):void
+		protected function repeatHelper(numIterations:int,preIterationCallback:Function = null, postIterationCallback:Function=null, completeCallback:Function = null, canIterateCallBack:Function = null):void
 		{
 
 			var startTime:int = getTimer();
 			var totalTime:int = 0;
 			while(totalTime < millisecondsPerFrame && currentIteration < numIterations)
 			{
+				if(canIterateCallBack != null)
+				{
+					//it seems that iteration at this moment is not possible, so we break
+					//it will then give the player 10ms to render and, and try again
+					if(canIterateCallBack.call(this) == false)
+						break;
+				}
+				
 				if(preIterationCallback != null)
 					preIterationCallback.call(this);
 				
@@ -179,7 +192,7 @@ package org.axiis.layouts.utils
 			// The loop took too long and we had to break out. Give the player 10ms to render and, and try again
 			else
 			{
-				timerID = setTimeout(repeatHelper,1,numIterations,preIterationCallback,postIterationCallback,completeCallback);
+				timerID = setTimeout(repeatHelper,1,numIterations,preIterationCallback,postIterationCallback,completeCallback,canIterateCallBack);
 			}
 		}
 	}

@@ -29,10 +29,10 @@ package org.axiis.core
 	import flash.geom.*;
 	import flash.utils.*;
 	
+	import mx.core.IFactory;
+	
 	import org.axiis.events.LayoutItemEvent;
 	import org.axiis.states.State;
-	
-	import mx.core.IFactory;
 	
 	// TODO This event should be moved to AbstractLayout
 	/**
@@ -130,6 +130,12 @@ package org.axiis.core
 		public var useHandCursor:Boolean = false;
 		
 		private var allStates:Array = [];
+		
+		/**
+		 * Used to determine how many child layouts are being rendered. If 0 then all are rendered, or none was started to render,
+		 * or there are no child layouts
+		 */
+		private var pendingChildLayouts:int = 0;
 		
 		[Bindable(event="scaleFillChange")]
 		/**
@@ -264,7 +270,7 @@ package org.axiis.core
 				_currentLabel = null
 				_currentIndex = -1;
 					
-				_referenceGeometryRepeater.repeat(itemCount, preIteration, postIteration, repeatComplete);
+				_referenceGeometryRepeater.repeat(itemCount, preIteration, postIteration, repeatComplete, canIterate);
 			}
 		}
 		
@@ -375,7 +381,7 @@ package org.axiis.core
 			
 			renderChildLayouts(currentChild);
 		}
-		
+				
 		/**
 		 * Calls the render method on all child layouts. 
 		 */
@@ -392,6 +398,15 @@ package org.axiis.core
 					var ns:AxiisSprite = createChildSprite(this);
 					child.addLayoutSprite(ns);
 				}
+				
+				//when the layout starts rendering we increase the number of children that are being rendered
+				//when the rendering is complete we decrease it. When pendingChildLayouts becomes 0 all layouts were rendered
+				if(layout is BaseLayout)
+				{
+					layout.addEventListener("preRender", function():void{pendingChildLayouts++});
+					layout.addEventListener("renderComplete", function():void{pendingChildLayouts--});
+				}
+				
 				layout.render(child.layoutSprites[i]);
 				i++;
 			}
@@ -407,6 +422,18 @@ package org.axiis.core
 			sprite.visible = visible;
 			_rendering = false;
 			this.dispatchEvent(new Event("renderComplete"));
+		}
+		
+		/**
+		 * The callback method called by the referenceRepeater before each iteration
+		 * to check if it is possible to do the iteration.
+		 * This method returns true if there are no child layouts pending to be rendered, 
+		 * returns false if some child layouts have started rendering but haven't already finnished, 
+		 * in that case the referenceRepeater will try aggain later to iterate
+		 */
+		protected function canIterate():Boolean
+		{
+			return pendingChildLayouts == 0; 
 		}
 		
 		private function createChildSprite(layout:AbstractLayout):AxiisSprite
