@@ -248,14 +248,14 @@ package org.axiis.core
 			
 			if (inheritParentBounds && parentLayout)
 			{
-				bounds = new Rectangle(parentLayout.currentReference.x + (isNaN(x) ? 0 : x),
+				_bounds = new Rectangle(parentLayout.currentReference.x + (isNaN(x) ? 0 : x),
 					parentLayout.currentReference.y + (isNaN(y) ? 0 : y),
 					parentLayout.currentReference.width,
 					parentLayout.currentReference.height);
 			}
 			else
 			{
-				bounds = new Rectangle((isNaN(x) ? 0:x),(isNaN(y) ? 0:y),width,height);
+				_bounds = new Rectangle((isNaN(x) ? 0:x),(isNaN(y) ? 0:y),width,height);
 			}
 			sprite.x = isNaN(_bounds.x) ? 0 :_bounds.x;
 			sprite.y = isNaN(_bounds.y) ? 0 :_bounds.y;
