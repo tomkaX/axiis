@@ -84,6 +84,12 @@
 				 */
 				dc.invalidateDisplayList();
 			}
+
+			protected function myStack_preRenderHandler(event:Event):void
+			{
+				// TODO Auto-generated method stub
+			}
+
 		]]>
 	</mx:Script>
 
@@ -237,7 +243,7 @@
 						y="0"
 						width="{hLayout.currentReference.width}"
 						height="{hLayout.currentReference.height}"
-						dataProvider="{[hLayout.currentDatum.aggregates]}"
+						dataProvider="{hLayout.currentDatum.aggregates}"
 						dataField="medal_count_sum"
 						labelField="medal_count_sum"
 						fill="{stackFill}"
@@ -246,6 +252,7 @@
 						fontFamily="Arial"
 						showLabel="false"
 						dataFontColor="{outerPalette.currentColor}"
+						preRender="myStack_preRenderHandler(event)"
 						showDataLabel="true"/>
 						
 					<!-- Cluster Group
