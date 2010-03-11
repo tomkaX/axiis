@@ -84,7 +84,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 			private var _verticalScale:IScale;
 			
 			private function addScaleListeners():void {
-				AbstractScale(_verticalScale).addEventListener("invalidated",onScaleChange);
+				AbstractScale(_verticalScale).addEventListener("invalidate",onScaleChange);
 			}
 			
 			private function removeScaleListeners():void {
