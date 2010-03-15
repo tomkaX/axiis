@@ -216,11 +216,13 @@ package org.axiis.core
 		 */
 		override public function render(newSprite:AxiisSprite = null):void 
 		{
-			if (!visible || !this.dataItems)
+			if (!visible || ! _dataItems)
 			{
 				
 				if (newSprite)
 					newSprite.visible = false;
+				
+				renderComplete();
 				return;
 			}
 
@@ -237,8 +239,10 @@ package org.axiis.core
 			
 			_rendering = true;
 			
-			if(!sprite || !_referenceGeometryRepeater)
-				return;		
+			if(!sprite || !_referenceGeometryRepeater  || itemCount==0) {
+				renderComplete();
+				return;	
+			}
 			
 			dispatchEvent(new Event("preRender"));	
 			
@@ -270,8 +274,9 @@ package org.axiis.core
 				_currentLabel = null
 				_currentIndex = -1;
 					
-				_referenceGeometryRepeater.repeat(itemCount, preIteration, postIteration, repeatComplete, canIterate);
+				_referenceGeometryRepeater.repeat(itemCount, preIteration, postIteration, renderComplete, canIterate);
 			}
+			
 		}
 		
 		/**
@@ -417,7 +422,7 @@ package org.axiis.core
 		 * its final iteration. Stop tracking changes to the drawingGeometries
 		 * properties.
 		 */
-		protected function repeatComplete():void
+		protected function renderComplete():void
 		{
 			sprite.visible = visible;
 			_rendering = false;
@@ -433,7 +438,7 @@ package org.axiis.core
 		 */
 		protected function canIterate():Boolean
 		{
-			return pendingChildLayouts == 0; 
+			return pendingChildLayouts <= 0; 
 		}
 		
 		private function createChildSprite(layout:AbstractLayout):AxiisSprite
