@@ -3,7 +3,7 @@
 	<!-- root -->
 	<component id="DataCanvas" class="org.axiis.DataCanvas"/>
 	
-	<!-- charts -->
+	<!-- charts test-->
 		<!-- axis -->
 		<component id="HAxis" class="org.axiis.charts.axis.HAxis"/>
 		<component id="VAxis" class="org.axiis.charts.axis.VAxis"/>
