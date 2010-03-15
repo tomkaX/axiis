@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <componentPackage>
-	<!-- root test -->
+	<!-- root-->
 	<component id="DataCanvas" class="org.axiis.DataCanvas"/>
 	
 	<!-- charts test-->
