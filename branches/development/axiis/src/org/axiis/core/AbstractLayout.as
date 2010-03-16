@@ -317,12 +317,12 @@ package org.axiis.core
 					_dataFilterIndex=i;
 					if (dataProvider.source[i] != null) {
 						if (dataFilterFunction != null) {
-								if (dataFilterFunction.call(this,dataProvider.source[i])) {
-									_dataItems.push(dataProvider.source[i]);
+								if (dataFilterFunction.call(this,dataProvider.getItemAt(i))) {
+									_dataItems.push(dataProvider.getItemAt(i));
 								}
 							}
 						else {
-							_dataItems.push(dataProvider.source[i]);
+							_dataItems.push(dataProvider.getItemAt(i));
 						}
 					}
 				}
