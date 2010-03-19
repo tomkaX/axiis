@@ -239,6 +239,8 @@ package org.axiis.core
 			
 			_rendering = true;
 			
+			trimChildSprites();
+			
 			if(!sprite || !_referenceGeometryRepeater  || itemCount==0) {
 				renderComplete();
 				return;	
@@ -248,7 +250,7 @@ package org.axiis.core
 			
 			_referenceGeometryRepeater.millisecondsPerFrame=this.msPerRenderFrame;
 			
-			trimChildSprites();
+
 			
 			if (inheritParentBounds && parentLayout)
 			{
