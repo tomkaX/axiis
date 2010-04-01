@@ -119,6 +119,8 @@ package org.axiis.core
 		{
 			_visible = value;
 		}
+		
+		[Bindable]
 		private var _visible:Boolean=true;
 
 		/**

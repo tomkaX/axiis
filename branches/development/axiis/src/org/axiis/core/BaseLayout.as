@@ -185,6 +185,7 @@ package org.axiis.core
 		/**
 		 * @private
 		 */
+		[Bindable]
 		override public function set visible(value:Boolean):void
 		{
 			super.visible = value;
