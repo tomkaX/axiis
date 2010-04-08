@@ -427,7 +427,8 @@ package org.axiis.core
 		 */
 		protected function renderComplete():void
 		{
-			sprite.visible = visible;
+			if (sprite)
+				sprite.visible = visible;
 			_rendering = false;
 			this.dispatchEvent(new Event("renderComplete"));
 		}
