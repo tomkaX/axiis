@@ -5,7 +5,6 @@ package org.axiis.managers
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	
-	import mx.core.ApplicationGlobals;
 	import mx.core.UIComponent;
 	import mx.managers.ISystemManager;
 	
@@ -23,7 +22,7 @@ package org.axiis.managers
 		public function AnchoredDataTipManager()
 		{
 			super();
-			systemManager = ApplicationGlobals.application.systemManager as ISystemManager;
+			//systemManager = ApplicationGlobals.application.systemManager as ISystemManager;
 		}
 		
 		/**
@@ -51,7 +50,10 @@ package org.axiis.managers
 			dataTip.x = anchorPoint.x;
 			dataTip.y = anchorPoint.y;
 			
-			systemManager.topLevelSystemManager.addChildToSandboxRoot("toolTipChildren", dataTip);
+			var sm:ISystemManager = axiisSprite.layout.owner['systemManager'] as ISystemManager;
+			sm.topLevelSystemManager.toolTipChildren.addChild(dataTip);
+		
+			//systemManager.topLevelSystemManager.addChildToSandboxRoot("toolTipChildren", dataTip);
 			
 			contexts.push(context);
 			this._dataTips.push(dataTip);
@@ -67,7 +69,8 @@ package org.axiis.managers
 		protected function calculateDataTipPosition(trigger:AxiisSprite,context:DisplayObject):Point
 		{
 			var point:Point=trigger.localToGlobal(trigger.dataTipAnchorPoint);
-			point = systemManager.stage.globalToLocal(point);
+			var sm:ISystemManager = trigger.layout.owner['systemManager'] as ISystemManager;
+			point = sm.stage.globalToLocal(point);
 			return point;
 		}
 		
@@ -99,7 +102,11 @@ package org.axiis.managers
 				var dataTip:UIComponent = _dataTips.pop();
 				var axiisSprite:AxiisSprite = axiisSprites.pop();
 				context.graphics.clear();
-				systemManager.topLevelSystemManager.removeChildFromSandboxRoot("toolTipChildren", dataTip);
+				
+				var sm:ISystemManager = axiisSprite.layout.owner['systemManager'] as ISystemManager;
+				sm.topLevelSystemManager.toolTipChildren.removeChild(dataTip);
+				
+			//	systemManager.topLevelSystemManager.removeChildFromSandboxRoot("toolTipChildren", dataTip);
 
 				axiisSprite.removeEventListener(MouseEvent.MOUSE_OUT,handleMouseOut);
 				

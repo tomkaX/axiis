@@ -30,6 +30,7 @@ package org.axiis
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.utils.getTimer;
 	
 	import mx.containers.Canvas;
 	import mx.core.IFactory;
@@ -223,7 +224,6 @@ package org.axiis
 		 */
 		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
 		{
-			super.updateDisplayList(unscaledWidth,unscaledHeight);
 	
 			//Render layouts first, as they may autoadjust Scales, etc that the background/foreground rely upon
 			while(invalidatedLayouts.length > 0)
@@ -263,11 +263,12 @@ package org.axiis
 				i++;
 			}
 			
-			
 			/* this.graphics.clear();
 			this.graphics.beginFill(0xff,.1);
 			this.graphics.drawRect(0,0,width,height);
 			this.graphics.endFill(); */
+			
+			super.updateDisplayList(unscaledWidth,unscaledHeight);
 			
 			_invalidated = false;
 		}
