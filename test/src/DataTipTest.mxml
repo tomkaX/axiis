@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical"
+	creationComplete="application1_creationCompleteHandler(event)" xmlns:axiis="http://www.axiis.org/2009" xmlns:degrafa="http://www.degrafa.com/2007">
+	
+	<mx:Script>
+		<![CDATA[
+			import dataTipTestClasses.ComplexDataTipContent;
+			import org.axiis.data.DataSet;
+			import mx.events.FlexEvent;
+
+			protected function application1_creationCompleteHandler(event:FlexEvent):void
+			{
+				var ds:DataSet = new DataSet();
+				ds.processXmlString(xml);
+				vBoxLayout.dataProvider = ds.data.object.data.datum;
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:String id="xml" source="/data/simple_data.xml"/>
+	
+	<mx:Point id="anchorPoint" x="{hScale.valueToLayout(vBoxLayout.currentDatum.value)}"
+		y="{vBoxLayout.currentReference.y + vBoxLayout.currentReference.height / 2}"/>
+	
+	<axiis:LinearScale id="hScale"
+		dataProvider="{vBoxLayout.dataProvider}"
+		dataField="value"
+		minLayout="0"
+		maxLayout="{vBoxLayout.width}"/>
+		
+	<mx:HBox>
+		<mx:Button id="anchoredButton" label="{anchoredButton.selected ? 'Anchored' : 'Free'}" toggle="true"/>
+		<mx:Button id="calloutFactoryButton" label="{calloutFactoryButton.selected ? 'Text' : 'Complex'}" toggle="true"/>
+	</mx:HBox>
+	
+	<axiis:DataCanvas id="dc" width="100%" height="100%">
+		<axiis:layouts>
+		
+			<axiis:VBoxLayout id="vBoxLayout"
+				width="{dc.width}"
+				height="{dc.height}"
+				labelField="value"
+				dataField="url"
+				dataTipContentClass="{calloutFactoryButton.selected ? null : new ClassFactory(ComplexDataTipContent)}"
+				dataTipAnchorPoint="{anchoredButton.selected ? anchorPoint : null}">
+				
+				<axiis:drawingGeometries>
+					<degrafa:RegularRectangle
+						x="{vBoxLayout.currentReference.x}"
+						y="{vBoxLayout.currentReference.y}"
+						width="{hScale.valueToLayout(vBoxLayout.currentDatum.value)}"
+						height="{vBoxLayout.currentReference.height}">
+						<degrafa:fill>
+							<degrafa:SolidFill color="0x0099ff"/>
+						</degrafa:fill>
+						<degrafa:stroke>
+							<degrafa:SolidStroke color="0"/>
+						</degrafa:stroke>
+					</degrafa:RegularRectangle>
+				</axiis:drawingGeometries>
+				
+			</axiis:VBoxLayout>
+			
+		</axiis:layouts>
+	</axiis:DataCanvas>
+	
+</mx:Application>

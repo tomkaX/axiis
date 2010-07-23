@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:utils="org.axiis.utils.*" creationComplete="{start()}">
+	
+	<mx:Script>
+		<![CDATA[
+		
+		/*
+		4 Label.text settings looping 100,000 times
+		-------------------------------------------
+		13596ms with bindings on
+		4596ms with bindings disabled
+		3680ms setting directly with no bindings
+		
+		
+		
+		*/
+		
+			import flash.utils.getTimer;
+			import mx.core.mx_internal;
+			
+			[Bindable]
+			private var _num:Number=0;
+			
+			private var _num2:Number=0;
+			
+			use namespace mx_internal;
+			
+			
+			
+			private function start():void {
+				var doc:Object=this.document;
+				
+			//	var bindings:Array=doc._bindings;
+			//	mx.binding.BindingManager.setEnabled(doc,false);
+				
+				var t:Number=flash.utils.getTimer();
+				for (var i:int=0;i<100000;i++) {
+					
+					//_num=i;
+					label1.text=i.toString();
+					label2.text=i.toString();
+					label3.text=i.toString();
+					label4.text=i.toString();
+				}
+				
+				trace("elapsed time = " + (flash.utils.getTimer()-t) + "ms");
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<!--utils:NumericExpression id="myExpression" value="{_num}"/-->
+	
+	<mx:Label id="label1"/>
+	<mx:Label id="label2"/>
+	<mx:Label id="label3"/>
+	<mx:Label id="label4"/>
+	
+	<!--mx:Label text="{myExpression.value}"/>
+	<mx:Label text="{myExpression.value}"/>
+	<mx:Label text="{myExpression.value}"/-->
+	
+	<!--mx:Label text="{_num}"/>
+	<mx:Label text="{_num}"/>
+	<mx:Label text="{_num}"/>
+	<mx:Label text="{_num}"/-->
+</mx:Application>

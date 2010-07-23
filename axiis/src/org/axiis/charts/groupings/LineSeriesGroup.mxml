@@ -42,11 +42,12 @@
 						showDataTips="true"
 						itemPreDraw="onItemPreDraw()"
 						itemMouseMove="onItemMouseMove(event)"
-						preRender="onPreRender()">
+						preRender="onPreRender()" xmlns:geometry="com.degrafa.geometry.*">
 
 	<!-- public variables -->
 	<mx:Script>
 		<![CDATA[
+			import com.degrafa.geometry.segment.ClosePath;
 			import com.degrafa.paint.SolidStroke;
 			import org.axiis.events.LayoutItemEvent;
 			import com.degrafa.geometry.command.CommandStackItem;
@@ -61,7 +62,6 @@
 			import com.degrafa.paint.SolidFill;
 			import com.degrafa.decorators.axiis.AreaLineDecorator;
 			import com.degrafa.geometry.segment.QuadraticBezierTo;
-			import com.degrafa.geometry.segment.ClosePath;
 			import com.degrafa.geometry.segment.LineTo;
 			import com.degrafa.geometry.segment.MoveTo;
 			import com.degrafa.GraphicPoint;
@@ -129,7 +129,7 @@
 			[Bindable]
 			private var _plotCollection:Object;
 
-			private var _prevCurvePath:Array;
+			private var _prevCurveAreaPath:Array;
 			private var _maxY:Array;
 			private var _minY:Array;
 
@@ -214,7 +214,7 @@
 
 			private function onItemPreDraw():void
 			{
-				if(_curvePathsTop.length == 0)
+				if(_curveAreaPathsTop.length == 0)
 					return;
 
 				var ci:int=currentIndex;
@@ -222,34 +222,34 @@
 				var segs=new Array();
 
 				//Grab all of our top segments (need to clone)
-				segs.push(new MoveTo(_curvePathsTop[ci][0].x - .01, _curvePathsTop[ci][0].y));
-				for (var i:int=0; i < _curvePathsTop[ci].length; i++)
+				segs.push(new MoveTo(_curveAreaPathsTop[ci][0].x - .01, _curveAreaPathsTop[ci][0].y));
+				for (var i:int=0; i < _curveAreaPathsTop[ci].length; i++)
 				{
-					segs.push(cloneItem(_curvePathsTop[ci][i]));
+					segs.push(cloneItem(_curveAreaPathsTop[ci][i]));
 				}
 				//Connect down to our bottom segments
-				segs.push(new LineTo(_curvePathsBottom[ci][_curvePathsBottom[ci].length - 1].x, _curvePathsBottom[ci][_curvePathsBottom[ci].length - 1].y));
+				segs.push(new LineTo(_curveAreaPathsBottom[ci][_curveAreaPathsBottom[ci].length - 1].x, _curveAreaPathsBottom[ci][_curveAreaPathsBottom[ci].length - 1].y));
 
 				//Add our bottom segments
-				for (i=_curvePathsBottom[ci].length - 1; i > 0; i--)
+				for (i=_curveAreaPathsBottom[ci].length - 1; i > 0; i--)
 				{
 					// NEED TO CLONE THIS IN REVERSE CX/CY !!!!!
-					segs.push(cloneItem(_curvePathsBottom[ci][i], _curvePathsBottom[ci][i - 1]));
+					segs.push(cloneItem(_curveAreaPathsBottom[ci][i], _curveAreaPathsBottom[ci][i - 1]));
 				}
-				//Close the path
-				segs.push(new LineTo(_curvePathsTop[ci][0].x, _curvePathsTop[ci][0].y));
+				//Close the AreaPath
+				segs.push(new LineTo(_curveAreaPathsTop[ci][0].x, _curveAreaPathsTop[ci][0].y));
 				segs.push(new ClosePath());
 
 				//Check to see if we need to fill
 				if (!showArea)
 				{
-					myPath.fill=null;
+					myAreaPath.fill=null;
 				}
 				else
 				{
-					myPath.fill=fill;
+					myAreaPath.fill=fill;
 				}
-				myPath.segments=segs;
+				myAreaPath.segments=segs;
 				markerRepeater.count=_plotIndexes.length;
 			}
 
@@ -398,7 +398,7 @@
 
 			/**
 			 * This routine pre-calculates all the curves for a series
-			 * While we could calculate on each iteration, it would degrade performance because each curve is depdendent on the previous and next point along its path
+			 * While we could calculate on each iteration, it would degrade performance because each curve is depdendent on the previous and next point along its AreaPath
 			 * Thus we cache all the curve segments up front, and then just takes slices off them to render
 			 * Curves are stored in multi-dimensional array
 			 *
@@ -414,7 +414,7 @@
 					return;
 				//var segmentWidth:Number=width/itemCount;
 
-				_curvePathsTop=new Array();
+				_curveAreaPathsTop=new Array();
 
 				//Two dimension array used to store each series fields, one row at a time  Array[hField,vField]
 				_seriesPoints=new Array();
@@ -557,51 +557,51 @@
 
 				for each (var ar:Array in _seriesPoints)
 				{
-					_curvePathsTop.push(GraphicUtils.buildSegmentsFromCurvePoints(ar, tension));
+					_curveAreaPathsTop.push(GraphicUtils.buildSegmentsFromCurvePoints(ar, tension));
 				}
 
-				//Create a set of paths we can connect as bottom curves
-				_curvePathsBottom=new Array();
+				//Create a set of AreaPaths we can connect as bottom curves
+				_curveAreaPathsBottom=new Array();
 				i=0;
-				for (obj in _curvePathsTop)
+				for (obj in _curveAreaPathsTop)
 				{
 					if (mode == LineSeriesGroup.MODE_STACK_FLOW)
 					{ //Our series alternate with the first one being split into two, then going positive/negative
 						if (i == 1)
 						{
-							_curvePathsBottom.push(_curvePathsTop[0]);
+							_curveAreaPathsBottom.push(_curveAreaPathsTop[0]);
 						}
 						else if (i == 3)
 						{
-							_curvePathsBottom.push(_curvePathsTop[0]);
+							_curveAreaPathsBottom.push(_curveAreaPathsTop[0]);
 						}
 						else if (i > 0)
 						{ //We should be a positive value here, so our "bottom" was the last positive value
-							_curvePathsBottom.push(_curvePathsTop[i - 2]);
+							_curveAreaPathsBottom.push(_curveAreaPathsTop[i - 2]);
 						}
 					}
 					else
-					{ //When we have a baseline axis we will create a straight line for the bottom by adding a new path and ignoring the last one
+					{ //When we have a baseline axis we will create a straight line for the bottom by adding a new AreaPath and ignoring the last one
 						if (i == 0 || mode == LineSeriesGroup.MODE_BASELINE)
 						{ //First bottom curve is a straight line;                                                   
-							var path:Array=new Array();
-							for (n=0; n < _curvePathsTop[0].length; n++)
+							var AreaPath:Array=new Array();
+							for (n=0; n < _curveAreaPathsTop[0].length; n++)
 							{
-								var q:QuadraticBezierTo=new QuadraticBezierTo(_curvePathsTop[0][n].cx, verticalScale.valueToLayout(0, true), _curvePathsTop[0][n].x, verticalScale.valueToLayout(0, true));
-								path.push(q);
+								var q:QuadraticBezierTo=new QuadraticBezierTo(_curveAreaPathsTop[0][n].cx, verticalScale.valueToLayout(0, true), _curveAreaPathsTop[0][n].x, verticalScale.valueToLayout(0, true));
+								AreaPath.push(q);
 							}
-							_curvePathsBottom.push(path);
+							_curveAreaPathsBottom.push(AreaPath);
 						}
 						else
 						{
-							_curvePathsBottom.push(_curvePathsTop[i - 1]);
+							_curveAreaPathsBottom.push(_curveAreaPathsTop[i - 1]);
 						}
 					}
 					i++;
 				}
 				if (mode == LineSeriesGroup.MODE_STACK_FLOW)
 				{ //Remove the first one as it was the result of splitting the first series by bisecting the zero line
-					_curvePathsTop.splice(0, 1);
+					_curveAreaPathsTop.splice(0, 1);
 				}
 			}
 
@@ -624,15 +624,15 @@
 			private function getMarkerCX(iteration:int, obj:Object):Number
 			{
 				if (iteration == plotCount - 1)
-					return _curvePathsTop[currentIndex][iteration * 2 - 1].x;
-				return _curvePathsTop[currentIndex][iteration * 2].x;
+					return _curveAreaPathsTop[currentIndex][iteration * 2 - 1].x;
+				return _curveAreaPathsTop[currentIndex][iteration * 2].x;
 			}
 
 			private function getMarkerCY(iteration:int, obj:Object):Number
 			{
 				if (iteration == plotCount - 1)
-					return _curvePathsTop[currentIndex][iteration * 2 - 1].y;
-				return _curvePathsTop[currentIndex][iteration * 2].y;
+					return _curveAreaPathsTop[currentIndex][iteration * 2 - 1].y;
+				return _curveAreaPathsTop[currentIndex][iteration * 2].y;
 			}
 
 			//Stores all the data points (accounts for stacking and alternate layouts
@@ -644,7 +644,7 @@
 			[Bindable]
 			private var _seriesPoints:Array;
 
-			//Used to help calculate common fill bounds for myPath
+			//Used to help calculate common fill bounds for myAreaPath
 			private var _maxHeight:Number;
 
 			//Our repeat width depends on the hPadding 
@@ -652,17 +652,17 @@
 			private var _repeatWidth:Number;
 
 			//Stores all the precomputed curve segments
-			private var _curvePathsTop:Array;
+			private var _curveAreaPathsTop:Array;
 
 			//Stores all the precomputed curve segments
-			private var _curvePathsBottom:Array;
+			private var _curveAreaPathsBottom:Array;
 
-			//The segments used to render the series by myPath
+			//The segments used to render the series by myAreaPath
 			[Bindable]
 			private var _currentSegments:Array;
 
 
-			//Used to remove strokes off the sides and bottom of the path
+			//Used to remove strokes off the sides and bottom of the AreaPath
 			[Bindable]
 			private var _decorator:AreaLineDecorator=new AreaLineDecorator();
 
@@ -752,18 +752,19 @@
 	<!-- decorators="{[_decorator]}" -->
 
 	<layouts:drawingGeometries>
-		<degrafa:RegularRectangle width="{width}"
+		<degrafa:RegularRectangle width="{width}" id="rect"
 								  height="{height}"
 								  x="0"
 								  y="0">
 								<!--- @private -->
-			<degrafa:Path id="myPath"
+								
+			<geometry:AreaPath id="myAreaPath"
 						  scaleOnLayout="false"
 						  decorators="{[_decorator]}"
 						  enableEvents="false"
 						  stroke="{stroke}"
-						  fill="{fill}">
-			</degrafa:Path>
+						  fill="{fill}"/>
+
 		</degrafa:RegularRectangle>
 		<!--- @private -->
 		<degrafa:GeometryRepeater id="markerRepeater"
@@ -797,7 +798,7 @@
 					  enterStateEvent="mouseOver"
 					  exitStateEvent="mouseOut"
 					  enabled="{enableRollOver}"
-					  targets="{[myPath]}"
+					  targets="{[myAreaPath]}"
 					  properties="{['fill']}"
 					  values="{[mouseOverFill]}"/>
 	</layouts:states>

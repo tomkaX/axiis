@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" minWidth="1024" minHeight="768">	
+<mx:Script>
+	<![CDATA[
+
+			import flexUnitTests.TestScaleUtils;
+
+			private var flexUnitTests_TestScaleUtils_obj:flexUnitTests.TestScaleUtils;
+	]]>
+</mx:Script>	
+<mx:Script>
+	<![CDATA[
+
+			import flexUnitTests.TestLinearScale;
+
+			private var flexUnitTests_TestLinearScale_obj:flexUnitTests.TestLinearScale;
+	]]>
+</mx:Script>	
+<mx:Script>
+	<![CDATA[
+
+			import flexUnitTests.TestAbstractScale;
+
+			private var flexUnitTests_TestAbstractScale_obj:flexUnitTests.TestAbstractScale;
+	]]>
+</mx:Script>	
+<mx:Script>
+	<![CDATA[
+
+			import flexUnitTests.TestScales;
+
+			private var flexUnitTests_TestScales_obj:flexUnitTests.TestScales;
+	]]>
+</mx:Script>
+	
+</mx:Application>
