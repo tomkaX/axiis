@@ -6,6 +6,7 @@ package  com.degrafa.decorators.axiis {
 	import com.degrafa.geometry.command.CommandStack;
 	
 	import flash.display.Graphics;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
 	public class AreaLineDecorator extends RenderDecoratorBase{
@@ -27,24 +28,24 @@ package  com.degrafa.decorators.axiis {
 			_commandStack=stack;
 			_currentFill=CommandStack.currentFill;
 			if (fillBounds) {
-				_currentFill.begin(CommandStack.currentContext,fillBounds);
+				_currentFill.begin(CommandStack.currentContext,fillBounds,new Point(fillBounds.x,fillBounds.y));
 				//trace("Decorator fill.y=" + fillBounds.y + " fill.height=" + fillBounds.height);	
 			}
 			if (CommandStack.currentStroke) {
 					_currentStrokeArgs = CommandStack.currentStroke.lastArgs;
 					var restroke:Function = CommandStack.currentStroke.reApplyFunction;
-						_reStroke = function(graphics:Graphics):void {
+						_reStroke = function(graphics:Graphics):void { 
 							restroke(graphics,_currentStrokeArgs);
-						_reStrokeActive = true; //
-				}
+							_reStrokeActive = true; //
+							}
 			}
 		}
 		
 		override public function lineTo(x:Number, y:Number, graphics:Graphics):void {
-			//if ( _commandStack.cursor.currentIndex == _commandStack.length - 3 )
-			//{
+		//	if ( _commandStack.cursor.currentIndex == _commandStack.length - 3 )
+		//	{
 				graphics.lineStyle();
-			//}
+		//	}
 			graphics.lineTo(x,y);
 			if (_reStrokeActive) _reStroke(graphics);
 		}

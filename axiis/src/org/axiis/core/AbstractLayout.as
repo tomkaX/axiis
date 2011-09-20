@@ -14,7 +14,7 @@
 //	included in all copies or substantial portions of the Software.
 //
 //	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-//	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+//	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
 //	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 //	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 //	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
@@ -119,6 +119,8 @@ package org.axiis.core
 		{
 			_visible = value;
 		}
+		
+		[Bindable]
 		private var _visible:Boolean=true;
 
 		/**
@@ -170,6 +172,7 @@ package org.axiis.core
 		 */
 		protected var _bounds:Rectangle;
 		
+		
 		/**
 		 * An array of states that should be applied to this layout.
 		 * 
@@ -183,11 +186,11 @@ package org.axiis.core
 		 * 
 		 * @see State
 		 */
-		public function get states():Array
+		public function get axiisStates():Array
 		{
 			return _states;
 		}
-		public function set states(value:Array):void
+		public function set axiisStates(value:Array):void
 		{
 			if(_states != value)
 			{
@@ -196,6 +199,30 @@ package org.axiis.core
 			}
 		}
 		private var _states:Array = [];
+		
+		
+		/**
+		 * An array of transitions that should be applied to this layout.
+		 * 
+		 * <p>
+		 * Transitions are used to support animation at the AxiisSprite level
+		 * TODO: Potentially have layouts create unique sprites for each root level drawing geometry.
+		 * </p>
+		 * 
+		 * @see State
+		 */
+		public function get transitions():Array
+		{
+			return _transitions;
+		}
+		public function set transitions(value:Array):void
+		{
+			_transitions=value;
+			
+		}
+		
+		[Bindable]
+		private var _transitions:Array = [];
 		
 		[Bindable(event="itemCountChange")]
 		/**
@@ -317,12 +344,12 @@ package org.axiis.core
 					_dataFilterIndex=i;
 					if (dataProvider.source[i] != null) {
 						if (dataFilterFunction != null) {
-								if (dataFilterFunction.call(this,dataProvider.source[i])) {
-									_dataItems.push(dataProvider.source[i]);
+								if (dataFilterFunction.call(this,dataProvider.getItemAt(i))) {
+									_dataItems.push(dataProvider.getItemAt(i));
 								}
 							}
 						else {
-							_dataItems.push(dataProvider.source[i]);
+							_dataItems.push(dataProvider.getItemAt(i));
 						}
 					}
 				}
@@ -486,14 +513,14 @@ package org.axiis.core
 		 * appears after the necessary iterations of the referenceRepeater have
 		 * been executed. 
 		 */
-		public function get currentReference():Geometry  
+		public function get currentReference():Object  
 		{
 			return _currentReference;
 		}
 		/**
 		 * @private
 		 */
-		protected function set _currentReference(value:Geometry):void
+		protected function set _currentReference(value:Object):void
 		{
 			//We want this to fire each time so the geometry property changes propogate
 			__currentReference = value;
@@ -502,11 +529,11 @@ package org.axiis.core
 		/**
 		 * @private
 		 */
-		protected function get _currentReference():Geometry
+		protected function get _currentReference():Object
 		{
 			return __currentReference;
 		}
-		private var __currentReference:Geometry;
+		private var __currentReference:Object;
 		
 		
 		[Bindable(event="dataFieldChange")]
@@ -656,7 +683,7 @@ package org.axiis.core
 		/**
 		 * @private
 		 */
-		protected var owner:DataCanvas;
+		public var owner:DataCanvas;
 		
 		/**
 		 * The AxiisSprites this layout has created to render each item in its dataProvider.
@@ -693,6 +720,7 @@ package org.axiis.core
 			{
 
 				for each(var layout:AbstractLayout in _layouts) {
+					layout.owner=this.owner;
 					layout.removeEventListener("itemDataTip",onItemDataTip);
 				}
 				
@@ -825,7 +853,7 @@ package org.axiis.core
 		 * Returns the Sprite associated with this layout if owner is
 		 * in fact the owner of this layout.
 		 */
-		public function getSprite(owner:DataCanvas):Sprite
+		public function getSprite(owner:DataCanvas):AxiisSprite
 		{
 			if(!sprite)
 				sprite = new AxiisSprite();

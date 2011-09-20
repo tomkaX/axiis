@@ -32,7 +32,8 @@ package org.axiis.core
 	import mx.core.IFactory;
 	
 	import org.axiis.events.LayoutItemEvent;
-	import org.axiis.states.State;
+	import org.axiis.states.AxiisState;
+	import org.axiis.transitions.Transition;
 	
 	// TODO This event should be moved to AbstractLayout
 	/**
@@ -185,6 +186,7 @@ package org.axiis.core
 		/**
 		 * @private
 		 */
+		[Bindable]
 		override public function set visible(value:Boolean):void
 		{
 			super.visible = value;
@@ -216,12 +218,19 @@ package org.axiis.core
 		 */
 		override public function render(newSprite:AxiisSprite = null):void 
 		{
-			if (!visible || !this.dataItems)
+			if (!visible || ! _dataItems)
 			{
 				
 				if (newSprite)
 					newSprite.visible = false;
+				
+				renderComplete();
 				return;
+			}
+			
+			for each (var t:Transition in transitions) {
+				trace("setting transition");
+				t.assignLayout(this);
 			}
 
 			//if (itemCount==0) {
@@ -237,14 +246,18 @@ package org.axiis.core
 			
 			_rendering = true;
 			
-			if(!sprite || !_referenceGeometryRepeater)
-				return;		
+			trimChildSprites();
+			
+			if(!sprite || !_referenceGeometryRepeater  || itemCount==0) {
+				renderComplete();
+				return;	
+			}
 			
 			dispatchEvent(new Event("preRender"));	
 			
 			_referenceGeometryRepeater.millisecondsPerFrame=this.msPerRenderFrame;
 			
-			trimChildSprites();
+
 			
 			if (inheritParentBounds && parentLayout)
 			{
@@ -270,8 +283,9 @@ package org.axiis.core
 				_currentLabel = null
 				_currentIndex = -1;
 					
-				_referenceGeometryRepeater.repeat(itemCount, preIteration, postIteration, repeatComplete, canIterate);
+				_referenceGeometryRepeater.repeat(itemCount, preIteration, postIteration, renderComplete, canIterate);
 			}
+			
 		}
 		
 		/**
@@ -293,7 +307,7 @@ package org.axiis.core
 		protected function findAllStatesInLayoutTree(layout:AbstractLayout):Array
 		{
 			var toReturn:Array = [];
-			for each(var state:State in layout.states)
+			for each(var state:AxiisState in layout.axiisStates)
 			{
 				toReturn.push(state);
 			}
@@ -352,7 +366,9 @@ package org.axiis.core
 				newChildSprite.addEventListener(MouseEvent.MOUSE_MOVE,sprite_onMouseMove); 
 				sprite.addDrawingSprite(newChildSprite);
 			}
+			
 			var currentChild:AxiisSprite = AxiisSprite(sprite.drawingSprites[currentIndex]);
+			currentChild.layout=this;
 			currentChild.data = currentDatum;
 			currentChild.label = currentLabel;
 			currentChild.value = currentValue;
@@ -370,13 +386,13 @@ package org.axiis.core
 			currentChild.dataTipContentClass = dataTipContentClass;
 			
 			currentChild.storeGeometries(drawingGeometries);
-			for each(var state:State in allStates)
+			for each(var state:AxiisState in allStates)
 			{
 				state.apply();
 				currentChild.storeGeometries(drawingGeometries,state);
 				state.remove();
 			}
-			currentChild.states = states;
+			currentChild.axiisStates = axiisStates;
 			currentChild.render();
 			
 			renderChildLayouts(currentChild);
@@ -417,9 +433,10 @@ package org.axiis.core
 		 * its final iteration. Stop tracking changes to the drawingGeometries
 		 * properties.
 		 */
-		protected function repeatComplete():void
+		protected function renderComplete():void
 		{
-			sprite.visible = visible;
+			if (sprite)
+				sprite.visible = visible;
 			_rendering = false;
 			this.dispatchEvent(new Event("renderComplete"));
 		}
@@ -433,7 +450,7 @@ package org.axiis.core
 		 */
 		protected function canIterate():Boolean
 		{
-			return pendingChildLayouts == 0; 
+			return pendingChildLayouts <= 0; 
 		}
 		
 		private function createChildSprite(layout:AbstractLayout):AxiisSprite
@@ -506,5 +523,7 @@ package org.axiis.core
 		private function sprite_onUnSelected(e:Event):void {
 			this.dispatchEvent(new LayoutItemEvent("itemUnSelected",AxiisSprite(e.currentTarget),e));
 		}
+		
+		
 	}
 }

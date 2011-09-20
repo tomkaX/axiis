@@ -1,22 +1,24 @@
 <?xml version="1.0"?>
 <componentPackage>
-	
+	<!-- root-->
 	<component id="DataCanvas" class="org.axiis.DataCanvas"/>
 	
-	<!-- charts -->
+	<!-- charts test-->
 		<!-- axis -->
 		<component id="HAxis" class="org.axiis.charts.axis.HAxis"/>
 		<component id="VAxis" class="org.axiis.charts.axis.VAxis"/>
 		<component id="HCategoryAxis" class="org.axiis.charts.axis.HCategoryAxis"/>
 		
 		<!-- groupings -->
-		<component id="BarCluster" class="org.axiis.charts.groupings.BarCluster"/>
-		<component id="BarStack" class="org.axiis.charts.groupings.BarStack"/>
-		<component id="ColumnCluster" class="org.axiis.charts.groupings.ColumnCluster"/>
-		<component id="ColumnStack" class="org.axiis.charts.groupings.ColumnStack"/>
-		<component id="LineSeriesGroup" class="org.axiis.charts.groupings.LineSeriesGroup"/>
-		<component id="PlotGroup" class="org.axiis.charts.groupings.PlotGroup"/>
-		<component id="WedgeStackGroup" class="org.axiis.charts.groupings.WedgeStackGroup"/>
+		<component id="BarCluster" class="org.axiis.charts.layouts.BarCluster"/>
+		<component id="BarStack" class="org.axiis.charts.layouts.BarStack"/>
+		<component id="ColumnCluster" class="org.axiis.charts.layouts.ColumnCluster"/>
+		<component id="ColumnStack" class="org.axiis.charts.layouts.ColumnStack"/>
+		<component id="LineSeriesLayout" class="org.axiis.charts.layouts.LineSeriesLayout"/>
+		<component id="PlotLayout" class="org.axiis.charts.layouts.PlotLayout"/>
+		<component id="WedgeStackLayout" class="org.axiis.charts.layouts.WedgeStackLayout"/>
+		
+		<component id="LineSeriesLayout2" class="org.axiis.charts.layouts.LineSeriesLayout2"/>
 		
 		<!-- labels -->
 		<component id="HBracket" class="org.axiis.charts.labels.HBracket"/>
@@ -46,15 +48,19 @@
 		<component id="PropertyModifier" class="org.axiis.layouts.utils.PropertyModifier"/>
 
 	
-	<!-- paint -->
-	<component id="LayoutAutoPalette" class="org.axiis.paint.LayoutAutoPalette"/>
-	<component id="LayoutPalette" class="org.axiis.paint.LayoutPalette"/>
-	
-	<!-- states -->
-	<component id="State" class="org.axiis.states.State"/>
-	
-	<!-- utils -->
-	<component id="BooleanExpression" class="org.axiis.utils.BooleanExpression"/>
-	<component id="NumericExpression" class="org.axiis.utils.NumericExpression"/>
+		<!-- paint -->
+		<component id="LayoutAutoPalette" class="org.axiis.paint.LayoutAutoPalette"/>
+		<component id="LayoutPalette" class="org.axiis.paint.LayoutPalette"/>
+		
+		<!-- states -->
+		<component id="AxiisState" class="org.axiis.states.AxiisState"/>
+		
+		<!-- utils -->
+		<component id="BooleanExpression" class="org.axiis.utils.BooleanExpression"/>
+		<component id="NumericExpression" class="org.axiis.utils.NumericExpression"/>
+		
+		<!-- transitions -->
+		<component id="Transition" class="org.axiis.transitions.Transition"/>
+		<component id="AnimateProperty" class="org.axiis.transitions.AnimateProperty"/>
 	
 </componentPackage>

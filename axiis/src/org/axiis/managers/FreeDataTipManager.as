@@ -5,7 +5,6 @@ package org.axiis.managers
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	
-	import mx.core.ApplicationGlobals;
 	import mx.core.UIComponent;
 	import mx.managers.ISystemManager;
 	
@@ -20,7 +19,7 @@ package org.axiis.managers
 		public function FreeDataTipManager()
 		{
 			super();
-			systemManager = ApplicationGlobals.application.systemManager as ISystemManager;
+			
 		}
 		
 		/**
@@ -30,8 +29,7 @@ package org.axiis.managers
 			return [dataTip];
 		}
 		
-		private var systemManager:ISystemManager;
-		
+
 		private var context:Sprite;
 		
 		private var dataTip:UIComponent;
@@ -55,9 +53,13 @@ package org.axiis.managers
 			dataTip.y = point.y;
 			
 			if(context)
-				context.systemManager.addChildToSandboxRoot("toolTipChildren", dataTip);
-			else
-				systemManager.topLevelSystemManager.addChildToSandboxRoot("toolTipChildren", dataTip);
+				context.systemManager.addChild(dataTip);
+			//	context.systemManager.addChildToSandboxRoot("toolTipChildren", dataTip);
+			else {
+				var sm:ISystemManager = context['systemManager'] as ISystemManager;
+				sm.topLevelSystemManager.addChild(dataTip);
+				//systemManager.topLevelSystemManager.addChildToSandboxRoot("toolTipChildren", dataTip);
+			}
 			
 			axiisSprite.addEventListener(MouseEvent.MOUSE_MOVE,handleMouseMove);
 			axiisSprite.addEventListener(MouseEvent.MOUSE_OUT,handleMouseOut);
@@ -66,11 +68,12 @@ package org.axiis.managers
 		/**
 		 * @private
 		 */
-		protected function calculateDataTipPosition(trigger:DisplayObject,context:DisplayObject):Point
+		protected function calculateDataTipPosition(trigger:AxiisSprite,context:DisplayObject):Point
 		{
 			var point:Point = new Point(trigger.mouseX,trigger.mouseY); 
+			var sm:ISystemManager = trigger.layout.owner['systemManager'] as ISystemManager;
 			point = trigger.localToGlobal(point);
-			point = systemManager.stage.globalToLocal(point);
+			point = sm.stage.globalToLocal(point);
 			return point;
 		}
 		
@@ -81,7 +84,7 @@ package org.axiis.managers
 		{
 			if(context != null)
 			{
-				var point:Point = calculateDataTipPosition(DisplayObject(event.target),context);
+				var point:Point = calculateDataTipPosition(AxiisSprite(event.target),context);
 				dataTip.x = point.x;
 				dataTip.y = point.y;
 				dataTip.invalidateDisplayList();
@@ -103,7 +106,8 @@ package org.axiis.managers
 		{
 			if(context != null && dataTip != null && axiisSprite != null)
 			{
-				UIComponent(context).systemManager.removeChildFromSandboxRoot("toolTipChildren", dataTip);
+				UIComponent(context).systemManager.removeChild(dataTip);
+			//	UIComponent(context).systemManager.removeChildFromSandboxRoot("toolTipChildren", dataTip);
 				axiisSprite.removeEventListener(MouseEvent.MOUSE_MOVE,handleMouseMove);
 				axiisSprite.removeEventListener(MouseEvent.MOUSE_OUT,handleMouseOut);
 				context = null;

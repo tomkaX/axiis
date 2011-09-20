@@ -28,6 +28,7 @@ package org.axiis.core
 	import com.degrafa.geometry.Geometry;
 	
 	import flash.display.DisplayObject;
+	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -37,15 +38,21 @@ package org.axiis.core
 	
 	import mx.core.FlexSprite;
 	import mx.core.IFactory;
+	import mx.core.IVisualElement;
+	import mx.core.UIComponent;
 	
-	import org.axiis.states.State;
+	import org.axiis.states.AxiisState;
+	
+	import spark.core.DisplayObjectSharingMode;
+	import spark.primitives.Rect;
+	import spark.primitives.supportClasses.GraphicElement;
 
 	/**
 	 * AxiisSprites render individual drawingGeometries from layouts.
 	 */
-	public class AxiisSprite extends FlexSprite
+	public class AxiisSprite extends UIComponent
 	{
-		private static const DEFAULT_STATE:State = new State();
+		private static const DEFAULT_STATE:AxiisState = new AxiisState();
 		public static const EVENT_SELECTED:String = "selected";
 		public static const EVENT_UNSELECTED:String = "unselected";
 		
@@ -54,7 +61,7 @@ package org.axiis.core
 		 */
 		public function AxiisSprite()
 		{
-			super();
+			super(); var t:UIComponent
 			this.addEventListener(MouseEvent.CLICK,onMouseClick);
 			//addEventListener(MouseEvent.MOUSE_OVER,onMouseOver);
 		}
@@ -161,18 +168,18 @@ package org.axiis.core
 		 *  
 		 * @see State
 		 */
-		public function get states():Array
+		public function get axiisStates():Array
 		{
 			return _states;
 		}
-		public function set states(value:Array):void
+		public function set axiisStates(value:Array):void
 		{
 			if(value != _states)
 			{
 				_states = value;
 				
 				// Add listeners for all the state changing events
-				for each(var state:State in states)
+				for each(var state:AxiisState in axiisStates)
 				{
 					if(state.enterStateEvent != null && state.enabled) {
 						addEventListener(state.enterStateEvent,handleStateTriggeringEvent);
@@ -258,7 +265,7 @@ package org.axiis.core
 		 * @ param geometries The geometries to store
 		 * @ param state The state these geometries represent
 		 */
-		public function storeGeometries(geometries:Array,state:State = null):void
+		public function storeGeometries(geometries:Array,state:AxiisState = null):void
 		{
 			if(state == null) {
 				state = AxiisSprite.DEFAULT_STATE;
@@ -268,23 +275,33 @@ package org.axiis.core
 			if(stateToSpriteHash[state] == null)
 			{
 				stateSprite = new AxiisSprite();
+				stateSprite.layout=this.layout;
 				stateToSpriteHash[state] = stateSprite;
 				addChild(stateSprite);
 			}
 			stateSprite = stateToSpriteHash[state]
 			stateSprite.graphics.clear();
 			_maxBounds=new Rectangle();
-			for each(var geometry:Geometry in geometries)
+			for each(var geometry:Object in geometries)
 			{
-				geometry.preDraw();
-				var drawingBounds:Rectangle = scaleFill
-					? new Rectangle(bounds.x+geometry.x, bounds.y+geometry.y,bounds.width,bounds.height)
-					: geometry.commandStack.bounds;
-				geometry.draw(stateSprite.graphics,drawingBounds);
-				_maxBounds.width=Math.max(_maxBounds.width,drawingBounds.width+drawingBounds.x);
-				_maxBounds.height=Math.max(_maxBounds.height,drawingBounds.height+drawingBounds.y);
-				_maxBounds.x=Math.min(_maxBounds.x,drawingBounds.x);
-				_maxBounds.y=Math.min(_maxBounds.y,drawingBounds.y);
+				if (geometry is Geometry) {
+					geometry.preDraw();
+					var drawingBounds:Rectangle = scaleFill
+						? new Rectangle(bounds.x+geometry.x, bounds.y+geometry.y,bounds.width,bounds.height)
+						: geometry.commandStack.bounds;
+					geometry.draw(stateSprite.graphics,drawingBounds);
+					_maxBounds.width=Math.max(_maxBounds.width,drawingBounds.width+drawingBounds.x);
+					_maxBounds.height=Math.max(_maxBounds.height,drawingBounds.height+drawingBounds.y);
+					_maxBounds.x=Math.min(_maxBounds.x,drawingBounds.x);
+					_maxBounds.y=Math.min(_maxBounds.y,drawingBounds.y);
+				}
+				else if (geometry is GraphicElement) {
+					var ge:GraphicElement=GraphicElement(geometry);
+					ge.setSharedDisplayObject(stateSprite);
+					ge.displayObjectSharingMode=DisplayObjectSharingMode.USES_SHARED_OBJECT;
+					//ge.invalidateDisplayList();
+					ge.validateDisplayList();
+				}
 			}
 			
 			//this.dataTipAnchorPoint=new Point(_maxBounds.x+_maxBounds.width/2,_maxBounds.y+_maxBounds.height/2);
@@ -303,7 +320,7 @@ package org.axiis.core
 			if((event.target.parent != this && event.type!=AxiisSprite.EVENT_SELECTED && event.type!=AxiisSprite.EVENT_UNSELECTED) || layout.rendering)
 				return;	
 			
-			var state:State = findStatesForEventType(event.type);
+			var state:AxiisState = findStatesForEventType(event.type);
 			
 			setState(state); 
 		
@@ -312,12 +329,12 @@ package org.axiis.core
 		/**
 		 * Can be called external to sprite to force entry of state
 		 */
-		public function setState(state:State):void {
+		public function setState(state:AxiisState):void {
 
-			var stateForChildren:State = state.propagateToDescendents ? state : DEFAULT_STATE;
-			var stateForSiblings:State = state.propagateToSiblings ? state : DEFAULT_STATE;
-			var stateForParents:State = state.propagateToAncestors ? state : DEFAULT_STATE;
-			var statesForParentSiblings:State = state.propagateToAncestorsSiblings ? state : DEFAULT_STATE;
+			var stateForChildren:AxiisState = state.propagateToDescendents ? state : DEFAULT_STATE;
+			var stateForSiblings:AxiisState = state.propagateToSiblings ? state : DEFAULT_STATE;
+			var stateForParents:AxiisState = state.propagateToAncestors ? state : DEFAULT_STATE;
+			var statesForParentSiblings:AxiisState = state.propagateToAncestorsSiblings ? state : DEFAULT_STATE;
 			
 			activateStateForParents(stateForParents,statesForParentSiblings);			
 			activateStateForSiblings(stateForSiblings);
@@ -339,9 +356,9 @@ package org.axiis.core
 		 * 
 		 * @param eventType The event type to search for.
 		 */
-		protected function findStatesForEventType(eventType:String):State
+		protected function findStatesForEventType(eventType:String):AxiisState
 		{
-			for each(var state:State in states)
+			for each(var state:AxiisState in axiisStates)
 			{
 				if(state.enterStateEvent == eventType)
 					return state;
@@ -354,7 +371,7 @@ package org.axiis.core
 		 * 
 		 * @param state The state that the descendents should enter.
 		 */
-		protected function activateStateForChildren(state:State):void
+		protected function activateStateForChildren(state:AxiisState):void
 		{	
 			for(var a:int = 0; a < numChildren; a++)
 			{
@@ -372,7 +389,7 @@ package org.axiis.core
 		 * 
 		 * @param state The state that the siblings should enter.
 		 */
-		protected function activateStateForSiblings(state:State):void
+		protected function activateStateForSiblings(state:AxiisState):void
 		{
 			if (!parent) return;
 			
@@ -396,7 +413,7 @@ package org.axiis.core
 		 * @param stateForAncestors The state that the ancestors should enter.
 		 * @param stateForAncestorSiblings The state that the siblings of the ancestors should enter.
 		 */
-		protected function activateStateForParents(stateForAncestors:State,stateForAncestorSiblings:State):void
+		protected function activateStateForParents(stateForAncestors:AxiisState,stateForAncestorSiblings:AxiisState):void
 		{
  
 			if(parent is AxiisSprite)
@@ -410,7 +427,7 @@ package org.axiis.core
 		/**
 		 * The state the AxiisSprite is currently renderering
 		 */
-		public function get activeState():State {
+		public function get activeState():AxiisState {
 			return _activeState;
 		}
 		
@@ -418,7 +435,7 @@ package org.axiis.core
 		/**
 		 * @private
 		 */
-		protected var _activeState:State;
+		protected var _activeState:AxiisState;
 		
 		/**
 		 * Displays the child sprite for the state parameter and hides all others.
@@ -426,13 +443,14 @@ package org.axiis.core
 		 * 
 		 * @param state The state this AxiisSprite should show.
 		 */
-		public function render(state:State = null):void
+		public function render(state:AxiisState = null):void
 		{
 			if(state == null)
 				state = _activeState;
 
 			_activeState=state;
-
+			
+			
 			if (!stateToSpriteHash) return;
 			var childToDisplay:Sprite = stateToSpriteHash[state];
 			for each(var stateChild:Sprite in stateToSpriteHash)
@@ -442,6 +460,8 @@ package org.axiis.core
 				else
 					stateChild.visible = false;
 			}
+			
+			
 		}
 		
 		/**
@@ -466,7 +486,7 @@ package org.axiis.core
 			layout=null;
 		//	_layoutSprites=null;
 		//	_drawingSprites=null;
-			states = null;
+			axiisStates = null;
 			stateToSpriteHash = null;
 		}
 		

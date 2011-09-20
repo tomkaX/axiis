@@ -30,6 +30,7 @@ package org.axiis
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.utils.getTimer;
 	
 	import mx.containers.Canvas;
 	import mx.core.IFactory;
@@ -40,10 +41,12 @@ package org.axiis
 	import org.axiis.managers.IDataTipManager;
 	import org.axiis.ui.DataTip;
 	
+	import spark.components.Group;
+	
 	/**
 	 * DataCanvas manages the placement and the rendering of layouts.
 	 */
-	public class DataCanvas extends Canvas
+	public class DataCanvas extends Group
 	{
 		[Bindable]
 		/**
@@ -161,13 +164,13 @@ package org.axiis
 			super.createChildren();
 			
 			_background=new AxiisSprite();
-			this.rawChildren.addChild(_background);
+			this.addElement(_background);
 
 			for each(var layout:AbstractLayout in layouts)
 			{
 				layout.registerOwner(this);
-				var sprite:Sprite = layout.getSprite(this);
-				this.rawChildren.addChild(sprite);
+				var sprite:AxiisSprite = layout.getSprite(this);
+				this.addElement(sprite);
 				
 				layout.addEventListener("layoutInvalidate",handleLayoutInvalidate);
 				layout.addEventListener("itemDataTip",onItemDataTip);
@@ -177,7 +180,7 @@ package org.axiis
 			}
 			
 			_foreground=new AxiisSprite();
-			this.rawChildren.addChild(_foreground);
+			this.addElement(_foreground);
 		}
 		
 		/**
@@ -223,7 +226,6 @@ package org.axiis
 		 */
 		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
 		{
-			super.updateDisplayList(unscaledWidth,unscaledHeight);
 	
 			//Render layouts first, as they may autoadjust Scales, etc that the background/foreground rely upon
 			while(invalidatedLayouts.length > 0)
@@ -263,11 +265,12 @@ package org.axiis
 				i++;
 			}
 			
-			
 			/* this.graphics.clear();
 			this.graphics.beginFill(0xff,.1);
 			this.graphics.drawRect(0,0,width,height);
 			this.graphics.endFill(); */
+			
+			super.updateDisplayList(unscaledWidth,unscaledHeight);
 			
 			_invalidated = false;
 		}
@@ -316,6 +319,7 @@ package org.axiis
 				
 			var axiisSprites:Array=getHitSiblings(axiisSprite);
 			
+			/*
 			for each (var a:AxiisSprite in axiisSprites) {
 			
 			var dataTip:DataTip = new DataTip();
@@ -342,7 +346,7 @@ package org.axiis
 			var dataTipManager:IDataTipManager=axiisSprite.layout.dataTipManager;
 			
 			dataTipManager.createDataTip(dataTips,this,axiisSprite);
-
+			*/
 		}
 		
 		/**
@@ -383,6 +387,10 @@ package org.axiis
 			}*/
 			
 			return toReturn;
+		}
+		
+		public function dispose():void {
+			
 		}
 		
 	}
